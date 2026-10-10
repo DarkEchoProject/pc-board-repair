@@ -28,11 +28,12 @@ $MaxBytes = 24MB
 
 function Get-Brand([string]$Name) {
     $n = $Name.ToLowerInvariant()
+
     if ($n -match 'asrock') { return 'ASRock' }
     if ($n -match 'asus|60nb') { return 'ASUS' }
     if ($n -match 'acer') { return 'Acer' }
     if ($n -match 'gigabyte|\bga[-_ ]') { return 'Gigabyte' }
-    if ($n -match 'msi|\bms[-_ ]?\d{3,5}') { return 'MSI' }
+    if ($n -match 'msi|\bms[-_ ]?[0-9a-z]{3,6}') { return 'MSI' }
     if ($n -match 'hewlett|\bhp\b|compaq|probook|elitebook|pavilion|prodesk|elitedesk') { return 'HP' }
     if ($n -match 'dell|optiplex|latitude|inspiron|vostro|precision') { return 'Dell' }
     if ($n -match 'lenovo|thinkpad|ideapad|thinkcentre') { return 'Lenovo' }
@@ -46,6 +47,26 @@ function Get-Brand([string]$Name) {
     if ($n -match 'toshiba') { return 'Toshiba' }
     if ($n -match 'sony|vaio') { return 'Sony' }
     if ($n -match 'clevo') { return 'Clevo' }
+
+    if ($n -match 'compal') { return 'Compal' }
+    if ($n -match 'quanta') { return 'Quanta' }
+    if ($n -match 'wistron') { return 'Wistron' }
+    if ($n -match 'lcfc') { return 'LCFC' }
+
+    if ($n -match '\b(a320m-hdv|b150m[-_ ]?pro4s|c8hm70-i|dl-h61m-vg4|h110m-dgs|h81m-v3|n68-gs4|z77[-_ ]?pro4-m)\b') { return 'ASRock' }
+
+    if ($n -match '\b(a58m-f|a8s\b|c872mpi|cg210pi|et2700i|fx506lh|fx517ze|g512li|g614j|g713p|gt730-2gd|gtx960|gx531gx|m5a97|maximus|p4s800|prime\b|strix\b|t100tam|t303ua|tp501|virgo-m)') { return 'ASUS' }
+    if ($n -match '\bdabklgmb8d0\b') { return 'ASUS' }
+
+    if ($n -match '\bgv(?:[-_ ]|$)') { return 'Gigabyte' }
+
+    if ($n -match '\bgdb70\b|\bla-k631p\b') { return 'Dell' }
+    if ($n -match '\bspeedy\b') { return 'Lenovo' }
+    if ($n -match '\bcasug\b') { return 'Toshiba' }
+    if ($n -match '\bh98p\b|\bdah98pmbab0\b') { return 'Huawei' }
+
+    if ($n -match '\bhsw-t1\b|\bodm\b') { return 'ODM' }
+
     return 'Other'
 }
 
