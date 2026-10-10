@@ -13,12 +13,20 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const brand=new URLSearchParams(location.search).get('brand')||''; let items=[];
 document.getElementById('crumbBrand').textContent=brand; document.getElementById('title').textContent=brand+' BoardView'; document.title=brand+' BoardView | PC Board Repair';
+function normalize(all){
+  return (Array.isArray(all)?all:[])
+    .flatMap(x=>Array.isArray(x?.value)?x.value:[x])
+    .filter(x=>x && typeof x.brand==='string' && x.brand.trim());
+}
 function card(b){
  const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).map(esc).join(' • ');
  const image=b.image?`<a class="boardImageLink" href="../images/${encodeURIComponent(b.image)}" target="_blank"><img class="boardImage" src="../images/${encodeURIComponent(b.image)}" alt="${esc(b.brand+' '+b.model)}"></a>`:`<div class="boardPlaceholder">🧩<span>لا توجد صورة بعد</span></div>`;
  return `<article class="boardCard">${image}<div class="boardInfo"><h2>${esc(b.model)}</h2><p class="fileMeta">${meta}</p><p><a class="btn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل الملف</a></p>${b.image?`<p><a class="imageBtn" href="../images/${encodeURIComponent(b.image)}" target="_blank">🖼️ فتح صورة اللوحة</a></p>`:''}</div></article>`;
 }
 function render(list){document.getElementById('list').innerHTML=list.length?list.map(card).join(''):'<div class="emptyState">لا توجد ملفات لهذه الشركة.</div>';}
-fetch('../data/boards.json',{cache:'no-store'}).then(r=>r.json()).then(all=>{items=all.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());render(items);});
+fetch('../data/boards.json',{cache:'no-store'})
+  .then(r=>r.json())
+  .then(all=>{const clean=normalize(all);items=clean.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());render(items);})
+  .catch(()=>{document.getElementById('list').innerHTML='<div class="emptyState">تعذر تحميل ملفات هذه الشركة.</div>';});
 document.getElementById('search').addEventListener('input',e=>{const t=e.target.value.toLowerCase().trim();render(!t?items:items.filter(b=>Object.values(b).join(' ').toLowerCase().includes(t)));});
 </script></body></html>
