@@ -24,7 +24,6 @@ if (-not (Test-Path -LiteralPath $Cleaned -PathType Container)) {
 New-Item -ItemType Directory -Force -Path $DownloadsDir | Out-Null
 New-Item -ItemType Directory -Force -Path $ReportDir | Out-Null
 
-# Cloudflare Workers static assets have a per-file limit. Leave a safety margin.
 $MaxBytes = 24MB
 
 function Get-Brand([string]$Name) {
@@ -56,7 +55,7 @@ function Get-DisplayName([string]$BaseName) {
     $s = $s -replace '(?i)\b(boardview|schematic|schematics|diagram|file)\b',''
     $s = $s -replace '(?i)\((bdv|brd|fz|cad|pdf)\)',''
     $s = $s -replace '\s+',' '
-    return $s.Trim(' ','-','_')
+    return $s.Trim([char[]]' -_')
 }
 
 function Get-SafeFileName([string]$Original, [string]$Brand) {
@@ -64,17 +63,18 @@ function Get-SafeFileName([string]$Original, [string]$Brand) {
     $base = [IO.Path]::GetFileNameWithoutExtension($Original)
     $base = $base -replace '[^A-Za-z0-9._+-]','-'
     $base = $base -replace '-+','-'
-    $base = $base.Trim('-','.')
+    $base = $base.Trim([char[]]'-.')
     if ([string]::IsNullOrWhiteSpace($base)) { $base = 'board' }
     $brandSafe = $Brand -replace '[^A-Za-z0-9]','-'
-    if ($base -notmatch "^(?i)$([regex]::Escape($brandSafe))[-_]" ) {
+    $brandPattern = '(?i)^' + [regex]::Escape($brandSafe) + '[-_]'
+    if ($base -notmatch $brandPattern) {
         $base = "$brandSafe-$base"
     }
     return "$base$ext"
 }
 
-$archives = Get-ChildItem -LiteralPath $Cleaned -Recurse -File | Where-Object { $_.Extension.ToLowerInvariant() -in @('.rar','.zip','.7z') }
-if (-not $archives) {
+$archives = @(Get-ChildItem -LiteralPath $Cleaned -Recurse -File | Where-Object { $_.Extension.ToLowerInvariant() -in @('.rar','.zip','.7z') })
+if ($archives.Count -eq 0) {
     Write-Host 'لم أجد ملفات RAR/ZIP/7Z داخل المجلد.' -ForegroundColor Red
     Read-Host 'اضغط Enter للخروج'
     exit 1
@@ -88,20 +88,25 @@ foreach ($a in $archives) {
     $safe = Get-SafeFileName $a.Name $brand
     $candidate = $safe
     $i = 2
+
     while ($used.ContainsKey($candidate.ToLowerInvariant()) -or (Test-Path -LiteralPath (Join-Path $DownloadsDir $candidate))) {
         $ext = [IO.Path]::GetExtension($safe)
         $b = [IO.Path]::GetFileNameWithoutExtension($safe)
         $candidate = "$b-$i$ext"
         $i++
     }
+
     $used[$candidate.ToLowerInvariant()] = $true
+    $status = 'READY'
+    if ($a.Length -gt $MaxBytes) { $status = 'SKIP_TOO_LARGE' }
+
     $preview += [pscustomobject]@{
         Brand = $brand
         Model = $display
         Source = $a.FullName
         DestinationFile = $candidate
         SizeMB = [math]::Round($a.Length / 1MB, 2)
-        Status = if ($a.Length -gt $MaxBytes) { 'SKIP_TOO_LARGE' } else { 'READY' }
+        Status = $status
     }
 }
 
@@ -111,8 +116,11 @@ $preview | Sort-Object Brand,Model | Export-Csv -LiteralPath $previewPath -NoTyp
 Write-Host ''
 Write-Host "وجدت $($preview.Count) ملفًا." -ForegroundColor Green
 $groups = $preview | Group-Object Brand | Sort-Object Name
-foreach ($g in $groups) { Write-Host ("  {0,-12} {1,4}" -f $g.Name,$g.Count) }
-$large = @($preview | Where-Object Status -eq 'SKIP_TOO_LARGE')
+foreach ($g in $groups) {
+    Write-Host ("  {0,-12} {1,4}" -f $g.Name,$g.Count)
+}
+
+$large = @($preview | Where-Object { $_.Status -eq 'SKIP_TOO_LARGE' })
 Write-Host ''
 Write-Host "ملف المعاينة: $previewPath" -ForegroundColor Cyan
 if ($large.Count -gt 0) {
@@ -133,7 +141,8 @@ if (Test-Path -LiteralPath $BoardsJson) {
 }
 
 $newEntries = @()
-foreach ($p in ($preview | Where-Object Status -eq 'READY')) {
+$ready = @($preview | Where-Object { $_.Status -eq 'READY' })
+foreach ($p in $ready) {
     $dest = Join-Path $DownloadsDir $p.DestinationFile
     Copy-Item -LiteralPath $p.Source -Destination $dest -Force
     $newEntries += [pscustomobject]@{
@@ -149,9 +158,11 @@ foreach ($p in ($preview | Where-Object Status -eq 'READY')) {
     }
 }
 
-# Keep current manually curated entries, then add only new destination filenames.
 $knownFiles = @{}
-foreach ($e in $existing) { if ($e.file) { $knownFiles[$e.file.ToLowerInvariant()] = $true } }
+foreach ($e in $existing) {
+    if ($e.file) { $knownFiles[$e.file.ToLowerInvariant()] = $true }
+}
+
 $merged = @($existing)
 foreach ($e in $newEntries) {
     if (-not $knownFiles.ContainsKey($e.file.ToLowerInvariant())) {
@@ -167,20 +178,25 @@ Write-Host "تم نسخ $($newEntries.Count) ملفًا وتحديث boards.json
 Write-Host 'الآن سيتم رفع التغييرات إلى GitHub تلقائيًا.' -ForegroundColor Cyan
 
 Push-Location $RepoRoot
-try {
-    git add public/downloads public/data/boards.json
-    if ((git status --porcelain).Length -eq 0) {
-        Write-Host 'لا توجد تغييرات جديدة للرفع.' -ForegroundColor Yellow
-    } else {
-        git commit -m "Bulk import cleaned BoardView archives"
-        git push origin main
-        if ($LASTEXITCODE -ne 0) { throw 'git push failed' }
-        Write-Host ''
-        Write-Host 'تم الرفع إلى GitHub. Cloudflare سيبدأ النشر تلقائيًا.' -ForegroundColor Green
+git add public/downloads public/data/boards.json
+$statusLines = @(git status --porcelain)
+if ($statusLines.Count -eq 0) {
+    Write-Host 'لا توجد تغييرات جديدة للرفع.' -ForegroundColor Yellow
+} else {
+    git commit -m "Bulk import cleaned BoardView archives"
+    if ($LASTEXITCODE -ne 0) {
+        Pop-Location
+        throw 'git commit failed'
     }
-} finally {
-    Pop-Location
+    git push origin main
+    if ($LASTEXITCODE -ne 0) {
+        Pop-Location
+        throw 'git push failed'
+    }
+    Write-Host ''
+    Write-Host 'تم الرفع إلى GitHub. Cloudflare سيبدأ النشر تلقائيًا.' -ForegroundColor Green
 }
+Pop-Location
 
 Write-Host ''
 Write-Host 'ملاحظة: الملفات غير المعروفة توضع تحت قسم Other، ويمكن مراجعتها لاحقًا.'
