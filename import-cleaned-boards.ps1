@@ -5,37 +5,34 @@ $PublicDir = Join-Path $RepoRoot 'public'
 $DownloadsDir = Join-Path $PublicDir 'downloads'
 $BoardsJson = Join-Path $PublicDir 'data\boards.json'
 $ReportDir = Join-Path $RepoRoot '_IMPORT_REPORT'
+$MaxBytes = 24MB
 
 Write-Host ''
 Write-Host '==============================================' -ForegroundColor Cyan
 Write-Host ' PC Board Repair - Bulk BoardView Importer' -ForegroundColor Cyan
 Write-Host '==============================================' -ForegroundColor Cyan
 Write-Host ''
-Write-Host 'اسحب مجلد _CLEANED إلى هذه النافذة ثم اضغط Enter:' -ForegroundColor Yellow
+Write-Host 'Drag the _CLEANED folder here, then press Enter:' -ForegroundColor Yellow
 $Cleaned = Read-Host 'Folder'
 $Cleaned = $Cleaned.Trim().Trim('"')
 
 if (-not (Test-Path -LiteralPath $Cleaned -PathType Container)) {
-    Write-Host 'المجلد غير موجود.' -ForegroundColor Red
-    Read-Host 'اضغط Enter للخروج'
+    Write-Host 'Folder not found.' -ForegroundColor Red
+    Read-Host 'Press Enter to exit'
     exit 1
 }
 
 New-Item -ItemType Directory -Force -Path $DownloadsDir | Out-Null
 New-Item -ItemType Directory -Force -Path $ReportDir | Out-Null
 
-$MaxBytes = 24MB
-
 function Get-Brand([string]$Name) {
     $n = $Name.ToLowerInvariant()
 
-    # Exact mappings for the last unresolved board names
     if ($n -match 'digilite|dl[-_ ]h61m[-_ ]vg4') { return 'Digilite' }
     if ($n -match 'b150m.*pro4s|n68.*gs4.*usb3.*fx|z77.*pro4.*m') { return 'ASRock' }
     if ($n -match 'h81m[-_ ]v3|strix.*z270f') { return 'ASUS' }
     if ($n -match 'speedy') { return 'Lenovo' }
 
-    # Explicit manufacturer / brand names
     if ($n -match 'asrock') { return 'ASRock' }
     if ($n -match 'asus|60nb') { return 'ASUS' }
     if ($n -match 'acer') { return 'Acer' }
@@ -54,68 +51,61 @@ function Get-Brand([string]$Name) {
     if ($n -match 'toshiba') { return 'Toshiba' }
     if ($n -match 'sony|vaio') { return 'Sony' }
     if ($n -match 'clevo') { return 'Clevo' }
+    if ($n -match 'huawei') { return 'Huawei' }
 
-    # ODM names: keep them in their own section when OEM cannot be safely inferred
     if ($n -match 'compal') { return 'Compal' }
     if ($n -match 'quanta') { return 'Quanta' }
     if ($n -match 'wistron') { return 'Wistron' }
     if ($n -match 'lcfc') { return 'LCFC' }
 
-    # ASRock model families found in the cleaned archive
     if ($n -match '\b(a320m-hdv|b150m[-_ ]?pro4s|c8hm70-i|h110m-dgs|n68-gs4|z77[-_ ]?pro4-m)\b') { return 'ASRock' }
-
-    # ASUS desktop / laptop / VGA model families found in the cleaned archive
-    if ($n -match '\b(a58m-f|a8s\b|c872mpi|cg210pi|et2700i|fx506lh|fx517ze|g512li|g614j|g713p|gt730-2gd|gtx960|gx531gx|m5a97|maximus|p4s800|prime\b|strix\b|t100tam|t303ua|tp501|virgo-m)') { return 'ASUS' }
+    if ($n -match '\b(a58m-f|a8s|c872mpi|cg210pi|et2700i|fx506lh|fx517ze|g512li|g614j|g713p|gt730-2gd|gtx960|gx531gx|m5a97|maximus|p4s800|prime|strix|t100tam|t303ua|tp501|virgo-m)\b') { return 'ASUS' }
     if ($n -match '\bdabklgmb8d0\b') { return 'ASUS' }
-
-    # Gigabyte VGA model prefix
     if ($n -match '\bgv(?:[-_ ]|$)') { return 'Gigabyte' }
-
-    # Known platform mappings
     if ($n -match '\bgdb70\b|\bla-k631p\b') { return 'Dell' }
-    if ($n -match '\bspeedy\b') { return 'Lenovo' }
     if ($n -match '\bcasug\b') { return 'Toshiba' }
     if ($n -match '\bh98p\b|\bdah98pmbab0\b') { return 'Huawei' }
-
-    # The archive identifies this only as an ODM board; avoid guessing an OEM brand.
     if ($n -match '\bhsw-t1\b|\bodm\b') { return 'ODM' }
 
     return 'Other'
 }
 
 function Get-DisplayName([string]$BaseName) {
-    $s = $BaseName -replace '_',' '
-    $s = $s -replace '\s+',' '
-    $s = $s -replace '(?i)\b(boardview|schematic|schematics|diagram|file)\b',''
-    $s = $s -replace '(?i)\((bdv|brd|fz|cad|pdf)\)',''
-    $s = $s -replace '\s+',' '
+    $s = $BaseName -replace '_', ' '
+    $s = $s -replace '\s+', ' '
+    $s = $s -replace '(?i)\b(boardview|schematic|schematics|diagram|file)\b', ''
+    $s = $s -replace '(?i)\((bdv|brd|fz|cad|pdf)\)', ''
+    $s = $s -replace '\s+', ' '
     return $s.Trim([char[]]' -_')
 }
 
 function Get-SafeFileName([string]$Original, [string]$Brand) {
     $ext = [IO.Path]::GetExtension($Original).ToLowerInvariant()
     $base = [IO.Path]::GetFileNameWithoutExtension($Original)
-    $base = $base -replace '[^A-Za-z0-9._+-]','-'
-    $base = $base -replace '-+','-'
+    $base = $base -replace '[^A-Za-z0-9._+-]', '-'
+    $base = $base -replace '-+', '-'
     $base = $base.Trim([char[]]'-.')
     if ([string]::IsNullOrWhiteSpace($base)) { $base = 'board' }
-    $brandSafe = $Brand -replace '[^A-Za-z0-9]','-'
+
+    $brandSafe = $Brand -replace '[^A-Za-z0-9]', '-'
     $brandPattern = '(?i)^' + [regex]::Escape($brandSafe) + '[-_]'
     if ($base -notmatch $brandPattern) {
-        $base = "$brandSafe-$base"
+        $base = $brandSafe + '-' + $base
     }
-    return "$base$ext"
+    return $base + $ext
 }
 
-$archives = @(Get-ChildItem -LiteralPath $Cleaned -Recurse -File | Where-Object { $_.Extension.ToLowerInvariant() -in @('.rar','.zip','.7z') })
+$archives = @(Get-ChildItem -LiteralPath $Cleaned -Recurse -File | Where-Object { $_.Extension.ToLowerInvariant() -in @('.rar', '.zip', '.7z') })
+
 if ($archives.Count -eq 0) {
-    Write-Host 'لم أجد ملفات RAR/ZIP/7Z داخل المجلد.' -ForegroundColor Red
-    Read-Host 'اضغط Enter للخروج'
+    Write-Host 'No RAR/ZIP/7Z files were found.' -ForegroundColor Red
+    Read-Host 'Press Enter to exit'
     exit 1
 }
 
 $preview = @()
 $used = @{}
+
 foreach ($a in $archives) {
     $brand = Get-Brand $a.BaseName
     $display = Get-DisplayName $a.BaseName
@@ -125,14 +115,16 @@ foreach ($a in $archives) {
 
     while ($used.ContainsKey($candidate.ToLowerInvariant()) -or (Test-Path -LiteralPath (Join-Path $DownloadsDir $candidate))) {
         $ext = [IO.Path]::GetExtension($safe)
-        $b = [IO.Path]::GetFileNameWithoutExtension($safe)
-        $candidate = "$b-$i$ext"
+        $baseName = [IO.Path]::GetFileNameWithoutExtension($safe)
+        $candidate = $baseName + '-' + $i + $ext
         $i++
     }
 
     $used[$candidate.ToLowerInvariant()] = $true
     $status = 'READY'
-    if ($a.Length -gt $MaxBytes) { $status = 'SKIP_TOO_LARGE' }
+    if ($a.Length -gt $MaxBytes) {
+        $status = 'SKIP_TOO_LARGE'
+    }
 
     $preview += [pscustomobject]@{
         Brand = $brand
@@ -145,40 +137,51 @@ foreach ($a in $archives) {
 }
 
 $previewPath = Join-Path $ReportDir 'import-preview.csv'
-$preview | Sort-Object Brand,Model | Export-Csv -LiteralPath $previewPath -NoTypeInformation -Encoding UTF8
+$preview | Sort-Object Brand, Model | Export-Csv -LiteralPath $previewPath -NoTypeInformation -Encoding UTF8
 
 Write-Host ''
-Write-Host "وجدت $($preview.Count) ملفًا." -ForegroundColor Green
+Write-Host ('Found {0} archives.' -f $preview.Count) -ForegroundColor Green
 $groups = $preview | Group-Object Brand | Sort-Object Name
 foreach ($g in $groups) {
-    Write-Host ("  {0,-12} {1,4}" -f $g.Name,$g.Count)
+    Write-Host ('  {0,-12} {1,4}' -f $g.Name, $g.Count)
 }
 
 $large = @($preview | Where-Object { $_.Status -eq 'SKIP_TOO_LARGE' })
 Write-Host ''
-Write-Host "ملف المعاينة: $previewPath" -ForegroundColor Cyan
+Write-Host ('Preview: {0}' -f $previewPath) -ForegroundColor Cyan
 if ($large.Count -gt 0) {
-    Write-Host "سيتم تخطي $($large.Count) ملفًا أكبر من 24MB." -ForegroundColor Yellow
+    Write-Host ('SKIP_TOO_LARGE: {0} file(s) over 24 MB.' -f $large.Count) -ForegroundColor Yellow
 }
 Write-Host ''
-$answer = Read-Host 'هل تريد المتابعة والنسخ إلى الموقع؟ اكتب Y للموافقة'
+$answer = Read-Host 'Continue and copy files to the site? Type Y'
 if ($answer.ToUpperInvariant() -ne 'Y') {
-    Write-Host 'تم الإيقاف بدون تعديل الموقع.' -ForegroundColor Yellow
-    Read-Host 'اضغط Enter للخروج'
+    Write-Host 'Stopped without changing the site.' -ForegroundColor Yellow
+    Read-Host 'Press Enter to exit'
     exit 0
 }
 
+$existing = @()
 if (Test-Path -LiteralPath $BoardsJson) {
-    $existing = @(Get-Content -LiteralPath $BoardsJson -Raw -Encoding UTF8 | ConvertFrom-Json)
-} else {
-    $existing = @()
+    $rawExisting = @(Get-Content -LiteralPath $BoardsJson -Raw -Encoding UTF8 | ConvertFrom-Json)
+    foreach ($e in $rawExisting) {
+        if ($null -ne $e.value) {
+            foreach ($inner in @($e.value)) {
+                if ($null -ne $inner.brand) { $existing += $inner }
+            }
+        }
+        elseif ($null -ne $e.brand) {
+            $existing += $e
+        }
+    }
 }
 
 $newEntries = @()
 $ready = @($preview | Where-Object { $_.Status -eq 'READY' })
+
 foreach ($p in $ready) {
     $dest = Join-Path $DownloadsDir $p.DestinationFile
     Copy-Item -LiteralPath $p.Source -Destination $dest -Force
+
     $newEntries += [pscustomobject]@{
         brand = $p.Brand
         model = $p.Model
@@ -194,44 +197,50 @@ foreach ($p in $ready) {
 
 $knownFiles = @{}
 foreach ($e in $existing) {
-    if ($e.file) { $knownFiles[$e.file.ToLowerInvariant()] = $true }
+    if ($null -ne $e.file -and -not [string]::IsNullOrWhiteSpace([string]$e.file)) {
+        $knownFiles[$e.file.ToLowerInvariant()] = $true
+    }
 }
 
 $merged = @($existing)
 foreach ($e in $newEntries) {
-    if (-not $knownFiles.ContainsKey($e.file.ToLowerInvariant())) {
+    $key = $e.file.ToLowerInvariant()
+    if (-not $knownFiles.ContainsKey($key)) {
         $merged += $e
-        $knownFiles[$e.file.ToLowerInvariant()] = $true
+        $knownFiles[$key] = $true
     }
 }
 
 $merged | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $BoardsJson -Encoding UTF8
 
 Write-Host ''
-Write-Host "تم نسخ $($newEntries.Count) ملفًا وتحديث boards.json." -ForegroundColor Green
-Write-Host 'الآن سيتم رفع التغييرات إلى GitHub تلقائيًا.' -ForegroundColor Cyan
+Write-Host ('Copied {0} files and updated boards.json.' -f $newEntries.Count) -ForegroundColor Green
+Write-Host 'Preparing one Git commit and one push...' -ForegroundColor Cyan
 
 Push-Location $RepoRoot
-git add public/downloads public/data/boards.json
-$statusLines = @(git status --porcelain)
-if ($statusLines.Count -eq 0) {
-    Write-Host 'لا توجد تغييرات جديدة للرفع.' -ForegroundColor Yellow
-} else {
-    git commit -m "Bulk import cleaned BoardView archives"
-    if ($LASTEXITCODE -ne 0) {
-        Pop-Location
-        throw 'git commit failed'
+try {
+    git add public/downloads public/data/boards.json
+    if ($LASTEXITCODE -ne 0) { throw 'git add failed' }
+
+    $statusLines = @(git status --porcelain)
+    if ($statusLines.Count -eq 0) {
+        Write-Host 'No new changes to upload.' -ForegroundColor Yellow
     }
-    git push origin main
-    if ($LASTEXITCODE -ne 0) {
-        Pop-Location
-        throw 'git push failed'
+    else {
+        git commit -m 'Bulk import cleaned BoardView archives'
+        if ($LASTEXITCODE -ne 0) { throw 'git commit failed' }
+
+        git push origin main
+        if ($LASTEXITCODE -ne 0) { throw 'git push failed' }
+
+        Write-Host ''
+        Write-Host 'Upload complete. Cloudflare will deploy automatically.' -ForegroundColor Green
     }
-    Write-Host ''
-    Write-Host 'تم الرفع إلى GitHub. Cloudflare سيبدأ النشر تلقائيًا.' -ForegroundColor Green
 }
-Pop-Location
+finally {
+    Pop-Location
+}
 
 Write-Host ''
-Write-Host 'ملاحظة: الملفات غير المعروفة توضع تحت قسم Other، ويمكن مراجعتها لاحقًا.'
-Read-Host 'اضغط Enter للإغلاق'
+Write-Host 'Unknown brands are listed under Other for later review.'
+Read-Host 'Press Enter to close'
