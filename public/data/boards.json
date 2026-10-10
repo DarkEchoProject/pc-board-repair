@@ -1,0 +1,68 @@
+[
+  {
+    "brand": "Dell",
+    "model": "OptiPlex 780 – Arrowhead BTX",
+    "board": "Arrowhead BTX",
+    "revision": "",
+    "platform": "",
+    "type": "BoardView",
+    "file": "Dell-OptiPlex-780-Arrowhead-BTX.rar",
+    "image": "Dell-OptiPlex-780-Arrowhead-BTX.png",
+    "note": "صورة مشروحة لنقاط ومكونات اللوحة"
+  },
+  {
+    "brand": "ASRock",
+    "model": "H81M-VG4",
+    "board": "70-MXGS80-A04",
+    "revision": "REV 1.00 & 2.02",
+    "platform": "",
+    "type": "BoardView",
+    "file": "ASROCK-H81M-VG4-REV-1.00-2.02-70-MXGS80-A04-BoardView.zip",
+    "image": "",
+    "note": ""
+  },
+  {
+    "brand": "ASRock",
+    "model": "990FX Extreme4",
+    "board": "70-MXGID0-A02",
+    "revision": "REV 1.06",
+    "platform": "",
+    "type": "BoardView",
+    "file": "ASROCK-990FX-EXTREME4-REV-1.06-70-MXGID0-A02-BoardView.zip",
+    "image": "ASRock-990FX-Extreme4-REV-1.06.jpg",
+    "note": ""
+  },
+  {
+    "brand": "MSI",
+    "model": "MS-7860",
+    "board": "MS-7860",
+    "revision": "Rev 1.2",
+    "platform": "",
+    "type": "BoardView",
+    "file": "MSI-MS-7860-REV-1.2-BoardView.zip",
+    "image": "",
+    "note": ""
+  },
+  {
+    "brand": "MSI",
+    "model": "MS-7860",
+    "board": "MS-7860",
+    "revision": "Rev 1.6",
+    "platform": "",
+    "type": "BoardView",
+    "file": "MSI-MS-7860-REV-1.6-BoardView.zip",
+    "image": "",
+    "note": ""
+  },
+  {
+    "brand": "HP",
+    "model": "Stream Notebook 11",
+    "board": "DA0Y0HMB6F0",
+    "revision": "",
+    "platform": "QUANTA Y0H",
+    "type": "Board repair archive",
+    "file": "HP-STREAM-NOTEBOOK-11-DA0Y0HMB6F0-QUANTA-Y0H.rar",
+    "image": "",
+    "note": ""
+  }
+]

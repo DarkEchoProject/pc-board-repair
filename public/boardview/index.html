@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BoardView | PC Board Repair</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header><div class="logo">⚙️ PC Board Repair</div><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="../bios/index.html">BIOS</a></nav></header>
+<main class="wrap">
+  <div class="crumb">الرئيسية ← BoardView</div>
+  <h1>🗺️ خرائط وملفات البورد</h1>
+  <p class="muted">ابحث باسم الشركة أو الموديل أو رقم البورد، أو اختر الشركة.</p>
+  <input id="search" class="searchBox" type="search" placeholder="مثال: HP أو 460963 أو MS-7860">
+  <div id="companies" class="grid"></div>
+  <h2 id="resultsTitle" class="resultsTitle" hidden>نتائج البحث</h2>
+  <div id="results"></div>
+</main>
+<footer>PC Board Repair — V7</footer>
+<script>
+let boards=[];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+function card(b){
+  const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).map(esc).join(' • ');
+  const image=b.image
+    ? `<a class="boardImageLink" href="../images/${encodeURIComponent(b.image)}" target="_blank"><img class="boardImage" src="../images/${encodeURIComponent(b.image)}" alt="${esc(b.brand+' '+b.model)}"></a>`
+    : `<div class="boardPlaceholder">🧩<span>لا توجد صورة بعد</span></div>`;
+  return `<article class="boardCard">${image}<div class="boardInfo"><div class="brandTag">${esc(b.brand)}</div><h2>${esc(b.model)}</h2><p class="fileMeta">${meta}</p><p><a class="btn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل الملف</a></p>${b.image?`<p><a class="imageBtn" href="../images/${encodeURIComponent(b.image)}" target="_blank">🖼️ فتح صورة اللوحة</a></p>`:''}</div></article>`;
+}
+async function load(){
+  const r=await fetch('../data/boards.json',{cache:'no-store'}); boards=await r.json();
+  const companies=[...new Set(boards.map(b=>b.brand))].sort((a,b)=>a.localeCompare(b,'en'));
+  document.getElementById('companies').innerHTML=companies.map(c=>{
+    const items=boards.filter(b=>b.brand===c);
+    const names=[...new Set(items.map(b=>b.model))].slice(0,3).join('، ');
+    return `<a class="card" href="company.html?brand=${encodeURIComponent(c)}"><h2>${esc(c)}</h2><p class="muted">${esc(names)}${items.length>3?'…':''}</p><div class="countBadge">${items.length} ملف</div></a>`;
+  }).join('');
+}
+const q=document.getElementById('search');
+q.addEventListener('input',()=>{
+  const term=q.value.trim().toLowerCase(); const title=document.getElementById('resultsTitle'); const out=document.getElementById('results');
+  if(!term){title.hidden=true;out.innerHTML='';return;}
+  const found=boards.filter(b=>Object.values(b).join(' ').toLowerCase().includes(term));
+  title.hidden=false; out.innerHTML=found.length?found.map(card).join(''):'<div class="emptyState">لا توجد نتيجة بهذا الاسم.</div>';
+});
+load().catch(()=>document.getElementById('companies').innerHTML='<div class="emptyState">تعذر تحميل قاعدة البيانات.</div>');
+</script>
+</body></html>
