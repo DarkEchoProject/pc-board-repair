@@ -29,6 +29,13 @@ $MaxBytes = 24MB
 function Get-Brand([string]$Name) {
     $n = $Name.ToLowerInvariant()
 
+    # Exact mappings for the last unresolved board names
+    if ($n -match 'digilite|dl[-_ ]h61m[-_ ]vg4') { return 'Digilite' }
+    if ($n -match 'b150m.*pro4s|n68.*gs4.*usb3.*fx|z77.*pro4.*m') { return 'ASRock' }
+    if ($n -match 'h81m[-_ ]v3|strix.*z270f') { return 'ASUS' }
+    if ($n -match 'speedy') { return 'Lenovo' }
+
+    # Explicit manufacturer / brand names
     if ($n -match 'asrock') { return 'ASRock' }
     if ($n -match 'asus|60nb') { return 'ASUS' }
     if ($n -match 'acer') { return 'Acer' }
@@ -48,23 +55,29 @@ function Get-Brand([string]$Name) {
     if ($n -match 'sony|vaio') { return 'Sony' }
     if ($n -match 'clevo') { return 'Clevo' }
 
+    # ODM names: keep them in their own section when OEM cannot be safely inferred
     if ($n -match 'compal') { return 'Compal' }
     if ($n -match 'quanta') { return 'Quanta' }
     if ($n -match 'wistron') { return 'Wistron' }
     if ($n -match 'lcfc') { return 'LCFC' }
 
-    if ($n -match '\b(a320m-hdv|b150m[-_ ]?pro4s|c8hm70-i|dl-h61m-vg4|h110m-dgs|h81m-v3|n68-gs4|z77[-_ ]?pro4-m)\b') { return 'ASRock' }
+    # ASRock model families found in the cleaned archive
+    if ($n -match '\b(a320m-hdv|b150m[-_ ]?pro4s|c8hm70-i|h110m-dgs|n68-gs4|z77[-_ ]?pro4-m)\b') { return 'ASRock' }
 
+    # ASUS desktop / laptop / VGA model families found in the cleaned archive
     if ($n -match '\b(a58m-f|a8s\b|c872mpi|cg210pi|et2700i|fx506lh|fx517ze|g512li|g614j|g713p|gt730-2gd|gtx960|gx531gx|m5a97|maximus|p4s800|prime\b|strix\b|t100tam|t303ua|tp501|virgo-m)') { return 'ASUS' }
     if ($n -match '\bdabklgmb8d0\b') { return 'ASUS' }
 
+    # Gigabyte VGA model prefix
     if ($n -match '\bgv(?:[-_ ]|$)') { return 'Gigabyte' }
 
+    # Known platform mappings
     if ($n -match '\bgdb70\b|\bla-k631p\b') { return 'Dell' }
     if ($n -match '\bspeedy\b') { return 'Lenovo' }
     if ($n -match '\bcasug\b') { return 'Toshiba' }
     if ($n -match '\bh98p\b|\bdah98pmbab0\b') { return 'Huawei' }
 
+    # The archive identifies this only as an ODM board; avoid guessing an OEM brand.
     if ($n -match '\bhsw-t1\b|\bodm\b') { return 'ODM' }
 
     return 'Other'
