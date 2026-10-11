@@ -13,39 +13,45 @@
   <div class="crumb"><a href="index.html">BoardView</a> ← <span id="crumbBrand"></span></div>
   <h1 id="title">BoardView</h1>
   <p class="muted" id="intro">اختر الملف المطابق للموديل ورقم اللوحة وRevision.</p>
-  <input id="search" class="searchBox" type="search" aria-label="البحث داخل الشركة" placeholder="ابحث داخل هذه الشركة">
+
+  <div class="boardStats" aria-label="إحصاءات الشركة">
+    <div class="statBox"><span id="totalStat" class="statValue">—</span><span class="statLabel">ملفات الشركة</span></div>
+    <div class="statBox"><span id="boardStat" class="statValue">—</span><span class="statLabel">لديها رقم بورد</span></div>
+    <div class="statBox"><span id="revisionStat" class="statValue">—</span><span class="statLabel">لديها Revision</span></div>
+  </div>
+
+  <section class="filterPanel" aria-label="فلاتر ملفات الشركة">
+    <div class="filterGrid">
+      <input id="search" class="filterInput" type="search" aria-label="البحث داخل الشركة" placeholder="ابحث بالموديل أو رقم البورد">
+      <select id="typeFilter" class="filterSelect" aria-label="نوع الملف"><option value="">كل أنواع الملفات</option></select>
+      <select id="dataFilter" class="filterSelect" aria-label="توفر البيانات"><option value="">كل الملفات</option><option value="board">لديه رقم بورد</option><option value="revision">لديه Revision</option><option value="image">لديه صورة</option></select>
+      <select id="sortFilter" class="filterSelect" aria-label="ترتيب النتائج"><option value="model">ترتيب حسب الموديل</option><option value="board">ترتيب حسب رقم البورد</option><option value="type">ترتيب حسب النوع</option></select>
+    </div>
+    <div class="filterActions"><span id="resultCount" class="resultCount">جاري التحميل...</span><button id="resetBtn" class="resetBtn" type="button">مسح الفلاتر</button></div>
+  </section>
+
   <div id="list"></div>
+  <div id="pagination" class="pagination" hidden></div>
 </main>
 <footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-const brand=new URLSearchParams(location.search).get('brand')||''; let items=[];
-document.getElementById('crumbBrand').textContent=brand;
-document.getElementById('title').textContent=brand?brand+' BoardView':'BoardView';
-document.title=(brand?brand+' BoardView':'BoardView')+' | PC Board Repair';
-if(brand){
-  const d=document.querySelector('meta[name="description"]');
-  d.content='تحميل خرائط وملفات BoardView لأجهزة ولوحات '+brand+' مرتبة حسب الموديل ورقم البورد.';
-  const canonical=document.createElement('link'); canonical.rel='canonical'; canonical.href='https://pc-board-repair.alinasser00001.workers.dev/boardview/company.html?brand='+encodeURIComponent(brand); document.head.appendChild(canonical);
-}
-function normalize(all){
-  return (Array.isArray(all)?all:[])
-    .flatMap(x=>Array.isArray(x?.value)?x.value:[x])
-    .filter(x=>x && typeof x.brand==='string' && x.brand.trim());
-}
+const brand=new URLSearchParams(location.search).get('brand')||'';let items=[];let page=1;const PAGE_SIZE=24;
+document.getElementById('crumbBrand').textContent=brand;document.getElementById('title').textContent=brand?brand+' BoardView':'BoardView';document.title=(brand?brand+' BoardView':'BoardView')+' | PC Board Repair';
+if(brand){const d=document.querySelector('meta[name="description"]');d.content='تحميل خرائط وملفات BoardView لأجهزة ولوحات '+brand+' مرتبة حسب الموديل ورقم البورد.';const canonical=document.createElement('link');canonical.rel='canonical';canonical.href='https://pc-board-repair.alinasser00001.workers.dev/boardview/company.html?brand='+encodeURIComponent(brand);document.head.appendChild(canonical);}
+function normalize(all){return(Array.isArray(all)?all:[]).flatMap(x=>Array.isArray(x?.value)?x.value:[x]).filter(x=>x&&typeof x.brand==='string'&&x.brand.trim());}
 function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
 function detailHref(b){const readable=textSlug([b.brand,b.model,b.board,b.revision].filter(Boolean).join('-'));return `item/${fileKey(b.file)}/${readable}`}
-function card(b){
- const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).filter(v=>!/^Imported automatically/i.test(v)).map(esc).join(' • ');
- const detail=detailHref(b);
- const image=b.image?`<a class="boardImageLink" href="${detail}"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`:`<a class="boardPlaceholder boardPlaceholderLink" href="${detail}">🧩<span>فتح صفحة الملف</span></a>`;
- return `<article class="boardCard">${image}<div class="boardInfo"><h2><a class="boardTitleLink" href="${detail}">${esc(b.model)}</a></h2><p class="fileMeta">${meta}</p><div class="boardActions"><a class="btn" href="${detail}">📄 تفاصيل الملف</a><a class="imageBtn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل مباشر</a></div></div></article>`;
-}
-function render(list){document.getElementById('list').innerHTML=list.length?list.map(card).join(''):'<div class="emptyState">لا توجد ملفات لهذه الشركة.</div>';}
-fetch('../data/boards.json',{cache:'no-store'})
-  .then(r=>r.json())
-  .then(all=>{const clean=normalize(all);items=clean.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());document.getElementById('intro').textContent=brand?`يوجد ${items.length} ملفًا ضمن ${brand}. افتح صفحة الملف لمشاهدة بياناته كاملة ثم تحقق من Revision قبل التحميل.`:'اختر شركة من صفحة BoardView.';render(items);})
-  .catch(()=>{document.getElementById('list').innerHTML='<div class="emptyState">تعذر تحميل ملفات هذه الشركة.</div>';});
-document.getElementById('search').addEventListener('input',e=>{const t=e.target.value.toLowerCase().trim();render(!t?items:items.filter(b=>Object.values(b).join(' ').toLowerCase().includes(t)));});
+function cleanNote(v){return v&&!/^Imported automatically/i.test(v)?v:''}
+function card(b){const meta=[b.type,b.board,b.revision,b.platform,cleanNote(b.note)].filter(Boolean).map(esc).join(' • ');const detail=detailHref(b);const image=b.image?`<a class="boardImageLink" href="${detail}"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`:`<a class="boardPlaceholder boardPlaceholderLink" href="${detail}">🧩<span>فتح صفحة الملف</span></a>`;return `<article class="boardCard">${image}<div class="boardInfo"><h2><a class="boardTitleLink" href="${detail}">${esc(b.model)}</a></h2><p class="fileMeta">${meta}</p><div class="boardActions"><a class="btn" href="${detail}">📄 تفاصيل الملف</a><a class="imageBtn downloadTrack" data-brand="${esc(b.brand)}" data-model="${esc(b.model)}" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل مباشر</a></div></div></article>`}
+function filtered(){const t=search.value.trim().toLowerCase();let list=items.filter(b=>{if(t&&!Object.values(b).join(' ').toLowerCase().includes(t))return false;if(typeFilter.value&&b.type!==typeFilter.value)return false;if(dataFilter.value==='board'&&!String(b.board||'').trim())return false;if(dataFilter.value==='revision'&&!String(b.revision||'').trim())return false;if(dataFilter.value==='image'&&!String(b.image||'').trim())return false;return true;});const key=sortFilter.value;list.sort((a,b)=>String((key==='board'?a.board:key==='type'?a.type:a.model)||'').localeCompare(String((key==='board'?b.board:key==='type'?b.type:b.model)||''),'en'));return list;}
+function renderPagination(total){const el=document.getElementById('pagination');const pages=Math.ceil(total/PAGE_SIZE);if(pages<=1){el.hidden=true;el.innerHTML='';return}el.hidden=false;const start=Math.max(1,page-2),end=Math.min(pages,start+4);let html=`<button class="pageBtn" ${page===1?'disabled':''} data-page="${page-1}">السابق</button>`;for(let p=start;p<=end;p++)html+=`<button class="pageBtn ${p===page?'active':''}" data-page="${p}">${p}</button>`;html+=`<button class="pageBtn" ${page===pages?'disabled':''} data-page="${page+1}">التالي</button>`;el.innerHTML=html;el.querySelectorAll('[data-page]').forEach(btn=>btn.addEventListener('click',()=>{page=Number(btn.dataset.page);render();scrollTo({top:document.getElementById('list').offsetTop-100,behavior:'smooth'});}));}
+function bindDownloadTracking(){document.querySelectorAll('.downloadTrack').forEach(a=>a.addEventListener('click',()=>{if(typeof gtag==='function')gtag('event','boardview_download',{board_brand:a.dataset.brand||'',board_model:a.dataset.model||'',file_name:a.getAttribute('href')||''});},{once:true}));}
+function render(){const list=filtered(),pages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));if(page>pages)page=1;const slice=list.slice((page-1)*PAGE_SIZE,page*PAGE_SIZE);resultCount.textContent=`تم العثور على ${list.length} نتيجة`;document.getElementById('list').innerHTML=slice.length?slice.map(card).join(''):'<div class="emptyState">لا توجد نتائج مطابقة.</div>';renderPagination(list.length);bindDownloadTracking();}
+function fillTypes(){const types=[...new Set(items.map(b=>b.type).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'en'));typeFilter.insertAdjacentHTML('beforeend',types.map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join(''));}
+const search=document.getElementById('search'),typeFilter=document.getElementById('typeFilter'),dataFilter=document.getElementById('dataFilter'),sortFilter=document.getElementById('sortFilter'),resultCount=document.getElementById('resultCount');
+fetch('../data/boards.json',{cache:'no-store'}).then(r=>r.json()).then(all=>{const clean=normalize(all);items=clean.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());document.getElementById('intro').textContent=brand?`يوجد ${items.length} ملفًا ضمن ${brand}. استخدم البحث والفلاتر ثم افتح صفحة الملف للتحقق من التفاصيل قبل التحميل.`:'اختر شركة من صفحة BoardView.';totalStat.textContent=items.length.toLocaleString('ar');boardStat.textContent=items.filter(b=>String(b.board||'').trim()).length.toLocaleString('ar');revisionStat.textContent=items.filter(b=>String(b.revision||'').trim()).length.toLocaleString('ar');fillTypes();render();}).catch(()=>document.getElementById('list').innerHTML='<div class="emptyState">تعذر تحميل ملفات هذه الشركة.</div>');
+[search,typeFilter,dataFilter,sortFilter].forEach(el=>el.addEventListener(el.tagName==='INPUT'?'input':'change',()=>{page=1;render()}));
+document.getElementById('resetBtn').addEventListener('click',()=>{search.value='';typeFilter.value='';dataFilter.value='';sortFilter.value='model';page=1;render();search.focus();});
 </script></body></html>
