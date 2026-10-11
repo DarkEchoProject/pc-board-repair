@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pc-board-repair.alinasser00001.workers.dev/sitemap.xml
