@@ -5,10 +5,10 @@
 <title>BoardView | PC Board Repair</title>
 <meta name="description" content="ملفات BoardView مرتبة حسب الشركة والموديل ورقم البورد في PC Board Repair.">
 <meta name="robots" content="index,follow">
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../boardview-extra.css">
 </head>
 <body>
-<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a></nav></header>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a></nav></header>
 <main class="wrap">
   <div class="crumb"><a href="index.html">BoardView</a> ← <span id="crumbBrand"></span></div>
   <h1 id="title">BoardView</h1>
@@ -16,7 +16,7 @@
   <input id="search" class="searchBox" type="search" aria-label="البحث داخل الشركة" placeholder="ابحث داخل هذه الشركة">
   <div id="list"></div>
 </main>
-<footer><div class="footerLinks"><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const brand=new URLSearchParams(location.search).get('brand')||''; let items=[];
@@ -33,15 +33,19 @@ function normalize(all){
     .flatMap(x=>Array.isArray(x?.value)?x.value:[x])
     .filter(x=>x && typeof x.brand==='string' && x.brand.trim());
 }
+function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
+function detailHref(b){const readable=textSlug([b.brand,b.model,b.board,b.revision].filter(Boolean).join('-'));return `item/${fileKey(b.file)}/${readable}`}
 function card(b){
- const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).map(esc).join(' • ');
- const image=b.image?`<a class="boardImageLink" href="../images/${encodeURIComponent(b.image)}" target="_blank" rel="noopener"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`:`<div class="boardPlaceholder">🧩<span>لا توجد صورة بعد</span></div>`;
- return `<article class="boardCard">${image}<div class="boardInfo"><h2>${esc(b.model)}</h2><p class="fileMeta">${meta}</p><p><a class="btn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل الملف</a></p>${b.image?`<p><a class="imageBtn" href="../images/${encodeURIComponent(b.image)}" target="_blank" rel="noopener">🖼️ فتح صورة اللوحة</a></p>`:''}</div></article>`;
+ const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).filter(v=>!/^Imported automatically/i.test(v)).map(esc).join(' • ');
+ const detail=detailHref(b);
+ const image=b.image?`<a class="boardImageLink" href="${detail}"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`:`<a class="boardPlaceholder boardPlaceholderLink" href="${detail}">🧩<span>فتح صفحة الملف</span></a>`;
+ return `<article class="boardCard">${image}<div class="boardInfo"><h2><a class="boardTitleLink" href="${detail}">${esc(b.model)}</a></h2><p class="fileMeta">${meta}</p><div class="boardActions"><a class="btn" href="${detail}">📄 تفاصيل الملف</a><a class="imageBtn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل مباشر</a></div></div></article>`;
 }
 function render(list){document.getElementById('list').innerHTML=list.length?list.map(card).join(''):'<div class="emptyState">لا توجد ملفات لهذه الشركة.</div>';}
 fetch('../data/boards.json',{cache:'no-store'})
   .then(r=>r.json())
-  .then(all=>{const clean=normalize(all);items=clean.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());document.getElementById('intro').textContent=brand?`يوجد ${items.length} ملفًا ضمن ${brand}. ابحث بالموديل أو رقم البورد ثم تحقق من Revision قبل التحميل.`:'اختر شركة من صفحة BoardView.';render(items);})
+  .then(all=>{const clean=normalize(all);items=clean.filter(b=>b.brand.toLowerCase()===brand.toLowerCase());document.getElementById('intro').textContent=brand?`يوجد ${items.length} ملفًا ضمن ${brand}. افتح صفحة الملف لمشاهدة بياناته كاملة ثم تحقق من Revision قبل التحميل.`:'اختر شركة من صفحة BoardView.';render(items);})
   .catch(()=>{document.getElementById('list').innerHTML='<div class="emptyState">تعذر تحميل ملفات هذه الشركة.</div>';});
 document.getElementById('search').addEventListener('input',e=>{const t=e.target.value.toLowerCase().trim();render(!t?items:items.filter(b=>Object.values(b).join(' ').toLowerCase().includes(t)));});
 </script></body></html>
