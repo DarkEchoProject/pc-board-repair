@@ -1,5 +1,7 @@
 import { DurableObject } from "cloudflare:workers";
 
+const GA_ID = "G-V8YQEDWLDP";
+
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status,
   headers: {
@@ -26,6 +28,15 @@ async function hashValue(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+class AnalyticsHead {
+  element(element) {
+    element.prepend(
+      `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>`,
+      { html: true },
+    );
+  }
 }
 
 export class ChatRoom extends DurableObject {
@@ -98,6 +109,12 @@ export default {
       const room = env.CHAT_ROOM.getByName("repair-main");
       return room.fetch(request);
     }
-    return env.ASSETS.fetch(request);
+
+    const response = await env.ASSETS.fetch(request);
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("text/html")) {
+      return new HTMLRewriter().on("head", new AnalyticsHead()).transform(response);
+    }
+    return response;
   },
 };
