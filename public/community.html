@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>غرفة الصيانة والطلبات | PC Board Repair</title>
+<meta name="description" content="غرفة مناقشات وطلبات لفنيي صيانة الكمبيوتر واللوحات الأم: طلب مخططات، BoardView، BIOS ومناقشة الأعطال.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/community.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><a class="logo" href="index.html">⚙️ PC Board Repair</a><nav><a href="index.html">الرئيسية</a><a href="boardview/index.html">BoardView</a><a href="bios/index.html">BIOS</a><a href="community.html">غرفة الصيانة</a><a href="contact.html">اتصل بنا</a></nav></header>
+<main class="wrap">
+  <div class="crumb"><a href="index.html">الرئيسية</a> ← غرفة الصيانة والطلبات</div>
+  <h1>💬 غرفة الصيانة والطلبات</h1>
+  <p class="muted">للطلبات والمناقشات المتعلقة بصيانة الكمبيوتر واللوحات الأم. يمكنك طلب مخطط أو BoardView أو BIOS أو مناقشة عطل مع الزوار والفنيين.</p>
+
+  <div class="chatRules">
+    <b>قواعد مختصرة:</b> اكتب موديل الجهاز ورقم البورد بوضوح، لا تنشر بيانات شخصية، وتجنب الرسائل المكررة أو الروابط المزعجة.
+  </div>
+
+  <section class="chatShell">
+    <div class="chatHeader"><div><strong>الغرفة العامة</strong><div class="muted smallText">يتم تحديث الرسائل تلقائيًا</div></div><button id="refreshBtn" class="imageBtn" type="button">↻ تحديث</button></div>
+    <div id="messages" class="chatMessages" aria-live="polite"><div class="emptyState">جاري تحميل الرسائل...</div></div>
+
+    <form id="chatForm" class="chatForm">
+      <div class="chatFields">
+        <label>الاسم أو اللقب<input id="name" class="chatInput" maxlength="32" autocomplete="nickname" placeholder="مثال: Ali Tech" required></label>
+        <label>نوع المشاركة<select id="category" class="chatInput"><option>مناقشة عطل</option><option>طلب مخطط</option><option>BoardView</option><option>BIOS</option><option>عام</option></select></label>
+      </div>
+      <label>الرسالة<textarea id="message" class="chatInput chatTextarea" maxlength="500" placeholder="مثال: لدي لوحة HP رقم DA0... لا تعمل، وهذه القياسات التي حصلت عليها..." required></textarea></label>
+      <input id="website" class="hpField" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="chatSendRow"><span id="status" class="muted smallText">الحد الأقصى 500 حرف.</span><button id="sendBtn" class="btn" type="submit">إرسال الرسالة</button></div>
+    </form>
+  </section>
+</main>
+<footer><div class="footerLinks"><a href="community.html">غرفة الصيانة</a><a href="about.html">من نحن</a><a href="contact.html">اتصل بنا</a><a href="privacy.html">سياسة الخصوصية</a><a href="terms.html">شروط الاستخدام</a><a href="disclaimer.html">إخلاء المسؤولية</a><a href="copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
+<script>
+const messagesEl=document.getElementById('messages');
+const form=document.getElementById('chatForm');
+const nameEl=document.getElementById('name');
+const categoryEl=document.getElementById('category');
+const messageEl=document.getElementById('message');
+const statusEl=document.getElementById('status');
+const sendBtn=document.getElementById('sendBtn');
+nameEl.value=localStorage.getItem('pcbr-chat-name')||'';
+
+function formatTime(iso){
+  try{return new Intl.DateTimeFormat('ar',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso));}
+  catch{return iso||'';}
+}
+function render(messages){
+  if(!messages.length){messagesEl.innerHTML='<div class="emptyState">لا توجد رسائل بعد. ابدأ أول مناقشة.</div>';return;}
+  const nearBottom=messagesEl.scrollHeight-messagesEl.scrollTop-messagesEl.clientHeight<100;
+  messagesEl.replaceChildren(...messages.map(m=>{
+    const item=document.createElement('article');item.className='chatMessage';
+    const top=document.createElement('div');top.className='chatMessageTop';
+    const who=document.createElement('strong');who.textContent=m.name;
+    const badge=document.createElement('span');badge.className='brandTag';badge.textContent=m.category||'عام';
+    const time=document.createElement('time');time.className='chatTime';time.textContent=formatTime(m.time);
+    top.append(who,badge,time);
+    const text=document.createElement('p');text.className='chatText';text.textContent=m.text;
+    item.append(top,text);return item;
+  }));
+  if(nearBottom)messagesEl.scrollTop=messagesEl.scrollHeight;
+}
+async function loadMessages(showError=false){
+  try{
+    const r=await fetch('/api/chat/messages',{cache:'no-store'});if(!r.ok)throw new Error();
+    const data=await r.json();render(Array.isArray(data.messages)?data.messages:[]);
+  }catch{if(showError||!messagesEl.children.length)messagesEl.innerHTML='<div class="emptyState">تعذر تحميل الرسائل. أعد المحاولة بعد قليل.</div>';}
+}
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const name=nameEl.value.trim(),text=messageEl.value.trim();
+  if(name.length<2||text.length<2)return;
+  sendBtn.disabled=true;statusEl.textContent='جاري الإرسال...';
+  try{
+    const r=await fetch('/api/chat/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,category:categoryEl.value,text,website:document.getElementById('website').value})});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'تعذر الإرسال.');
+    localStorage.setItem('pcbr-chat-name',name);messageEl.value='';statusEl.textContent='تم إرسال الرسالة.';await loadMessages(true);messagesEl.scrollTop=messagesEl.scrollHeight;
+  }catch(err){statusEl.textContent=err.message||'تعذر الإرسال.';}
+  finally{sendBtn.disabled=false;}
+});
+document.getElementById('refreshBtn').addEventListener('click',()=>loadMessages(true));
+loadMessages(true);setInterval(()=>loadMessages(false),5000);
+</script>
+</body>
+</html>
