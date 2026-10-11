@@ -6,20 +6,20 @@
 <meta name="description" content="ابحث ونزّل خرائط BoardView للوحـات الأم حسب الشركة والموديل ورقم البورد من قاعدة PC Board Repair.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/boardview/index.html">
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../boardview-extra.css">
 </head>
 <body>
-<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a></nav></header>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a></nav></header>
 <main class="wrap">
   <div class="crumb"><a href="../index.html">الرئيسية</a> ← BoardView</div>
   <h1>🗺️ خرائط وملفات BoardView</h1>
-  <p class="muted">ابحث باسم الشركة أو الموديل أو رقم البورد، أو اختر الشركة من القائمة.</p>
+  <p class="muted">ابحث باسم الشركة أو الموديل أو رقم البورد، أو اختر الشركة من القائمة. أصبح لكل ملف صفحة مستقلة يمكن مشاركتها والوصول إليها مباشرة.</p>
   <input id="search" class="searchBox" type="search" aria-label="البحث في ملفات BoardView" placeholder="مثال: HP أو 460963 أو MS-7860">
   <div id="companies" class="grid"></div>
   <h2 id="resultsTitle" class="resultsTitle" hidden>نتائج البحث</h2>
   <div id="results"></div>
 </main>
-<footer><div class="footerLinks"><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>
 let boards=[];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
@@ -28,12 +28,16 @@ function normalize(all){
     .flatMap(x=>Array.isArray(x?.value)?x.value:[x])
     .filter(x=>x && typeof x.brand==='string' && x.brand.trim());
 }
+function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
+function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
+function detailHref(b){const readable=textSlug([b.brand,b.model,b.board,b.revision].filter(Boolean).join('-'));return `item/${fileKey(b.file)}/${readable}`}
 function card(b){
-  const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).map(esc).join(' • ');
+  const meta=[b.type,b.board,b.revision,b.platform,b.note].filter(Boolean).filter(v=>!/^Imported automatically/i.test(v)).map(esc).join(' • ');
+  const detail=detailHref(b);
   const image=b.image
-    ? `<a class="boardImageLink" href="../images/${encodeURIComponent(b.image)}" target="_blank" rel="noopener"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`
-    : `<div class="boardPlaceholder">🧩<span>لا توجد صورة بعد</span></div>`;
-  return `<article class="boardCard">${image}<div class="boardInfo"><div class="brandTag">${esc(b.brand)}</div><h2>${esc(b.model)}</h2><p class="fileMeta">${meta}</p><p><a class="btn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل الملف</a></p>${b.image?`<p><a class="imageBtn" href="../images/${encodeURIComponent(b.image)}" target="_blank" rel="noopener">🖼️ فتح صورة اللوحة</a></p>`:''}</div></article>`;
+    ? `<a class="boardImageLink" href="${detail}"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`
+    : `<a class="boardPlaceholder boardPlaceholderLink" href="${detail}">🧩<span>فتح صفحة الملف</span></a>`;
+  return `<article class="boardCard">${image}<div class="boardInfo"><div class="brandTag">${esc(b.brand)}</div><h2><a class="boardTitleLink" href="${detail}">${esc(b.model)}</a></h2><p class="fileMeta">${meta}</p><div class="boardActions"><a class="btn" href="${detail}">📄 تفاصيل الملف</a><a class="imageBtn" href="../downloads/${encodeURIComponent(b.file)}" download>⬇️ تحميل مباشر</a></div></div></article>`;
 }
 async function load(){
   const r=await fetch('../data/boards.json',{cache:'no-store'}); boards=normalize(await r.json());
