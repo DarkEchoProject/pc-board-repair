@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كيفية فحص القطع الإلكترونية بالأفوميتر | PC Board Repair</title>
+<meta name="description" content="دليل عملي لفحص الديود والمقاومة والترانزستور BJT وMOSFET والمكثف والملف والفيوز وجسر التوحيد باستخدام الأفوميتر والقراءات المتوقعة بشكل عام.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/component-testing/index.html">
+<link rel="stylesheet" href="../style.css">
+<style>
+.testHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:22px}.testHero h1{margin-bottom:8px}.partGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.partCard{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px}.partCard h2{margin:0 0 8px}.partIcon{font-size:30px}.reading{width:100%;border-collapse:collapse;margin-top:12px}.reading th,.reading td{border:1px solid #203a5b;padding:9px;text-align:right;vertical-align:top}.reading th{background:#102238;color:#8edfff}.ok{color:#83e6ae}.bad{color:#ff9d9d}.note{background:#102238;border:1px solid #2a4e72;border-radius:14px;padding:14px;margin:16px 0}.warnLocal{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:14px;padding:14px;margin:16px 0}.mini{font-size:13px;color:#9fb6d1}.tag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 8px;border-radius:999px;font-size:12px}.tips{margin-top:25px;background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px}.tips li{margin:7px 0}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"كيفية فحص القطع الإلكترونية بالأفوميتر","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/component-testing/index.html","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+</head>
+<body>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../diagnostics/index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a></nav></header>
+<main class="wrap">
+<div class="crumb"><a href="../index.html">الرئيسية</a> ← فحص القطع بالأفوميتر</div>
+<section class="testHero"><span class="tag">دليل قياس سريع</span><h1>🔬 كيفية فحص القطع الإلكترونية بالأفوميتر</h1><p class="muted">مرجع عملي للقراءات العامة المتوقعة عند فحص القطع الشائعة. القيم قد تختلف حسب نوع القطعة والدائرة، لذلك استعمل هذه القراءات لتحديد الاتجاه وليس كحكم وحيد.</p></section>
+
+<div class="warnLocal"><b>قبل القياس:</b> افصل الكهرباء وفرّغ المكثفات. القياس داخل البورد قد يتأثر بمكونات موصولة على التوازي؛ عند الشك ارفع رجلًا من القطعة أو افصلها ثم أعد القياس.</div>
+
+<div class="partGrid">
+<section class="partCard"><div class="partIcon">▶️</div><h2>الديود Diode</h2><p>ضع الأفوميتر على وضع <b>Diode</b>.</p><table class="reading"><tr><th>الاتجاه</th><th>القراءة العامة</th></tr><tr><td>Forward</td><td class="ok">سيليكون غالبًا 0.45–0.75V</td></tr><tr><td>Reverse</td><td class="ok">OL</td></tr><tr><td>0 أو قريب جدًا من 0 بالاتجاهين</td><td class="bad">شورت غالبًا</td></tr><tr><td>OL بالاتجاهين</td><td>مفتوح أو القياس داخل الدائرة غير واضح</td></tr></table><p class="mini">Schottky غالبًا أقل، تقريبًا 0.15–0.45V. LED قد يعطي قراءة أعلى. الزينر يُفحص كديود عادي بالأفوميتر، لكن جهد الزينر نفسه يحتاج مصدرًا مناسبًا ومحدد التيار.</p></section>
+
+<section class="partCard"><div class="partIcon">〰️</div><h2>المقاومة Resistor</h2><p>ضع الجهاز على وضع <b>Ω</b>.</p><table class="reading"><tr><th>الحالة</th><th>القراءة</th></tr><tr><td>سليمة</td><td class="ok">قريبة من قيمتها المكتوبة ضمن السماحية</td></tr><tr><td>OL</td><td class="bad">مفتوحة غالبًا</td></tr><tr><td>قيمة أقل كثيرًا من المكتوب داخل البورد</td><td>قد يكون بسبب مسار موازٍ؛ ارفع رجلًا للتأكيد</td></tr><tr><td>0Ω Resistor / Jumper</td><td class="ok">قريب جدًا من 0Ω</td></tr></table></section>
+
+<section class="partCard"><div class="partIcon">🔺</div><h2>ترانزستور BJT — NPN / PNP</h2><p>افحصه بوضع <b>Diode</b>. القاعدة Base تتصرف مع الرجلين الأخريين مثل وصلتي ديود.</p><table class="reading"><tr><th>القياس</th><th>السليم غالبًا</th></tr><tr><td>Base ↔ Emitter</td><td class="ok">حوالي 0.55–0.75V في اتجاه واحد وOL بالعكس</td></tr><tr><td>Base ↔ Collector</td><td class="ok">حوالي 0.55–0.75V في اتجاه واحد وOL بالعكس</td></tr><tr><td>Collector ↔ Emitter</td><td class="ok">غالبًا OL بالاتجاهين عند الفحص خارج الدائرة</td></tr><tr><td>C ↔ E = 0 تقريبًا بالاتجاهين</td><td class="bad">شورت غالبًا</td></tr></table><p class="mini">في NPN وPNP تنعكس قطبية مجسات القياس على القاعدة. تأكد من ترتيب الأرجل من رقم القطعة لأن E/B/C ليست ثابتة بين كل الترانزستورات.</p></section>
+
+<section class="partCard"><div class="partIcon">⚡</div><h2>MOSFET</h2><p>الأفضل فحصه خارج الدائرة أو بعد عزل إحدى الأرجل.</p><table class="reading"><tr><th>بين الأرجل</th><th>المتوقع عمومًا</th></tr><tr><td>Gate ↔ Source</td><td class="ok">مقاومة عالية جدًا / OL</td></tr><tr><td>Gate ↔ Drain</td><td class="ok">مقاومة عالية جدًا / OL</td></tr><tr><td>Drain ↔ Source</td><td>قد يظهر Body Diode في اتجاه واحد وOL بالعكس</td></tr><tr><td>D ↔ S قريب من 0 بالاتجاهين بعد تفريغ Gate</td><td class="bad">شورت محتمل بقوة</td></tr></table><p class="mini">لمس Gate بالمجس قد يشحنها ويجعل MOSFET يفتح مؤقتًا، فتتغير القراءة. قصّر Gate مع Source لحظيًا لتفريغها ثم أعد الاختبار. اتجاه Body Diode يختلف حسب N-channel أو P-channel وترتيب الأرجل.</p></section>
+
+<section class="partCard"><div class="partIcon">🔋</div><h2>المكثف Capacitor</h2><p>أفضل اختبار للسعة هو وضع <b>Capacitance</b>، وللحالة العملية ESR Meter مفيد جدًا.</p><table class="reading"><tr><th>الاختبار</th><th>المتوقع</th></tr><tr><td>قياس µF</td><td class="ok">قريب من القيمة المكتوبة ضمن سماحية المكثف</td></tr><tr><td>المقاومة على إلكتروليتي كبير</td><td>قد تبدأ منخفضة ثم ترتفع أثناء الشحن</td></tr><tr><td>0Ω ثابت</td><td class="bad">شورت محتمل</td></tr><tr><td>السعة أقل بكثير أو ESR مرتفع</td><td class="bad">تالف أو ضعيف</td></tr></table><p class="mini">قياس المكثف وهو ملحوم على البورد قد يعطي نتائج مضللة بسبب بقية الدائرة.</p></section>
+
+<section class="partCard"><div class="partIcon">🌀</div><h2>الملف Coil / Inductor</h2><p>الملف السليم عادة له استمرارية ومقاومة DC منخفضة.</p><table class="reading"><tr><th>القراءة</th><th>التفسير</th></tr><tr><td>0Ω أو أجزاء أوم في ملفات القدرة</td><td class="ok">طبيعي غالبًا</td></tr><tr><td>OL</td><td class="bad">ملف مفتوح أو مسار مقطوع</td></tr></table><p class="mini">انخفاض المقاومة ليس شورتًا تلقائيًا. بعض ملفات VRM مقاومتها منخفضة جدًا طبيعيًا.</p></section>
+
+<section class="partCard"><div class="partIcon">🧯</div><h2>الفيوز Fuse</h2><p>استخدم الاستمرارية أو المقاومة.</p><table class="reading"><tr><th>القراءة</th><th>الحالة</th></tr><tr><td>قريب جدًا من 0Ω / صفارة</td><td class="ok">سليم</td></tr><tr><td>OL</td><td class="bad">مقطوع</td></tr></table></section>
+
+<section class="partCard"><div class="partIcon">◇</div><h2>Bridge Rectifier / جسر التوحيد</h2><p>عامله كأربع ديودات داخل قطعة واحدة.</p><table class="reading"><tr><th>الاختبار</th><th>المتوقع</th></tr><tr><td>كل وصلة ديود في الاتجاه الأمامي</td><td class="ok">عادة نحو 0.4–0.8V</td></tr><tr><td>العكس</td><td class="ok">OL</td></tr><tr><td>قصر بين + و− أو أرجل AC</td><td class="bad">اشتباه تلف قوي</td></tr></table><p class="mini">قد تختلف القراءات داخل مزود الطاقة بسبب المكونات المتصلة بالجسر.</p></section>
+</div>
+
+<section class="tips"><h2>قواعد مهمة أثناء الفحص</h2><ul><li>لا تعتبر صفارة الأفوميتر وحدها دليل شورت؛ راقب قيمة الأوم ونوع الخط.</li><li>دائمًا قارن القياس في الاتجاهين عند الديود والترانزستور.</li><li>قبل الحكم على القطعة داخل البورد، افصل رجلًا منها إذا كانت الدائرة المحيطة تؤثر على القراءة.</li><li>في MOSFET وBJT تأكد أولًا من Pinout الصحيح للقطعة.</li><li>على خطوط Vcore وVDIMM قد تكون المقاومة إلى الأرضي منخفضة طبيعيًا.</li><li>المكثفات الكبيرة قد تحتفظ بجهد خطير حتى بعد فصل الكهرباء؛ تأكد من تفريغها بطريقة آمنة قبل لمس الدائرة.</li></ul></section>
+</main>
+<footer><div class="footerLinks"><a href="../diagnostics/index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+</body>
+</html>
