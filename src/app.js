@@ -132,6 +132,7 @@ export default {
         `${SITE}/diagnostics/short-circuit.html`,
         `${SITE}/diagnostics/post-beep-codes.html`,
         `${SITE}/diagnostics/vrm-cpu-ram.html`,
+        `${SITE}/component-testing/index.html`,
       ];
       const extra = additions
         .filter(item => !xml.includes(`<loc>${item}</loc>`))
