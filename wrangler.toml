@@ -1,5 +1,5 @@
 name = "pc-board-repair"
-main = "src/index.js"
+main = "src/app.js"
 compatibility_date = "2026-10-02"
 
 [assets]
