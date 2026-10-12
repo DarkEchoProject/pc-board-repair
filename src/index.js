@@ -92,7 +92,7 @@ async function hashValue(value) {
 class AnalyticsHead {
   element(element) {
     element.prepend(
-      `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>`,
+      `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');try{const k='pcbr-visit-last',n=Date.now(),p=Number(localStorage.getItem(k)||0);if(n-p>1800000){fetch('/api/stats/visit',{method:'POST',keepalive:true}).catch(()=>{});}localStorage.setItem(k,String(n));}catch(e){}</script>`,
       { html: true },
     );
   }
@@ -238,6 +238,7 @@ export class ChatRoom extends DurableObject {
       const text = cleanText(body.text, 500);
       const category = allowedCategories.has(body.category) ? body.category : "عام";
       const website = cleanText(body.website, 100);
+      const replyTo = cleanText(body.replyTo, 80);
 
       if (website) return json({ ok: true });
       if (name.length < 2) return json({ error: "اكتب اسمًا أو لقبًا من حرفين على الأقل." }, 400);
@@ -257,17 +258,40 @@ export class ChatRoom extends DurableObject {
       }
 
       const messages = (await this.ctx.storage.get("messages")) || [];
+      const validReply = replyTo && messages.some(item => item.id === replyTo) ? replyTo : "";
       const message = {
         id: crypto.randomUUID(),
         name,
         category,
         text,
         time: new Date(now).toISOString(),
+        ...(validReply ? { replyTo: validReply } : {}),
       };
       messages.push(message);
       const trimmed = messages.slice(-200);
       await this.ctx.storage.put("messages", trimmed);
       return json({ ok: true, message }, 201);
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/chat/report") {
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "طلب غير صالح." }, 400);
+      }
+      const id = cleanText(body.id, 80);
+      const messages = (await this.ctx.storage.get("messages")) || [];
+      if (!messages.some(item => item.id === id)) return json({ error: "الرسالة غير موجودة." }, 404);
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      const reporter = await hashValue(`${ip}:${id}`);
+      const dedupeKey = `reported:${reporter}`;
+      if (await this.ctx.storage.get(dedupeKey)) return json({ ok: true, duplicate: true });
+      const reports = (await this.ctx.storage.get("reportCounts")) || {};
+      reports[id] = (Number(reports[id]) || 0) + 1;
+      await this.ctx.storage.put("reportCounts", reports);
+      await this.ctx.storage.put(dedupeKey, true, { expirationTtl: 30 * 24 * 60 * 60 });
+      return json({ ok: true });
     }
 
     if (request.method === "GET" && url.pathname === "/api/stats/top") {
@@ -280,6 +304,22 @@ export class ChatRoom extends DurableObject {
         .slice(0, limit);
       const total = Object.values(counts).reduce((sum, value) => sum + (Number(value) || 0), 0);
       return json({ items, total });
+    }
+
+    if (request.method === "GET" && url.pathname === "/api/stats/summary") {
+      const counts = (await this.ctx.storage.get("downloadCounts")) || {};
+      const downloads = Object.values(counts).reduce((sum, value) => sum + (Number(value) || 0), 0);
+      const visits = Number(await this.ctx.storage.get("visitCount")) || 0;
+      return json({ visits, downloads });
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/stats/visit") {
+      let visits = 0;
+      await this.ctx.storage.transaction(async txn => {
+        visits = (Number(await txn.get("visitCount")) || 0) + 1;
+        await txn.put("visitCount", visits);
+      });
+      return json({ ok: true, visits });
     }
 
     if (request.method === "POST" && url.pathname === "/api/stats/download") {
