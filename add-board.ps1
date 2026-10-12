@@ -54,7 +54,8 @@ $current = @()
 if (-not [string]::IsNullOrWhiteSpace($raw)) { $current = @($raw | ConvertFrom-Json) }
 $newItem = [PSCustomObject]@{
     brand=$brand; model=$model; board=$board; revision=$revision; platform=$platform;
-    type=$type; file=$fileName; image=$imageName; note=$note
+    type=$type; file=$fileName; image=$imageName; note=$note;
+    added_at=[DateTime]::UtcNow.ToString('o')
 }
 $current += $newItem
 $json = $current | ConvertTo-Json -Depth 6
@@ -65,6 +66,7 @@ Write-Host 'BOARD ADDED SUCCESSFULLY.' -ForegroundColor Green
 Write-Host "Archive: public\downloads\$fileName"
 if ($imageName) { Write-Host "Image: public\images\$imageName" }
 Write-Host 'No HTML editing is required.' -ForegroundColor Cyan
+Write-Host 'The new board will appear automatically in the Latest Files section.' -ForegroundColor Cyan
 Write-Host ''
 $deploy = Read-Host 'Deploy the updated site to Cloudflare now? y/n'
 if ($deploy -match '^(y|yes)$') {
