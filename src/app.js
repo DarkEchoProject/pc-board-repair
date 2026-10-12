@@ -120,6 +120,24 @@ export default {
       return room.fetch(new Request(request, { headers }));
     }
 
+    if (url.pathname === "/sitemap.xml") {
+      const response = await baseWorker.fetch(request, env, ctx);
+      if (!response.ok) return response;
+      let xml = await response.text();
+      const additions = [
+        `${SITE}/diagnostics/index.html`,
+        `${SITE}/diagnostics/no-power.html`,
+      ];
+      const extra = additions
+        .filter(item => !xml.includes(`<loc>${item}</loc>`))
+        .map(item => `  <url><loc>${item}</loc></url>`)
+        .join("\n");
+      if (extra) xml = xml.replace("</urlset>", `${extra}\n</urlset>`);
+      const headers = new Headers(response.headers);
+      headers.set("content-type", "application/xml; charset=utf-8");
+      return new Response(xml, { status: response.status, headers });
+    }
+
     return baseWorker.fetch(request, env, ctx);
   },
 };
