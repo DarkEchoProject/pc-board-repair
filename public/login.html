@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>تسجيل الدخول | PC Board Repair</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/auth.css">
+</head>
+<body>
+<header><a class="logo" href="/index.html">PC Board Repair</a><nav><a href="/index.html">الرئيسية</a><a href="/boardview/index.html">BoardView</a><a href="/diagnostics/index.html">التشخيص</a><a href="/community.html">غرفة الصيانة</a></nav></header>
+<main class="loginShell">
+  <section class="loginCard">
+    <div class="loginMark" aria-hidden="true"></div>
+    <h1>تسجيل الدخول</h1>
+    <p class="muted">استخدم حساب Google للدخول بسرعة. لا تحتاج إلى إنشاء كلمة مرور جديدة للموقع.</p>
+    <a id="googleLogin" class="googleBtn" href="/api/auth/google"><span class="googleG">G</span><span>المتابعة باستخدام Google</span></a>
+    <p class="loginNote">التصفح والبحث متاحان بدون حساب. تسجيل الدخول مطلوب فقط للمشاركة في غرفة الصيانة وتحميل الملفات.</p>
+  </section>
+</main>
+<footer><div>© 2026 PC Board Repair</div></footer>
+<script>
+const p=new URLSearchParams(location.search);const n=p.get('next');if(n&&n.startsWith('/')&&!n.startsWith('//'))document.getElementById('googleLogin').href='/api/auth/google?next='+encodeURIComponent(n);
+</script>
+</body>
+</html>
