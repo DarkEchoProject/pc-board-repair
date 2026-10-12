@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#11365a"/><stop offset="1" stop-color="#06111f"/></linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#27c9f7"/><stop offset="1" stop-color="#0874c8"/></linearGradient>
+  </defs>
+  <rect x="18" y="18" width="476" height="476" rx="94" fill="url(#bg)" stroke="#21c3f3" stroke-width="14"/>
+  <rect x="122" y="120" width="268" height="268" rx="44" fill="#0a2036" stroke="#65dcfb" stroke-width="13"/>
+  <rect x="181" y="179" width="150" height="150" rx="28" fill="url(#chip)" stroke="#b7f2ff" stroke-width="9"/>
+  <g stroke="#5bdcff" stroke-width="13" stroke-linecap="round">
+    <path d="M155 154H93M155 215H93M155 276H93M155 337H93"/>
+    <path d="M357 154h62M357 215h62M357 276h62M357 337h62"/>
+    <path d="M154 154V92M215 154V92M276 154V92M337 154V92"/>
+    <path d="M154 358v62M215 358v62M276 358v62M337 358v62"/>
+  </g>
+  <g transform="rotate(-43 292 292)">
+    <rect x="259" y="184" width="66" height="236" rx="32" fill="#fff"/>
+    <circle cx="292" cy="404" r="48" fill="#fff"/><circle cx="292" cy="404" r="18" fill="#12304d"/>
+    <path d="M218 163c0-51 34-95 80-111l-6 75 49 30 65-40c5 16 8 34 8 51 0 65-52 117-116 117s-80-56-80-122Z" fill="#fff"/>
+    <path d="M292 127l49 30 63-39c-8-25-24-48-47-63l-65 72Z" fill="#12304d"/>
+  </g>
+</svg>
