@@ -2,6 +2,13 @@
   let currentUser=null;
   let authLoaded=false;
 
+  if(!document.querySelector('script[data-pcbr-i18n]')){
+    const i18n=document.createElement('script');
+    i18n.src='/i18n.js';
+    i18n.dataset.pcbrI18n='1';
+    document.head.append(i18n);
+  }
+
   const nextPath=()=>location.pathname+location.search+location.hash;
   const loginHref=(next=nextPath())=>`/login.html?next=${encodeURIComponent(next)}`;
 
