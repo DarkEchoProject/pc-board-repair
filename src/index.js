@@ -60,6 +60,8 @@ const boardPath = (board) => {
   return `/boardview/item/${fileKey(board.file)}/${readable}`;
 };
 
+const downloadPath = (board) => `/download/${fileKey(board.file)}`;
+
 const normalizeBoards = (all) => (Array.isArray(all) ? all : [])
   .flatMap(x => Array.isArray(x?.value) ? x.value : [x])
   .filter(x => x && typeof x.brand === "string" && x.brand.trim() && typeof x.file === "string" && x.file.trim());
@@ -111,7 +113,7 @@ function boardPage(board, related) {
   const type = escapeHtml(board.type || "BoardView");
   const note = board.note && !/^Imported automatically/i.test(board.note) ? escapeHtml(board.note) : "";
   const canonical = `${SITE}${boardPath(board)}`;
-  const downloadUrl = `/downloads/${encodeURIComponent(board.file)}`;
+  const downloadUrl = downloadPath(board);
   const imageBlock = board.image
     ? `<a class="boardImageLink" href="/images/${encodeURIComponent(board.image)}" target="_blank" rel="noopener"><img class="boardImage" src="/images/${encodeURIComponent(board.image)}" alt="لوحة ${brand} ${model}"></a>`
     : `<div class="boardPlaceholder">🧩<span>لا توجد صورة متاحة حاليًا</span></div>`;
@@ -170,13 +172,14 @@ function boardPage(board, related) {
     <p class="muted">صفحة مستقلة لملف الصيانة. تحقق من رقم البورد وRevision قبل التحميل والاستخدام.</p>
     <div class="detailList">${details}</div>
     ${note ? `<p class="fileMeta">${note}</p>` : ""}
-    <div class="boardActions"><a class="btn" href="${downloadUrl}" download>⬇️ تحميل الملف</a>${board.image ? `<a class="imageBtn" href="/images/${encodeURIComponent(board.image)}" target="_blank" rel="noopener">🖼️ فتح صورة اللوحة</a>` : ""}</div>
+    <div class="boardActions"><a class="btn downloadTrack" data-brand="${brand}" data-model="${model}" href="${downloadUrl}" download>⬇️ تحميل الملف</a>${board.image ? `<a class="imageBtn" href="/images/${encodeURIComponent(board.image)}" target="_blank" rel="noopener">🖼️ فتح صورة اللوحة</a>` : ""}</div>
   </div>
 </article>
 <div class="warn"><b>تنبيه:</b> تأكد من تطابق الشركة والموديل ورقم اللوحة وRevision قبل استخدام الملف. احتفظ بنسخة احتياطية قبل أي تعديل أو برمجة.</div>
 ${relatedHtml}
 </main>
 <footer><div class="footerLinks"><a href="/community.html">غرفة الصيانة</a><a href="/about.html">من نحن</a><a href="/contact.html">اتصل بنا</a><a href="/privacy.html">سياسة الخصوصية</a><a href="/terms.html">شروط الاستخدام</a><a href="/disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<script>document.addEventListener('click',e=>{const a=e.target.closest('.downloadTrack');if(a&&typeof gtag==='function')gtag('event','boardview_download',{board_brand:a.dataset.brand||'',board_model:a.dataset.model||'',file_name:a.getAttribute('href')||''});});</script>
 </body></html>`;
 }
 
@@ -267,12 +270,44 @@ export class ChatRoom extends DurableObject {
       return json({ ok: true, message }, 201);
     }
 
+    if (request.method === "GET" && url.pathname === "/api/stats/top") {
+      const limit = Math.min(20, Math.max(1, Number(url.searchParams.get("limit")) || 6));
+      const counts = (await this.ctx.storage.get("downloadCounts")) || {};
+      const items = Object.entries(counts)
+        .map(([key, count]) => ({ key, count: Number(count) || 0 }))
+        .filter(item => item.count > 0)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, limit);
+      const total = Object.values(counts).reduce((sum, value) => sum + (Number(value) || 0), 0);
+      return json({ items, total });
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/stats/download") {
+      let body;
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "طلب غير صالح." }, 400);
+      }
+      const key = String(body.key || "").toLowerCase();
+      if (!/^[a-z0-9]{1,20}$/.test(key)) return json({ error: "مفتاح غير صالح." }, 400);
+
+      let nextCount = 0;
+      await this.ctx.storage.transaction(async txn => {
+        const counts = (await txn.get("downloadCounts")) || {};
+        nextCount = (Number(counts[key]) || 0) + 1;
+        counts[key] = nextCount;
+        await txn.put("downloadCounts", counts);
+      });
+      return json({ ok: true, key, count: nextCount });
+    }
+
     return json({ error: "Not found" }, 404);
   }
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith("/api/chat/")) {
@@ -280,11 +315,36 @@ export default {
       return room.fetch(request);
     }
 
+    if (url.pathname.startsWith("/api/stats/")) {
+      const stats = env.CHAT_ROOM.getByName("site-stats");
+      return stats.fetch(request);
+    }
+
     if (url.pathname === "/sitemap.xml") {
       try {
         return await sitemapResponse(env);
       } catch {
         return new Response("Sitemap temporarily unavailable", { status: 503 });
+      }
+    }
+
+    const downloadMatch = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
+    if (downloadMatch) {
+      try {
+        const boards = await getBoards(env);
+        const board = boards.find(item => fileKey(item.file) === downloadMatch[1].toLowerCase());
+        if (!board) return new Response("File not found", { status: 404 });
+        const stats = env.CHAT_ROOM.getByName("site-stats");
+        const countRequest = new Request(`${SITE}/api/stats/download`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ key: downloadMatch[1].toLowerCase() }),
+        });
+        if (ctx?.waitUntil) ctx.waitUntil(stats.fetch(countRequest));
+        else await stats.fetch(countRequest);
+        return Response.redirect(`${SITE}/downloads/${encodeURIComponent(board.file)}`, 302);
+      } catch {
+        return new Response("Temporary error", { status: 503 });
       }
     }
 
