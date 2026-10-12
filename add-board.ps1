@@ -31,7 +31,8 @@ Clear-Host
 Write-Host '=========================================='
 Write-Host ' Add a new board - PC Board Repair'
 Write-Host '=========================================='
-Write-Host 'Tip: drag a ZIP/RAR or image file into this window, then press Enter.'
+Write-Host 'Supported board files: BRD, FZ, ZIP, RAR, 7Z.'
+Write-Host 'Tip: drag the BoardView file/archive or image into this window, then press Enter.'
 Write-Host ''
 
 $brand = (Read-Host 'Brand (example: HP)').Trim()
@@ -39,9 +40,15 @@ $model = (Read-Host 'Model (example: Stream Notebook 11)').Trim()
 $board = (Read-Host 'Board/PCB number').Trim()
 $revision = (Read-Host 'Revision (optional)').Trim()
 $platform = (Read-Host 'Platform (optional, example: QUANTA Y0H)').Trim()
-$type = (Read-Host 'File type [BoardView]').Trim(); if (-not $type) { $type='BoardView' }
-$archivePath = Read-Host 'Drag the ZIP/RAR file here and press Enter'
-$fileName = Copy-WithName $archivePath $downloads
+$boardFilePath = Read-Host 'Drag the BRD/FZ/ZIP/RAR/7Z BoardView file here and press Enter'
+$fileName = Copy-WithName $boardFilePath $downloads
+$fileExt = [IO.Path]::GetExtension($fileName).ToLowerInvariant()
+$defaultType = switch ($fileExt) {
+    '.brd' { 'BoardView BRD' }
+    '.fz'  { 'BoardView FZ' }
+    default { 'BoardView archive' }
+}
+$type = (Read-Host "File type [$defaultType]").Trim(); if (-not $type) { $type=$defaultType }
 
 $imageName = ''
 $imagePath = Read-Host 'Drag board image here, or press Enter to skip'
@@ -63,7 +70,8 @@ $json = $current | ConvertTo-Json -Depth 6
 
 Write-Host ''
 Write-Host 'BOARD ADDED SUCCESSFULLY.' -ForegroundColor Green
-Write-Host "Archive: public\downloads\$fileName"
+Write-Host "File: public\downloads\$fileName"
+Write-Host "Type: $type"
 if ($imageName) { Write-Host "Image: public\images\$imageName" }
 Write-Host 'No HTML editing is required.' -ForegroundColor Cyan
 Write-Host 'The new board will appear automatically in the Latest Files section.' -ForegroundColor Cyan
