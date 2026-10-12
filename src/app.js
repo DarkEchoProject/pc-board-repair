@@ -20,6 +20,21 @@ async function readBody(request) {
   }
 }
 
+class BrandHead {
+  element(element) {
+    element.prepend(
+      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css"><meta name="theme-color" content="#07111f">`,
+      { html: true },
+    );
+  }
+}
+
+function withBrand(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
+  return new HTMLRewriter().on("head", new BrandHead()).transform(response);
+}
+
 export class ChatRoom extends BaseChatRoom {
   async fetch(request) {
     const url = new URL(request.url);
@@ -144,6 +159,7 @@ export default {
       return new Response(xml, { status: response.status, headers });
     }
 
-    return baseWorker.fetch(request, env, ctx);
+    const response = await baseWorker.fetch(request, env, ctx);
+    return withBrand(response);
   },
 };
