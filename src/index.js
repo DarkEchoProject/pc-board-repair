@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 
-const GA_ID = "G-V8YQEDWLDP";
+const GA_ID = "G-G13T8YNG71";
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 let boardsCache = null;
 
