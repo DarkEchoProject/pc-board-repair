@@ -4,7 +4,7 @@
 
   if(!document.querySelector('script[data-pcbr-i18n]')){
     const i18n=document.createElement('script');
-    i18n.src='/i18n.js';
+    i18n.src='/i18n-v2.js';
     i18n.dataset.pcbrI18n='1';
     document.head.append(i18n);
   }
