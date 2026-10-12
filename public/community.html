@@ -16,15 +16,20 @@
   <h1>💬 غرفة الصيانة والطلبات</h1>
   <p class="muted">للطلبات والمناقشات المتعلقة بصيانة الكمبيوتر واللوحات الأم. يمكنك طلب مخطط أو BoardView أو BIOS أو مناقشة عطل مع الزوار والفنيين.</p>
 
-  <div class="chatRules">
-    <b>قواعد مختصرة:</b> اكتب موديل الجهاز ورقم البورد بوضوح، لا تنشر بيانات شخصية، وتجنب الرسائل المكررة أو الروابط المزعجة.
+  <div class="chatRules"><b>قواعد مختصرة:</b> اكتب موديل الجهاز ورقم البورد بوضوح، لا تنشر بيانات شخصية، وتجنب الرسائل المكررة أو الروابط المزعجة.</div>
+
+  <div class="chatToolbar">
+    <input id="chatSearch" class="chatInput" type="search" placeholder="ابحث في الرسائل أو أسماء المشاركين" aria-label="بحث في غرفة الصيانة">
+    <select id="chatCategoryFilter" class="chatInput" aria-label="تصفية نوع المشاركات"><option value="">كل الأنواع</option><option>مناقشة عطل</option><option>طلب مخطط</option><option>BoardView</option><option>BIOS</option><option>عام</option></select>
+    <span id="messageCount" class="countBadge">0 رسالة</span>
   </div>
 
   <section class="chatShell">
-    <div class="chatHeader"><div><strong>الغرفة العامة</strong><div class="muted smallText">يتم تحديث الرسائل تلقائيًا</div></div><button id="refreshBtn" class="imageBtn" type="button">↻ تحديث</button></div>
+    <div class="chatHeader"><div><strong>الغرفة العامة</strong><div class="muted smallText">تحديث تلقائي كل 5 ثوانٍ — يمكنك الرد ونسخ رابط أي رسالة والإبلاغ عنها.</div></div><button id="refreshBtn" class="imageBtn" type="button">↻ تحديث</button></div>
     <div id="messages" class="chatMessages" aria-live="polite"><div class="emptyState">جاري تحميل الرسائل...</div></div>
 
     <form id="chatForm" class="chatForm">
+      <div id="replyBar" class="replyBar" hidden><div><span>↪ رد على </span><strong id="replyName"></strong><div id="replyPreview" class="smallText"></div></div><button id="cancelReply" type="button" class="chatActionBtn">إلغاء الرد</button></div>
       <div class="chatFields">
         <label>الاسم أو اللقب<input id="name" class="chatInput" maxlength="32" autocomplete="nickname" placeholder="مثال: Ali Tech" required></label>
         <label>نوع المشاركة<select id="category" class="chatInput"><option>مناقشة عطل</option><option>طلب مخطط</option><option>BoardView</option><option>BIOS</option><option>عام</option></select></label>
@@ -44,47 +49,26 @@ const categoryEl=document.getElementById('category');
 const messageEl=document.getElementById('message');
 const statusEl=document.getElementById('status');
 const sendBtn=document.getElementById('sendBtn');
+const searchEl=document.getElementById('chatSearch');
+const filterEl=document.getElementById('chatCategoryFilter');
+const countEl=document.getElementById('messageCount');
+const replyBar=document.getElementById('replyBar');
+let allMessages=[];
+let replyTo='';
+let hashHandled=false;
 nameEl.value=localStorage.getItem('pcbr-chat-name')||'';
 
-function formatTime(iso){
-  try{return new Intl.DateTimeFormat('ar',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso));}
-  catch{return iso||'';}
-}
-function render(messages){
-  if(!messages.length){messagesEl.innerHTML='<div class="emptyState">لا توجد رسائل بعد. ابدأ أول مناقشة.</div>';return;}
-  const nearBottom=messagesEl.scrollHeight-messagesEl.scrollTop-messagesEl.clientHeight<100;
-  messagesEl.replaceChildren(...messages.map(m=>{
-    const item=document.createElement('article');item.className='chatMessage';
-    const top=document.createElement('div');top.className='chatMessageTop';
-    const who=document.createElement('strong');who.textContent=m.name;
-    const badge=document.createElement('span');badge.className='brandTag';badge.textContent=m.category||'عام';
-    const time=document.createElement('time');time.className='chatTime';time.textContent=formatTime(m.time);
-    top.append(who,badge,time);
-    const text=document.createElement('p');text.className='chatText';text.textContent=m.text;
-    item.append(top,text);return item;
-  }));
-  if(nearBottom)messagesEl.scrollTop=messagesEl.scrollHeight;
-}
-async function loadMessages(showError=false){
-  try{
-    const r=await fetch('/api/chat/messages',{cache:'no-store'});if(!r.ok)throw new Error();
-    const data=await r.json();render(Array.isArray(data.messages)?data.messages:[]);
-  }catch{if(showError||!messagesEl.children.length)messagesEl.innerHTML='<div class="emptyState">تعذر تحميل الرسائل. أعد المحاولة بعد قليل.</div>';}
-}
-form.addEventListener('submit',async e=>{
-  e.preventDefault();
-  const name=nameEl.value.trim(),text=messageEl.value.trim();
-  if(name.length<2||text.length<2)return;
-  sendBtn.disabled=true;statusEl.textContent='جاري الإرسال...';
-  try{
-    const r=await fetch('/api/chat/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,category:categoryEl.value,text,website:document.getElementById('website').value})});
-    const data=await r.json();
-    if(!r.ok)throw new Error(data.error||'تعذر الإرسال.');
-    localStorage.setItem('pcbr-chat-name',name);messageEl.value='';statusEl.textContent='تم إرسال الرسالة.';await loadMessages(true);messagesEl.scrollTop=messagesEl.scrollHeight;
-  }catch(err){statusEl.textContent=err.message||'تعذر الإرسال.';}
-  finally{sendBtn.disabled=false;}
-});
-document.getElementById('refreshBtn').addEventListener('click',()=>loadMessages(true));
+function formatTime(iso){try{return new Intl.DateTimeFormat('ar',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso));}catch{return iso||'';}}
+function findMessage(id){return allMessages.find(m=>m.id===id);}
+function filteredMessages(){const term=searchEl.value.trim().toLowerCase(),cat=filterEl.value;return allMessages.filter(m=>{if(cat&&m.category!==cat)return false;if(term&&!`${m.name} ${m.text} ${m.category}`.toLowerCase().includes(term))return false;return true;});}
+function setReply(id){const m=findMessage(id);if(!m)return;replyTo=m.id;document.getElementById('replyName').textContent=m.name;document.getElementById('replyPreview').textContent=m.text.slice(0,140);replyBar.hidden=false;messageEl.focus();}
+function clearReply(){replyTo='';replyBar.hidden=true;document.getElementById('replyName').textContent='';document.getElementById('replyPreview').textContent='';}
+async function copyMessageLink(id,btn){const link=`${location.origin}${location.pathname}#msg-${id}`;try{await navigator.clipboard.writeText(link);btn.textContent='تم نسخ الرابط';setTimeout(()=>btn.textContent='🔗 رابط',1500);}catch{location.hash=`msg-${id}`;}}
+async function reportMessage(id,btn){if(btn.dataset.done)return;btn.disabled=true;try{const r=await fetch('/api/chat/report',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id})});if(!r.ok)throw new Error();btn.dataset.done='1';btn.textContent='✓ تم الإبلاغ';}catch{btn.textContent='تعذر الإبلاغ';btn.disabled=false;}}
+function render(){const messages=filteredMessages();countEl.textContent=`${messages.length.toLocaleString('ar')} رسالة`;if(!messages.length){messagesEl.innerHTML='<div class="emptyState">لا توجد رسائل مطابقة.</div>';return;}const nearBottom=messagesEl.scrollHeight-messagesEl.scrollTop-messagesEl.clientHeight<100;messagesEl.replaceChildren(...messages.map(m=>{const item=document.createElement('article');item.className='chatMessage';item.id=`msg-${m.id}`;const top=document.createElement('div');top.className='chatMessageTop';const who=document.createElement('strong');who.textContent=m.name;const badge=document.createElement('span');badge.className='brandTag';badge.textContent=m.category||'عام';const time=document.createElement('time');time.className='chatTime';time.textContent=formatTime(m.time);top.append(who,badge,time);item.append(top);if(m.replyTo){const parent=findMessage(m.replyTo);if(parent){const quote=document.createElement('button');quote.type='button';quote.className='replyQuote';quote.textContent=`↪ ${parent.name}: ${parent.text.slice(0,120)}`;quote.addEventListener('click',()=>document.getElementById(`msg-${parent.id}`)?.scrollIntoView({behavior:'smooth',block:'center'}));item.append(quote);}}const text=document.createElement('p');text.className='chatText';text.textContent=m.text;item.append(text);const actions=document.createElement('div');actions.className='chatMessageActions';const reply=document.createElement('button');reply.type='button';reply.className='chatActionBtn';reply.textContent='↩ رد';reply.addEventListener('click',()=>setReply(m.id));const link=document.createElement('button');link.type='button';link.className='chatActionBtn';link.textContent='🔗 رابط';link.addEventListener('click',()=>copyMessageLink(m.id,link));const report=document.createElement('button');report.type='button';report.className='chatActionBtn reportBtn';report.textContent='⚑ إبلاغ';report.addEventListener('click',()=>reportMessage(m.id,report));actions.append(reply,link,report);item.append(actions);return item;}));if(nearBottom)messagesEl.scrollTop=messagesEl.scrollHeight;if(!hashHandled&&location.hash.startsWith('#msg-')){hashHandled=true;setTimeout(()=>{const target=document.querySelector(location.hash);if(target){target.scrollIntoView({behavior:'smooth',block:'center'});target.classList.add('chatHighlight');setTimeout(()=>target.classList.remove('chatHighlight'),2500);}},100);}}
+async function loadMessages(showError=false){try{const r=await fetch('/api/chat/messages',{cache:'no-store'});if(!r.ok)throw new Error();const data=await r.json();allMessages=Array.isArray(data.messages)?data.messages:[];render();}catch{if(showError||!messagesEl.children.length)messagesEl.innerHTML='<div class="emptyState">تعذر تحميل الرسائل. أعد المحاولة بعد قليل.</div>';}}
+form.addEventListener('submit',async e=>{e.preventDefault();const name=nameEl.value.trim(),text=messageEl.value.trim();if(name.length<2||text.length<2)return;sendBtn.disabled=true;statusEl.textContent='جاري الإرسال...';try{const r=await fetch('/api/chat/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,category:categoryEl.value,text,replyTo,website:document.getElementById('website').value})});const data=await r.json();if(!r.ok)throw new Error(data.error||'تعذر الإرسال.');localStorage.setItem('pcbr-chat-name',name);messageEl.value='';clearReply();statusEl.textContent='تم إرسال الرسالة.';await loadMessages(true);messagesEl.scrollTop=messagesEl.scrollHeight;}catch(err){statusEl.textContent=err.message||'تعذر الإرسال.';}finally{sendBtn.disabled=false;}});
+searchEl.addEventListener('input',render);filterEl.addEventListener('change',render);document.getElementById('cancelReply').addEventListener('click',clearReply);document.getElementById('refreshBtn').addEventListener('click',()=>loadMessages(true));
 loadMessages(true);setInterval(()=>loadMessages(false),5000);
 </script>
 </body>
