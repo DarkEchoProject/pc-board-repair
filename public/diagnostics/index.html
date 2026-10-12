@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>تشخيص أعطال اللوحات الأم والكمبيوتر | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص أعطال اللوحات الأم والكمبيوتر المكتبي: No Power، No Display، إعادة التشغيل، الشورت، POST والصفارات، ودوائر التغذية.">
+<meta name="description" content="دليل عملي لتشخيص أعطال اللوحات الأم والكمبيوتر المكتبي: No Power، No Display، إعادة التشغيل، الشورت، POST والصفارات، ودوائر VRM وتغذية المعالج والرام.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/index.html">
 <link rel="stylesheet" href="../style.css">
 <style>
-.diagHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:28px}.diagHero h1{margin-bottom:8px}.diagGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.diagCard{display:block;background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:21px;text-decoration:none;transition:.2s}.diagCard:hover{transform:translateY(-3px);border-color:#20bdf2;box-shadow:0 10px 30px #0005}.diagCard h2{margin:9px 0}.diagIcon{font-size:31px}.diagTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 8px;border-radius:999px;font-size:12px}.coming{opacity:.68;cursor:default}.coming:hover{transform:none;border-color:#203a5b;box-shadow:none}.startBox{margin-top:32px;background:#102238;border:1px solid #2a4e72;border-radius:16px;padding:18px}.startBox p{margin-bottom:0}
+.diagHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:28px}.diagHero h1{margin-bottom:8px}.diagGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.diagCard{display:block;background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:21px;text-decoration:none;transition:.2s}.diagCard:hover{transform:translateY(-3px);border-color:#20bdf2;box-shadow:0 10px 30px #0005}.diagCard h2{margin:9px 0}.diagIcon{font-size:31px}.diagTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 8px;border-radius:999px;font-size:12px}.startBox{margin-top:32px;background:#102238;border:1px solid #2a4e72;border-radius:16px;padding:18px}.startBox p{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -24,7 +24,7 @@
   <a class="diagCard" href="restarts-shuts-down.html"><div class="diagIcon">🔁</div><span class="diagTag">متاح الآن</span><h2>يعمل ويفصل أو يعيد التشغيل</h2><p class="muted">PSU، PWR_OK، الحرارة، VRM، Vcore، RAM وتسلسل Power Good.</p></a>
   <a class="diagCard" href="short-circuit.html"><div class="diagIcon">🔌</div><span class="diagTag">متاح الآن</span><h2>شورت على اللوحة</h2><p class="muted">تمييز المقاومة الطبيعية المنخفضة عن الشورت الحقيقي، تحديد الخط، عزل المراحل وفحص MOSFET والمكثفات.</p></a>
   <a class="diagCard" href="post-beep-codes.html"><div class="diagIcon">🧠</div><span class="diagTag">متاح الآن</span><h2>POST متوقف أو صفارات</h2><p class="muted">RAM، CPU، BIOS، VGA، POST Card، Reset وClock مع تفسير السلوك بدل الاعتماد على عدد الصفارات وحده.</p></a>
-  <div class="diagCard coming"><div class="diagIcon">🔋</div><span class="diagTag">قريبًا</span><h2>VRM وخطوط المعالج والرام</h2><p class="muted">MOSFET، PWM، الملفات، Vcore، VDIMM ونقاط القياس الأساسية.</p></div>
+  <a class="diagCard" href="vrm-cpu-ram.html"><div class="diagIcon">🔋</div><span class="diagTag">متاح الآن</span><h2>VRM وخطوط المعالج والرام</h2><p class="muted">12V CPU، MOSFET وPower Stage، PWM، الملفات، Vcore، VDIMM ونقاط القياس الأساسية.</p></a>
 </div>
 
 <section class="startBox"><b>قاعدة البداية:</b><p class="muted">قبل أي قياس على اللوحة افصل الكهرباء، افحص بصريًا، ثم استخدم مزود طاقة معروف السلامة. لا تعمل على الجانب الابتدائي لمزود الطاقة المتصل بالتيار إذا لم تكن مؤهلًا لذلك.</p></section>
