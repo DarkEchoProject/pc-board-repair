@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تشخيص عطل No Power في اللوحة الأم | PC Board Repair</title>
+<meta name="description" content="دليل عملي خطوة بخطوة لتشخيص الكمبيوتر الذي لا يعمل نهائيًا: 5VSB، زر التشغيل، PS_ON، خطوط 12V و5V و3.3V، الشورت ودوائر الاستعداد.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power.html">
+<link rel="stylesheet" href="../style.css">
+<style>
+.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.related a{text-decoration:none}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
+</style>
+</head>
+<body>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a></nav></header>
+<main class="wrap">
+<div class="crumb"><a href="../index.html">الرئيسية</a> ← <a href="index.html">التشخيص</a> ← No Power</div>
+<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>⚡ الجهاز لا يعمل نهائيًا — No Power</h1><p class="muted">المقصود هنا: عند الضغط على زر التشغيل لا تدور المروحة ولا يبدأ الجهاز. اتبع التسلسل التالي بدل تغيير القطع عشوائيًا.</p></section>
+
+<div class="danger"><b>سلامة:</b> القياسات التالية على جهة الجهد المنخفض للوحة الأم وموصل ATX. لا تفتح مزود الطاقة ولا تقس على جانبه الابتدائي المتصل بالتيار إلا إذا كنت مؤهلًا لذلك.</div>
+
+<div class="guideLayout">
+<article class="guideMain">
+<section id="s1" class="step"><h2><span class="stepNum">1</span>ابدأ خارج اللوحة</h2><ul class="checklist"><li>استخدم كابل كهرباء سليم ومزود طاقة معروف أنه يعمل.</li><li>افصل الأقراص وكروت PCIe وUSB الأمامية، واترك اللوحة مع CPU وقطعة RAM فقط عند الحاجة.</li><li>افحص بصريًا: مكثفات منتفخة، MOSFET محترق، آثار سوائل أو سواد حول دوائر التغذية.</li></ul><div class="decision"><b>إذا اشتغل الجهاز بمزود آخر:</b> العطل غالبًا في مزود الطاقة أو كابله وليس اللوحة.</div></section>
+
+<section id="s2" class="step"><h2><span class="stepNum">2</span>افحص 5VSB أولًا</h2><p>صل مزود الطاقة باللوحة دون الضغط على زر التشغيل. ضع الأسود على GND وقس خط الاستعداد <span class="mono">5VSB</span>. في موصل ATX القياسي يكون عادة السلك البنفسجي.</p><table class="measureTable"><thead><tr><th>النقطة</th><th>المتوقع</th><th>المعنى</th></tr></thead><tbody><tr><td>5VSB</td><td class="good">حوالي 5V</td><td>طاقة الاستعداد وصلت للوحة.</td></tr><tr><td>5VSB = 0V</td><td class="bad">غير طبيعي</td><td>افحص PSU، الموصل، الفيوز/الحماية ومسار 5VSB على اللوحة.</td></tr><tr><td>5VSB منخفض جدًا</td><td class="bad">مثلاً 1–3V</td><td>قد توجد حماية أو حمل زائد/شورت على خط الاستعداد.</td></tr></tbody></table><p class="muted">في اللوحات OEM ذات الموصلات الخاصة لا تعتمد ألوان أو أرقام ATX القياسية؛ استخدم المخطط أو BoardView الخاص باللوحة.</p></section>
+
+<section id="s3" class="step"><h2><span class="stepNum">3</span>افحص زر التشغيل وإشارة Power Button</h2><p>اختبر الزر نفسه أو قصّر طرفي <span class="mono">PWR_SW</span> لحظة واحدة بمفك معزول. على كثير من اللوحات تكون إشارة الزر مرفوعة لجهد منطقي ثم تنخفض عند الضغط، لكن القيمة الدقيقة تختلف حسب التصميم.</p><div class="decision"><b>إذا استجابت اللوحة عند قصر PWR_SW:</b> افحص زر الكيس والأسلاك. <br><b>إذا لم تتغير إشارة الزر:</b> تتبع المسار إلى Super I/O أو EC والمقاومات المحيطة.</div></section>
+
+<section id="s4" class="step"><h2><span class="stepNum">4</span>راقب PS_ON#</h2><p>في ATX القياسي يكون <span class="mono">PS_ON#</span> هو السلك الأخضر. قبل التشغيل يكون مرتفعًا، وعند أمر التشغيل يجب أن يسحبه النظام إلى مستوى منخفض ليشغّل المخارج الرئيسية.</p><table class="measureTable"><thead><tr><th>الحالة</th><th>PS_ON#</th><th>الاتجاه التالي</th></tr></thead><tbody><tr><td>قبل الضغط</td><td>مرتفع عادة عدة فولتات</td><td>طبيعي.</td></tr><tr><td>بعد الضغط</td><td class="good">ينخفض قرب 0V</td><td>أمر التشغيل خرج من اللوحة؛ افحص المخارج الرئيسية والشورت.</td></tr><tr><td>لا يتغير</td><td class="bad">يبقى مرتفعًا</td><td>افحص زر التشغيل، 3.3V/5V الاستعداد، Super I/O، RTC/CMOS ومسار التحكم.</td></tr><tr><td>منخفض دائمًا بمجرد توصيل الكهرباء</td><td class="bad">قرب 0V</td><td>قد يكون PS_ON عالقًا منخفضًا أو هناك عطل تحكم. إذا كانت اللوحة تقلع طبيعيًا فقد يكون إعداد Restore after AC Loss سببًا محتملًا.</td></tr></tbody></table></section>
+
+<section id="s5" class="step"><h2><span class="stepNum">5</span>إذا انخفض PS_ON لكن لا يوجد تشغيل</h2><p>قس المخارج الرئيسية من موصل الطاقة: <span class="mono">12V</span>، <span class="mono">5V</span> و<span class="mono">3.3V</span>. إذا ظهرت ثم اختفت فورًا، افصل الكهرباء وافحص وجود شورت على الخطوط قبل إعادة المحاولة.</p><table class="measureTable"><thead><tr><th>الخط</th><th>القيمة الاسمية</th><th>ملاحظات</th></tr></thead><tbody><tr><td>12V</td><td>حوالي 12V</td><td>يغذي VRM المعالج ودوائر أخرى.</td></tr><tr><td>5V</td><td>حوالي 5V</td><td>موجود بعد تشغيل PSU.</td></tr><tr><td>3.3V</td><td>حوالي 3.3V</td><td>خط منطقي رئيسي.</td></tr></tbody></table><div class="decision"><b>المخارج كلها صفر رغم أن PS_ON منخفض:</b> جرّب PSU معروفًا، ثم افحص شورت على خطوط اللوحة أو دخول PSU في الحماية.</div></section>
+
+<section id="s6" class="step"><h2><span class="stepNum">6</span>فحص الشورت قبل حقن أي فولت</h2><p>افصل PSU والبطارية إن أمكن، ثم قس المقاومة إلى الأرضي على خطوط الإدخال. لا تعتبر كل مقاومة منخفضة شورتًا: خط <span class="mono">Vcore</span> نفسه قد تكون مقاومته منخفضة جدًا طبيعيًا، خصوصًا مع CPU مركب.</p><ul class="checklist"><li>ركز أولًا على <b>دخل 12V CPU</b> قبل مراحل التحويل، وليس خرج Vcore.</li><li>قراءة قريبة جدًا من الصفر وثابتة مع صفارة مستمرة على دخل 12V تستحق تتبع MOSFETs والمكثفات على ذلك الخط.</li><li>أزل المعالج فقط إذا كان ذلك جزءًا من المقارنة المطلوبة؛ وجوده يغير مقاومات عدة خطوط.</li><li>لا تحقن 12V في خط مجهول. إذا استُخدم الحقن الحراري فليكن بجهد منخفض ومحدود التيار يناسب الخط.</li></ul></section>
+
+<section id="s7" class="step"><h2><span class="stepNum">7</span>إذا 5VSB موجود وPS_ON لا يتحرك</h2><p>في هذه الحالة يكون التركيز داخل اللوحة على دائرة الاستعداد والتحكم:</p><ul class="checklist"><li>جهد RTC/بطارية CMOS.</li><li>خطوط 3.3V أو 5V Standby الناتجة من 5VSB.</li><li>Super I/O / EC وتغذيته.</li><li>إشارة زر التشغيل من الهيدر حتى المتحكم.</li><li>إشارات Reset/Clock اللازمة لبدء التسلسل في بعض التصاميم.</li><li>BIOS فقط بعد التأكد أن تغذيات الاستعداد والتحكم الأساسية موجودة.</li></ul></section>
+
+<section id="flow" class="step"><h2>خلاصة المسار السريع</h2><div class="decision"><b>5VSB غير موجود</b> → PSU / حماية / شورت على Standby.</div><div class="decision"><b>5VSB موجود + زر التشغيل لا يصل</b> → زر/هيدر/مسار PWR_SW.</div><div class="decision"><b>زر التشغيل يصل + PS_ON لا ينخفض</b> → Standby logic / Super I/O / RTC / تحكم.</div><div class="decision"><b>PS_ON ينخفض + المخارج لا تظهر</b> → PSU protection أو شورت على Main rails.</div><div class="decision"><b>المخارج تظهر والجهاز لا يكمل</b> → انتقل إلى تشخيص No POST / No Display وليس No Power.</div></section>
+
+<section class="step"><h2>مراجع مفيدة داخل الموقع</h2><p class="muted">بعد تحديد الخط المتوقف، استخدم BoardView للعثور على MOSFETs والملفات والمقاومات المرتبطة به.</p><div class="related"><a class="btn" href="../boardview/index.html">فتح BoardView</a><a class="imageBtn" href="../community.html">ناقش القياسات في غرفة الصيانة</a><a class="imageBtn" href="index.html">كل أعطال التشخيص</a></div></section>
+</article>
+
+<aside class="toc"><b>في هذه الصفحة</b><a href="#s1">1. فحص خارجي</a><a href="#s2">2. 5VSB</a><a href="#s3">3. زر التشغيل</a><a href="#s4">4. PS_ON</a><a href="#s5">5. المخارج الرئيسية</a><a href="#s6">6. الشورت</a><a href="#s7">7. دوائر الاستعداد</a><a href="#flow">الخلاصة السريعة</a></aside>
+</div>
+</main>
+<footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+</body>
+</html>
