@@ -52,7 +52,7 @@
 </main>
 <footer><div class="footerLinks"><a href="diagnostics/index.html">التشخيص</a><a href="component-testing/index.html">فحص القطع</a><a href="community.html">غرفة الصيانة</a><a href="about.html">من نحن</a><a href="contact.html">اتصل بنا</a><a href="privacy.html">سياسة الخصوصية</a><a href="terms.html">شروط الاستخدام</a><a href="disclaimer.html">إخلاء المسؤولية</a><a href="copyright.html">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 function normalizeBoards(all){return(Array.isArray(all)?all:[]).flatMap(x=>Array.isArray(x?.value)?x.value:[x]).filter(x=>x&&typeof x.brand==='string'&&x.brand.trim()&&typeof x.file==='string'&&x.file.trim());}
 function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
 function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
