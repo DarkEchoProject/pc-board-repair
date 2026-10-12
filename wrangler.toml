@@ -5,7 +5,7 @@ compatibility_date = "2026-10-02"
 [assets]
 directory = "./public"
 binding = "ASSETS"
-run_worker_first = [ "/api/*", "/download/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/sitemap.xml" ]
+run_worker_first = [ "/api/*", "/download/*", "/downloads/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/sitemap.xml" ]
 
 [[durable_objects.bindings]]
 name = "CHAT_ROOM"
