@@ -127,6 +127,7 @@ export default {
       const additions = [
         `${SITE}/diagnostics/index.html`,
         `${SITE}/diagnostics/no-power.html`,
+        `${SITE}/diagnostics/no-display.html`,
       ];
       const extra = additions
         .filter(item => !xml.includes(`<loc>${item}</loc>`))
