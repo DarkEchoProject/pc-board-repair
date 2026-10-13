@@ -18,6 +18,17 @@
     document.head.append(link);
   }
 
+  function addNavSearch(){
+    const nav=document.querySelector('header nav');
+    if(!nav||nav.querySelector('.globalSearchLink'))return;
+    const a=document.createElement('a');
+    a.className='globalSearchLink';
+    a.href='/search.html';
+    a.textContent=lang()==='en'?'🔎 Search':'🔎 بحث';
+    a.setAttribute('aria-label',lang()==='en'?'Site-wide search':'البحث الشامل في الموقع');
+    nav.append(a);
+  }
+
   function ensureEngine(){
     if(window.PCBRSiteSearch)return Promise.resolve(window.PCBRSiteSearch);
     return new Promise((resolve,reject)=>{
@@ -177,6 +188,7 @@
 
   function start(){
     ensureStyles();
+    addNavSearch();
     ensureEngine().then(engine=>{
       // Replace the old global handler again in case another script redefined it.
       if(typeof window.setupHomeSearch==='function')window.setupHomeSearch=()=>{};
