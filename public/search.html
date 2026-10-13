@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>البحث الشامل | PC Board Repair</title>
+<meta name="description" content="ابحث في ملفات BoardView وBIOS وأدلة تشخيص أعطال الكمبيوتر وفحص القطع وغرفة الصيانة من مكان واحد.">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#0b1729">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/search.html">
+<link rel="stylesheet" href="/style.css">
+<script src="/site-search.js" defer></script>
+</head>
+<body>
+<header>
+  <a class="logo" href="/index.html">⚙️ PC Board Repair</a>
+  <nav>
+    <a href="/index.html">الرئيسية</a>
+    <a href="/boardview/index.html">BoardView</a>
+    <a href="/bios/index.html">BIOS</a>
+    <a href="/diagnostics/index.html">التشخيص</a>
+    <a href="/component-testing/index.html">فحص القطع</a>
+    <a href="/community.html">غرفة الصيانة</a>
+  </nav>
+</header>
+
+<main class="siteSearchShell">
+  <section class="siteSearchTop">
+    <h1 id="searchTitle">🔎 البحث الشامل في الموقع</h1>
+    <p id="searchIntro">ابحث في BoardView وBIOS وأدلة التشخيص وفحص القطع وغرفة الصيانة من مكان واحد.</p>
+
+    <form id="siteSearchForm" class="siteSearchInputRow" role="search">
+      <input id="siteSearchInput" class="siteSearchInput" type="search" autocomplete="off" autofocus placeholder="ابحث: H81M-VG4 أو DH55PJ أو No Power أو MOSFET" aria-label="البحث في الموقع">
+      <button id="siteSearchButton" class="btn" type="submit">بحث</button>
+    </form>
+
+    <div id="searchFilters" class="searchFilters" aria-label="تصفية النتائج">
+      <button class="searchFilter active" type="button" data-type="all">الكل</button>
+      <button class="searchFilter" type="button" data-type="boardview">BoardView</button>
+      <button class="searchFilter" type="button" data-type="bios">BIOS</button>
+      <button class="searchFilter" type="button" data-type="diagnostics">التشخيص</button>
+      <button class="searchFilter" type="button" data-type="components">فحص القطع</button>
+      <button class="searchFilter" type="button" data-type="community">غرفة الصيانة</button>
+    </div>
+  </section>
+
+  <div id="siteSearchMeta" class="siteSearchMeta">جاري تجهيز البحث...</div>
+  <section id="siteSearchResults" class="siteSearchResults" aria-live="polite"></section>
+</main>
+
+<footer>
+  <a href="/about.html">من نحن</a><a href="/contact.html">اتصل بنا</a><a href="/privacy.html">سياسة الخصوصية</a><a href="/terms.html">شروط الاستخدام</a><a href="/disclaimer.html">إخلاء المسؤولية</a><a href="/copyright.html">حقوق النشر</a>
+</footer>
+
+<script>
+(()=>{
+  const lang=(()=>{try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}})();
+  const copy={
+    ar:{
+      title:'🔎 البحث الشامل في الموقع',
+      intro:'ابحث في BoardView وBIOS وأدلة التشخيص وفحص القطع وغرفة الصيانة من مكان واحد.',
+      placeholder:'ابحث: H81M-VG4 أو DH55PJ أو No Power أو MOSFET',
+      button:'بحث',
+      loading:'جاري تجهيز البحث...',
+      ready:'ابدأ بكتابة موديل، رقم بورد، BIOS أو اسم عطل.',
+      noResults:'لا توجد نتائج مطابقة. جرّب موديلًا أو رقم بورد أو كلمة فنية مختلفة.',
+      results:n=>`تم العثور على ${n} نتيجة`,
+      examples:'أمثلة: H81M-VG4، DH55PJ، No Power، MOSFET',
+      open:'فتح',
+      inputLabel:'البحث في الموقع',
+      filterLabel:'تصفية النتائج'
+    },
+    en:{
+      title:'🔎 Site-wide Search',
+      intro:'Search BoardView, BIOS, diagnostic guides, component testing and the repair room from one place.',
+      placeholder:'Search: H81M-VG4, DH55PJ, No Power or MOSFET',
+      button:'Search',
+      loading:'Preparing search...',
+      ready:'Enter a model, board number, BIOS name or fault.',
+      noResults:'No matching results. Try a different model, board number or technical term.',
+      results:n=>`Found ${n} results`,
+      examples:'Examples: H81M-VG4, DH55PJ, No Power, MOSFET',
+      open:'Open',
+      inputLabel:'Search the site',
+      filterLabel:'Filter results'
+    }
+  }[lang];
+
+  let activeType='all';
+  let timer=null;
+  const form=document.getElementById('siteSearchForm');
+  const input=document.getElementById('siteSearchInput');
+  const meta=document.getElementById('siteSearchMeta');
+  const results=document.getElementById('siteSearchResults');
+  const filters=document.getElementById('searchFilters');
+
+  function localizePage(){
+    document.getElementById('searchTitle').textContent=copy.title;
+    document.getElementById('searchIntro').textContent=copy.intro;
+    input.placeholder=copy.placeholder;
+    input.setAttribute('aria-label',copy.inputLabel);
+    document.getElementById('siteSearchButton').textContent=copy.button;
+    filters.setAttribute('aria-label',copy.filterLabel);
+    for(const button of filters.querySelectorAll('.searchFilter')){
+      if(window.PCBRSiteSearch)button.textContent=window.PCBRSiteSearch.label(button.dataset.type,lang);
+    }
+    if(lang==='en')document.title='Site-wide Search | PC Board Repair';
+  }
+
+  function clearResults(message,withExamples=false){
+    results.innerHTML='';
+    const empty=document.createElement('div');
+    empty.className='searchEmpty';
+    const text=document.createElement('div');
+    text.textContent=message;
+    empty.append(text);
+    if(withExamples){
+      const examples=document.createElement('div');
+      examples.className='searchExamples';
+      examples.textContent=copy.examples;
+      empty.append(examples);
+    }
+    results.append(empty);
+  }
+
+  function makeResult(item){
+    const a=document.createElement('a');
+    a.className='siteSearchResult';
+    a.href=item.url;
+
+    const body=document.createElement('div');
+    const title=document.createElement('div');
+    title.className='siteSearchTitle';
+    title.textContent=item.title;
+    const subtitle=document.createElement('div');
+    subtitle.className='siteSearchSubtitle';
+    subtitle.textContent=item.subtitle||'';
+    body.append(title,subtitle);
+
+    const side=document.createElement('div');
+    side.className='siteSearchResultSide';
+    const badge=document.createElement('span');
+    badge.className='siteSearchBadge';
+    badge.textContent=window.PCBRSiteSearch.label(item.type,lang);
+    const open=document.createElement('span');
+    open.className='siteSearchOpen';
+    open.textContent=copy.open;
+    side.append(badge,open);
+
+    a.append(body,side);
+    return a;
+  }
+
+  async function runSearch(pushUrl=true){
+    if(!window.PCBRSiteSearch)return;
+    const query=input.value.trim();
+    if(pushUrl){
+      const url=new URL(location.href);
+      if(query)url.searchParams.set('q',query);else url.searchParams.delete('q');
+      if(activeType!=='all')url.searchParams.set('type',activeType);else url.searchParams.delete('type');
+      history.replaceState(null,'',url.pathname+url.search);
+    }
+    if(!query){
+      meta.textContent=copy.ready;
+      clearResults(copy.ready,true);
+      return;
+    }
+    meta.textContent=copy.loading;
+    const matches=await window.PCBRSiteSearch.search(query,{limit:100,type:activeType});
+    results.innerHTML='';
+    meta.textContent=copy.results(matches.length);
+    if(!matches.length){clearResults(copy.noResults);return;}
+    for(const item of matches)results.append(makeResult(item));
+  }
+
+  function selectFilter(type,run=true){
+    activeType=type||'all';
+    for(const button of filters.querySelectorAll('.searchFilter')){
+      button.classList.toggle('active',button.dataset.type===activeType);
+    }
+    if(run)runSearch();
+  }
+
+  form.addEventListener('submit',event=>{event.preventDefault();runSearch();});
+  input.addEventListener('input',()=>{
+    clearTimeout(timer);
+    timer=setTimeout(()=>runSearch(),130);
+  });
+  filters.addEventListener('click',event=>{
+    const button=event.target.closest('.searchFilter');
+    if(button)selectFilter(button.dataset.type);
+  });
+
+  document.addEventListener('DOMContentLoaded',async()=>{
+    localizePage();
+    const params=new URLSearchParams(location.search);
+    const requestedType=params.get('type');
+    if(['all','boardview','bios','diagnostics','components','community'].includes(requestedType))activeType=requestedType;
+    selectFilter(activeType,false);
+    input.value=params.get('q')||'';
+    try{
+      await window.PCBRSiteSearch.getIndex();
+      localizePage();
+      await runSearch(false);
+    }catch{
+      meta.textContent=copy.noResults;
+      clearResults(copy.noResults);
+    }
+  },{once:true});
+})();
+</script>
+</body>
+</html>
