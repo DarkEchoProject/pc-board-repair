@@ -14,6 +14,12 @@
     titleFix.dataset.pcbrI18nTitle='1';
     document.head.append(titleFix);
   }
+  if(!document.querySelector('script[data-pcbr-site-search-boot]')){
+    const searchBoot=document.createElement('script');
+    searchBoot.src='/site-search-boot.js?v=20261013-1';
+    searchBoot.dataset.pcbrSiteSearchBoot='1';
+    document.head.append(searchBoot);
+  }
 
   const nextPath=()=>location.pathname+location.search+location.hash;
   const loginHref=(next=nextPath())=>`/login.html?next=${encodeURIComponent(next)}`;
