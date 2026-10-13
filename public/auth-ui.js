@@ -8,6 +8,12 @@
     i18n.dataset.pcbrI18n='1';
     document.head.append(i18n);
   }
+  if(!document.querySelector('script[data-pcbr-i18n-title]')){
+    const titleFix=document.createElement('script');
+    titleFix.src='/i18n-title-fix.js';
+    titleFix.dataset.pcbrI18nTitle='1';
+    document.head.append(titleFix);
+  }
 
   const nextPath=()=>location.pathname+location.search+location.hash;
   const loginHref=(next=nextPath())=>`/login.html?next=${encodeURIComponent(next)}`;
