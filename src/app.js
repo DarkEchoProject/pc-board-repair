@@ -244,7 +244,7 @@ async function finishGoogleAuth(request, env) {
 class BrandHead {
   element(element) {
     element.prepend(
-      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js" defer></script>`,
+      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js" defer></script><script src="/i18n-extra.js" defer></script>`,
       { html: true },
     );
   }
