@@ -4,7 +4,7 @@
 
   if(!document.querySelector('script[data-pcbr-i18n]')){
     const i18n=document.createElement('script');
-    i18n.src='/i18n-v2.js';
+    i18n.src='/i18n.js?v=20261013-1';
     i18n.dataset.pcbrI18n='1';
     document.head.append(i18n);
   }
@@ -97,9 +97,9 @@
     }
   }
 
-  // Reliable language switching fallback. The translation engine applies the
-  // saved language on page load; reloading avoids race conditions between the
-  // base and extended translation dictionaries on dynamic pages.
+  // Save the selected language first, then reload the original Arabic HTML.
+  // On the new page load i18n.js applies English when requested, while Arabic
+  // stays as the original source text. This makes both directions symmetric.
   document.addEventListener('change',e=>{
     const select=e.target?.closest?.('.languageSelect');
     if(!select)return;
@@ -107,7 +107,7 @@
     try{localStorage.setItem('pcbr-language',next);}catch{}
     document.documentElement.lang=next;
     document.documentElement.dir=next==='ar'?'rtl':'ltr';
-    setTimeout(()=>location.reload(),0);
+    location.reload();
   },true);
 
   document.addEventListener('click',async e=>{
