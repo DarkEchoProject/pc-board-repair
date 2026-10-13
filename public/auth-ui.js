@@ -97,6 +97,19 @@
     }
   }
 
+  // Reliable language switching fallback. The translation engine applies the
+  // saved language on page load; reloading avoids race conditions between the
+  // base and extended translation dictionaries on dynamic pages.
+  document.addEventListener('change',e=>{
+    const select=e.target?.closest?.('.languageSelect');
+    if(!select)return;
+    const next=select.value==='en'?'en':'ar';
+    try{localStorage.setItem('pcbr-language',next);}catch{}
+    document.documentElement.lang=next;
+    document.documentElement.dir=next==='ar'?'rtl':'ltr';
+    setTimeout(()=>location.reload(),0);
+  },true);
+
   document.addEventListener('click',async e=>{
     const a=e.target.closest('a[href]');
     if(!a)return;
