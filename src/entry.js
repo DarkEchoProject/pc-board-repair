@@ -91,16 +91,34 @@ function wrappedEnvironment(env) {
 
 class YouTubeHead {
   element(element) {
-    element.append('<script src="/youtube-integration.js?v=20261015-4" defer></script><script src="/tools-integration.js?v=20261015-1" defer></script>', { html: true });
-  }
-}
-
-class YouTubeTopNav {
-  element(element) {
-    element.append(
-      '<a href="https://www.youtube.com/@PCBoardRepairArabic" target="_blank" rel="noopener noreferrer" data-pcbr-youtube-channel="nav" style="color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap">▶ YouTube</a>',
-      { html: true },
-    );
+    element.append(`
+      <script src="/youtube-integration.js?v=20261015-5" defer></script>
+      <script src="/tools-integration.js?v=20261015-2" defer></script>
+      <script>
+      (()=>{
+        const href='https://www.youtube.com/@PCBoardRepairArabic';
+        const ensure=()=>{
+          const nav=document.querySelector('header nav');
+          if(!nav||nav.querySelector('[data-pcbr-youtube-channel="nav"]'))return;
+          const a=document.createElement('a');
+          a.href=href;
+          a.target='_blank';
+          a.rel='noopener noreferrer';
+          a.dataset.pcbrYoutubeChannel='nav';
+          a.textContent='▶ YouTube';
+          a.style.cssText='color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap';
+          nav.append(a);
+        };
+        const start=()=>{
+          ensure();
+          const header=document.querySelector('header');
+          if(!header)return;
+          new MutationObserver(ensure).observe(header,{childList:true,subtree:true});
+        };
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+      })();
+      </script>
+    `, { html: true });
   }
 }
 
@@ -109,7 +127,6 @@ function withYouTube(response) {
   if (!contentType.includes("text/html")) return response;
   return new HTMLRewriter()
     .on("head", new YouTubeHead())
-    .on("header nav", new YouTubeTopNav())
     .transform(response);
 }
 
