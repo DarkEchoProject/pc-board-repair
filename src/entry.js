@@ -89,6 +89,18 @@ function wrappedEnvironment(env) {
   return { ...env, ASSETS: mergedAssets };
 }
 
+class YouTubeHead {
+  element(element) {
+    element.append('<script src="/youtube-integration.js?v=20261015-1" defer></script>', { html: true });
+  }
+}
+
+function withYouTube(response) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
+  return new HTMLRewriter().on("head", new YouTubeHead()).transform(response);
+}
+
 export { ChatRoom };
 
 export default {
@@ -98,7 +110,7 @@ export default {
     const response = await appWorker.fetch(request, wrappedEnv, ctx);
 
     const match = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
-    if (!match || response.status < 300 || response.status >= 400) return response;
+    if (!match || response.status < 300 || response.status >= 400) return withYouTube(response);
 
     const location = response.headers.get("location") || "";
     let locationPath = "";
