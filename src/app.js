@@ -80,9 +80,19 @@ async function hmacKey(secret) {
   );
 }
 
+function sessionSigningSecret(env) {
+  return String(env.SESSION_SECRET || env.GOOGLE_CLIENT_SECRET || "").trim();
+}
+
+function sessionVerificationSecrets(env) {
+  const current = String(env.SESSION_SECRET || "").trim();
+  const legacy = String(env.GOOGLE_CLIENT_SECRET || "").trim();
+  return [...new Set([current, legacy].filter(Boolean))];
+}
+
 async function createSession(user, env) {
-  const secret = String(env.GOOGLE_CLIENT_SECRET || "").trim();
-  if (!secret) throw new Error("Auth secret unavailable");
+  const secret = sessionSigningSecret(env);
+  if (!secret) throw new Error("Session secret unavailable");
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     sub: cleanText(user.sub, 160),
@@ -98,19 +108,23 @@ async function createSession(user, env) {
 }
 
 async function getSessionUser(request, env) {
-  const secret = String(env.GOOGLE_CLIENT_SECRET || "").trim();
-  if (!secret) return null;
+  const secrets = sessionVerificationSecrets(env);
+  if (!secrets.length) return null;
   const token = getCookie(request, SESSION_COOKIE);
   const parts = token.split(".");
   if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
   try {
-    const key = await hmacKey(secret);
-    const valid = await crypto.subtle.verify(
-      "HMAC",
-      key,
-      base64UrlToBytes(parts[1]),
-      encoder.encode(parts[0]),
-    );
+    let valid = false;
+    for (const secret of secrets) {
+      const key = await hmacKey(secret);
+      valid = await crypto.subtle.verify(
+        "HMAC",
+        key,
+        base64UrlToBytes(parts[1]),
+        encoder.encode(parts[0]),
+      );
+      if (valid) break;
+    }
     if (!valid) return null;
     const payload = JSON.parse(base64UrlToText(parts[0]));
     if (!payload?.sub || !payload?.email || Number(payload.exp) <= Math.floor(Date.now() / 1000)) return null;
