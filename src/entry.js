@@ -91,14 +91,26 @@ function wrappedEnvironment(env) {
 
 class YouTubeHead {
   element(element) {
-    element.append('<script src="/youtube-integration.js?v=20261015-3" defer></script>', { html: true });
+    element.append('<script src="/youtube-integration.js?v=20261015-4" defer></script>', { html: true });
+  }
+}
+
+class YouTubeTopNav {
+  element(element) {
+    element.append(
+      '<a href="https://www.youtube.com/@PCBoardRepairArabic" target="_blank" rel="noopener noreferrer" data-pcbr-youtube-channel="nav" style="color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap">▶ YouTube</a>',
+      { html: true },
+    );
   }
 }
 
 function withYouTube(response) {
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
-  return new HTMLRewriter().on("head", new YouTubeHead()).transform(response);
+  return new HTMLRewriter()
+    .on("head", new YouTubeHead())
+    .on("header nav", new YouTubeTopNav())
+    .transform(response);
 }
 
 export { ChatRoom };
