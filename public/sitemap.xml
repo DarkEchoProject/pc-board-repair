@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/</loc><lastmod>2026-10-11</lastmod><priority>1.0</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/index.html</loc><lastmod>2026-10-11</lastmod><priority>0.9</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/index.html</loc><lastmod>2026-10-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/community.html</loc><lastmod>2026-10-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/intel.html</loc><lastmod>2026-10-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/about.html</loc><lastmod>2026-10-11</lastmod><priority>0.6</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/contact.html</loc><lastmod>2026-10-11</lastmod><priority>0.5</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/privacy.html</loc><lastmod>2026-10-11</lastmod><priority>0.4</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/terms.html</loc><lastmod>2026-10-11</lastmod><priority>0.4</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/disclaimer.html</loc><lastmod>2026-10-11</lastmod><priority>0.4</priority></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/copyright.html</loc><lastmod>2026-10-11</lastmod><priority>0.4</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/</loc><priority>1.0</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/index.html</loc><priority>0.9</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/index.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/intel.html</loc><priority>0.7</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/index.html</loc><priority>0.9</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/index.html</loc><priority>0.8</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/community.html</loc><priority>0.6</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/about.html</loc><priority>0.5</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/contact.html</loc><priority>0.4</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/privacy.html</loc><priority>0.3</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/terms.html</loc><priority>0.3</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/disclaimer.html</loc><priority>0.3</priority></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/copyright.html</loc><priority>0.3</priority></url>
 </urlset>
