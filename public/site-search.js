@@ -21,6 +21,10 @@
       .trim();
   }
 
+  function compact(value){
+    return normalize(value).replace(/\s+/g,'');
+  }
+
   function fileKey(path){
     let h=2166136261>>>0;
     for(const ch of String(path||'')){
@@ -159,6 +163,12 @@
     const boardNo=normalize(entry.boardNo||'');
     const fileName=normalize(entry.fileName||'');
     const text=entry._searchText;
+    const qCompact=compact(q);
+    const titleCompact=compact(title);
+    const modelCompact=compact(model);
+    const boardNoCompact=compact(boardNo);
+    const fileNameCompact=compact(fileName);
+    const textCompact=compact(text);
     let score=0;
 
     if(title===q)score+=120;
@@ -174,6 +184,21 @@
     if(fileName.includes(q))score+=55;
     if(text.includes(q))score+=45;
 
+    if(qCompact){
+      if(titleCompact===qCompact)score+=120;
+      if(modelCompact===qCompact)score+=140;
+      if(boardNoCompact===qCompact)score+=150;
+      if(fileNameCompact===qCompact)score+=130;
+      if(titleCompact.startsWith(qCompact))score+=70;
+      if(modelCompact.startsWith(qCompact))score+=80;
+      if(boardNoCompact.startsWith(qCompact))score+=90;
+      if(titleCompact.includes(qCompact))score+=50;
+      if(modelCompact.includes(qCompact))score+=60;
+      if(boardNoCompact.includes(qCompact))score+=70;
+      if(fileNameCompact.includes(qCompact))score+=45;
+      if(textCompact.includes(qCompact))score+=35;
+    }
+
     let matched=0;
     for(const token of tokens){
       if(!token)continue;
@@ -184,7 +209,7 @@
       if(text.includes(token)){score+=8;matched++;}
     }
     if(tokens.length>1&&matched===tokens.length)score+=35;
-    return matched===tokens.length||text.includes(q)?score:0;
+    return matched===tokens.length||text.includes(q)||(qCompact&&textCompact.includes(qCompact))?score:0;
   }
 
   async function buildIndex(){
@@ -233,5 +258,5 @@
     return labels[type]?.[lang]||type;
   }
 
-  window.PCBRSiteSearch={getIndex,search,normalize,label,currentLang};
+  window.PCBRSiteSearch={getIndex,search,normalize,compact,label,currentLang};
 })();
