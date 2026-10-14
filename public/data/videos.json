@@ -1,0 +1,12 @@
+[
+  {
+    "id": "S_fd3NaecIA",
+    "title_ar": "طريقة فحص القطع الإلكترونية على البورد والقراءات المتوقعة للقطع السليمة",
+    "title_en": "How to Test Electronic Components on a Motherboard and Expected Good Readings",
+    "description_ar": "شرح عملي لفحص القطع الشائعة على البورد باستخدام الأفوميتر، مع توضيح القراءات العامة المتوقعة للقطع السليمة والتنبيه إلى أن القراءات قد تختلف حسب نوع القطعة والدائرة.",
+    "description_en": "A practical guide to testing common motherboard components with a multimeter, including general expected readings for good components and a reminder that readings vary by component and circuit.",
+    "category": "component-testing",
+    "youtube_url": "https://www.youtube.com/watch?v=S_fd3NaecIA",
+    "published_at": "2026-10-14"
+  }
+]
