@@ -56,6 +56,24 @@
     </article>`;
   }
 
+  function updateHomeVideoStat(videos){
+    if(!/^\/(?:index\.html)?$/.test(location.pathname))return;
+    const counter=document.getElementById('homeImageCount');
+    if(!counter)return;
+    const l=lang();
+    const desired=videos.length.toLocaleString(l==='en'?'en-US':'ar-LB');
+    const label=counter.closest('.homeStat')?.querySelector('span');
+    const desiredLabel=l==='en'?'Repair videos':'فيديوهات صيانة';
+    const apply=()=>{
+      if(counter.textContent!==desired)counter.textContent=desired;
+      if(label&&label.textContent!==desiredLabel)label.textContent=desiredLabel;
+    };
+    apply();
+    const observer=new MutationObserver(apply);
+    observer.observe(counter,{childList:true,characterData:true,subtree:true});
+    setTimeout(()=>{apply();observer.disconnect();},5000);
+  }
+
   function addHomeSection(videos){
     if(!/^\/(?:index\.html)?$/.test(location.pathname)||document.getElementById('pcbrHomeVideos'))return;
     const l=lang();
@@ -70,12 +88,13 @@
   }
 
   function addComponentTestingVideo(videos){
-    if(location.pathname!=='/component-testing/index.html'||document.getElementById('pcbrComponentVideo'))return;
+    if(!/^\/component-testing(?:\/index\.html|\/)?$/.test(location.pathname)||document.getElementById('pcbrComponentVideo'))return;
     const video=videos.find(v=>v.category==='component-testing');
     if(!video)return;
     const l=lang();
     const hero=document.querySelector('.testHero');
-    if(!hero)return;
+    const fallback=document.querySelector('.warnLocal');
+    if(!hero&&!fallback)return;
     const section=document.createElement('section');
     section.id='pcbrComponentVideo';
     section.className='pcbrVideoSection';
@@ -85,7 +104,7 @@
       <p class="muted">${esc(description(video,l))}</p>
       <div class="pcbrVideoEmbed"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.id)}?rel=0" title="${esc(title(video,l))}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
       <div class="pcbrVideoActions" style="margin-top:14px"><a class="btn" href="${esc(watchUrl(video))}" target="_blank" rel="noopener noreferrer">${l==='en'?'Open video on YouTube':'فتح الفيديو على YouTube'}</a></div>`;
-    hero.insertAdjacentElement('afterend',section);
+    if(hero)hero.insertAdjacentElement('afterend',section);else fallback.insertAdjacentElement('beforebegin',section);
 
     const schema=document.createElement('script');
     schema.type='application/ld+json';
@@ -110,6 +129,7 @@
       const videos=Array.isArray(data)?data.filter(v=>v&&v.id):[];
       if(!videos.length)return;
       addStyles();
+      updateHomeVideoStat(videos);
       addHomeSection(videos);
       addComponentTestingVideo(videos);
     }catch(err){
