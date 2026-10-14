@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /login.html
+Disallow: /api/
+Disallow: /download/
+Disallow: /downloads/
+Disallow: /data/
 
 Sitemap: https://pc-board-repair.alinasser00001.workers.dev/sitemap.xml
