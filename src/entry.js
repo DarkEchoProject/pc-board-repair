@@ -91,7 +91,7 @@ function wrappedEnvironment(env) {
 
 class YouTubeHead {
   element(element) {
-    element.append('<script src="/youtube-integration.js?v=20261015-1" defer></script>', { html: true });
+    element.append('<script src="/youtube-integration.js?v=20261015-2" defer></script>', { html: true });
   }
 }
 
