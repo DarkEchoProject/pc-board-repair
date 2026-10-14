@@ -2,6 +2,9 @@ name = "pc-board-repair"
 main = "src/app.js"
 compatibility_date = "2026-10-02"
 
+[vars]
+GOOGLE_CLIENT_ID = "688045496018-0l0ok4kt8nv7rp2c294ktep51rt3s0bp.apps.googleusercontent.com"
+
 [assets]
 directory = "./public"
 binding = "ASSETS"
