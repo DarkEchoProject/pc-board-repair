@@ -93,7 +93,7 @@ class YouTubeHead {
   element(element) {
     element.append(`
       <script src="/youtube-integration.js?v=20261015-5" defer></script>
-      <script src="/tools-integration.js?v=20261015-2" defer></script>
+      <script src="/tools-integration.js?v=20261015-3" defer></script>
       <script>
       (()=>{
         const href='https://www.youtube.com/@PCBoardRepairArabic';
