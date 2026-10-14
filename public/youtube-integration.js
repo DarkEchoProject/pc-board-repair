@@ -2,6 +2,8 @@
   'use strict';
 
   const DATA_URL='/data/videos.json';
+  const CHANNEL_URL='https://www.youtube.com/@PCBoardRepairArabic';
+  const SUBSCRIBE_URL=`${CHANNEL_URL}?sub_confirmation=1`;
 
   const lang=()=>{
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
@@ -35,9 +37,57 @@
       .pcbrVideoEmbed{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;margin-top:14px}
       .pcbrVideoEmbed iframe{width:100%;height:100%;border:0;display:block}
       .pcbrVideoEyebrow{display:inline-block;margin-bottom:8px;background:#2a1015;border:1px solid #743241;color:#ffb3be;padding:4px 9px;border-radius:999px;font-size:12px}
+      .pcbrSubscribeBtn{background:#ff0033!important;border-color:#ff0033!important;color:#fff!important}
       @media(max-width:640px){.pcbrVideoSection{padding:15px}.pcbrVideoPlay{width:56px;height:39px;font-size:21px}}
     `;
     document.head.append(style);
+  }
+
+  function channelLabel(l,place){
+    if(place==='nav')return '▶ YouTube';
+    return l==='en'?'YouTube Channel':'قناة YouTube';
+  }
+
+  function subscribeLabel(l){return l==='en'?'Subscribe to the channel':'اشترك في القناة';}
+
+  function addChannelLinks(){
+    const l=lang();
+    const nav=document.querySelector('header nav');
+    if(nav&&!nav.querySelector('[data-pcbr-youtube-channel="nav"]')){
+      const a=document.createElement('a');
+      a.href=CHANNEL_URL;
+      a.target='_blank';
+      a.rel='noopener noreferrer';
+      a.dataset.pcbrYoutubeChannel='nav';
+      a.textContent=channelLabel(l,'nav');
+      nav.append(a);
+    }
+
+    const footerLinks=document.querySelector('.footerLinks');
+    if(footerLinks&&!footerLinks.querySelector('[data-pcbr-youtube-channel="footer"]')){
+      const a=document.createElement('a');
+      a.href=CHANNEL_URL;
+      a.target='_blank';
+      a.rel='noopener noreferrer';
+      a.dataset.pcbrYoutubeChannel='footer';
+      a.textContent=channelLabel(l,'footer');
+      footerLinks.append(a);
+    }
+  }
+
+  function addChannelSchema(){
+    if(document.getElementById('pcbrYouTubeChannelSchema'))return;
+    const schema=document.createElement('script');
+    schema.id='pcbrYouTubeChannelSchema';
+    schema.type='application/ld+json';
+    schema.textContent=JSON.stringify({
+      '@context':'https://schema.org',
+      '@type':'Organization',
+      name:'PC Board Repair',
+      url:location.origin,
+      sameAs:[CHANNEL_URL]
+    }).replace(/</g,'\\u003c');
+    document.head.append(schema);
   }
 
   function videoCard(video,l){
@@ -51,7 +101,10 @@
         <span class="pcbrVideoEyebrow">YouTube</span>
         <h3>${esc(title(video,l))}</h3>
         <p class="muted">${esc(description(video,l))}</p>
-        <div class="pcbrVideoActions"><a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${l==='en'?'Watch on YouTube':'شاهد على YouTube'}</a></div>
+        <div class="pcbrVideoActions">
+          <a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${l==='en'?'Watch on YouTube':'شاهد على YouTube'}</a>
+          <a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a>
+        </div>
       </div>
     </article>`;
   }
@@ -83,7 +136,7 @@
     section.id='pcbrHomeVideos';
     section.className='pcbrVideoSection';
     const recent=[...videos].sort((a,b)=>String(b.published_at||'').localeCompare(String(a.published_at||''))).slice(0,3);
-    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2><p class="muted">${l==='en'?'Practical videos linked to the repair guides on this site.':'شروحات عملية مرتبطة بأدلة الصيانة الموجودة في الموقع.'}</p></div></div><div class="pcbrVideoGrid">${recent.map(v=>videoCard(v,l)).join('')}</div>`;
+    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2><p class="muted">${l==='en'?'Practical videos linked to the repair guides on this site.':'شروحات عملية مرتبطة بأدلة الصيانة الموجودة في الموقع.'}</p></div><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div><div class="pcbrVideoGrid">${recent.map(v=>videoCard(v,l)).join('')}</div>`;
     target.insertAdjacentElement('afterend',section);
   }
 
@@ -103,7 +156,10 @@
       <h2>${l==='en'?'🎥 Practical video explanation':'🎥 الشرح العملي بالفيديو'}</h2>
       <p class="muted">${esc(description(video,l))}</p>
       <div class="pcbrVideoEmbed"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.id)}?rel=0" title="${esc(title(video,l))}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
-      <div class="pcbrVideoActions" style="margin-top:14px"><a class="btn" href="${esc(watchUrl(video))}" target="_blank" rel="noopener noreferrer">${l==='en'?'Open video on YouTube':'فتح الفيديو على YouTube'}</a></div>`;
+      <div class="pcbrVideoActions" style="margin-top:14px">
+        <a class="btn" href="${esc(watchUrl(video))}" target="_blank" rel="noopener noreferrer">${l==='en'?'Open video on YouTube':'فتح الفيديو على YouTube'}</a>
+        <a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a>
+      </div>`;
     if(hero)hero.insertAdjacentElement('afterend',section);else fallback.insertAdjacentElement('beforebegin',section);
 
     const schema=document.createElement('script');
@@ -122,13 +178,15 @@
   }
 
   async function init(){
+    addStyles();
+    addChannelLinks();
+    addChannelSchema();
     try{
       const response=await fetch(DATA_URL,{cache:'no-store'});
       if(!response.ok)throw new Error(`HTTP ${response.status}`);
       const data=await response.json();
       const videos=Array.isArray(data)?data.filter(v=>v&&v.id):[];
       if(!videos.length)return;
-      addStyles();
       updateHomeVideoStat(videos);
       addHomeSection(videos);
       addComponentTestingVideo(videos);
