@@ -24,6 +24,41 @@
   const nextPath=()=>location.pathname+location.search+location.hash;
   const loginHref=(next=nextPath())=>`/login.html?next=${encodeURIComponent(next)}`;
 
+  function currentLang(){
+    try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
+  }
+
+  function standardizeHeaderNav(){
+    const header=document.querySelector('header');
+    if(!header)return;
+    let nav=header.querySelector('nav');
+    if(!nav){
+      nav=document.createElement('nav');
+      const account=header.querySelector('.accountBox');
+      if(account)header.insertBefore(nav,account);else header.append(nav);
+    }
+
+    const lang=currentLang();
+    const items=[
+      {href:'/',ar:'الرئيسية',en:'Home',active:path=>path==='/'||path==='/index.html'},
+      {href:'/boardview/index.html',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
+      {href:'/bios/index.html',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
+      {href:'/diagnostics/index.html',ar:'التشخيص',en:'Diagnostics',active:path=>path.startsWith('/diagnostics/')},
+      {href:'/component-testing/index.html',ar:'فحص القطع',en:'Component Testing',active:path=>path.startsWith('/component-testing/')},
+      {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
+      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'}
+    ];
+
+    const path=location.pathname;
+    nav.replaceChildren(...items.map(item=>{
+      const a=document.createElement('a');
+      a.href=item.href;
+      a.textContent=item[lang];
+      if(item.active(path))a.setAttribute('aria-current','page');
+      return a;
+    }));
+  }
+
   async function loadAuth(){
     try{
       const r=await fetch('/api/auth/me',{cache:'no-store'});
@@ -36,6 +71,7 @@
   }
 
   function renderHeader(){
+    standardizeHeaderNav();
     const header=document.querySelector('header');
     if(!header||header.querySelector('.accountBox'))return;
     const box=document.createElement('div');
@@ -119,5 +155,6 @@
     location.href=u.href;
   },true);
 
+  standardizeHeaderNav();
   const authPromise=loadAuth();
 })();
