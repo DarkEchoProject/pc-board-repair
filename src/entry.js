@@ -130,6 +130,33 @@ function withYouTube(response) {
     .transform(response);
 }
 
+function withSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("x-frame-options", "SAMEORIGIN");
+  headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
+  headers.set("strict-transport-security", "max-age=31536000");
+
+  const contentType = headers.get("content-type") || "";
+  if (contentType.includes("text/html")) {
+    headers.set(
+      "content-security-policy",
+      "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://i.ytimg.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com; connect-src 'self'; font-src 'self' data:; form-action 'self' https://accounts.google.com; upgrade-insecure-requests",
+    );
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function finalize(response) {
+  return withSecurityHeaders(withYouTube(response));
+}
+
 export { ChatRoom };
 
 export default {
@@ -139,19 +166,19 @@ export default {
     const response = await appWorker.fetch(request, wrappedEnv, ctx);
 
     const match = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
-    if (!match || response.status < 300 || response.status >= 400) return withYouTube(response);
+    if (!match || response.status < 300 || response.status >= 400) return finalize(response);
 
     const location = response.headers.get("location") || "";
     let locationPath = "";
     try { locationPath = new URL(location, SITE).pathname; } catch {}
-    if (!locationPath.startsWith("/downloads/")) return response;
+    if (!locationPath.startsWith("/downloads/")) return finalize(response);
 
     const largeBoards = await getLargeBoards(env);
     const board = largeBoards.find(item => fileKey(item.file) === match[1].toLowerCase());
-    if (!board) return response;
+    if (!board) return finalize(response);
 
     const target = safeReleaseUrl(board.download_url);
-    if (!target) return new Response("Invalid download target", { status: 500 });
-    return Response.redirect(target, 302);
+    if (!target) return finalize(new Response("Invalid download target", { status: 500 }));
+    return finalize(Response.redirect(target, 302));
   },
 };
