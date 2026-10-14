@@ -1,5 +1,5 @@
 name = "pc-board-repair"
-main = "src/app.js"
+main = "src/entry.js"
 compatibility_date = "2026-10-02"
 
 [vars]
