@@ -204,7 +204,7 @@ export default {
     if (!board) return finalize(response);
 
     const target = safeReleaseUrl(board.download_url);
-    if (!target) return finalize(response);
+    if (!target) return finalize(new Response("Invalid download target", { status: 500 }));
     return finalize(Response.redirect(target, 302));
   },
 };
