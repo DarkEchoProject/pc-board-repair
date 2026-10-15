@@ -10,6 +10,22 @@
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   };
 
+  function fileKey(value){
+    const s=String(value??'');
+    let h=2166136261;
+    for(let i=0;i<s.length;i++){
+      h^=s.charCodeAt(i);
+      h=Math.imul(h,16777619);
+    }
+    return(h>>>0).toString(36);
+  }
+
+  function normalizeBoards(all){
+    return(Array.isArray(all)?all:[])
+      .flatMap(item=>Array.isArray(item?.value)?item.value:[item])
+      .filter(item=>item&&typeof item.file==='string'&&item.file.trim());
+  }
+
   function addStyles(){
     if(document.getElementById('pcbrReaderGridStyles'))return;
     const style=document.createElement('style');
@@ -24,8 +40,16 @@
       .pcbrReaderMeta{font-size:12px;color:#9fc1dd;line-height:1.65;word-break:break-word}
       .pcbrReaderCard .btn{align-self:flex-start;padding:10px 14px;font-size:14px}
       .pcbrReaderIcon{font-size:26px;line-height:1;margin-bottom:8px}
+      .pcbrBoardToolHelp{margin:16px 0 0;padding:15px 16px;border:1px solid #20bdf2;border-radius:14px;background:linear-gradient(145deg,rgba(18,56,92,.92),rgba(12,34,58,.92))}
+      .pcbrBoardToolHelp h3{margin:0 0 7px;font-size:18px}
+      .pcbrBoardToolHelp p{margin:5px 0;line-height:1.65}
+      .pcbrBoardToolHelp .pcbrToolFormat{font-size:12px;color:#9fc1dd}
+      .pcbrBoardToolButtons{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:11px}
+      .pcbrBoardToolButtons .btn{padding:9px 13px;font-size:13px}
+      .pcbrBoardToolAlt{font-size:13px;color:#9fdfff;text-decoration:none}
+      .pcbrBoardToolAlt:hover{text-decoration:underline}
       @media(max-width:1100px){.pcbrReaderGrid{grid-template-columns:1fr 1fr}}
-      @media(max-width:640px){.pcbrReaderGrid{grid-template-columns:1fr}.pcbrReaderCard .btn{width:100%;text-align:center}}
+      @media(max-width:640px){.pcbrReaderGrid{grid-template-columns:1fr}.pcbrReaderCard .btn{width:100%;text-align:center}.pcbrBoardToolButtons{align-items:stretch;flex-direction:column}.pcbrBoardToolButtons .btn,.pcbrBoardToolAlt{width:100%;text-align:center;box-sizing:border-box}}
     `;
     document.head.append(style);
   }
@@ -110,6 +134,148 @@
     oldFlex.replaceWith(grid);
   }
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupReaders,{once:true});
-  else setupReaders();
+  function hasFormatToken(text,token){
+    return new RegExp(`(^|[^a-z0-9])${token}([^a-z0-9]|$)`,'i').test(text);
+  }
+
+  function detectBoardFormat(board){
+    const text=`${board?.file||''} ${board?.type||''}`.toLowerCase();
+    if(text.includes('allegro')||hasFormatToken(text,'brd'))return 'BRD';
+    if(hasFormatToken(text,'fz'))return 'FZ';
+    if(hasFormatToken(text,'bdv'))return 'BDV';
+    if(hasFormatToken(text,'bvr'))return 'BVR';
+    if(hasFormatToken(text,'cae'))return 'CAE';
+    if(hasFormatToken(text,'asc'))return 'ASC';
+    if(hasFormatToken(text,'brd2'))return 'BRD2';
+    if(hasFormatToken(text,'tvw'))return 'TVW';
+    return String(board?.type||'BoardView').trim()||'BoardView';
+  }
+
+  function recommendedTool(board,l){
+    const format=detectBoardFormat(board);
+    const upper=format.toUpperCase();
+
+    if(upper==='BRD'){
+      return {
+        format,
+        name:'TRACE Boardviewer',
+        url:TRACE_URL,
+        external:true,
+        description:l==='en'
+          ?'Recommended first for old BRD files, including legacy Allegro boards such as 16.x files.'
+          :'الخيار الأول الموصى به لملفات BRD القديمة، ومنها خرائط Allegro القديمة مثل ملفات 16.x.',
+        altName:'OpenBoardView',
+        altUrl:OPENBOARDVIEW_URL
+      };
+    }
+
+    if(upper==='FZ'){
+      return {
+        format,
+        name:'FlexBV',
+        url:FLEXBV_URL,
+        external:false,
+        description:l==='en'?'Start with FlexBV for this FZ BoardView file.':'ابدأ بـ FlexBV لفتح ملف BoardView بصيغة FZ.',
+        altName:'OpenBoardView',
+        altUrl:OPENBOARDVIEW_URL
+      };
+    }
+
+    if(['BDV','BVR','CAE','ASC'].includes(upper)){
+      return {
+        format,
+        name:'OpenBoardView',
+        url:OPENBOARDVIEW_URL,
+        external:false,
+        description:l==='en'?`OpenBoardView is the recommended first choice for ${upper} files.`:`OpenBoardView هو الخيار الأول الموصى به لملفات ${upper}.`,
+        altName:'TRACE Boardviewer',
+        altUrl:TRACE_URL,
+        altExternal:true
+      };
+    }
+
+    return {
+      format,
+      name:'TRACE Boardviewer',
+      url:TRACE_URL,
+      external:true,
+      description:l==='en'?'If you are unsure which reader to use, start with TRACE Boardviewer and try the alternatives if needed.':'إذا لم تكن الصيغة واضحة، ابدأ بـ TRACE Boardviewer ثم جرّب البدائل عند الحاجة.',
+      altName:'OpenBoardView',
+      altUrl:OPENBOARDVIEW_URL
+    };
+  }
+
+  async function setupBoardRecommendation(){
+    const match=location.pathname.match(/^\/boardview\/item\/([a-z0-9]+)/i);
+    if(!match||document.getElementById('pcbrBoardToolHelp'))return;
+
+    const actions=document.querySelector('.boardActions');
+    if(!actions)return;
+
+    let board=null;
+    try{
+      const r=await fetch('/data/boards.json',{cache:'no-store'});
+      if(!r.ok)return;
+      const boards=normalizeBoards(await r.json());
+      board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
+    }catch{return;}
+    if(!board)return;
+
+    addStyles();
+    const l=lang();
+    const tool=recommendedTool(board,l);
+    const archive=/\.(?:zip|rar|7z)$/i.test(String(board.file||''));
+
+    const box=document.createElement('section');
+    box.id='pcbrBoardToolHelp';
+    box.className='pcbrBoardToolHelp';
+
+    const title=document.createElement('h3');
+    title.textContent=l==='en'?'🛠️ How to open this BoardView file':'🛠️ كيف تفتح ملف BoardView هذا؟';
+
+    const desc=document.createElement('p');
+    desc.textContent=tool.description;
+
+    const format=document.createElement('p');
+    format.className='pcbrToolFormat';
+    format.textContent=(l==='en'?'Detected format: ':'الصيغة المكتشفة: ')+tool.format+(archive?(l==='en'?' • Compressed archive':' • ملف مضغوط'):'');
+
+    box.append(title,desc,format);
+
+    if(archive){
+      const note=document.createElement('p');
+      note.className='pcbrToolFormat';
+      note.textContent=l==='en'?'Extract the ZIP/RAR/7Z archive first, then open the BoardView file inside it.':'فك ضغط ملف ZIP/RAR/7Z أولًا، ثم افتح ملف BoardView الموجود بداخله.';
+      box.append(note);
+    }
+
+    const buttons=document.createElement('div');
+    buttons.className='pcbrBoardToolButtons';
+
+    const primary=document.createElement('a');
+    primary.className='btn';
+    primary.href=tool.url;
+    primary.textContent=(l==='en'?'Download ':'تحميل ')+tool.name;
+    if(tool.external){primary.target='_blank';primary.rel='noopener noreferrer';}
+    else primary.setAttribute('download','');
+
+    const alt=document.createElement('a');
+    alt.className='pcbrBoardToolAlt';
+    alt.href=tool.altUrl;
+    alt.textContent=(l==='en'?'Alternative: ':'بديل: ')+tool.altName;
+    if(tool.altExternal){alt.target='_blank';alt.rel='noopener noreferrer';}
+    else alt.setAttribute('download','');
+
+    buttons.append(primary,alt);
+    box.append(buttons);
+    actions.after(box);
+  }
+
+  function setup(){
+    setupReaders();
+    setupBoardRecommendation();
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});
+  else setup();
 })();
