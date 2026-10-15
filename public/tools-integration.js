@@ -1,6 +1,7 @@
 (()=>{
   'use strict';
 
+  const TRACE_URL='https://github.com/DarkEchoProject/pc-board-repair/releases/download/boardview-tools/TRACE-Boardviewer-1.3.3.exe';
   const FLEXBV_URL='/downloads/flexbv-free-5.3162-win64.zip';
   const OPENBOARDVIEW_URL='/downloads/openboardview-10.0.0-win32.zip';
   const ALLEGRO_URL='https://www.cadence.com/en_US/home/tools/pcb-design-and-analysis/allegro-downloads-start.html';
@@ -14,25 +15,28 @@
     const style=document.createElement('style');
     style.id='pcbrReaderGridStyles';
     style.textContent=`
-      .pcbrReaderGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 24px}
+      .pcbrReaderGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 24px}
       .pcbrReaderCard{display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-width:0;background:linear-gradient(145deg,#12385c,#0c223a);border:1px solid #20bdf2;border-radius:16px;padding:17px 18px}
+      .pcbrReaderCard.pcbrReaderRecommended{border-width:2px;box-shadow:0 0 0 1px rgba(32,189,242,.15)}
+      .pcbrReaderBadge{display:inline-block;margin:0 0 8px;padding:3px 8px;border-radius:999px;background:#20bdf2;color:#06111c;font-size:11px;font-weight:800}
       .pcbrReaderCard h2{font-size:20px;margin:0 0 7px;line-height:1.3}
       .pcbrReaderCard p{margin:0 0 7px}
-      .pcbrReaderMeta{font-size:12px;color:#9fc1dd;line-height:1.65}
+      .pcbrReaderMeta{font-size:12px;color:#9fc1dd;line-height:1.65;word-break:break-word}
       .pcbrReaderCard .btn{align-self:flex-start;padding:10px 14px;font-size:14px}
       .pcbrReaderIcon{font-size:26px;line-height:1;margin-bottom:8px}
-      @media(max-width:900px){.pcbrReaderGrid{grid-template-columns:1fr 1fr}}
+      @media(max-width:1100px){.pcbrReaderGrid{grid-template-columns:1fr 1fr}}
       @media(max-width:640px){.pcbrReaderGrid{grid-template-columns:1fr}.pcbrReaderCard .btn{width:100%;text-align:center}}
     `;
     document.head.append(style);
   }
 
-  function card({id,icon,title,description,meta,url,label,download=false}){
+  function card({id,icon,title,description,meta,url,label,download=false,recommended=false,badge=''}){
     const el=document.createElement('div');
     el.id=id;
-    el.className='pcbrReaderCard';
+    el.className=`pcbrReaderCard${recommended?' pcbrReaderRecommended':''}`;
     el.innerHTML=`
       <div>
+        ${badge?`<span class="pcbrReaderBadge">${badge}</span>`:''}
         <div class="pcbrReaderIcon" aria-hidden="true">${icon}</div>
         <h2>${title}</h2>
         <p class="muted">${description}</p>
@@ -56,11 +60,24 @@
     grid.className='pcbrReaderGrid';
     grid.setAttribute('aria-label',l==='en'?'BoardView reader downloads':'برامج فتح ملفات BoardView');
 
+    const trace=card({
+      id:'pcbrTraceBoardviewer',
+      icon:'🧩',
+      title:'TRACE Boardviewer',
+      description:l==='en'?'Recommended for older BoardView files, especially legacy Allegro BRD files.':'الخيار الموصى به للخرائط القديمة، وخصوصًا ملفات Allegro BRD القديمة.',
+      meta:l==='en'?'Portable Windows x64 • Legacy Allegro BRD support • SHA256 verified':'Windows x64 محمول • يدعم Allegro BRD القديمة • تم التحقق من SHA256',
+      url:TRACE_URL,
+      label:l==='en'?'Download TRACE':'تحميل TRACE',
+      download:false,
+      recommended:true,
+      badge:l==='en'?'Recommended for old BRD':'موصى به للـ BRD القديمة'
+    });
+
     const flex=card({
       id:'pcbrFlexBV',
       icon:'🧭',
       title:'FlexBV',
-      description:l==='en'?'Primary BoardView reader for many common repair files.':'القارئ الأساسي لعدد كبير من ملفات BoardView الشائعة.',
+      description:l==='en'?'Primary BoardView reader for many common repair files.':'قارئ مناسب لعدد كبير من ملفات BoardView الشائعة.',
       meta:'FlexBV Free 5.3162 • Windows 64-bit',
       url:FLEXBV_URL,
       label:l==='en'?'Download FlexBV':'تحميل FlexBV',
@@ -82,14 +99,14 @@
       id:'pcbrAllegroViewer',
       icon:'📐',
       title:'Allegro X Free Viewer',
-      description:l==='en'?'Official Cadence viewer for Allegro PCB board files.':'العارض الرسمي من Cadence لملفات لوحات Allegro.',
+      description:l==='en'?'Official Cadence viewer for newer Allegro PCB files. Older 16.x BRD files may require conversion.':'العارض الرسمي من Cadence لملفات Allegro الحديثة. ملفات BRD القديمة 16.x قد تحتاج تحويلًا.',
       meta:'.BRD • .DPF • .MDD • .DRA • Windows',
       url:ALLEGRO_URL,
       label:l==='en'?'Download from Cadence':'تحميل من Cadence',
       download:false
     });
 
-    grid.append(flex,open,allegro);
+    grid.append(trace,flex,open,allegro);
     oldFlex.replaceWith(grid);
   }
 
