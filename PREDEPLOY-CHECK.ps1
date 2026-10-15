@@ -62,7 +62,7 @@ foreach ($file in $jsonFiles) {
     }
     try {
         $raw = Get-Content -LiteralPath $file -Raw -Encoding UTF8
-        $null = $raw | ConvertFrom-Json
+        $null = ConvertFrom-Json -InputObject $raw
         Pass "Valid JSON: $file"
     }
     catch {
@@ -72,12 +72,13 @@ foreach ($file in $jsonFiles) {
 
 try {
     $boardsRaw = Get-Content -LiteralPath 'public\data\boards.json' -Raw -Encoding UTF8
-    $boards = @($boardsRaw | ConvertFrom-Json)
-    if ($boards.Count -gt 100) {
-        Pass "BoardView database contains $($boards.Count) top-level records"
+    $boards = ConvertFrom-Json -InputObject $boardsRaw
+    $boardCount = if ($null -eq $boards) { 0 } elseif ($boards -is [System.Array]) { $boards.Length } else { 1 }
+    if ($boardCount -gt 100) {
+        Pass "BoardView database contains $boardCount records"
     }
     else {
-        Fail "BoardView database looks unexpectedly small: $($boards.Count) records"
+        Fail "BoardView database looks unexpectedly small: $boardCount records"
     }
 }
 catch {
