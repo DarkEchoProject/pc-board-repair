@@ -157,13 +157,39 @@ function finalize(response) {
   return withSecurityHeaders(withYouTube(response));
 }
 
+async function withCustom404(request, response, env) {
+  if (response.status !== 404 || request.method !== "GET") return response;
+
+  const url = new URL(request.url);
+  if (
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/download/") ||
+    url.pathname.startsWith("/downloads/")
+  ) return response;
+
+  const accept = request.headers.get("accept") || "";
+  if (accept && !accept.includes("text/html") && !accept.includes("*/*")) return response;
+
+  const page = await env.ASSETS.fetch(new Request(`${SITE}/404.html`));
+  if (!page.ok) return response;
+
+  const headers = new Headers(page.headers);
+  headers.set("cache-control", "no-store");
+  return new Response(page.body, {
+    status: 404,
+    statusText: "Not Found",
+    headers,
+  });
+}
+
 export { ChatRoom };
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const wrappedEnv = wrappedEnvironment(env);
-    const response = await appWorker.fetch(request, wrappedEnv, ctx);
+    let response = await appWorker.fetch(request, wrappedEnv, ctx);
+    response = await withCustom404(request, response, env);
 
     const match = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
     if (!match || response.status < 300 || response.status >= 400) return finalize(response);
