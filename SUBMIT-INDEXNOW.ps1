@@ -22,7 +22,8 @@ function Get-LiveSitemapUrls {
 
 function Test-IndexNowKey {
     $stamp = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
-    $response = Invoke-WebRequest -UseBasicParsing -Uri "$KeyLocation?verify=$stamp" -Headers @{ 'Cache-Control' = 'no-cache' }
+    $verifyUrl = "${KeyLocation}?verify=$stamp"
+    $response = Invoke-WebRequest -UseBasicParsing -Uri $verifyUrl -Headers @{ 'Cache-Control' = 'no-cache' }
     if ($response.StatusCode -ne 200) {
         throw "IndexNow key file is not publicly reachable. HTTP $($response.StatusCode)"
     }
