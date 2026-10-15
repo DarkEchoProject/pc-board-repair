@@ -93,7 +93,7 @@ class YouTubeHead {
   element(element) {
     element.append(`
       <script src="/youtube-integration.js?v=20261015-5" defer></script>
-      <script src="/tools-integration.js?v=20261015-3" defer></script>
+      <script src="/tools-integration.js?v=20261015-4" defer></script>
       <script>
       (()=>{
         const href='https://www.youtube.com/@PCBoardRepairArabic';
@@ -204,7 +204,7 @@ export default {
     if (!board) return finalize(response);
 
     const target = safeReleaseUrl(board.download_url);
-    if (!target) return finalize(new Response("Invalid download target", { status: 500 }));
+    if (!target) return finalize(response);
     return finalize(Response.redirect(target, 302));
   },
 };
