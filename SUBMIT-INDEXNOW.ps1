@@ -4,7 +4,7 @@ $Site = 'https://pc-board-repair.alinasser00001.workers.dev'
 $HostName = 'pc-board-repair.alinasser00001.workers.dev'
 $Key = '42670790-e807-440c-ad00-45ab0767a5ad'
 $KeyLocation = "$Site/$Key.txt"
-$IndexNowEndpoint = 'https://api.indexnow.org/indexnow'
+$IndexNowEndpoint = 'https://www.bing.com/indexnow'
 
 function Get-LiveSitemapUrls {
     $stamp = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -20,21 +20,53 @@ function Get-LiveSitemapUrls {
     return @($urls | Where-Object { $_ -like "$Site*" } | Select-Object -Unique)
 }
 
+function Test-IndexNowKey {
+    $stamp = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $response = Invoke-WebRequest -UseBasicParsing -Uri "$KeyLocation?verify=$stamp" -Headers @{ 'Cache-Control' = 'no-cache' }
+    if ($response.StatusCode -ne 200) {
+        throw "IndexNow key file is not publicly reachable. HTTP $($response.StatusCode)"
+    }
+    $liveKey = [string]$response.Content
+    if ($liveKey.Trim() -ne $Key) {
+        throw 'IndexNow key file is reachable, but its content does not match the configured key.'
+    }
+    Write-Host 'IndexNow: public key file verified successfully.'
+}
+
 function Submit-IndexNowBatch([string[]]$Urls) {
     if (-not $Urls -or $Urls.Count -eq 0) { return }
 
+    # The key is hosted at the site root, so keyLocation is intentionally omitted.
+    # Bing will validate https://<host>/<key>.txt according to the IndexNow protocol.
     $payload = @{
-        host        = $HostName
-        key         = $Key
-        keyLocation = $KeyLocation
-        urlList     = @($Urls)
+        host    = $HostName
+        key     = $Key
+        urlList = @($Urls)
     } | ConvertTo-Json -Depth 4 -Compress
 
-    $response = Invoke-WebRequest -UseBasicParsing -Method Post -Uri $IndexNowEndpoint -ContentType 'application/json; charset=utf-8' -Body $payload
-    if ($response.StatusCode -notin 200, 202) {
-        throw "IndexNow returned HTTP $($response.StatusCode)"
+    try {
+        $response = Invoke-WebRequest -UseBasicParsing -Method Post -Uri $IndexNowEndpoint -ContentType 'application/json; charset=utf-8' -Body $payload
+        if ($response.StatusCode -notin 200, 202) {
+            throw "IndexNow returned HTTP $($response.StatusCode)"
+        }
+        Write-Host "IndexNow accepted $($Urls.Count) URL(s). HTTP $($response.StatusCode)."
+    } catch {
+        $status = $null
+        $body = ''
+        if ($_.Exception.Response) {
+            try { $status = [int]$_.Exception.Response.StatusCode } catch {}
+            try {
+                $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+                $body = $reader.ReadToEnd().Trim()
+                $reader.Dispose()
+            } catch {}
+        }
+        if ($status) {
+            $detail = if ($body) { " Response: $body" } else { '' }
+            throw "IndexNow submission failed with HTTP $status.$detail"
+        }
+        throw
     }
-    Write-Host "IndexNow accepted $($Urls.Count) URL(s). HTTP $($response.StatusCode)."
 }
 
 $currentCommit = (& git rev-parse HEAD 2>$null).Trim()
@@ -55,6 +87,8 @@ if ($lastCommit -eq $currentCommit) {
     Write-Host 'IndexNow: this commit was already submitted. Nothing to send.'
     exit 0
 }
+
+Test-IndexNowKey
 
 $submitAll = $false
 $changedFiles = @()
