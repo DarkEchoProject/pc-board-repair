@@ -35,6 +35,16 @@ const boardPath = (board) => {
   return `/boardview/item/${fileKey(board.file)}/${readable}`;
 };
 
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#039;",
+}[c]));
+
+const norm = (value) => String(value ?? "").trim().toLowerCase();
+
 function sitemapDate(value) {
   if (!value) return "";
   const date = new Date(value);
@@ -239,6 +249,86 @@ async function withSitemapLastmod(response, env) {
   }
 }
 
+function similarBoards(board, boards) {
+  const brand = norm(board.brand);
+  const model = norm(board.model);
+  const boardNo = norm(board.board);
+  const platform = norm(board.platform);
+  const type = norm(board.type);
+
+  return boards
+    .filter(item => norm(item.file) !== norm(board.file))
+    .map(item => {
+      let score = 0;
+      if (brand && norm(item.brand) === brand) score += 1;
+      if (boardNo && norm(item.board) === boardNo) score += 7;
+      if (model && norm(item.model) === model) score += 6;
+      if (platform && norm(item.platform) === platform) score += 2;
+      if (type && norm(item.type) === type) score += 1;
+      return { item, score };
+    })
+    .filter(entry => entry.score >= 6)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4)
+    .map(entry => entry.item);
+}
+
+function boardSeoBlock(board, similar) {
+  const brand = escapeHtml(board.brand);
+  const model = escapeHtml(board.model || "BoardView");
+  const boardNo = escapeHtml(board.board || "");
+  const revision = escapeHtml(board.revision || "");
+  const platform = escapeHtml(board.platform || "");
+  const type = escapeHtml(board.type || "BoardView");
+  const file = escapeHtml(board.file || "");
+  const companyUrl = `/boardview/company.html?brand=${encodeURIComponent(board.brand)}`;
+
+  const facts = [
+    `هذه الصفحة مخصصة لملف ${type} الخاص بلوحة ${brand}${board.model ? ` ${model}` : ""}.`,
+    boardNo ? `رقم البورد المسجل للملف هو ${boardNo}.` : "",
+    revision ? `الإصدار المسجل هو ${revision}.` : "",
+    platform ? `المنصة المسجلة في قاعدة الملفات هي ${platform}.` : "",
+    file ? `اسم الملف الأصلي هو ${file}.` : "",
+  ].filter(Boolean).join(" ");
+
+  const similarHtml = similar.length
+    ? `<div><h3>ملفات قريبة من نفس الموديل أو رقم البورد</h3><div class="grid">${similar.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision, item.type].filter(Boolean).join(" • ") || item.file)}</p></a>`).join("")}</div></div>`
+    : "";
+
+  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
+}
+
+class BoardSeoAfter {
+  constructor(html) {
+    this.html = html;
+  }
+  element(element) {
+    element.after(this.html, { html: true });
+  }
+}
+
+async function withBoardSeo(request, response, env) {
+  if (!response.ok || request.method !== "GET") return response;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
+
+  const url = new URL(request.url);
+  const match = url.pathname.match(/^\/boardview\/item\/([a-z0-9]+)(?:\/[^/]*)?\/?$/i);
+  if (!match) return response;
+
+  try {
+    const boards = await getMergedBoards(env);
+    const board = boards.find(item => fileKey(item.file) === match[1].toLowerCase());
+    if (!board) return response;
+    const html = boardSeoBlock(board, similarBoards(board, boards));
+    return new HTMLRewriter()
+      .on("article.boardDetail", new BoardSeoAfter(html))
+      .transform(response);
+  } catch {
+    return response;
+  }
+}
+
 async function withCustom404(request, response, env) {
   if (response.status !== 404 || request.method !== "GET") return response;
 
@@ -273,6 +363,7 @@ export default {
     let response = await appWorker.fetch(request, wrappedEnv, ctx);
     if (url.pathname === "/sitemap.xml") response = await withSitemapLastmod(response, env);
     response = await withCustom404(request, response, env);
+    response = await withBoardSeo(request, response, env);
 
     const match = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
     if (!match || response.status < 300 || response.status >= 400) return finalize(response);
