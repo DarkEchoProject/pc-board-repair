@@ -81,13 +81,12 @@ async function hmacKey(secret) {
 }
 
 function sessionSigningSecret(env) {
-  return String(env.SESSION_SECRET || env.GOOGLE_CLIENT_SECRET || "").trim();
+  return String(env.SESSION_SECRET || "").trim();
 }
 
 function sessionVerificationSecrets(env) {
   const current = String(env.SESSION_SECRET || "").trim();
-  const legacy = String(env.GOOGLE_CLIENT_SECRET || "").trim();
-  return [...new Set([current, legacy].filter(Boolean))];
+  return current ? [current] : [];
 }
 
 async function createSession(user, env) {
