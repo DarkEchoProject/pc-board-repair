@@ -95,17 +95,28 @@
     try{return new Intl.DateTimeFormat(lang==='en'?'en-GB':'ar-LB',{year:'numeric',month:'short',day:'numeric'}).format(d);}catch{return d.toISOString().slice(0,10);}
   }
 
-  function addMetaRow(list,label,value,extraClass=''){
-    const row=document.createElement('div');
-    row.className='detailRow pcbrExtraMeta';
-    const span=document.createElement('span');
-    span.textContent=label;
-    const strong=document.createElement('strong');
-    if(extraClass)strong.className=extraClass;
-    strong.textContent=value;
-    row.append(span,strong);
-    list.append(row);
-    return strong;
+  function fileFormat(board){
+    const file=String(board?.file||'').trim();
+    const archive=file.match(/\.(zip|rar|7z)$/i)?.[1]?.toUpperCase()||'';
+    const withoutArchive=archive?file.replace(/\.(zip|rar|7z)$/i,''):file;
+    const ext=withoutArchive.match(/\.([a-z0-9]{2,8})$/i)?.[1]?.toUpperCase()||'';
+    const type=String(board?.type||'').trim();
+    const core=ext||type||'BoardView';
+    return archive?`${core} • ${archive}`:core;
+  }
+
+  function addMetaTile(grid,label,value,extraClass=''){
+    const tile=document.createElement('div');
+    tile.className='pcbrMetaTile';
+    const lab=document.createElement('span');
+    lab.className='pcbrMetaLabel';
+    lab.textContent=label;
+    const val=document.createElement('strong');
+    val.className=`pcbrMetaValue${extraClass?` ${extraClass}`:''}`;
+    val.textContent=value;
+    tile.append(lab,val);
+    grid.append(tile);
+    return val;
   }
 
   async function getDownloadDisplay(key,lang){
@@ -127,18 +138,17 @@
     const match=location.pathname.match(/^\/boardview\/item\/([a-z0-9]+)/i);
     if(!match)return;
     const list=document.querySelector('.detailList');
-    if(!list||list.dataset.pcbrExtraMeta==='1')return;
-    list.dataset.pcbrExtraMeta='1';
+    if(!list||document.getElementById('pcbrFileMetaPanel'))return;
 
     const lang=currentLang();
     const t=lang==='en'?{
-      size:'File size',added:'Date added',downloads:'Downloads',sha:'SHA-256',status:'File status',
+      heading:'File information',format:'File format',size:'File size',added:'Date added',downloads:'Downloads',sha:'SHA-256',status:'File status',
       unavailable:'Not available yet',loginForSize:'Available after sign-in',notCalculated:'Not calculated yet',
-      cleaned:'Cleaned',verified:'Verified',unverified:'Unverified'
+      cleaned:'Cleaned',verified:'Verified',unverified:'Unverified',copy:'Copy SHA-256',copied:'Copied'
     }:{
-      size:'حجم الملف',added:'تاريخ الإضافة',downloads:'عدد التحميلات',sha:'SHA-256',status:'حالة الملف',
+      heading:'معلومات الملف',format:'صيغة الملف',size:'حجم الملف',added:'تاريخ الإضافة',downloads:'عدد التحميلات',sha:'SHA-256',status:'حالة الملف',
       unavailable:'غير متوفر بعد',loginForSize:'يتوفر بعد تسجيل الدخول',notCalculated:'غير محسوب بعد',
-      cleaned:'Cleaned',verified:'Verified',unverified:'غير موثّق'
+      cleaned:'Cleaned',verified:'Verified',unverified:'غير موثّق',copy:'نسخ SHA-256',copied:'تم النسخ'
     };
 
     let board=null;
@@ -163,13 +173,53 @@
     const cleaned=isTrue(board.cleaned)||/^Imported automatically from cleaned archive/i.test(String(board.note||''));
     const verified=isTrue(board.verified)||String(board.status||'').toLowerCase()==='verified';
     const status=verified&&cleaned?`${t.cleaned} • ${t.verified}`:verified?t.verified:cleaned?`${t.cleaned} • ${t.unverified}`:t.unverified;
+    const statusClass=verified?'pcbrStatusVerified':cleaned?'pcbrStatusCleaned':'pcbrStatusUnverified';
 
-    addMetaRow(list,t.size,size?formatBytes(size,lang):(currentUser?t.unavailable:t.loginForSize));
-    addMetaRow(list,t.added,added?formatDate(added,lang):t.unavailable);
-    const downloadsRow=addMetaRow(list,t.downloads,lang==='en'?'Loading…':'جاري التحميل…');
-    addMetaRow(list,t.sha,sha||t.notCalculated,sha?'checksumValue':'');
-    addMetaRow(list,t.status,status,'fileStatusValue');
-    downloadsRow.textContent=await getDownloadDisplay(match[1],lang);
+    const panel=document.createElement('section');
+    panel.id='pcbrFileMetaPanel';
+    panel.className='pcbrFileMetaPanel';
+    const heading=document.createElement('h2');
+    heading.textContent=t.heading;
+    const grid=document.createElement('div');
+    grid.className='pcbrFileMetaGrid';
+
+    addMetaTile(grid,t.format,fileFormat(board),'pcbrFormatValue');
+    addMetaTile(grid,t.size,size?formatBytes(size,lang):(currentUser?t.unavailable:t.loginForSize));
+    addMetaTile(grid,t.added,added?formatDate(added,lang):t.unavailable);
+    const downloadsValue=addMetaTile(grid,t.downloads,lang==='en'?'Loading…':'جاري التحميل…');
+    addMetaTile(grid,t.status,status,statusClass);
+
+    const shaTile=document.createElement('div');
+    shaTile.className='pcbrMetaTile pcbrMetaTileWide';
+    const shaLabel=document.createElement('span');
+    shaLabel.className='pcbrMetaLabel';
+    shaLabel.textContent=t.sha;
+    const shaLine=document.createElement('div');
+    shaLine.className='pcbrShaLine';
+    const shaValue=document.createElement('code');
+    shaValue.className='pcbrShaValue';
+    shaValue.textContent=sha||t.notCalculated;
+    shaLine.append(shaValue);
+    if(sha){
+      const copy=document.createElement('button');
+      copy.type='button';
+      copy.className='pcbrCopySha';
+      copy.textContent=t.copy;
+      copy.addEventListener('click',async()=>{
+        try{
+          await navigator.clipboard.writeText(sha);
+          copy.textContent=t.copied;
+          setTimeout(()=>{copy.textContent=t.copy;},1400);
+        }catch{}
+      });
+      shaLine.append(copy);
+    }
+    shaTile.append(shaLabel,shaLine);
+    grid.append(shaTile);
+
+    panel.append(heading,grid);
+    list.after(panel);
+    downloadsValue.textContent=await getDownloadDisplay(match[1],lang);
   }
 
   async function loadAuth(){
