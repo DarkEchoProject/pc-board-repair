@@ -62,6 +62,16 @@ if errorlevel 1 (
 )
 
 echo.
+echo Notifying IndexNow about new or changed pages...
+echo.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0SUBMIT-INDEXNOW.ps1"
+if errorlevel 1 (
+  echo.
+  echo WARNING: Site deploy succeeded, but IndexNow notification failed.
+  echo The site is still live. IndexNow can be retried on the next deploy.
+)
+
+echo.
 echo DEPLOY COMPLETED SUCCESSFULLY.
 echo Open: https://pc-board-repair.alinasser00001.workers.dev
 echo Then press Ctrl+F5 in the browser.
