@@ -107,13 +107,14 @@ if (-not $lastCommit) {
         $globalBoardFiles = @(
             'src/index.js',
             'src/app.js',
+            'src/seo-entry.js',
             'public/data/boards.json',
             'public/data/boards-large.json',
             'public/auth-ui.js'
         )
         if ($changedFiles | Where-Object { $_ -in $globalBoardFiles }) {
             $submitAll = $true
-            Write-Host 'IndexNow: BoardView/search content changed; submitting the full sitemap.'
+            Write-Host 'IndexNow: sitemap or BoardView/search content changed; submitting the full sitemap.'
         }
     }
 }
