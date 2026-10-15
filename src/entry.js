@@ -19,6 +19,45 @@ const fileKey = (value) => {
   return (h >>> 0).toString(36);
 };
 
+const textSlug = (value) => {
+  const slug = String(value ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120);
+  return slug || "boardview";
+};
+
+const boardPath = (board) => {
+  const readable = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"));
+  return `/boardview/item/${fileKey(board.file)}/${readable}`;
+};
+
+function sitemapDate(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toISOString().slice(0, 10);
+}
+
+function boardLastmod(board) {
+  return sitemapDate(
+    board.modified_at ??
+    board.modifiedAt ??
+    board.updated_at ??
+    board.updatedAt ??
+    board.last_modified ??
+    board.lastModified ??
+    board.added_at ??
+    board.addedAt ??
+    board.date_added ??
+    board.dateAdded ??
+    "",
+  );
+}
+
 async function readJsonAsset(assets, path, required = false) {
   const response = await assets.fetch(new Request(`${SITE}${path}`));
   if (!response.ok) {
@@ -157,6 +196,49 @@ function finalize(response) {
   return withSecurityHeaders(withYouTube(response));
 }
 
+async function withSitemapLastmod(response, env) {
+  const contentType = response.headers.get("content-type") || "";
+  if (!response.ok || !contentType.includes("xml")) return response;
+
+  const fallback = response.clone();
+  try {
+    let xml = await response.text();
+    const boards = await getMergedBoards(env);
+    let latestBoardDate = "";
+
+    for (const board of boards) {
+      const lastmod = boardLastmod(board);
+      if (!lastmod) continue;
+      if (!latestBoardDate || lastmod > latestBoardDate) latestBoardDate = lastmod;
+
+      const loc = `${SITE}${boardPath(board)}`;
+      const plain = `<url><loc>${loc}</loc></url>`;
+      const enriched = `<url><loc>${loc}</loc><lastmod>${lastmod}</lastmod></url>`;
+      if (xml.includes(plain)) xml = xml.replace(plain, enriched);
+    }
+
+    if (latestBoardDate) {
+      for (const path of ["/", "/boardview/index.html"]) {
+        const loc = `${SITE}${path}`;
+        const plain = `<url><loc>${loc}</loc></url>`;
+        const enriched = `<url><loc>${loc}</loc><lastmod>${latestBoardDate}</lastmod></url>`;
+        if (xml.includes(plain)) xml = xml.replace(plain, enriched);
+      }
+    }
+
+    const headers = new Headers(response.headers);
+    headers.set("content-type", "application/xml; charset=utf-8");
+    headers.set("cache-control", "public, max-age=300");
+    return new Response(xml, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  } catch {
+    return fallback;
+  }
+}
+
 async function withCustom404(request, response, env) {
   if (response.status !== 404 || request.method !== "GET") return response;
 
@@ -189,6 +271,7 @@ export default {
     const url = new URL(request.url);
     const wrappedEnv = wrappedEnvironment(env);
     let response = await appWorker.fetch(request, wrappedEnv, ctx);
+    if (url.pathname === "/sitemap.xml") response = await withSitemapLastmod(response, env);
     response = await withCustom404(request, response, env);
 
     const match = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
