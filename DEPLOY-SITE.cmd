@@ -6,6 +6,7 @@ echo ==========================================
 echo PC Board Repair - Cloudflare Deploy
 echo ==========================================
 echo.
+
 where npx.cmd >nul 2>nul
 if errorlevel 1 (
   echo ERROR: Node.js / npx was not found.
@@ -14,6 +15,41 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+
+where powershell.exe >nul 2>nul
+if errorlevel 1 (
+  echo ERROR: PowerShell was not found.
+  echo.
+  pause
+  exit /b 1
+)
+
+echo Running pre-deploy checks...
+echo.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0PREDEPLOY-CHECK.ps1"
+if errorlevel 1 (
+  echo.
+  echo DEPLOY CANCELLED because a pre-deploy check failed.
+  echo Fix the FAIL item above, then run DEPLOY-SITE.cmd again.
+  echo.
+  pause
+  exit /b 1
+)
+
+echo.
+echo Validating Worker build with Wrangler dry-run...
+echo.
+call npx.cmd wrangler deploy --dry-run --assets public --name pc-board-repair
+if errorlevel 1 (
+  echo.
+  echo DEPLOY CANCELLED because Wrangler dry-run failed.
+  echo Copy or photograph the error above.
+  echo.
+  pause
+  exit /b 1
+)
+
+echo.
 echo Uploading site to pc-board-repair...
 echo.
 call npx.cmd wrangler deploy --assets public --name pc-board-repair
@@ -24,6 +60,7 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
+
 echo.
 echo DEPLOY COMPLETED SUCCESSFULLY.
 echo Open: https://pc-board-repair.alinasser00001.workers.dev
