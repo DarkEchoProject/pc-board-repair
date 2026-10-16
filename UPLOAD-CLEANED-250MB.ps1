@@ -3,6 +3,7 @@ param(
     [string]$AuditPath = '',
     [int]$BatchNumber = 1,
     [int]$BatchLimitMB = 250,
+    [int]$MaxUploadAttempts = 8,
     [switch]$PreviewOnly
 )
 
@@ -48,12 +49,68 @@ function Get-ReleaseAssets([int64]$ReleaseId) {
     return @($all.ToArray())
 }
 
+function Test-RemoteAssetComplete([int64]$ReleaseId,[string]$AssetName,[int64]$ExpectedSize) {
+    try {
+        $assets = @(Get-ReleaseAssets $ReleaseId)
+        $match = $assets | Where-Object { [string]$_.name -eq $AssetName } | Select-Object -First 1
+        return ($null -ne $match -and [int64]$match.size -eq $ExpectedSize -and [string]$match.state -eq 'uploaded')
+    }
+    catch {
+        return $false
+    }
+}
+
+function Invoke-ReleaseUploadWithRetry(
+    [string]$Tag,
+    [int64]$ReleaseId,
+    [string]$StagePath,
+    [string]$AssetName,
+    [int64]$ExpectedSize,
+    [string]$OriginalFile,
+    [int]$Attempts
+) {
+    for ($attempt = 1; $attempt -le $Attempts; $attempt++) {
+        if (Test-RemoteAssetComplete $ReleaseId $AssetName $ExpectedSize) {
+            Write-Host '  remote asset is already complete - accepted' -ForegroundColor Yellow
+            return
+        }
+
+        if ($attempt -gt 1) {
+            Write-Host ("  retry {0}/{1} ..." -f $attempt,$Attempts) -ForegroundColor Yellow
+        }
+
+        $old = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        & gh release upload $Tag $StagePath --repo $Repo --clobber
+        $code = $LASTEXITCODE
+        $ErrorActionPreference = $old
+
+        if ($code -eq 0) { return }
+
+        # Sometimes GitHub finishes the upload but the client receives a timeout.
+        Start-Sleep -Seconds 2
+        if (Test-RemoteAssetComplete $ReleaseId $AssetName $ExpectedSize) {
+            Write-Host '  upload completed remotely despite the client error - continuing' -ForegroundColor Green
+            return
+        }
+
+        if ($attempt -lt $Attempts) {
+            $delay = [math]::Min(60, 5 * $attempt)
+            Write-Host ("  upload attempt failed; waiting {0}s before retry" -f $delay) -ForegroundColor Yellow
+            Start-Sleep -Seconds $delay
+        }
+    }
+
+    throw "Upload failed after $Attempts attempts: $OriginalFile"
+}
+
 Write-Host ''
 Write-Host '========================================================' -ForegroundColor Cyan
 Write-Host ' PC Board Repair - GitHub Release uploader (250 MB)' -ForegroundColor Cyan
 Write-Host '========================================================' -ForegroundColor Cyan
 Write-Host 'Only rows marked NEW_STANDARD are included.' -ForegroundColor Green
 Write-Host 'Possible-name matches, conflicts, duplicates and NEW_LARGE are excluded.' -ForegroundColor Yellow
+Write-Host ("Automatic upload retries: {0}" -f $MaxUploadAttempts) -ForegroundColor Green
 Write-Host ''
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { throw 'GitHub CLI (gh) is not installed or not available in PATH.' }
@@ -167,16 +224,15 @@ foreach ($p in $selected) {
     if ($actualHash -ne $p.SHA256) { throw "SHA256 changed since audit: $($p.OriginalFile)" }
 
     $uploadStatus = 'UPLOADED'
-    if ($remoteByName.ContainsKey($p.AssetName) -and [int64]$remoteByName[$p.AssetName].size -eq [int64]$p.SizeBytes) {
+    if ($remoteByName.ContainsKey($p.AssetName) -and [int64]$remoteByName[$p.AssetName].size -eq [int64]$p.SizeBytes -and [string]$remoteByName[$p.AssetName].state -eq 'uploaded') {
         $uploadStatus = 'ALREADY_UPLOADED'
         Write-Host '  already present with matching size - skipped' -ForegroundColor Yellow
     } else {
         $stagePath = Join-Path $stageDir $p.AssetName
         Copy-Item -LiteralPath $p.Source -Destination $stagePath -Force
         try {
-            & gh release upload $tag $stagePath --repo $Repo --clobber
-            if ($LASTEXITCODE -ne 0) { throw "Upload failed: $($p.OriginalFile)" }
-            $remoteByName[$p.AssetName] = [pscustomobject]@{name=$p.AssetName;size=[int64]$p.SizeBytes}
+            Invoke-ReleaseUploadWithRetry -Tag $tag -ReleaseId ([int64]$release.id) -StagePath $stagePath -AssetName $p.AssetName -ExpectedSize ([int64]$p.SizeBytes) -OriginalFile $p.OriginalFile -Attempts $MaxUploadAttempts
+            $remoteByName[$p.AssetName] = [pscustomobject]@{name=$p.AssetName;size=[int64]$p.SizeBytes;state='uploaded'}
         }
         finally {
             Remove-Item -LiteralPath $stagePath -Force -ErrorAction SilentlyContinue
@@ -199,6 +255,7 @@ foreach ($a in $finalAssets) { $finalMap[[string]$a.name] = $a }
 foreach ($p in $selected) {
     if (-not $finalMap.ContainsKey($p.AssetName)) { throw "Final verification: missing remote asset $($p.AssetName)" }
     if ([int64]$finalMap[$p.AssetName].size -ne [int64]$p.SizeBytes) { throw "Final verification: wrong remote size for $($p.AssetName)" }
+    if ([string]$finalMap[$p.AssetName].state -ne 'uploaded') { throw "Final verification: remote asset is not complete $($p.AssetName)" }
 }
 
 $batchManifest = Join-Path $ReportDir ("release-upload-batch-{0:D2}.csv" -f $BatchNumber)
