@@ -3,7 +3,6 @@ param(
     [string]$AuditPath = '',
     [int]$BatchNumber = 1,
     [int]$BatchLimitMB = 250,
-    [int]$MaxUploadAttempts = 8,
     [switch]$PreviewOnly
 )
 
@@ -49,68 +48,16 @@ function Get-ReleaseAssets([int64]$ReleaseId) {
     return @($all.ToArray())
 }
 
-function Test-RemoteAssetComplete([int64]$ReleaseId,[string]$AssetName,[int64]$ExpectedSize) {
-    try {
-        $assets = @(Get-ReleaseAssets $ReleaseId)
-        $match = $assets | Where-Object { [string]$_.name -eq $AssetName } | Select-Object -First 1
-        return ($null -ne $match -and [int64]$match.size -eq $ExpectedSize -and [string]$match.state -eq 'uploaded')
-    }
-    catch {
-        return $false
-    }
-}
-
-function Invoke-ReleaseUploadWithRetry(
-    [string]$Tag,
-    [int64]$ReleaseId,
-    [string]$StagePath,
-    [string]$AssetName,
-    [int64]$ExpectedSize,
-    [string]$OriginalFile,
-    [int]$Attempts
-) {
-    for ($attempt = 1; $attempt -le $Attempts; $attempt++) {
-        if (Test-RemoteAssetComplete $ReleaseId $AssetName $ExpectedSize) {
-            Write-Host '  remote asset is already complete - accepted' -ForegroundColor Yellow
-            return
-        }
-
-        if ($attempt -gt 1) {
-            Write-Host ("  retry {0}/{1} ..." -f $attempt,$Attempts) -ForegroundColor Yellow
-        }
-
-        $old = $ErrorActionPreference
-        $ErrorActionPreference = 'Continue'
-        & gh release upload $Tag $StagePath --repo $Repo --clobber
-        $code = $LASTEXITCODE
-        $ErrorActionPreference = $old
-
-        if ($code -eq 0) { return }
-
-        # Sometimes GitHub finishes the upload but the client receives a timeout.
-        Start-Sleep -Seconds 2
-        if (Test-RemoteAssetComplete $ReleaseId $AssetName $ExpectedSize) {
-            Write-Host '  upload completed remotely despite the client error - continuing' -ForegroundColor Green
-            return
-        }
-
-        if ($attempt -lt $Attempts) {
-            $delay = [math]::Min(60, 5 * $attempt)
-            Write-Host ("  upload attempt failed; waiting {0}s before retry" -f $delay) -ForegroundColor Yellow
-            Start-Sleep -Seconds $delay
-        }
-    }
-
-    throw "Upload failed after $Attempts attempts: $OriginalFile"
+function Test-AssetComplete($Asset,[int64]$ExpectedSize) {
+    return ($null -ne $Asset -and [int64]$Asset.size -eq $ExpectedSize -and [string]$Asset.state -eq 'uploaded')
 }
 
 Write-Host ''
 Write-Host '========================================================' -ForegroundColor Cyan
 Write-Host ' PC Board Repair - GitHub Release uploader (250 MB)' -ForegroundColor Cyan
 Write-Host '========================================================' -ForegroundColor Cyan
-Write-Host 'Only rows marked NEW_STANDARD are included.' -ForegroundColor Green
-Write-Host 'Possible-name matches, conflicts, duplicates and NEW_LARGE are excluded.' -ForegroundColor Yellow
-Write-Host ("Automatic upload retries: {0}" -f $MaxUploadAttempts) -ForegroundColor Green
+Write-Host 'Upload failures are SKIPPED immediately; no retry loop.' -ForegroundColor Yellow
+Write-Host 'Previously uploaded files and previously failed files are skipped on resume.' -ForegroundColor Green
 Write-Host ''
 
 if (-not (Get-Command gh -ErrorAction SilentlyContinue)) { throw 'GitHub CLI (gh) is not installed or not available in PATH.' }
@@ -126,9 +73,7 @@ if ($rows.Count -eq 0) { throw 'No NEW_STANDARD rows found in the audit report.'
 $items = New-Object System.Collections.ArrayList
 foreach ($r in $rows) {
     $p = [string]$r.Path
-    if (-not (Test-Path -LiteralPath $p -PathType Leaf)) {
-        $p = Join-Path $CleanedPath ([string]$r.File)
-    }
+    if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { $p = Join-Path $CleanedPath ([string]$r.File) }
     if (-not (Test-Path -LiteralPath $p -PathType Leaf)) { throw "Source file missing: $($r.File)" }
     $f = Get-Item -LiteralPath $p
     if ($f.Length -gt $BatchLimitBytes) { throw "A NEW_STANDARD file is larger than the configured batch cap: $($f.Name)" }
@@ -158,8 +103,7 @@ if ($current.Count -gt 0) { [void]$batches.Add([pscustomobject]@{ Items=@($curre
 
 $plan = New-Object System.Collections.ArrayList
 for ($i=0; $i -lt $batches.Count; $i++) {
-    $b = $batches[$i]
-    foreach ($item in $b.Items) {
+    foreach ($item in $batches[$i].Items) {
         $asset = Get-SafeAssetName $item.OriginalFile $item.SHA256
         [void]$plan.Add([pscustomobject]@{
             Batch=($i+1); Tag=('boardview-cleaned-250mb-{0:D2}' -f ($i+1)); OriginalFile=$item.OriginalFile;
@@ -189,6 +133,9 @@ $selected = @($plan | Where-Object { [int]$_.Batch -eq $BatchNumber })
 $batchBytes = ($selected | Measure-Object -Property SizeBytes -Sum).Sum
 $tag = 'boardview-cleaned-250mb-{0:D2}' -f $BatchNumber
 $title = 'BoardView Cleaned Batch {0:D2}' -f $BatchNumber
+$skipPath = Join-Path $ReportDir ("release-upload-skipped-batch-{0:D2}.csv" -f $BatchNumber)
+$batchManifest = Join-Path $ReportDir ("release-upload-batch-{0:D2}.csv" -f $BatchNumber)
+
 Write-Host ''
 Write-Host ("Selected batch: {0}/{1}" -f $BatchNumber,$batches.Count) -ForegroundColor Cyan
 Write-Host ("Files:          {0}" -f $selected.Count)
@@ -200,9 +147,10 @@ if ($answer.ToUpperInvariant() -ne 'Y') { Write-Host 'Stopped. Nothing uploaded.
 
 $release = Get-ReleaseMeta $tag
 if ($null -eq $release) {
-    Write-Host "Creating draft release $tag ..." -ForegroundColor Cyan
-    & gh release create $tag --repo $Repo --target main --title $title --notes "PC Board Repair cleaned BoardView files. This release is one upload batch capped at $BatchLimitMB MB." --draft --latest=false
+    Write-Host "Creating release $tag ..." -ForegroundColor Cyan
+    & gh release create $tag --repo $Repo --target main --title $title --notes "PC Board Repair cleaned BoardView files. This release is one upload batch capped at $BatchLimitMB MB." --latest=false
     if ($LASTEXITCODE -ne 0) { throw "Failed to create release $tag" }
+    Start-Sleep -Seconds 1
     $release = Get-ReleaseMeta $tag
     if ($null -eq $release) { throw "Release was created but could not be read back: $tag" }
 } else {
@@ -213,64 +161,116 @@ $remoteAssets = @(Get-ReleaseAssets ([int64]$release.id))
 $remoteByName = @{}
 foreach ($a in $remoteAssets) { $remoteByName[[string]$a.name] = $a }
 
+$skippedRows = @()
+if (Test-Path -LiteralPath $skipPath -PathType Leaf) { $skippedRows = @(Import-Csv -LiteralPath $skipPath) }
+$skippedByName = @{}
+foreach ($s in $skippedRows) { $skippedByName[[string]$s.AssetName] = $s }
+
+$already = New-Object System.Collections.ArrayList
+$previouslySkipped = New-Object System.Collections.ArrayList
+$pending = New-Object System.Collections.ArrayList
+foreach ($p in $selected) {
+    $remote = $null
+    if ($remoteByName.ContainsKey($p.AssetName)) { $remote = $remoteByName[$p.AssetName] }
+    if (Test-AssetComplete $remote ([int64]$p.SizeBytes)) { [void]$already.Add($p) }
+    elseif ($skippedByName.ContainsKey($p.AssetName)) { [void]$previouslySkipped.Add($p) }
+    else { [void]$pending.Add($p) }
+}
+
+Write-Host ''
+Write-Host ("Already uploaded:          {0}" -f $already.Count) -ForegroundColor Green
+Write-Host ("Previously failed/skipped: {0}" -f $previouslySkipped.Count) -ForegroundColor Yellow
+Write-Host ("Remaining to try now:      {0}" -f $pending.Count) -ForegroundColor Cyan
+Write-Host ''
+
 $stageDir = Join-Path $ReportDir ("_release-stage-{0:D2}" -f $BatchNumber)
 New-Item -ItemType Directory -Force -Path $stageDir | Out-Null
 $batchResults = New-Object System.Collections.ArrayList
-$done = 0
-foreach ($p in $selected) {
-    $done++
-    Write-Host ("[{0}/{1}] {2}" -f $done,$selected.Count,$p.OriginalFile) -ForegroundColor Cyan
-    $actualHash = (Get-FileHash -LiteralPath $p.Source -Algorithm SHA256).Hash.ToLowerInvariant()
-    if ($actualHash -ne $p.SHA256) { throw "SHA256 changed since audit: $($p.OriginalFile)" }
 
-    $uploadStatus = 'UPLOADED'
-    if ($remoteByName.ContainsKey($p.AssetName) -and [int64]$remoteByName[$p.AssetName].size -eq [int64]$p.SizeBytes -and [string]$remoteByName[$p.AssetName].state -eq 'uploaded') {
-        $uploadStatus = 'ALREADY_UPLOADED'
-        Write-Host '  already present with matching size - skipped' -ForegroundColor Yellow
-    } else {
-        $stagePath = Join-Path $stageDir $p.AssetName
-        Copy-Item -LiteralPath $p.Source -Destination $stagePath -Force
-        try {
-            Invoke-ReleaseUploadWithRetry -Tag $tag -ReleaseId ([int64]$release.id) -StagePath $stagePath -AssetName $p.AssetName -ExpectedSize ([int64]$p.SizeBytes) -OriginalFile $p.OriginalFile -Attempts $MaxUploadAttempts
-            $remoteByName[$p.AssetName] = [pscustomobject]@{name=$p.AssetName;size=[int64]$p.SizeBytes;state='uploaded'}
-        }
-        finally {
-            Remove-Item -LiteralPath $stagePath -Force -ErrorAction SilentlyContinue
-        }
-    }
-
-    $url = "https://github.com/$Repo/releases/download/$tag/$($p.AssetName)"
+foreach ($p in $already) {
     [void]$batchResults.Add([pscustomobject]@{
         Batch=$BatchNumber; Tag=$tag; OriginalFile=$p.OriginalFile; AssetName=$p.AssetName; Brand=$p.Brand;
-        SizeBytes=$p.SizeBytes; SHA256=$p.SHA256; DownloadURL=$url; UploadStatus=$uploadStatus;
-        UploadedAtUTC=[DateTime]::UtcNow.ToString('o')
+        SizeBytes=$p.SizeBytes; SHA256=$p.SHA256; DownloadURL="https://github.com/$Repo/releases/download/$tag/$($p.AssetName)";
+        UploadStatus='ALREADY_UPLOADED'; Error=''; UploadedAtUTC=''
+    })
+}
+foreach ($p in $previouslySkipped) {
+    $oldSkip = $skippedByName[$p.AssetName]
+    [void]$batchResults.Add([pscustomobject]@{
+        Batch=$BatchNumber; Tag=$tag; OriginalFile=$p.OriginalFile; AssetName=$p.AssetName; Brand=$p.Brand;
+        SizeBytes=$p.SizeBytes; SHA256=$p.SHA256; DownloadURL=''; UploadStatus='SKIPPED_PREVIOUS_FAILURE';
+        Error=[string]$oldSkip.Error; UploadedAtUTC=''
     })
 }
 
-# Full verification using all release-asset pages.
-$release = Get-ReleaseMeta $tag
-$finalAssets = @(Get-ReleaseAssets ([int64]$release.id))
-$finalMap = @{}
-foreach ($a in $finalAssets) { $finalMap[[string]$a.name] = $a }
-foreach ($p in $selected) {
-    if (-not $finalMap.ContainsKey($p.AssetName)) { throw "Final verification: missing remote asset $($p.AssetName)" }
-    if ([int64]$finalMap[$p.AssetName].size -ne [int64]$p.SizeBytes) { throw "Final verification: wrong remote size for $($p.AssetName)" }
-    if ([string]$finalMap[$p.AssetName].state -ne 'uploaded') { throw "Final verification: remote asset is not complete $($p.AssetName)" }
-}
+$tryNumber = 0
+foreach ($p in $pending) {
+    $tryNumber++
+    Write-Host ("[{0}/{1}] {2}" -f $tryNumber,$pending.Count,$p.OriginalFile) -ForegroundColor Cyan
 
-$batchManifest = Join-Path $ReportDir ("release-upload-batch-{0:D2}.csv" -f $BatchNumber)
-$batchResults | Export-Csv -LiteralPath $batchManifest -NoTypeInformation -Encoding UTF8
+    $actualHash = (Get-FileHash -LiteralPath $p.Source -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($actualHash -ne $p.SHA256) {
+        $err = 'SHA256 changed since audit'
+        Write-Host "  $err - SKIPPED" -ForegroundColor Red
+        $skip = [pscustomobject]@{Batch=$BatchNumber;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;Error=$err;SkippedAtUTC=[DateTime]::UtcNow.ToString('o')}
+        $skippedByName[$p.AssetName] = $skip
+        @($skippedByName.Values) | Export-Csv -LiteralPath $skipPath -NoTypeInformation -Encoding UTF8
+        [void]$batchResults.Add([pscustomobject]@{Batch=$BatchNumber;Tag=$tag;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;Brand=$p.Brand;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;DownloadURL='';UploadStatus='SKIPPED_HASH_CHANGED';Error=$err;UploadedAtUTC=''})
+        continue
+    }
 
-if ([bool]$release.draft) {
-    Write-Host 'Publishing completed draft release ...' -ForegroundColor Cyan
-    & gh release edit $tag --repo $Repo --draft=false
-    if ($LASTEXITCODE -ne 0) { throw "Uploads are complete but publishing the draft failed: $tag" }
+    $stagePath = Join-Path $stageDir $p.AssetName
+    Copy-Item -LiteralPath $p.Source -Destination $stagePath -Force
+    $uploadOutput = @()
+    try {
+        $old = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        $uploadOutput = @(& gh release upload $tag $stagePath --repo $Repo --clobber 2>&1)
+        $code = $LASTEXITCODE
+        $ErrorActionPreference = $old
+    }
+    finally {
+        Remove-Item -LiteralPath $stagePath -Force -ErrorAction SilentlyContinue
+    }
+
+    if ($code -eq 0) {
+        Write-Host '  uploaded' -ForegroundColor Green
+        [void]$batchResults.Add([pscustomobject]@{Batch=$BatchNumber;Tag=$tag;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;Brand=$p.Brand;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;DownloadURL="https://github.com/$Repo/releases/download/$tag/$($p.AssetName)";UploadStatus='UPLOADED';Error='';UploadedAtUTC=[DateTime]::UtcNow.ToString('o')})
+        continue
+    }
+
+    # Do not retry. Check once whether GitHub actually completed the upload despite the client error.
+    Start-Sleep -Seconds 1
+    $checkAssets = @(Get-ReleaseAssets ([int64]$release.id))
+    $match = $checkAssets | Where-Object { [string]$_.name -eq [string]$p.AssetName } | Select-Object -First 1
+    if (Test-AssetComplete $match ([int64]$p.SizeBytes)) {
+        Write-Host '  GitHub completed it despite the client error - accepted' -ForegroundColor Green
+        [void]$batchResults.Add([pscustomobject]@{Batch=$BatchNumber;Tag=$tag;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;Brand=$p.Brand;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;DownloadURL="https://github.com/$Repo/releases/download/$tag/$($p.AssetName)";UploadStatus='UPLOADED_AFTER_CLIENT_ERROR';Error='';UploadedAtUTC=[DateTime]::UtcNow.ToString('o')})
+        continue
+    }
+
+    $errText = (($uploadOutput | ForEach-Object { [string]$_ }) -join ' | ')
+    if ($errText.Length -gt 500) { $errText = $errText.Substring(0,500) }
+    if ([string]::IsNullOrWhiteSpace($errText)) { $errText = "gh exit code $code" }
+    Write-Host '  upload failed - SKIPPED, continuing with next file' -ForegroundColor Yellow
+    $skip = [pscustomobject]@{Batch=$BatchNumber;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;Error=$errText;SkippedAtUTC=[DateTime]::UtcNow.ToString('o')}
+    $skippedByName[$p.AssetName] = $skip
+    @($skippedByName.Values) | Export-Csv -LiteralPath $skipPath -NoTypeInformation -Encoding UTF8
+    [void]$batchResults.Add([pscustomobject]@{Batch=$BatchNumber;Tag=$tag;OriginalFile=$p.OriginalFile;AssetName=$p.AssetName;Brand=$p.Brand;SizeBytes=$p.SizeBytes;SHA256=$p.SHA256;DownloadURL='';UploadStatus='SKIPPED_UPLOAD_FAILED';Error=$errText;UploadedAtUTC=''})
 }
 
 Remove-Item -LiteralPath $stageDir -Force -Recurse -ErrorAction SilentlyContinue
+$batchResults | Export-Csv -LiteralPath $batchManifest -NoTypeInformation -Encoding UTF8
+
+$successCount = @($batchResults | Where-Object { $_.UploadStatus -in @('UPLOADED','UPLOADED_AFTER_CLIENT_ERROR','ALREADY_UPLOADED') }).Count
+$skipCount = @($batchResults | Where-Object { $_.UploadStatus -like 'SKIPPED*' }).Count
+
 Write-Host ''
 Write-Host '========================================================' -ForegroundColor Green
-Write-Host ("Batch {0} COMPLETE: {1} files / {2:N2} MB" -f $BatchNumber,$selected.Count,($batchBytes/1MB)) -ForegroundColor Green
-Write-Host ("Manifest: $batchManifest") -ForegroundColor Cyan
-Write-Host 'The site database was NOT modified yet.' -ForegroundColor Yellow
+Write-Host ("Batch {0} FINISHED" -f $BatchNumber) -ForegroundColor Green
+Write-Host ("Uploaded/available: {0}" -f $successCount) -ForegroundColor Green
+Write-Host ("Skipped failures:   {0}" -f $skipCount) -ForegroundColor Yellow
+Write-Host ("Manifest:           {0}" -f $batchManifest) -ForegroundColor Cyan
+Write-Host ("Skipped log:        {0}" -f $skipPath) -ForegroundColor Cyan
+Write-Host 'Skipped files are NOT added to the site database later.' -ForegroundColor Yellow
 Write-Host '========================================================' -ForegroundColor Green
