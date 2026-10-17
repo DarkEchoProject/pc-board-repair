@@ -8,10 +8,13 @@ $ExpectedBatches = 1..7
 $ExpectedPlanned = 2216
 
 function Read-JsonArray([string]$Path) {
-    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return @() }
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) { return }
     $text = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
-    if ([string]::IsNullOrWhiteSpace($text)) { return @() }
-    return @($text | ConvertFrom-Json)
+    if ([string]::IsNullOrWhiteSpace($text)) { return }
+    $parsed = ConvertFrom-Json -InputObject $text
+    # Windows PowerShell 5.1 can preserve a top-level JSON array as one pipeline object.
+    # Explicit foreach enumeration makes each JSON item a separate PowerShell output object.
+    foreach ($item in $parsed) { Write-Output $item }
 }
 
 function Get-BoardType([string]$Name) {
