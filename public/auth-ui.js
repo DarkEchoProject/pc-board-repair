@@ -46,6 +46,7 @@
       {href:'/diagnostics/index.html',ar:'التشخيص',en:'Diagnostics',active:path=>path.startsWith('/diagnostics/')},
       {href:'/component-testing/index.html',ar:'فحص القطع',en:'Component Testing',active:path=>path.startsWith('/component-testing/')},
       {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
+      {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:path=>path==='/contact.html'},
       {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'}
     ];
 
