@@ -24,6 +24,19 @@ if errorlevel 1 (
   exit /b 1
 )
 
+echo Building static sitemap...
+echo.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0BUILD-SITEMAP.ps1"
+if errorlevel 1 (
+  echo.
+  echo DEPLOY CANCELLED because sitemap generation failed.
+  echo Copy or photograph the error above.
+  echo.
+  pause
+  exit /b 1
+)
+
+echo.
 echo Running pre-deploy checks...
 echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0PREDEPLOY-CHECK.ps1"
