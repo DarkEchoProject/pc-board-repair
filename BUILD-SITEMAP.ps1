@@ -26,9 +26,14 @@ function Read-JsonArray([string]$Path) {
 
 function Get-FileKey([string]$Value) {
     [uint32]$h = 2166136261
+    [uint64]$mod32 = 4294967296
     foreach ($ch in $Value.ToCharArray()) {
         $h = [uint32]($h -bxor [uint32][char]$ch)
-        $h = [uint32](([uint64]$h * 16777619) -band 0xffffffff)
+        # Windows PowerShell 5.1 can treat 0xffffffff as signed -1 during
+        # bitwise promotion, which prevents the intended 32-bit mask.
+        # Modulo 2^32 is equivalent to JavaScript Math.imul uint32 wrapping.
+        $product = [uint64]$h * [uint64]16777619
+        $h = [uint32]($product % $mod32)
     }
     if ($h -eq 0) { return '0' }
     $digits = '0123456789abcdefghijklmnopqrstuvwxyz'
