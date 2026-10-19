@@ -29,9 +29,6 @@ function Get-FileKey([string]$Value) {
     [uint64]$mod32 = 4294967296
     foreach ($ch in $Value.ToCharArray()) {
         $h = [uint32]($h -bxor [uint32][char]$ch)
-        # Windows PowerShell 5.1 can treat 0xffffffff as signed -1 during
-        # bitwise promotion, which prevents the intended 32-bit mask.
-        # Modulo 2^32 is equivalent to JavaScript Math.imul uint32 wrapping.
         $product = [uint64]$h * [uint64]16777619
         $h = [uint32]($product % $mod32)
     }
@@ -73,6 +70,7 @@ function Escape-Xml([string]$Value) {
 $staticPaths = @(
     '/',
     '/boardview/index.html',
+    '/boardview/hp-compaq-dc5800-c453-vrm-repair.html',
     '/bios/index.html',
     '/bios/intel.html',
     '/community.html',

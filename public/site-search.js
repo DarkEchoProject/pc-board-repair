@@ -53,6 +53,12 @@
 
   const staticEntries=[
     {
+      type:'boardview',url:'/boardview/hp-compaq-dc5800-c453-vrm-repair.html',
+      titleAr:'HP Compaq dc5800 — C453 CPU VRM Repair Map',titleEn:'HP Compaq dc5800 — C453 CPU VRM Repair Map',
+      subtitleAr:'Cheetah Rev A • AS# 450667-001 • SP# 461536-001 • FlexBV FZ',subtitleEn:'Cheetah Rev A • AS# 450667-001 • SP# 461536-001 • FlexBV FZ',
+      keywords:'HP Compaq dc5800 HP_Compaq_dc5800 Cheetah Rev A 450667-001 461536-001 C453 R526 U46 NCP5385 NCP3488 VCORE VRM CPU boardview flexbv fz repair map مخطط خريطة اصلاح تغذية المعالج'
+    },
+    {
       type:'diagnostics',url:'/diagnostics/index.html',
       titleAr:'تشخيص أعطال الكمبيوتر واللوحات الأم',titleEn:'PC & Motherboard Diagnostics',
       subtitleAr:'ابدأ من العطل الظاهر واتبع خطوات القياس بالترتيب.',subtitleEn:'Start from the visible fault and follow measurements in order.',
