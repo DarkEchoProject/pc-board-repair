@@ -1,5 +1,5 @@
 name = "pc-board-repair"
-main = "src/seo-entry.js"
+main = "src/header-entry.js"
 compatibility_date = "2026-10-02"
 
 [vars]
