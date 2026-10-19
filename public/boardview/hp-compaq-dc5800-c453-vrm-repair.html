@@ -1,76 +1,75 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>HP Compaq dc5800 C453 CPU VRM Repair Map | PC Board Repair</title>
-<meta name="description" content="ط®ط±ظٹط·ط© ط¥طµظ„ط§ط­ HP Compaq dc5800 Cheetah Rev A ظ„ط¹ط·ظ„ VCORE=0V ط¨ط³ط¨ط¨ ط§ظ„ظ…ظƒط«ظپ C453 ط¹ظ„ظ‰ طھط؛ط°ظٹط© NCP5385طŒ ظ…ط¹ ظ…ظ„ظپ FlexBV FZ ظ„ظ„طھط­ظ…ظٹظ„.">
+<meta name="description" content="خريطة إصلاح HP Compaq dc5800 Cheetah Rev A لعطل VCORE=0V بسبب المكثف C453 على تغذية NCP5385، مع ملف FlexBV FZ للتحميل.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/boardview/hp-compaq-dc5800-c453-vrm-repair.html">
 <link rel="stylesheet" href="../style.css">
 <link rel="stylesheet" href="../boardview-extra.css">
-<link rel="icon href=/favicon.ico?v=3 sizes=any>
-<link rel=icon type=image/png href=/site-logo.png?v=3>
+<link rel="icon href=/favicon.ico?v=4 sizes=any>
+<link rel=icon type=image/png href=/site-logo.png?v=4>
 </head>
 <body>
 <header>
-  <a class="logo" href="../index.html">âڑ™ï¸ڈ PC Board Repair</a>
+  <a class="logo" href="../index.html">⚙️ PC Board Repair</a>
   <nav>
-    <a href="../index.html">ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
+    <a href="../index.html">الرئيسية</a>
     <a href="index.html">BoardView</a>
     <a href="../bios/index.html">BIOS</a>
-    <a href="../diagnostics/index.html">ط§ظ„طھط´ط®ظٹطµ</a>
-    <a href="../component-testing/index.html">ظپط­طµ ط§ظ„ظ‚ط·ط¹</a>
-    <a href="../community.html">ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a>
+    <a href="../diagnostics/index.html">التشخيص</a>
+    <a href="../component-testing/index.html">فحص القطع</a>
+    <a href="../community.html">غرفة الصيانة</a>
   </nav>
 </header>
 
 <main class="wrap">
-  <div class="crumb"><a href="index.html">BoardView</a> â†گ <a href="hp.html">HP</a> â†گ HP Compaq dc5800</div>
-  <h1>HP Compaq dc5800 â€” C453 CPU VRM Repair Map</h1>
-  <p class="muted">ط®ط±ظٹط·ط© ط¥طµظ„ط§ط­ ط¹ظ…ظ„ظٹط© ظ…ط¨ظ†ظٹط© ط¹ظ„ظ‰ ظ‚ظٹط§ط³ط§طھ ظپط¹ظ„ظٹط© ظ„ظ„ط¨ظˆط±ط¯ ط¨ط¹ط¯ ط­ظ„ ط§ظ„ط¹ط·ظ„ ط¨ظ†ط¬ط§ط­.</p>
+  <div class="crumb"><a href="index.html">BoardView</a> ← <a href="hp.html">HP</a> ← HP Compaq dc5800</div>
+  <h1>HP Compaq dc5800 — C453 CPU VRM Repair Map</h1>
+  <p class="muted">خريطة إصلاح عملية مبنية على قياسات فعلية للبورد بعد حل العطل بنجاح.</p>
 
   <article class="boardCard" style="display:block;max-width:980px;margin:20px auto;padding:22px">
-    <h2>ط¨ظٹط§ظ†ط§طھ ط§ظ„ظ„ظˆط­ط©</h2>
+    <h2>بيانات اللوحة</h2>
     <p><strong>Model:</strong> HP Compaq dc5800</p>
     <p><strong>Board family:</strong> Cheetah Rev A</p>
     <p><strong>AS#:</strong> 450667-001</p>
     <p><strong>SP#:</strong> 461536-001</p>
     <p><strong>Area:</strong> CPU VRM / VCORE</p>
 
-    <h2>ط§ظ„ط¹ط·ظ„</h2>
-    <p>ط§ظ„ط¬ظ‡ط§ط² ظ„ط§ ظٹظ‚ظ„ط¹ ظˆظ‚ط±ط§ط،ط© <strong>VCORE = 0V</strong> ط±ط؛ظ… ظˆط¬ظˆط¯ 12V ط¹ظ„ظ‰ ظ…ط±ط­ظ„ط© VRM.</p>
+    <h2>العطل</h2>
+    <p>الجهاز لا يقلع وقراءة <strong>VCORE = 0V</strong> رغم وجود 12V على مرحلة VRM.</p>
 
-    <h2>ظ…ط³ط§ط± ط§ظ„طھط´ط®ظٹطµ ط§ظ„ظ…ط®طھطµط±</h2>
+    <h2>مسار التشخيص المختصر</h2>
     <p>
-      +12V CPU â†’ R526 â†’ طھط؛ط°ظٹط© U46 NCP5385 Pin 36 VCC â†’ Pin 29 DRVON â†’
-      ط£ط±ط¨ط¹ ط¯ظˆط§ط¦ط± NCP3488 Gate Driver â†’ MOSFETs â†’ VCORE Coils.
+      +12V CPU → R526 → تغذية U46 NCP5385 Pin 36 VCC → Pin 29 DRVON →
+      أربع دوائر NCP3488 Gate Driver → MOSFETs → VCORE Coils.
     </p>
     <p>
-      ط£ط«ظ†ط§ط، ط§ظ„ط¹ط·ظ„ ظƒط§ظ†طھ ظ‚ط±ط§ط،ط© VCC ط¹ظ„ظ‰ Pin 36 ط­ظˆط§ظ„ظٹ <strong>4.4V</strong> ظپظ‚ط·طŒ ط¨ظٹظ†ظ…ط§ ظ‚ط¨ظ„ R526 طھظˆط¬ط¯ <strong>12V</strong>.
-      ط¨ط¹ط¯ ط­ظ‚ظ† 6V ط¹ظ„ظ‰ ط§ظ„ط®ط· ط³ط®ظ† ط§ظ„ظ…ظƒط«ظپ <strong>C453</strong>طŒ ظˆطھظ… ط§ط³طھط¨ط¯ط§ظ„ظ‡ ظ…ظ† ط¨ظˆط±ط¯ ط®ط±ط¯ط© ظ…ط·ط§ط¨ظ‚ ظپط¹ط§ط¯طھ ط§ظ„ط¨ظˆط±ط¯ ظ„ظ„ط¹ظ…ظ„ ظˆط¸ظ‡ط±طھ ط§ظ„طµظˆط±ط© ط¨ظ†ط¬ط§ط­.
+      أثناء العطل كانت قراءة VCC على Pin 36 حوالي <strong>4.4V</strong> فقط، بينما قبل R526 توجد <strong>12V</strong>.
+      بعد حقن 6V على الخط سخن المكثف <strong>C453</strong>، وتم استبداله من بورد خردة مطابق فعادت البورد للعمل وظهرت الصورة بنجاح.
     </p>
 
-    <h2>ط§ظ„ظ…ظƒظˆظ†ط§طھ ط§ظ„ط±ط¦ظٹط³ظٹط© ط§ظ„ظ…ظˆط«ظ‚ط© ظپظٹ ط§ظ„ط®ط±ظٹط·ط©</h2>
-    <p>U46 NCP5385طŒ ط£ط±ط¨ط¹ ط´ط±ط§ط¦ط­ NCP3488طŒ R526طŒ C453طŒ ظ…ط³ط§ط± DRVONطŒ MOSFETs ظˆظ…ظ„ظپط§طھ VCORE.</p>
+    <h2>المكونات الرئيسية الموثقة في الخريطة</h2>
+    <p>U46 NCP5385، أربع شرائح NCP3488، R526، C453، مسار DRVON، MOSFETs وملفات VCORE.</p>
 
     <div class="boardActions" style="margin-top:24px">
-      <a class="btn" href="/downloads/HP-Compaq-dc5800-Cheetah-VRM-C453-Repair-FlexBV.zip" download>â¬‡ï¸ڈ طھط­ظ…ظٹظ„ ظ…ظ„ظپ FlexBV ط§ظ„ظ…ط¶ط؛ظˆط·</a>
-      <a class="imageBtn" href="../diagnostics/vrm-cpu-ram.html">ًں“ک ط¯ظ„ظٹظ„ VRM</a>
+      <a class="btn" href="/downloads/HP-Compaq-dc5800-Cheetah-VRM-C453-Repair-FlexBV.zip" download>⬇️ تحميل ملف FlexBV المضغوط</a>
+      <a class="imageBtn" href="../diagnostics/vrm-cpu-ram.html">📘 دليل VRM</a>
     </div>
   </article>
 
   <section style="max-width:980px;margin:20px auto">
-    <p class="muted">ظ…ظ„ط§ط­ط¸ط©: ظ‡ط°ظ‡ ط®ط±ظٹط·ط© ط¥طµظ„ط§ط­ ظ…ظٹط¯ط§ظ†ظٹط© ظˆظ„ظٹط³طھ ظ…ط®ط·ط· HP ظ…طµظ†ط¹ظٹط§ظ‹. ط§ظ„ظ‚ظٹظ… ظˆط§ظ„ظ…ط³ط§ط±ط§طھ ط§ظ„ظ…ظˆط¶ط­ط© ظ…ط¨ظ†ظٹط© ط¹ظ„ظ‰ ط§ظ„ظ‚ظٹط§ط³ط§طھ ظˆط§ظ„طھطھط¨ط¹ ط§ظ„ط°ظٹ طھظ… ط£ط«ظ†ط§ط، ط§ظ„ط¥طµظ„ط§ط­.</p>
+    <p class="muted">ملاحظة: هذه خريطة إصلاح ميدانية وليست مخطط HP مصنعياً. القيم والمسارات الموضحة مبنية على القياسات والتتبع الذي تم أثناء الإصلاح.</p>
   </section>
 </main>
 
 <footer>
   <div class="footerLinks">
-    <a href="../community.html">ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a><a href="../about.html">ظ…ظ† ظ†ط­ظ†</a><a href="../contact.html">ط§طھطµظ„ ط¨ظ†ط§</a><a href="../privacy.html">ط³ظٹط§ط³ط© ط§ظ„ط®طµظˆطµظٹط©</a><a href="../terms.html">ط´ط±ظˆط· ط§ظ„ط§ط³طھط®ط¯ط§ظ…</a><a href="../disclaimer.html">ط¥ط®ظ„ط§ط، ط§ظ„ظ…ط³ط¤ظˆظ„ظٹط©</a><a href="../copyright.html">ط­ظ‚ظˆظ‚ ط§ظ„ظ†ط´ط±</a>
+    <a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a><a href="../copyright.html">حقوق النشر</a>
   </div>
-  <div>آ© 2026 PC Board Repair</div>
+  <div>© 2026 PC Board Repair</div>
 </footer>
 </body>
 </html>
-
