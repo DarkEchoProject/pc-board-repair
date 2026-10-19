@@ -1,44 +1,46 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<title>لوحة إدارة غرفة الصيانة | PC Board Repair</title>
+<title>ظ„ظˆط­ط© ط¥ط¯ط§ط±ط© ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط© | PC Board Repair</title>
 <link rel="stylesheet" href="style.css">
 <style>
 .adminWrap{max-width:1100px;margin:auto;padding:38px 5%}.adminLogin,.adminPanel{background:#0d1a2d;border:1px solid #203a5b;border-radius:18px;padding:22px}.adminLogin{max-width:560px;margin:45px auto}.adminInput{width:100%;background:#07111f;color:#eef5ff;border:1px solid #2b4d72;border-radius:12px;padding:13px 14px;font:inherit;outline:none}.adminInput:focus{border-color:#20bdf2;box-shadow:0 0 0 3px #20bdf222}.adminRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.adminStats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:20px 0}.adminStat{background:#0a1626;border:1px solid #203a5b;border-radius:14px;padding:16px;text-align:center}.adminStat strong{display:block;font-size:30px;color:#56d6ff}.adminSection{margin-top:28px}.adminCard{background:#0a1626;border:1px solid #203a5b;border-radius:14px;padding:16px;margin:12px 0}.adminCard.reported{border-color:#74561f}.adminTop{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.adminTop time{margin-inline-start:auto;color:#7890ad;font-size:12px}.adminText{white-space:pre-wrap;overflow-wrap:anywhere}.adminActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.dangerBtn{background:#7d2630;color:#fff;border:1px solid #b84754;border-radius:10px;padding:9px 13px;cursor:pointer;font:inherit}.dangerBtn:hover{filter:brightness(1.1)}.softBtn{background:#102840;color:#dbe9ff;border:1px solid #3b5f86;border-radius:10px;padding:9px 13px;cursor:pointer;font:inherit}.reportBadge{display:inline-block;background:#332612;border:1px solid #74561f;color:#ffd98b;padding:4px 8px;border-radius:999px;font-size:12px}.adminToolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.adminSearch{min-width:min(100%,420px);flex:1}.statusLine{min-height:24px;margin-top:10px}.hidden{display:none!important}@media(max-width:700px){.adminStats{grid-template-columns:1fr}.adminActions>*{flex:1}.adminTop time{width:100%;margin:0}.adminRow>*{width:100%}}
 </style>
+<link rel="icon href=/favicon.ico?v=3 sizes=any>
+<link rel=icon type=image/png href=/site-logo.png?v=3>
 </head>
 <body>
-<header><a class="logo" href="index.html">⚙️ PC Board Repair</a><nav><a href="index.html">الرئيسية</a><a href="community.html">غرفة الصيانة</a></nav></header>
+<header><a class="logo" href="index.html">âڑ™ï¸ڈ PC Board Repair</a><nav><a href="index.html">ط§ظ„ط±ط¦ظٹط³ظٹط©</a><a href="community.html">ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a></nav></header>
 <main class="adminWrap">
   <section id="loginBox" class="adminLogin">
-    <h1>🔐 لوحة الإدارة</h1>
-    <p class="muted">أدخل كلمة مرور الإدارة. لا يتم حفظها بشكل دائم؛ تبقى في جلسة المتصفح الحالية فقط.</p>
+    <h1>ًں”گ ظ„ظˆط­ط© ط§ظ„ط¥ط¯ط§ط±ط©</h1>
+    <p class="muted">ط£ط¯ط®ظ„ ظƒظ„ظ…ط© ظ…ط±ظˆط± ط§ظ„ط¥ط¯ط§ط±ط©. ظ„ط§ ظٹطھظ… ط­ظپط¸ظ‡ط§ ط¨ط´ظƒظ„ ط¯ط§ط¦ظ…ط› طھط¨ظ‚ظ‰ ظپظٹ ط¬ظ„ط³ط© ط§ظ„ظ…طھطµظپط­ ط§ظ„ط­ط§ظ„ظٹط© ظپظ‚ط·.</p>
     <form id="loginForm">
-      <input id="adminPassword" class="adminInput" type="password" autocomplete="current-password" placeholder="كلمة مرور الإدارة" required>
-      <div class="adminRow" style="margin-top:12px"><button class="btn" type="submit">دخول</button><a class="imageBtn" href="community.html">العودة لغرفة الصيانة</a></div>
+      <input id="adminPassword" class="adminInput" type="password" autocomplete="current-password" placeholder="ظƒظ„ظ…ط© ظ…ط±ظˆط± ط§ظ„ط¥ط¯ط§ط±ط©" required>
+      <div class="adminRow" style="margin-top:12px"><button class="btn" type="submit">ط¯ط®ظˆظ„</button><a class="imageBtn" href="community.html">ط§ظ„ط¹ظˆط¯ط© ظ„ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a></div>
       <div id="loginStatus" class="statusLine muted"></div>
     </form>
   </section>
 
   <section id="dashboard" class="adminPanel hidden">
-    <div class="adminToolbar"><div><h1 style="margin-bottom:4px">لوحة إدارة غرفة الصيانة</h1><div class="muted">مراجعة البلاغات وحذف الرسائل المزعجة.</div></div><div class="adminRow"><button id="refreshBtn" class="softBtn" type="button">↻ تحديث</button><button id="logoutBtn" class="softBtn" type="button">تسجيل الخروج</button></div></div>
+    <div class="adminToolbar"><div><h1 style="margin-bottom:4px">ظ„ظˆط­ط© ط¥ط¯ط§ط±ط© ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</h1><div class="muted">ظ…ط±ط§ط¬ط¹ط© ط§ظ„ط¨ظ„ط§ط؛ط§طھ ظˆط­ط°ظپ ط§ظ„ط±ط³ط§ط¦ظ„ ط§ظ„ظ…ط²ط¹ط¬ط©.</div></div><div class="adminRow"><button id="refreshBtn" class="softBtn" type="button">â†» طھط­ط¯ظٹط«</button><button id="logoutBtn" class="softBtn" type="button">طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</button></div></div>
 
     <div class="adminStats">
-      <div class="adminStat"><strong id="messagesCount">0</strong><span>إجمالي الرسائل</span></div>
-      <div class="adminStat"><strong id="reportedCount">0</strong><span>رسائل عليها بلاغ</span></div>
-      <div class="adminStat"><strong id="reportsCount">0</strong><span>إجمالي البلاغات</span></div>
+      <div class="adminStat"><strong id="messagesCount">0</strong><span>ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ط±ط³ط§ط¦ظ„</span></div>
+      <div class="adminStat"><strong id="reportedCount">0</strong><span>ط±ط³ط§ط¦ظ„ ط¹ظ„ظٹظ‡ط§ ط¨ظ„ط§ط؛</span></div>
+      <div class="adminStat"><strong id="reportsCount">0</strong><span>ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ط¨ظ„ط§ط؛ط§طھ</span></div>
     </div>
 
     <section class="adminSection">
-      <h2>⚑ الرسائل المُبلّغ عنها</h2>
-      <div id="reportedList"><div class="emptyState">جاري التحميل...</div></div>
+      <h2>âڑ‘ ط§ظ„ط±ط³ط§ط¦ظ„ ط§ظ„ظ…ظڈط¨ظ„ظ‘ط؛ ط¹ظ†ظ‡ط§</h2>
+      <div id="reportedList"><div class="emptyState">ط¬ط§ط±ظٹ ط§ظ„طھط­ظ…ظٹظ„...</div></div>
     </section>
 
     <section class="adminSection">
-      <div class="adminToolbar"><h2>كل الرسائل</h2><input id="messageSearch" class="adminInput adminSearch" type="search" placeholder="بحث بالاسم أو النص أو التصنيف"></div>
+      <div class="adminToolbar"><h2>ظƒظ„ ط§ظ„ط±ط³ط§ط¦ظ„</h2><input id="messageSearch" class="adminInput adminSearch" type="search" placeholder="ط¨ط­ط« ط¨ط§ظ„ط§ط³ظ… ط£ظˆ ط§ظ„ظ†طµ ط£ظˆ ط§ظ„طھطµظ†ظٹظپ"></div>
       <div id="allMessages"></div>
     </section>
 
@@ -54,18 +56,19 @@ const loginStatus=document.getElementById('loginStatus'),adminStatus=document.ge
 
 function fmt(iso){try{return new Intl.DateTimeFormat('ar',{dateStyle:'short',timeStyle:'short'}).format(new Date(iso));}catch{return iso||'';}}
 function headers(){return {'authorization':'Bearer '+token,'content-type':'application/json'};}
-async function api(path,options={}){const r=await fetch(path,{...options,headers:{...headers(),...(options.headers||{})},cache:'no-store'});let data={};try{data=await r.json();}catch{}if(!r.ok){const err=new Error(data.error||'تعذر تنفيذ الطلب.');err.status=r.status;throw err;}return data;}
+async function api(path,options={}){const r=await fetch(path,{...options,headers:{...headers(),...(options.headers||{})},cache:'no-store'});let data={};try{data=await r.json();}catch{}if(!r.ok){const err=new Error(data.error||'طھط¹ط°ط± طھظ†ظپظٹط° ط§ظ„ط·ظ„ط¨.');err.status=r.status;throw err;}return data;}
 function showLogin(message=''){loginBox.classList.remove('hidden');dashboard.classList.add('hidden');loginStatus.textContent=message;}
 function showDashboard(){loginBox.classList.add('hidden');dashboard.classList.remove('hidden');}
-function card(m,reported=false){const article=document.createElement('article');article.className='adminCard'+(reported?' reported':'');const top=document.createElement('div');top.className='adminTop';const name=document.createElement('strong');name.textContent=m.name||'بدون اسم';const cat=document.createElement('span');cat.className='brandTag';cat.textContent=m.category||'عام';top.append(name,cat);if(m.reportCount>0){const badge=document.createElement('span');badge.className='reportBadge';badge.textContent=`${m.reportCount} بلاغ`;top.append(badge);}const time=document.createElement('time');time.textContent=fmt(m.time);top.append(time);const text=document.createElement('p');text.className='adminText';text.textContent=m.text||'';const actions=document.createElement('div');actions.className='adminActions';const open=document.createElement('a');open.className='softBtn';open.href='community.html#msg-'+encodeURIComponent(m.id);open.target='_blank';open.rel='noopener';open.textContent='فتح في الغرفة';const del=document.createElement('button');del.type='button';del.className='dangerBtn';del.textContent='حذف الرسالة';del.addEventListener('click',()=>deleteMessage(m.id));actions.append(open);if(m.reportCount>0){const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='softBtn';dismiss.textContent='تجاهل البلاغ';dismiss.addEventListener('click',()=>dismissReport(m.id));actions.append(dismiss);}actions.append(del);article.append(top,text,actions);return article;}
-function renderAll(){const term=document.getElementById('messageSearch').value.trim().toLowerCase();const list=allMessages.filter(m=>!term||`${m.name} ${m.text} ${m.category}`.toLowerCase().includes(term)).slice().reverse();const root=document.getElementById('allMessages');root.replaceChildren(...(list.length?list.map(m=>card(m,false)):[Object.assign(document.createElement('div'),{className:'emptyState',textContent:'لا توجد رسائل مطابقة.'})]));}
-function renderReported(list){const root=document.getElementById('reportedList');root.replaceChildren(...(list.length?list.map(m=>card(m,true)):[Object.assign(document.createElement('div'),{className:'emptyState',textContent:'لا توجد بلاغات معلقة.'})]));}
-async function loadOverview(){adminStatus.textContent='جاري التحديث...';try{const data=await api('/api/admin/overview');allMessages=Array.isArray(data.messages)?data.messages:[];document.getElementById('messagesCount').textContent=Number(data.summary?.messages||0).toLocaleString('ar');document.getElementById('reportedCount').textContent=Number(data.summary?.reportedMessages||0).toLocaleString('ar');document.getElementById('reportsCount').textContent=Number(data.summary?.totalReports||0).toLocaleString('ar');renderReported(Array.isArray(data.reported)?data.reported:[]);renderAll();showDashboard();adminStatus.textContent='تم التحديث.';}catch(err){if(err.status===401){sessionStorage.removeItem(TOKEN_KEY);token='';showLogin('كلمة المرور غير صحيحة.');}else if(err.status===503){showLogin(err.message);}else{adminStatus.textContent=err.message;}}}
-async function deleteMessage(id){if(!confirm('هل تريد حذف هذه الرسالة نهائيًا؟'))return;adminStatus.textContent='جاري حذف الرسالة...';try{await api('/api/admin/delete-message',{method:'POST',body:JSON.stringify({id})});await loadOverview();adminStatus.textContent='تم حذف الرسالة.';}catch(err){adminStatus.textContent=err.message;}}
-async function dismissReport(id){if(!confirm('تجاهل كل البلاغات الحالية على هذه الرسالة؟'))return;adminStatus.textContent='جاري تجاهل البلاغ...';try{await api('/api/admin/dismiss-report',{method:'POST',body:JSON.stringify({id})});await loadOverview();adminStatus.textContent='تم تجاهل البلاغ.';}catch(err){adminStatus.textContent=err.message;}}
-document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();token=document.getElementById('adminPassword').value.trim();if(!token)return;sessionStorage.setItem(TOKEN_KEY,token);loginStatus.textContent='جاري التحقق...';await loadOverview();});
-document.getElementById('refreshBtn').addEventListener('click',loadOverview);document.getElementById('logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem(TOKEN_KEY);token='';document.getElementById('adminPassword').value='';showLogin('تم تسجيل الخروج.');});document.getElementById('messageSearch').addEventListener('input',renderAll);
+function card(m,reported=false){const article=document.createElement('article');article.className='adminCard'+(reported?' reported':'');const top=document.createElement('div');top.className='adminTop';const name=document.createElement('strong');name.textContent=m.name||'ط¨ط¯ظˆظ† ط§ط³ظ…';const cat=document.createElement('span');cat.className='brandTag';cat.textContent=m.category||'ط¹ط§ظ…';top.append(name,cat);if(m.reportCount>0){const badge=document.createElement('span');badge.className='reportBadge';badge.textContent=`${m.reportCount} ط¨ظ„ط§ط؛`;top.append(badge);}const time=document.createElement('time');time.textContent=fmt(m.time);top.append(time);const text=document.createElement('p');text.className='adminText';text.textContent=m.text||'';const actions=document.createElement('div');actions.className='adminActions';const open=document.createElement('a');open.className='softBtn';open.href='community.html#msg-'+encodeURIComponent(m.id);open.target='_blank';open.rel='noopener';open.textContent='ظپطھط­ ظپظٹ ط§ظ„ط؛ط±ظپط©';const del=document.createElement('button');del.type='button';del.className='dangerBtn';del.textContent='ط­ط°ظپ ط§ظ„ط±ط³ط§ظ„ط©';del.addEventListener('click',()=>deleteMessage(m.id));actions.append(open);if(m.reportCount>0){const dismiss=document.createElement('button');dismiss.type='button';dismiss.className='softBtn';dismiss.textContent='طھط¬ط§ظ‡ظ„ ط§ظ„ط¨ظ„ط§ط؛';dismiss.addEventListener('click',()=>dismissReport(m.id));actions.append(dismiss);}actions.append(del);article.append(top,text,actions);return article;}
+function renderAll(){const term=document.getElementById('messageSearch').value.trim().toLowerCase();const list=allMessages.filter(m=>!term||`${m.name} ${m.text} ${m.category}`.toLowerCase().includes(term)).slice().reverse();const root=document.getElementById('allMessages');root.replaceChildren(...(list.length?list.map(m=>card(m,false)):[Object.assign(document.createElement('div'),{className:'emptyState',textContent:'ظ„ط§ طھظˆط¬ط¯ ط±ط³ط§ط¦ظ„ ظ…ط·ط§ط¨ظ‚ط©.'})]));}
+function renderReported(list){const root=document.getElementById('reportedList');root.replaceChildren(...(list.length?list.map(m=>card(m,true)):[Object.assign(document.createElement('div'),{className:'emptyState',textContent:'ظ„ط§ طھظˆط¬ط¯ ط¨ظ„ط§ط؛ط§طھ ظ…ط¹ظ„ظ‚ط©.'})]));}
+async function loadOverview(){adminStatus.textContent='ط¬ط§ط±ظٹ ط§ظ„طھط­ط¯ظٹط«...';try{const data=await api('/api/admin/overview');allMessages=Array.isArray(data.messages)?data.messages:[];document.getElementById('messagesCount').textContent=Number(data.summary?.messages||0).toLocaleString('ar');document.getElementById('reportedCount').textContent=Number(data.summary?.reportedMessages||0).toLocaleString('ar');document.getElementById('reportsCount').textContent=Number(data.summary?.totalReports||0).toLocaleString('ar');renderReported(Array.isArray(data.reported)?data.reported:[]);renderAll();showDashboard();adminStatus.textContent='طھظ… ط§ظ„طھط­ط¯ظٹط«.';}catch(err){if(err.status===401){sessionStorage.removeItem(TOKEN_KEY);token='';showLogin('ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط؛ظٹط± طµط­ظٹط­ط©.');}else if(err.status===503){showLogin(err.message);}else{adminStatus.textContent=err.message;}}}
+async function deleteMessage(id){if(!confirm('ظ‡ظ„ طھط±ظٹط¯ ط­ط°ظپ ظ‡ط°ظ‡ ط§ظ„ط±ط³ط§ظ„ط© ظ†ظ‡ط§ط¦ظٹظ‹ط§طں'))return;adminStatus.textContent='ط¬ط§ط±ظٹ ط­ط°ظپ ط§ظ„ط±ط³ط§ظ„ط©...';try{await api('/api/admin/delete-message',{method:'POST',body:JSON.stringify({id})});await loadOverview();adminStatus.textContent='طھظ… ط­ط°ظپ ط§ظ„ط±ط³ط§ظ„ط©.';}catch(err){adminStatus.textContent=err.message;}}
+async function dismissReport(id){if(!confirm('طھط¬ط§ظ‡ظ„ ظƒظ„ ط§ظ„ط¨ظ„ط§ط؛ط§طھ ط§ظ„ط­ط§ظ„ظٹط© ط¹ظ„ظ‰ ظ‡ط°ظ‡ ط§ظ„ط±ط³ط§ظ„ط©طں'))return;adminStatus.textContent='ط¬ط§ط±ظٹ طھط¬ط§ظ‡ظ„ ط§ظ„ط¨ظ„ط§ط؛...';try{await api('/api/admin/dismiss-report',{method:'POST',body:JSON.stringify({id})});await loadOverview();adminStatus.textContent='طھظ… طھط¬ط§ظ‡ظ„ ط§ظ„ط¨ظ„ط§ط؛.';}catch(err){adminStatus.textContent=err.message;}}
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();token=document.getElementById('adminPassword').value.trim();if(!token)return;sessionStorage.setItem(TOKEN_KEY,token);loginStatus.textContent='ط¬ط§ط±ظٹ ط§ظ„طھط­ظ‚ظ‚...';await loadOverview();});
+document.getElementById('refreshBtn').addEventListener('click',loadOverview);document.getElementById('logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem(TOKEN_KEY);token='';document.getElementById('adminPassword').value='';showLogin('طھظ… طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬.');});document.getElementById('messageSearch').addEventListener('input',renderAll);
 if(token)loadOverview();else showLogin();
 </script>
 </body>
 </html>
+

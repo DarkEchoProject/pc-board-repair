@@ -1,34 +1,37 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص أعطال اللوحات الأم والكمبيوتر | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص أعطال اللوحات الأم والكمبيوتر المكتبي: No Power، No Display، إعادة التشغيل، الشورت، POST والصفارات، ودوائر VRM وتغذية المعالج والرام.">
+<title>طھط´ط®ظٹطµ ط£ط¹ط·ط§ظ„ ط§ظ„ظ„ظˆط­ط§طھ ط§ظ„ط£ظ… ظˆط§ظ„ظƒظ…ط¨ظٹظˆطھط± | PC Board Repair</title>
+<meta name="description" content="ط¯ظ„ظٹظ„ ط¹ظ…ظ„ظٹ ظ„طھط´ط®ظٹطµ ط£ط¹ط·ط§ظ„ ط§ظ„ظ„ظˆط­ط§طھ ط§ظ„ط£ظ… ظˆط§ظ„ظƒظ…ط¨ظٹظˆطھط± ط§ظ„ظ…ظƒطھط¨ظٹ: No PowerطŒ No DisplayطŒ ط¥ط¹ط§ط¯ط© ط§ظ„طھط´ط؛ظٹظ„طŒ ط§ظ„ط´ظˆط±طھطŒ POST ظˆط§ظ„طµظپط§ط±ط§طھطŒ ظˆط¯ظˆط§ط¦ط± VRM ظˆطھط؛ط°ظٹط© ط§ظ„ظ…ط¹ط§ظ„ط¬ ظˆط§ظ„ط±ط§ظ….">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/index.html">
 <link rel="stylesheet" href="../style.css">
 <style>
 .diagHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:28px}.diagHero h1{margin-bottom:8px}.diagGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}.diagCard{display:block;background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:21px;text-decoration:none;transition:.2s}.diagCard:hover{transform:translateY(-3px);border-color:#20bdf2;box-shadow:0 10px 30px #0005}.diagCard h2{margin:9px 0}.diagIcon{font-size:31px}.diagTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 8px;border-radius:999px;font-size:12px}.startBox{margin-top:32px;background:#102238;border:1px solid #2a4e72;border-radius:16px;padding:18px}.startBox p{margin-bottom:0}
 </style>
+<link rel="icon href=/favicon.ico?v=3 sizes=any>
+<link rel=icon type=image/png href=/site-logo.png?v=3>
 </head>
 <body>
-<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a></nav></header>
+<header><a class="logo" href="../index.html">âڑ™ï¸ڈ PC Board Repair</a><nav><a href="../index.html">ط§ظ„ط±ط¦ظٹط³ظٹط©</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="index.html">ط§ظ„طھط´ط®ظٹطµ</a><a href="../community.html">ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a></nav></header>
 <main class="wrap">
-<div class="crumb"><a href="../index.html">الرئيسية</a> ← التشخيص</div>
-<section class="diagHero"><span class="diagTag">دليل فني عملي</span><h1>🔧 تشخيص أعطال الكمبيوتر واللوحات الأم</h1><p class="muted">ابدأ من العَرَض الظاهر ثم اتبع القياسات بالترتيب. الهدف هو تحديد الدائرة المتوقفة قبل فك القطع أو تغييرها عشوائيًا.</p></section>
+<div class="crumb"><a href="../index.html">ط§ظ„ط±ط¦ظٹط³ظٹط©</a> â†گ ط§ظ„طھط´ط®ظٹطµ</div>
+<section class="diagHero"><span class="diagTag">ط¯ظ„ظٹظ„ ظپظ†ظٹ ط¹ظ…ظ„ظٹ</span><h1>ًں”§ طھط´ط®ظٹطµ ط£ط¹ط·ط§ظ„ ط§ظ„ظƒظ…ط¨ظٹظˆطھط± ظˆط§ظ„ظ„ظˆط­ط§طھ ط§ظ„ط£ظ…</h1><p class="muted">ط§ط¨ط¯ط£ ظ…ظ† ط§ظ„ط¹ظژط±ظژط¶ ط§ظ„ط¸ط§ظ‡ط± ط«ظ… ط§طھط¨ط¹ ط§ظ„ظ‚ظٹط§ط³ط§طھ ط¨ط§ظ„طھط±طھظٹط¨. ط§ظ„ظ‡ط¯ظپ ظ‡ظˆ طھط­ط¯ظٹط¯ ط§ظ„ط¯ط§ط¦ط±ط© ط§ظ„ظ…طھظˆظ‚ظپط© ظ‚ط¨ظ„ ظپظƒ ط§ظ„ظ‚ط·ط¹ ط£ظˆ طھط؛ظٹظٹط±ظ‡ط§ ط¹ط´ظˆط§ط¦ظٹظ‹ط§.</p></section>
 
 <div class="diagGrid">
-  <a class="diagCard" href="no-power.html"><div class="diagIcon">⚡</div><span class="diagTag">متاح الآن</span><h2>الجهاز لا يعمل نهائيًا — No Power</h2><p class="muted">فحص 5VSB، زر التشغيل، PS_ON، مخارج الباور، الشورت وخطوط الاستعداد.</p></a>
-  <a class="diagCard" href="no-display.html"><div class="diagIcon">🖥️</div><span class="diagTag">متاح الآن</span><h2>يعمل ولا توجد صورة — No Display / No POST</h2><p class="muted">RAM، VDIMM، CPU، Vcore، BIOS، Reset، Clock وكرت الشاشة.</p></a>
-  <a class="diagCard" href="restarts-shuts-down.html"><div class="diagIcon">🔁</div><span class="diagTag">متاح الآن</span><h2>يعمل ويفصل أو يعيد التشغيل</h2><p class="muted">PSU، PWR_OK، الحرارة، VRM، Vcore، RAM وتسلسل Power Good.</p></a>
-  <a class="diagCard" href="short-circuit.html"><div class="diagIcon">🔌</div><span class="diagTag">متاح الآن</span><h2>شورت على اللوحة</h2><p class="muted">تمييز المقاومة الطبيعية المنخفضة عن الشورت الحقيقي، تحديد الخط، عزل المراحل وفحص MOSFET والمكثفات.</p></a>
-  <a class="diagCard" href="post-beep-codes.html"><div class="diagIcon">🧠</div><span class="diagTag">متاح الآن</span><h2>POST متوقف أو صفارات</h2><p class="muted">RAM، CPU، BIOS، VGA، POST Card، Reset وClock مع تفسير السلوك بدل الاعتماد على عدد الصفارات وحده.</p></a>
-  <a class="diagCard" href="vrm-cpu-ram.html"><div class="diagIcon">🔋</div><span class="diagTag">متاح الآن</span><h2>VRM وخطوط المعالج والرام</h2><p class="muted">12V CPU، MOSFET وPower Stage، PWM، الملفات، Vcore، VDIMM ونقاط القياس الأساسية.</p></a>
+  <a class="diagCard" href="no-power.html"><div class="diagIcon">âڑ،</div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>ط§ظ„ط¬ظ‡ط§ط² ظ„ط§ ظٹط¹ظ…ظ„ ظ†ظ‡ط§ط¦ظٹظ‹ط§ â€” No Power</h2><p class="muted">ظپط­طµ 5VSBطŒ ط²ط± ط§ظ„طھط´ط؛ظٹظ„طŒ PS_ONطŒ ظ…ط®ط§ط±ط¬ ط§ظ„ط¨ط§ظˆط±طŒ ط§ظ„ط´ظˆط±طھ ظˆط®ط·ظˆط· ط§ظ„ط§ط³طھط¹ط¯ط§ط¯.</p></a>
+  <a class="diagCard" href="no-display.html"><div class="diagIcon">ًں–¥ï¸ڈ</div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>ظٹط¹ظ…ظ„ ظˆظ„ط§ طھظˆط¬ط¯ طµظˆط±ط© â€” No Display / No POST</h2><p class="muted">RAMطŒ VDIMMطŒ CPUطŒ VcoreطŒ BIOSطŒ ResetطŒ Clock ظˆظƒط±طھ ط§ظ„ط´ط§ط´ط©.</p></a>
+  <a class="diagCard" href="restarts-shuts-down.html"><div class="diagIcon">ًں”پ</div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>ظٹط¹ظ…ظ„ ظˆظٹظپطµظ„ ط£ظˆ ظٹط¹ظٹط¯ ط§ظ„طھط´ط؛ظٹظ„</h2><p class="muted">PSUطŒ PWR_OKطŒ ط§ظ„ط­ط±ط§ط±ط©طŒ VRMطŒ VcoreطŒ RAM ظˆطھط³ظ„ط³ظ„ Power Good.</p></a>
+  <a class="diagCard" href="short-circuit.html"><div class="diagIcon">ًں”Œ</div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>ط´ظˆط±طھ ط¹ظ„ظ‰ ط§ظ„ظ„ظˆط­ط©</h2><p class="muted">طھظ…ظٹظٹط² ط§ظ„ظ…ظ‚ط§ظˆظ…ط© ط§ظ„ط·ط¨ظٹط¹ظٹط© ط§ظ„ظ…ظ†ط®ظپط¶ط© ط¹ظ† ط§ظ„ط´ظˆط±طھ ط§ظ„ط­ظ‚ظٹظ‚ظٹطŒ طھط­ط¯ظٹط¯ ط§ظ„ط®ط·طŒ ط¹ط²ظ„ ط§ظ„ظ…ط±ط§ط­ظ„ ظˆظپط­طµ MOSFET ظˆط§ظ„ظ…ظƒط«ظپط§طھ.</p></a>
+  <a class="diagCard" href="post-beep-codes.html"><div class="diagIcon">ًں§ </div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>POST ظ…طھظˆظ‚ظپ ط£ظˆ طµظپط§ط±ط§طھ</h2><p class="muted">RAMطŒ CPUطŒ BIOSطŒ VGAطŒ POST CardطŒ Reset ظˆClock ظ…ط¹ طھظپط³ظٹط± ط§ظ„ط³ظ„ظˆظƒ ط¨ط¯ظ„ ط§ظ„ط§ط¹طھظ…ط§ط¯ ط¹ظ„ظ‰ ط¹ط¯ط¯ ط§ظ„طµظپط§ط±ط§طھ ظˆط­ط¯ظ‡.</p></a>
+  <a class="diagCard" href="vrm-cpu-ram.html"><div class="diagIcon">ًں”‹</div><span class="diagTag">ظ…طھط§ط­ ط§ظ„ط¢ظ†</span><h2>VRM ظˆط®ط·ظˆط· ط§ظ„ظ…ط¹ط§ظ„ط¬ ظˆط§ظ„ط±ط§ظ…</h2><p class="muted">12V CPUطŒ MOSFET ظˆPower StageطŒ PWMطŒ ط§ظ„ظ…ظ„ظپط§طھطŒ VcoreطŒ VDIMM ظˆظ†ظ‚ط§ط· ط§ظ„ظ‚ظٹط§ط³ ط§ظ„ط£ط³ط§ط³ظٹط©.</p></a>
 </div>
 
-<section class="startBox"><b>قاعدة البداية:</b><p class="muted">قبل أي قياس على اللوحة افصل الكهرباء، افحص بصريًا، ثم استخدم مزود طاقة معروف السلامة. لا تعمل على الجانب الابتدائي لمزود الطاقة المتصل بالتيار إذا لم تكن مؤهلًا لذلك.</p></section>
+<section class="startBox"><b>ظ‚ط§ط¹ط¯ط© ط§ظ„ط¨ط¯ط§ظٹط©:</b><p class="muted">ظ‚ط¨ظ„ ط£ظٹ ظ‚ظٹط§ط³ ط¹ظ„ظ‰ ط§ظ„ظ„ظˆط­ط© ط§ظپطµظ„ ط§ظ„ظƒظ‡ط±ط¨ط§ط،طŒ ط§ظپط­طµ ط¨طµط±ظٹظ‹ط§طŒ ط«ظ… ط§ط³طھط®ط¯ظ… ظ…ط²ظˆط¯ ط·ط§ظ‚ط© ظ…ط¹ط±ظˆظپ ط§ظ„ط³ظ„ط§ظ…ط©. ظ„ط§ طھط¹ظ…ظ„ ط¹ظ„ظ‰ ط§ظ„ط¬ط§ظ†ط¨ ط§ظ„ط§ط¨طھط¯ط§ط¦ظٹ ظ„ظ…ط²ظˆط¯ ط§ظ„ط·ط§ظ‚ط© ط§ظ„ظ…طھطµظ„ ط¨ط§ظ„طھظٹط§ط± ط¥ط°ط§ ظ„ظ… طھظƒظ† ظ…ط¤ظ‡ظ„ظ‹ط§ ظ„ط°ظ„ظƒ.</p></section>
 </main>
-<footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer><div class="footerLinks"><a href="../community.html">ط؛ط±ظپط© ط§ظ„طµظٹط§ظ†ط©</a><a href="../about.html">ظ…ظ† ظ†ط­ظ†</a><a href="../contact.html">ط§طھطµظ„ ط¨ظ†ط§</a><a href="../privacy.html">ط³ظٹط§ط³ط© ط§ظ„ط®طµظˆطµظٹط©</a><a href="../terms.html">ط´ط±ظˆط· ط§ظ„ط§ط³طھط®ط¯ط§ظ…</a><a href="../disclaimer.html">ط¥ط®ظ„ط§ط، ط§ظ„ظ…ط³ط¤ظˆظ„ظٹط©</a></div><div>آ© 2026 PC Board Repair</div></footer>
 </body>
 </html>
+
