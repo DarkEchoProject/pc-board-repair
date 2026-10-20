@@ -32,6 +32,15 @@ Write-Host "PC Board Repair - Pre-deploy checks"
 Write-Host "=========================================="
 Write-Host ""
 
+Write-Host "Checking required project files..."
+Check-File 'wrangler.toml' 100
+Check-File 'DEPLOY-SITE.cmd' 100
+Check-File 'src\index.js' 100
+Check-File 'src\app.js' 100
+Check-File 'src\entry.js' 100
+Check-File 'src\seo-entry.js' 100
+Check-File 'src\header-entry.js' 100
+
 $requiredPages = @(
     'public\index.html',
     'public\boardview\index.html',
@@ -39,6 +48,8 @@ $requiredPages = @(
     'public\diagnostics\index.html',
     'public\component-testing\index.html',
     'public\community.html',
+    'public\contact.html',
+    'public\privacy.html',
     'public\login.html',
     'public\404.html'
 )
@@ -48,10 +59,40 @@ foreach ($page in $requiredPages) {
 }
 
 Write-Host ""
+Write-Host "Checking deploy configuration..."
+
+try {
+    $wrangler = Get-Content -LiteralPath 'wrangler.toml' -Raw -Encoding UTF8
+    if ($wrangler -match '(?m)^\s*main\s*=\s*["'']src/header-entry\.js["'']\s*$') {
+        Pass 'wrangler.toml uses src/header-entry.js as the Worker entry point'
+    }
+    else {
+        Fail 'wrangler.toml Worker entry point is not src/header-entry.js'
+    }
+}
+catch {
+    Fail "Could not read wrangler.toml - $($_.Exception.Message)"
+}
+
+try {
+    $deployScript = Get-Content -LiteralPath 'DEPLOY-SITE.cmd' -Raw -Encoding UTF8
+    if ($deployScript -match '(?i)--assets\s+public') {
+        Fail 'DEPLOY-SITE.cmd still contains --assets public; use wrangler.toml asset configuration instead'
+    }
+    else {
+        Pass 'DEPLOY-SITE.cmd does not override assets with --assets public'
+    }
+}
+catch {
+    Fail "Could not read DEPLOY-SITE.cmd - $($_.Exception.Message)"
+}
+
+Write-Host ""
 Write-Host "Checking data files..."
 
 $jsonFiles = @(
     'public\data\boards.json',
+    'public\data\boards-large.json',
     'public\data\videos.json'
 )
 
@@ -75,10 +116,25 @@ try {
     $boards = ConvertFrom-Json -InputObject $boardsRaw
     $boardCount = if ($null -eq $boards) { 0 } elseif ($boards -is [System.Array]) { $boards.Length } else { 1 }
     if ($boardCount -gt 100) {
-        Pass "BoardView database contains $boardCount records"
+        Pass "Primary BoardView database contains $boardCount records"
     }
     else {
-        Fail "BoardView database looks unexpectedly small: $boardCount records"
+        Fail "Primary BoardView database looks unexpectedly small: $boardCount records"
+    }
+}
+catch {
+    # JSON error already reported above.
+}
+
+try {
+    $largeRaw = Get-Content -LiteralPath 'public\data\boards-large.json' -Raw -Encoding UTF8
+    $largeBoards = ConvertFrom-Json -InputObject $largeRaw
+    $largeCount = if ($null -eq $largeBoards) { 0 } elseif ($largeBoards -is [System.Array]) { $largeBoards.Length } else { 1 }
+    if ($largeCount -gt 0) {
+        Pass "Large BoardView database contains $largeCount records"
+    }
+    else {
+        Fail 'Large BoardView database is empty'
     }
 }
 catch {
@@ -111,14 +167,24 @@ if (-not $node) {
     Fail 'Node.js was not found'
 }
 else {
-    $jsFiles = @('src\index.js', 'src\app.js', 'src\entry.js')
-    foreach ($js in $jsFiles) {
-        & node.exe --check $js 2>&1 | Out-Host
-        if ($LASTEXITCODE -eq 0) {
-            Pass "Syntax OK: $js"
-        }
-        else {
-            Fail "JavaScript syntax error: $js"
+    $jsFiles = @(
+        Get-ChildItem -LiteralPath 'src' -Recurse -File -Filter '*.js'
+        Get-ChildItem -LiteralPath 'public' -Recurse -File -Filter '*.js'
+    ) | Sort-Object FullName -Unique
+
+    if (-not $jsFiles.Count) {
+        Fail 'No JavaScript files were found to validate'
+    }
+    else {
+        foreach ($js in $jsFiles) {
+            & node.exe --check $js.FullName 2>&1 | Out-Host
+            $relative = $js.FullName.Substring($root.Length).TrimStart('\')
+            if ($LASTEXITCODE -eq 0) {
+                Pass "Syntax OK: $relative"
+            }
+            else {
+                Fail "JavaScript syntax error: $relative"
+            }
         }
     }
 }
