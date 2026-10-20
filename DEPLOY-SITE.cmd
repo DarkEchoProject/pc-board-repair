@@ -52,7 +52,7 @@ if errorlevel 1 (
 echo.
 echo Validating Worker build with Wrangler dry-run...
 echo.
-call npx.cmd wrangler deploy --dry-run --assets public --name pc-board-repair
+call npx.cmd wrangler deploy --dry-run --name pc-board-repair
 if errorlevel 1 (
   echo.
   echo DEPLOY CANCELLED because Wrangler dry-run failed.
@@ -65,7 +65,7 @@ if errorlevel 1 (
 echo.
 echo Uploading site to pc-board-repair...
 echo.
-call npx.cmd wrangler deploy --assets public --name pc-board-repair
+call npx.cmd wrangler deploy --name pc-board-repair
 if errorlevel 1 (
   echo.
   echo DEPLOY FAILED. Copy or photograph the error above.
