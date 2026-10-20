@@ -1,8 +1,8 @@
 (()=>{
   'use strict';
 
-  if(window.PCBRYouTubeIntegrationVersion==='20261020-7')return;
-  window.PCBRYouTubeIntegrationVersion='20261020-7';
+  if(window.PCBRYouTubeIntegrationVersion==='20261020-8')return;
+  window.PCBRYouTubeIntegrationVersion='20261020-8';
 
   const DATA_URL='/data/videos.json';
   const CHANNEL_URL='https://www.youtube.com/@PCBoardRepairArabic';
@@ -13,7 +13,7 @@
   };
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
   }[c]));
 
   function isShort(video){return video?.kind==='short'||/\/shorts\//i.test(String(video?.youtube_url||''));}
@@ -92,16 +92,6 @@
     return `<article class="pcbrVideoCard"><a class="pcbrVideoThumb" href="${esc(url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(title(video,l))}"><img loading="lazy" src="${esc(thumb(video))}" alt="${esc(title(video,l))}"><span class="pcbrVideoPlay" aria-hidden="true">▶</span></a><div class="pcbrVideoBody"><span class="pcbrVideoEyebrow">${badge}</span><h3>${esc(title(video,l))}</h3><p class="muted">${esc(description(video,l))}</p><div class="pcbrVideoActions"><a class="btn" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${l==='en'?'Watch on YouTube':'شاهد على YouTube'}</a><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div></div></article>`;
   }
 
-  function updateHomeVideoStat(videos){
-    if(!/^\/(?:index\.html)?$/.test(location.pathname))return;
-    const counter=document.getElementById('homeImageCount');if(!counter)return;
-    const l=lang();const desired=videos.length.toLocaleString(l==='en'?'en-US':'ar-LB');
-    const label=counter.closest('.homeStat')?.querySelector('span');const desiredLabel=l==='en'?'Repair videos':'فيديوهات صيانة';
-    const apply=()=>{counter.textContent=desired;if(label)label.textContent=desiredLabel;};
-    apply();if(counter.dataset.pcbrVideoStat==='1')return;counter.dataset.pcbrVideoStat='1';
-    const observer=new MutationObserver(apply);observer.observe(counter,{childList:true,characterData:true,subtree:true});setTimeout(()=>{apply();observer.disconnect();},5000);
-  }
-
   function addHomeSection(videos){
     if(!/^\/(?:index\.html)?$/.test(location.pathname))return;
     const l=lang();const target=document.querySelector('.homeSearchSection')||document.querySelector('main.wrap .downloadBox');if(!target)return;
@@ -125,7 +115,7 @@
     try{
       const response=await fetch(DATA_URL,{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
       const data=await response.json();const videos=Array.isArray(data)?data.filter(v=>v&&v.id):[];if(!videos.length)return;
-      updateHomeVideoStat(videos);addHomeSection(videos);addComponentTestingVideo(videos);
+      addHomeSection(videos);addComponentTestingVideo(videos);
     }catch(err){console.warn('PCBR YouTube integration unavailable.',err);}
   }
 
