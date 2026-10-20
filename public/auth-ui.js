@@ -47,7 +47,8 @@
       {href:'/component-testing/index.html',ar:'فحص القطع',en:'Component Testing',active:path=>path.startsWith('/component-testing/')},
       {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
       {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:path=>path==='/contact.html'},
-      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'}
+      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'},
+      {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}
     ];
 
     const path=location.pathname;
@@ -55,6 +56,11 @@
       const a=document.createElement('a');
       a.href=item.href;
       a.textContent=item[lang];
+      if(item.external){a.target='_blank';a.rel='noopener noreferrer';}
+      if(item.youtube){
+        a.dataset.pcbrYoutubeChannel='nav';
+        a.style.cssText='color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap';
+      }
       if(item.active(path))a.setAttribute('aria-current','page');
       return a;
     }));
