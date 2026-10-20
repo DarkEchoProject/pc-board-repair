@@ -1,8 +1,8 @@
 (()=>{
   'use strict';
 
-  if(window.PCBRYouTubeIntegrationVersion==='20261020-8')return;
-  window.PCBRYouTubeIntegrationVersion='20261020-8';
+  if(window.PCBRYouTubeIntegrationVersion==='20261020-9')return;
+  window.PCBRYouTubeIntegrationVersion='20261020-9';
 
   const DATA_URL='/data/videos.json';
   const CHANNEL_URL='https://www.youtube.com/@PCBoardRepairArabic';
@@ -31,16 +31,6 @@
   }
   function watchUrl(video){return video.youtube_url||`https://www.youtube.com/watch?v=${encodeURIComponent(video.id||'')}`;}
   function thumb(video){return `https://i.ytimg.com/vi/${encodeURIComponent(video.id||'')}/hqdefault.jpg`;}
-  function orderedVideos(videos){
-    return [...videos].sort((a,b)=>{
-      const ao=Number(a?.order),bo=Number(b?.order);
-      const ah=Number.isFinite(ao),bh=Number.isFinite(bo);
-      if(ah&&bh&&ao!==bo)return ao-bo;
-      if(ah&&!bh)return -1;
-      if(!ah&&bh)return 1;
-      return String(b?.published_at||'').localeCompare(String(a?.published_at||''));
-    });
-  }
 
   function addStyles(){
     if(document.getElementById('pcbrYouTubeStyles'))return;
@@ -97,8 +87,8 @@
     const l=lang();const target=document.querySelector('.homeSearchSection')||document.querySelector('main.wrap .downloadBox');if(!target)return;
     let section=document.getElementById('pcbrHomeVideos');
     if(!section){section=document.createElement('section');section.id='pcbrHomeVideos';section.className='pcbrVideoSection';target.insertAdjacentElement('afterend',section);}
-    const list=orderedVideos(videos).slice(0,3);
-    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2><p class="muted">${l==='en'?'The latest three videos from the PC Board Repair channel.':'أحدث 3 فيديوهات من قناة PC Board Repair، ويحل الفيديو الجديد مكان الأقدم تلقائيًا في العرض.'}</p></div><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div><div class="pcbrVideoGrid">${list.map(v=>videoCard(v,l)).join('')}</div>`;
+    const list=videos.slice(0,3);
+    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2><p class="muted">${l==='en'?'The first three videos in the site video list are shown here. Add each new video at the top of the list and the oldest displayed video drops out automatically.':'تظهر هنا أول 3 فيديوهات في قائمة الموقع. عند إضافة فيديو جديد في أول القائمة يخرج أقدم فيديو من العرض تلقائيًا.'}</p></div><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div><div class="pcbrVideoGrid">${list.map(v=>videoCard(v,l)).join('')}</div>`;
   }
 
   function addComponentTestingVideo(videos){
