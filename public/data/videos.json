@@ -1,6 +1,62 @@
 [
   {
+    "id": "MYrgG9a04G8",
+    "kind": "video",
+    "order": 1,
+    "title_ar": "فيديو صيانة من قناة PC Board Repair",
+    "title_en": "PC Board Repair video",
+    "description_ar": "فيديو عملي من قناة PC Board Repair مرتبط بصيانة الكمبيوتر واللوحات الأم.",
+    "description_en": "A practical PC Board Repair video about desktop computer and motherboard repair.",
+    "category": "repair",
+    "youtube_url": "https://www.youtube.com/watch?v=MYrgG9a04G8"
+  },
+  {
+    "id": "xplTEQ0mssA",
+    "kind": "video",
+    "order": 2,
+    "title_ar": "فيديو صيانة من قناة PC Board Repair",
+    "title_en": "PC Board Repair video",
+    "description_ar": "فيديو عملي من قناة PC Board Repair مرتبط بصيانة الكمبيوتر واللوحات الأم.",
+    "description_en": "A practical PC Board Repair video about desktop computer and motherboard repair.",
+    "category": "repair",
+    "youtube_url": "https://www.youtube.com/watch?v=xplTEQ0mssA"
+  },
+  {
+    "id": "7MXSFFcaRAk",
+    "kind": "video",
+    "order": 3,
+    "title_ar": "فيديو صيانة من قناة PC Board Repair",
+    "title_en": "PC Board Repair video",
+    "description_ar": "فيديو عملي من قناة PC Board Repair مرتبط بصيانة الكمبيوتر واللوحات الأم.",
+    "description_en": "A practical PC Board Repair video about desktop computer and motherboard repair.",
+    "category": "repair",
+    "youtube_url": "https://www.youtube.com/watch?v=7MXSFFcaRAk"
+  },
+  {
+    "id": "MwdOSHsLqVo",
+    "kind": "short",
+    "order": 4,
+    "title_ar": "Short صيانة من PC Board Repair",
+    "title_en": "PC Board Repair Short",
+    "description_ar": "مقطع Short سريع من قناة PC Board Repair.",
+    "description_en": "A quick repair Short from PC Board Repair.",
+    "category": "shorts",
+    "youtube_url": "https://www.youtube.com/shorts/MwdOSHsLqVo"
+  },
+  {
+    "id": "49J7xGlQwog",
+    "kind": "short",
+    "order": 5,
+    "title_ar": "Short صيانة من PC Board Repair",
+    "title_en": "PC Board Repair Short",
+    "description_ar": "مقطع Short سريع من قناة PC Board Repair.",
+    "description_en": "A quick repair Short from PC Board Repair.",
+    "category": "shorts",
+    "youtube_url": "https://www.youtube.com/shorts/49J7xGlQwog"
+  },
+  {
     "id": "S_fd3NaecIA",
+    "order": 6,
     "title_ar": "طريقة فحص القطع الإلكترونية على البورد والقراءات المتوقعة للقطع السليمة",
     "title_en": "How to Test Electronic Components on a Motherboard and Expected Good Readings",
     "description_ar": "شرح عملي لفحص القطع الشائعة على البورد باستخدام الأفوميتر، مع توضيح القراءات العامة المتوقعة للقطع السليمة والتنبيه إلى أن القراءات قد تختلف حسب نوع القطعة والدائرة.",
