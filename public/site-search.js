@@ -34,8 +34,15 @@
     return h.toString(36);
   }
 
-  function textSlug(text){
-    return String(text||'boardview').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,70)||'boardview';
+  function textSlug(value){
+    const slug=String(value??'')
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,'-')
+      .replace(/^-+|-+$/g,'')
+      .slice(0,120);
+    return slug||'boardview';
   }
 
   function filenameOnly(path){
@@ -142,11 +149,12 @@
     const format=typeValue(board);
     const file=String(board?.file||'');
     const fileName=filenameOnly(file);
+    const readable=textSlug([board?.brand,board?.model,board?.board,board?.revision].filter(Boolean).join('-'));
     const details=[boardNo,revision,format].filter(Boolean).join(' • ');
     const keywords=[brand,model,boardNo,revision,format,fileName,file,'boardview','board view','خريطة','مخطط بورد'].filter(Boolean).join(' ');
     return {
       type:'boardview',
-      url:`/boardview/item/${fileKey(file)}/${textSlug(model||'boardview')}`,
+      url:`/boardview/item/${fileKey(file)}/${readable}`,
       titleAr:`${brand} — ${model}`,
       titleEn:`${brand} — ${model}`,
       subtitleAr:details||fileName,
