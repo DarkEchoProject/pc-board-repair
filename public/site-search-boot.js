@@ -28,14 +28,33 @@
         script.dataset.pcbrSiteSearch='1';
         document.head.append(script);
       }
-      const finish=()=>window.PCBRSiteSearch?resolve(window.PCBRSiteSearch):reject(new Error('Search engine unavailable'));
-      script.addEventListener('load',finish,{once:true});
-      script.addEventListener('error',()=>reject(new Error('Search engine failed to load')),{once:true});
+
+      let settled=false;
+      let timer=null;
+      const succeed=()=>{
+        if(settled||!window.PCBRSiteSearch)return false;
+        settled=true;
+        if(timer)clearInterval(timer);
+        resolve(window.PCBRSiteSearch);
+        return true;
+      };
+      const fail=message=>{
+        if(settled)return;
+        settled=true;
+        if(timer)clearInterval(timer);
+        reject(new Error(message));
+      };
+
+      script.addEventListener('load',()=>{
+        if(!succeed())fail('Search engine unavailable');
+      },{once:true});
+      script.addEventListener('error',()=>fail('Search engine failed to load'),{once:true});
+
       // A direct site-search.js tag may already have finished before listeners were attached.
       let tries=0;
-      const timer=setInterval(()=>{
-        if(window.PCBRSiteSearch){clearInterval(timer);resolve(window.PCBRSiteSearch);}
-        else if(++tries>40){clearInterval(timer);}
+      timer=setInterval(()=>{
+        if(succeed())return;
+        if(++tries>40)fail('Search engine load timed out');
       },50);
     });
   }
