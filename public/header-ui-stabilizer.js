@@ -1,21 +1,19 @@
 (()=>{
   'use strict';
 
+  window.PCBRHeaderStabilizerLoaded='20261020-2';
+
   const YOUTUBE_URL='https://www.youtube.com/@PCBoardRepairArabic';
   let authReady=false;
   let currentUser=null;
-  let scheduled=false;
 
   function currentLang(){
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   }
 
-  function nextPath(){
-    return location.pathname+location.search+location.hash;
-  }
-
   function loginHref(){
-    return `/login.html?next=${encodeURIComponent(nextPath())}`;
+    const next=location.pathname+location.search+location.hash;
+    return `/login.html?next=${encodeURIComponent(next)}`;
   }
 
   function ensureYouTube(){
@@ -31,53 +29,10 @@
     nav.append(a);
   }
 
-  function ensureAccount(){
-    const header=document.querySelector('header');
-    if(!header||header.querySelector('.accountBox')||!authReady)return;
-
-    const box=document.createElement('div');
-    box.className='accountBox';
-
-    if(!currentUser){
-      const a=document.createElement('a');
-      a.className='accountLogin';
-      a.href=loginHref();
-      a.textContent='تسجيل الدخول';
-      box.append(a);
-    }else{
-      const chip=document.createElement('div');
-      chip.className='accountChip';
-
-      const avatar=document.createElement('span');
-      avatar.className='accountAvatar';
-      avatar.textContent=(currentUser.name||currentUser.email||'?').trim().charAt(0).toUpperCase();
-
-      const name=document.createElement('span');
-      name.className='accountName';
-      name.textContent=currentUser.name||currentUser.email||'حسابي';
-
-      chip.append(avatar,name);
-
-      const out=document.createElement('button');
-      out.className='accountLogout';
-      out.type='button';
-      out.textContent='خروج';
-      out.addEventListener('click',async()=>{
-        try{await fetch('/api/auth/logout',{method:'POST'});}catch{}
-        location.reload();
-      });
-
-      box.append(chip,out);
-    }
-
-    header.append(box);
-  }
-
   function ensureLanguage(){
     const header=document.querySelector('header');
     if(!header||header.querySelector('.languageBox'))return;
 
-    const lang=currentLang();
     const box=document.createElement('div');
     box.className='languageBox';
 
@@ -90,15 +45,15 @@
     select.className='languageSelect';
     select.setAttribute('aria-label','اللغة / Language');
     select.innerHTML='<option value="ar">العربية</option><option value="en">English</option>';
-    select.value=lang;
+    select.value=currentLang();
     select.addEventListener('change',()=>{
       const next=select.value==='en'?'en':'ar';
       if(window.PCBRLanguage&&typeof window.PCBRLanguage.set==='function'){
         window.PCBRLanguage.set(next);
-        return;
+      }else{
+        try{localStorage.setItem('pcbr-language',next);}catch{}
+        location.reload();
       }
-      try{localStorage.setItem('pcbr-language',next);}catch{}
-      location.reload();
     });
 
     box.append(icon,select);
@@ -106,22 +61,54 @@
     if(account)header.insertBefore(box,account);else header.append(box);
   }
 
+  function ensureAccount(){
+    const header=document.querySelector('header');
+    if(!header||header.querySelector('.accountBox')||!authReady)return;
+
+    const box=document.createElement('div');
+    box.className='accountBox';
+
+    if(currentUser){
+      const chip=document.createElement('div');
+      chip.className='accountChip';
+
+      const avatar=document.createElement('span');
+      avatar.className='accountAvatar';
+      avatar.textContent=(currentUser.name||currentUser.email||'?').trim().charAt(0).toUpperCase();
+
+      const name=document.createElement('span');
+      name.className='accountName';
+      name.textContent=currentUser.name||currentUser.email||'حسابي';
+
+      const out=document.createElement('button');
+      out.className='accountLogout';
+      out.type='button';
+      out.textContent='خروج';
+      out.addEventListener('click',async()=>{
+        try{await fetch('/api/auth/logout',{method:'POST'});}catch{}
+        location.reload();
+      });
+
+      chip.append(avatar,name);
+      box.append(chip,out);
+    }else{
+      const a=document.createElement('a');
+      a.className='accountLogin';
+      a.href=loginHref();
+      a.textContent='تسجيل الدخول';
+      box.append(a);
+    }
+
+    header.append(box);
+  }
+
   function ensureAll(){
     ensureYouTube();
-    ensureAccount();
     ensureLanguage();
+    ensureAccount();
   }
 
-  function scheduleEnsure(){
-    if(scheduled)return;
-    scheduled=true;
-    queueMicrotask(()=>{
-      scheduled=false;
-      ensureAll();
-    });
-  }
-
-  async function loadAuth(){
+  async function refreshAuth(){
     try{
       const response=await fetch('/api/auth/me',{cache:'no-store'});
       if(response.ok){
@@ -130,17 +117,13 @@
       }
     }catch{}
     authReady=true;
-    scheduleEnsure();
-  }
-
-  function start(){
     ensureAll();
-    loadAuth();
-    const observer=new MutationObserver(scheduleEnsure);
-    observer.observe(document.documentElement,{childList:true,subtree:true});
-    window.addEventListener('pcbr:language-applied',scheduleEnsure);
   }
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
+  ensureAll();
+  refreshAuth();
+  document.addEventListener('DOMContentLoaded',ensureAll);
+  window.addEventListener('load',ensureAll);
+  window.addEventListener('pcbr:language-applied',ensureAll);
+  setInterval(ensureAll,750);
 })();
