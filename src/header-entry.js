@@ -4,7 +4,7 @@ export { ChatRoom };
 
 class HeaderUiHead {
   element(element) {
-    element.append('<script src="/youtube-integration.js?v=20261020-7" defer></script>', { html: true });
+    element.append('<script src="/youtube-integration.js?v=20261020-8" defer></script>', { html: true });
   }
 }
 
