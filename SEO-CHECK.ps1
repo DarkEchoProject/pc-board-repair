@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+Set-StrictMode -Version 2.0
 
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $root
@@ -27,23 +28,23 @@ function Require-File([string]$path) {
     return $true
 }
 
-Write-Host "=========================================="
-Write-Host "PC Board Repair - SEO / Sitemap checks"
-Write-Host "=========================================="
-Write-Host ""
+Write-Host '=========================================='
+Write-Host 'PC Board Repair - SEO / Sitemap checks'
+Write-Host '=========================================='
+Write-Host ''
 
 if (-not (Test-Path -LiteralPath $BuilderPath -PathType Leaf)) {
-    Write-Host "[FAIL] Missing sitemap builder: BUILD-SITEMAP.ps1" -ForegroundColor Red
+    Write-Host '[FAIL] Missing sitemap builder: BUILD-SITEMAP.ps1' -ForegroundColor Red
     exit 1
 }
 
-Write-Host "Refreshing generated sitemap and BoardView crawl directory..."
+Write-Host 'Refreshing generated sitemap and BoardView crawl directory...'
 & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $BuilderPath
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[FAIL] BUILD-SITEMAP.ps1 failed; SEO validation cannot continue." -ForegroundColor Red
+    Write-Host '[FAIL] BUILD-SITEMAP.ps1 failed; SEO validation cannot continue.' -ForegroundColor Red
     exit 1
 }
-Write-Host ""
+Write-Host ''
 
 if (-not (Require-File $SitemapPath)) { exit 1 }
 if (-not (Require-File $DirectoryPath)) { exit 1 }
@@ -53,7 +54,6 @@ $sitemapRaw = Get-Content -LiteralPath $SitemapPath -Raw -Encoding UTF8
 $directoryRaw = Get-Content -LiteralPath $DirectoryPath -Raw -Encoding UTF8
 $robotsRaw = Get-Content -LiteralPath $RobotsPath -Raw -Encoding UTF8
 
-# XML must be well formed and use the official sitemap namespace.
 try {
     [xml]$sitemapXml = $sitemapRaw
     Pass 'sitemap.xml is well-formed XML'
@@ -104,6 +104,7 @@ foreach ($urlText in $urls) {
             [void]$invalidUrls.Add($urlText)
             continue
         }
+
         $path = $u.AbsolutePath
         if ($path -match '^/(?:api|download|downloads)(?:/|$)' -or
             $path -eq '/login.html' -or
@@ -133,7 +134,13 @@ else {
 
 $featuredUrl = "$Site/boardview/featured.html"
 $directoryUrl = "$Site/boardview/directory.html"
-foreach ($requiredUrl in @($Site + '/', "$Site/boardview/index.html", $featuredUrl, $directoryUrl)) {
+$requiredUrls = @(
+    "$Site/",
+    "$Site/boardview/index.html",
+    $featuredUrl,
+    $directoryUrl
+)
+foreach ($requiredUrl in $requiredUrls) {
     if ($urls -contains $requiredUrl) {
         Pass "Required sitemap URL present: $requiredUrl"
     }
@@ -142,7 +149,6 @@ foreach ($requiredUrl in @($Site + '/', "$Site/boardview/index.html", $featuredU
     }
 }
 
-# Compare every BoardView item in sitemap.xml with the static HTML crawl directory.
 $sitemapBoardPaths = @(
     [regex]::Matches($sitemapRaw, '<loc>https://pc-board-repair\.alinasser00001\.workers\.dev(?<path>/boardview/item/[^<]+)</loc>') |
         ForEach-Object { [Net.WebUtility]::HtmlDecode($_.Groups['path'].Value) }
@@ -177,8 +183,9 @@ else {
     Fail "BoardView sitemap/directory mismatch: $($differences.Count) difference(s)"
 }
 
+$expectedCanonical = '<link rel="canonical" href="{0}">' -f $directoryUrl
 if ($directoryRaw -match '<meta\s+name="robots"\s+content="index,follow"' -and
-    $directoryRaw -match [regex]::Escape("<link rel=\"canonical\" href=\"$directoryUrl\">") ) {
+    $directoryRaw -match [regex]::Escape($expectedCanonical)) {
     Pass 'BoardView directory is indexable and has the correct canonical URL'
 }
 else {
@@ -193,18 +200,19 @@ else {
     Fail 'robots.txt does not clearly allow normal crawling'
 }
 
-if ($robotsRaw -match [regex]::Escape("Sitemap: $Site/sitemap.xml")) {
+$expectedSitemapLine = 'Sitemap: {0}/sitemap.xml' -f $Site
+if ($robotsRaw -match [regex]::Escape($expectedSitemapLine)) {
     Pass 'robots.txt advertises the canonical sitemap URL'
 }
 else {
     Fail 'robots.txt does not advertise the canonical sitemap URL'
 }
 
-Write-Host ""
+Write-Host ''
 if ($script:failed) {
-    Write-Host "SEO / SITEMAP CHECK FAILED. Deployment has been stopped." -ForegroundColor Red
+    Write-Host 'SEO / SITEMAP CHECK FAILED. Deployment has been stopped.' -ForegroundColor Red
     exit 1
 }
 
-Write-Host "ALL SEO / SITEMAP CHECKS PASSED." -ForegroundColor Green
+Write-Host 'ALL SEO / SITEMAP CHECKS PASSED.' -ForegroundColor Green
 exit 0
