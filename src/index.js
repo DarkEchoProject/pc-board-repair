@@ -26,14 +26,6 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
   "'": "&#039;",
 }[c]));
 
-const escapeXml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&apos;",
-}[c]));
-
 const fileKey = (value) => {
   const s = String(value ?? "");
   let h = 2166136261;
@@ -187,31 +179,6 @@ function notFoundPage() {
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>الملف غير موجود | PC Board Repair</title><link rel="stylesheet" href="/style.css"></head><body><main class="wrap"><div class="emptyState"><h1>الملف غير موجود</h1><p>قد يكون الرابط قديمًا أو تم تغيير بيانات الملف.</p><a class="btn" href="/boardview/index.html">العودة إلى BoardView</a></div></main></body></html>`;
 }
 
-async function sitemapResponse(env) {
-  const boards = await getBoards(env);
-  const staticPaths = [
-    "/",
-    "/boardview/index.html",
-    "/bios/index.html",
-    "/bios/intel.html",
-    "/community.html",
-    "/about.html",
-    "/contact.html",
-    "/privacy.html",
-    "/terms.html",
-    "/disclaimer.html",
-    "/copyright.html",
-  ];
-  const urls = [...staticPaths, ...boards.map(boardPath)];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(path => `  <url><loc>${escapeXml(`${SITE}${path}`)}</loc></url>`).join("\n")}\n</urlset>\n`;
-  return new Response(xml, {
-    headers: {
-      "content-type": "application/xml; charset=utf-8",
-      "cache-control": "public, max-age=300",
-    },
-  });
-}
-
 export class ChatRoom extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -362,14 +329,6 @@ export default {
     if (url.pathname.startsWith("/api/stats/")) {
       const stats = env.CHAT_ROOM.getByName("site-stats");
       return stats.fetch(request);
-    }
-
-    if (url.pathname === "/sitemap.xml") {
-      try {
-        return await sitemapResponse(env);
-      } catch {
-        return new Response("Sitemap temporarily unavailable", { status: 503 });
-      }
     }
 
     const downloadMatch = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
