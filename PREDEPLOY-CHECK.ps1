@@ -86,6 +86,8 @@ Write-Host ""
 Write-Host "Checking required project files..."
 Check-File 'wrangler.toml' 100
 Check-File 'DEPLOY-SITE.cmd' 100
+Check-File 'BUILD-SITEMAP.ps1' 100
+Check-File 'scripts\build-sitemap.mjs' 1000
 Check-File 'src\index.js' 100
 Check-File 'src\app.js' 100
 Check-File 'src\entry.js' 100
@@ -298,7 +300,8 @@ else {
     $jsFiles = @(
         Get-ChildItem -LiteralPath 'src' -Recurse -File -Filter '*.js'
         Get-ChildItem -LiteralPath 'public' -Recurse -File -Filter '*.js'
-    ) | Sort-Object FullName -Unique
+        Get-Item -LiteralPath 'scripts\build-sitemap.mjs' -ErrorAction SilentlyContinue
+    ) | Where-Object { $null -ne $_ } | Sort-Object FullName -Unique
 
     if (-not $jsFiles.Count) {
         Fail 'No JavaScript files were found to validate'
