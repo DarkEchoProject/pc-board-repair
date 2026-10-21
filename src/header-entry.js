@@ -8,9 +8,9 @@ class HeaderUiHead {
   }
 }
 
-class FeaturedFooterLink {
+class BoardviewFooterLinks {
   element(element) {
-    element.append('<a href="/boardview/featured.html">ملفات مختارة</a>', { html: true });
+    element.append('<a href="/boardview/featured.html">ملفات مختارة</a><a href="/boardview/directory.html">فهرس BoardView</a>', { html: true });
   }
 }
 
@@ -19,7 +19,7 @@ function withHeaderUi(response) {
   if (!type.toLowerCase().includes("text/html")) return response;
   return new HTMLRewriter()
     .on("head", new HeaderUiHead())
-    .on(".footerLinks", new FeaturedFooterLink())
+    .on(".footerLinks", new BoardviewFooterLinks())
     .transform(response);
 }
 
