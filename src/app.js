@@ -145,11 +145,6 @@ function clearCookie(name) {
   return `${name}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`;
 }
 
-function authRedirect(url) {
-  const next = safeNext(`${url.pathname}${url.search}`);
-  return Response.redirect(`${SITE}/login.html?next=${encodeURIComponent(next)}`, 302);
-}
-
 function authConfigured(env) {
   return Boolean(String(env.GOOGLE_CLIENT_ID || "").trim() && String(env.GOOGLE_CLIENT_SECRET || "").trim());
 }
@@ -403,36 +398,6 @@ export default {
         body: JSON.stringify(body),
       });
       return baseWorker.fetch(forwarded, env, ctx);
-    }
-
-    if ((url.pathname.startsWith("/download/") || url.pathname.startsWith("/downloads/")) && (request.method === "GET" || request.method === "HEAD")) {
-      const user = await getSessionUser(request, env);
-      if (!user) return authRedirect(url);
-      if (url.pathname.startsWith("/downloads/")) return env.ASSETS.fetch(request);
-    }
-
-    if (url.pathname === "/sitemap.xml") {
-      const response = await baseWorker.fetch(request, env, ctx);
-      if (!response.ok) return response;
-      let xml = await response.text();
-      const additions = [
-        `${SITE}/diagnostics/index.html`,
-        `${SITE}/diagnostics/no-power.html`,
-        `${SITE}/diagnostics/no-display.html`,
-        `${SITE}/diagnostics/restarts-shuts-down.html`,
-        `${SITE}/diagnostics/short-circuit.html`,
-        `${SITE}/diagnostics/post-beep-codes.html`,
-        `${SITE}/diagnostics/vrm-cpu-ram.html`,
-        `${SITE}/component-testing/index.html`,
-      ];
-      const extra = additions
-        .filter(item => !xml.includes(`<loc>${item}</loc>`))
-        .map(item => `  <url><loc>${item}</loc></url>`)
-        .join("\n");
-      if (extra) xml = xml.replace("</urlset>", `${extra}\n</urlset>`);
-      const headers = new Headers(response.headers);
-      headers.set("content-type", "application/xml; charset=utf-8");
-      return new Response(xml, { status: response.status, headers });
     }
 
     const response = await baseWorker.fetch(request, env, ctx);
