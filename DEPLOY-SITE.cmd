@@ -37,6 +37,19 @@ if errorlevel 1 (
 )
 
 echo.
+echo Running strict SEO / sitemap checks...
+echo.
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0SEO-CHECK.ps1"
+if errorlevel 1 (
+  echo.
+  echo DEPLOY CANCELLED because an SEO / sitemap check failed.
+  echo Fix the FAIL item above, then run DEPLOY-SITE.cmd again.
+  echo.
+  pause
+  exit /b 1
+)
+
+echo.
 echo Running pre-deploy checks...
 echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0PREDEPLOY-CHECK.ps1"
