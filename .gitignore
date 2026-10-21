@@ -7,6 +7,9 @@ _IMPORT_REPORT/
 .env.*
 !.env.example
 
+# Generated crawl/index artifacts
+public/boardview/directory.html
+
 # Local dependencies and temporary files
 node_modules/
 *.bak
