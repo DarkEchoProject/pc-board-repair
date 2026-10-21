@@ -7,6 +7,7 @@ $Site = 'https://pc-board-repair.alinasser00001.workers.dev'
 $SitemapPath = 'public\sitemap.xml'
 $DirectoryPath = 'public\boardview\directory.html'
 $RobotsPath = 'public\robots.txt'
+$BuilderPath = Join-Path $root 'BUILD-SITEMAP.ps1'
 $script:failed = $false
 
 function Pass([string]$message) {
@@ -29,6 +30,19 @@ function Require-File([string]$path) {
 Write-Host "=========================================="
 Write-Host "PC Board Repair - SEO / Sitemap checks"
 Write-Host "=========================================="
+Write-Host ""
+
+if (-not (Test-Path -LiteralPath $BuilderPath -PathType Leaf)) {
+    Write-Host "[FAIL] Missing sitemap builder: BUILD-SITEMAP.ps1" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "Refreshing generated sitemap and BoardView crawl directory..."
+& powershell.exe -NoProfile -ExecutionPolicy Bypass -File $BuilderPath
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "[FAIL] BUILD-SITEMAP.ps1 failed; SEO validation cannot continue." -ForegroundColor Red
+    exit 1
+}
 Write-Host ""
 
 if (-not (Require-File $SitemapPath)) { exit 1 }
