@@ -8,11 +8,18 @@ class HeaderUiHead {
   }
 }
 
+class FeaturedFooterLink {
+  element(element) {
+    element.append('<a href="/boardview/featured.html">ملفات مختارة</a>', { html: true });
+  }
+}
+
 function withHeaderUi(response) {
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
   return new HTMLRewriter()
     .on("head", new HeaderUiHead())
+    .on(".footerLinks", new FeaturedFooterLink())
     .transform(response);
 }
 
