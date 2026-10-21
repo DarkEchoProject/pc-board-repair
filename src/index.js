@@ -355,6 +355,10 @@ export default {
       return room.fetch(request);
     }
 
+    if (url.pathname === "/api/stats/download") {
+      return json({ error: "Not found" }, 404);
+    }
+
     if (url.pathname.startsWith("/api/stats/")) {
       const stats = env.CHAT_ROOM.getByName("site-stats");
       return stats.fetch(request);
@@ -370,18 +374,26 @@ export default {
 
     const downloadMatch = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
     if (downloadMatch) {
+      if (request.method !== "GET" && request.method !== "HEAD") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: { allow: "GET, HEAD" },
+        });
+      }
       try {
         const boards = await getBoards(env);
         const board = boards.find(item => fileKey(item.file) === downloadMatch[1].toLowerCase());
         if (!board) return new Response("File not found", { status: 404 });
-        const stats = env.CHAT_ROOM.getByName("site-stats");
-        const countRequest = new Request(`${SITE}/api/stats/download`, {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ key: downloadMatch[1].toLowerCase() }),
-        });
-        if (ctx?.waitUntil) ctx.waitUntil(stats.fetch(countRequest));
-        else await stats.fetch(countRequest);
+        if (request.method === "GET") {
+          const stats = env.CHAT_ROOM.getByName("site-stats");
+          const countRequest = new Request(`${SITE}/api/stats/download`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ key: downloadMatch[1].toLowerCase() }),
+          });
+          if (ctx?.waitUntil) ctx.waitUntil(stats.fetch(countRequest));
+          else await stats.fetch(countRequest);
+        }
         return Response.redirect(`${SITE}/downloads/${encodeURIComponent(board.file)}`, 302);
       } catch {
         return new Response("Temporary error", { status: 503 });
