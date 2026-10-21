@@ -27,6 +27,14 @@ function Check-File([string]$path, [long]$minBytes = 1) {
     Pass "$path ($length bytes)"
 }
 
+function Check-Absent([string]$path) {
+    if (Test-Path -LiteralPath $path) {
+        Fail "Legacy/dead file should not exist: $path"
+        return
+    }
+    Pass "Legacy/dead file absent: $path"
+}
+
 Write-Host "=========================================="
 Write-Host "PC Board Repair - Pre-deploy checks"
 Write-Host "=========================================="
@@ -56,6 +64,37 @@ $requiredPages = @(
 
 foreach ($page in $requiredPages) {
     Check-File $page 100
+}
+
+Write-Host ""
+Write-Host "Checking legacy/dead code cleanup..."
+Check-Absent 'public\i18n-v2.js'
+Check-Absent 'public\header-ui-stabilizer.js'
+
+try {
+    $indexWorker = Get-Content -LiteralPath 'src\index.js' -Raw -Encoding UTF8
+    if ($indexWorker -match '\bsitemapResponse\b' -or $indexWorker -match '\bescapeXml\b') {
+        Fail 'src\index.js contains legacy dynamic sitemap code'
+    }
+    else {
+        Pass 'src\index.js has no legacy dynamic sitemap implementation'
+    }
+}
+catch {
+    Fail "Could not inspect src\index.js for legacy code - $($_.Exception.Message)"
+}
+
+try {
+    $appWorker = Get-Content -LiteralPath 'src\app.js' -Raw -Encoding UTF8
+    if ($appWorker -match 'url\.pathname\s*-eq\s*["'']/sitemap\.xml["'']' -or $appWorker -match 'url\.pathname\s*===\s*["'']/sitemap\.xml["'']' -or $appWorker -match '\bauthRedirect\b') {
+        Fail 'src\app.js contains legacy sitemap or duplicate download-auth code'
+    }
+    else {
+        Pass 'src\app.js has no legacy sitemap or duplicate download-auth implementation'
+    }
+}
+catch {
+    Fail "Could not inspect src\app.js for legacy code - $($_.Exception.Message)"
 }
 
 Write-Host ""
