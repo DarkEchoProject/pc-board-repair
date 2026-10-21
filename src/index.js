@@ -175,10 +175,6 @@ ${relatedHtml}
 </body></html>`;
 }
 
-function notFoundPage() {
-  return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>الملف غير موجود | PC Board Repair</title><link rel="stylesheet" href="/style.css"></head><body><main class="wrap"><div class="emptyState"><h1>الملف غير موجود</h1><p>قد يكون الرابط قديمًا أو تم تغيير بيانات الملف.</p><a class="btn" href="/boardview/index.html">العودة إلى BoardView</a></div></main></body></html>`;
-}
-
 export class ChatRoom extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -365,7 +361,7 @@ export default {
         const boards = await getBoards(env);
         const board = boards.find(item => fileKey(item.file) === match[1].toLowerCase());
         if (!board) {
-          return withAnalytics(new Response(notFoundPage(), { status: 404, headers: { "content-type": "text/html; charset=utf-8" } }));
+          return new Response("Not Found", { status: 404 });
         }
         const canonicalPath = boardPath(board);
         if (url.pathname.replace(/\/$/, "") !== canonicalPath) {
