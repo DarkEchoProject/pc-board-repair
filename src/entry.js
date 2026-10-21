@@ -261,11 +261,62 @@ async function withCustom404(request, response, env) {
   });
 }
 
+async function validateCompanyRoute(request, env) {
+  const url = new URL(request.url);
+  if (url.pathname !== "/boardview/company.html") return null;
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
+
+  const requestedBrand = String(url.searchParams.get("brand") || "").trim();
+  if (!requestedBrand) {
+    return new Response("Not Found", {
+      status: 404,
+      headers: {
+        "content-type": "text/plain; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    });
+  }
+
+  try {
+    const boards = await getMergedBoards(env);
+    const canonicalBrand = boards.find(board => norm(board.brand) === norm(requestedBrand))?.brand || "";
+    if (!canonicalBrand) {
+      return new Response("Not Found", {
+        status: 404,
+        headers: {
+          "content-type": "text/plain; charset=utf-8",
+          "cache-control": "no-store",
+        },
+      });
+    }
+
+    const canonicalPath = `/boardview/company.html?brand=${encodeURIComponent(canonicalBrand)}`;
+    const currentPath = `${url.pathname}${url.search}`;
+    if (currentPath !== canonicalPath) {
+      return Response.redirect(`${SITE}${canonicalPath}`, 301);
+    }
+
+    return null;
+  } catch {
+    return new Response("Temporary error", {
+      status: 503,
+      headers: { "cache-control": "no-store" },
+    });
+  }
+}
+
 export { ChatRoom };
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    const companyResponse = await validateCompanyRoute(request, env);
+    if (companyResponse) {
+      const response = await withCustom404(request, companyResponse, env);
+      return finalize(response);
+    }
+
     const wrappedEnv = wrappedEnvironment(env);
     let response = await appWorker.fetch(request, wrappedEnv, ctx);
     response = await withCustom404(request, response, env);
