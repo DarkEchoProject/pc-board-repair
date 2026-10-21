@@ -1,10 +1,6 @@
 (()=>{
   'use strict';
 
-  // Prevent the older BoardView-only homepage handler from attaching after this
-  // script starts. If it already attached, replacing the input below removes it.
-  if(typeof window.setupHomeSearch==='function')window.setupHomeSearch=()=>{};
-
   function lang(){
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   }
@@ -60,18 +56,10 @@
   }
 
   function enhanceHomepage(engine){
-    let input=document.getElementById('homeSearch');
+    const input=document.getElementById('homeSearch');
     const out=document.getElementById('homeSearchResults');
     const info=document.getElementById('homeSearchInfo');
     if(!input||!out||!info)return;
-
-    // Remove any anonymous BoardView-only input listener that may have already attached.
-    if(input.dataset.pcbrUnifiedSearch!=='1'){
-      const replacement=input.cloneNode(true);
-      replacement.dataset.pcbrUnifiedSearch='1';
-      input.replaceWith(replacement);
-      input=replacement;
-    }
 
     const language=lang();
     const section=input.closest('.homeSearchSection');
@@ -196,11 +184,7 @@
 
   function start(){
     ensureStyles();
-    ensureEngine().then(engine=>{
-      // Replace the old global handler again in case another script redefined it.
-      if(typeof window.setupHomeSearch==='function')window.setupHomeSearch=()=>{};
-      enhanceHomepage(engine);
-    }).catch(()=>{});
+    ensureEngine().then(enhanceHomepage).catch(()=>{});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
