@@ -53,6 +53,7 @@ $requiredPages = @(
     'public\index.html',
     'public\boardview\index.html',
     'public\boardview\featured.html',
+    'public\boardview\directory.html',
     'public\bios\index.html',
     'public\diagnostics\index.html',
     'public\component-testing\index.html',
@@ -68,22 +69,46 @@ foreach ($page in $requiredPages) {
 }
 
 Write-Host ""
-Write-Host "Checking sitemap output..."
+Write-Host "Checking sitemap and crawl-directory output..."
 Check-File 'public\sitemap.xml' 100
+Check-File 'public\boardview\directory.html' 10000
 
 if (Test-Path -LiteralPath 'public\sitemap.xml' -PathType Leaf) {
     try {
         $sitemap = Get-Content -LiteralPath 'public\sitemap.xml' -Raw -Encoding UTF8
         $featuredUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/featured.html'
+        $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html'
         if ($sitemap.Contains("<loc>$featuredUrl</loc>")) {
             Pass 'sitemap.xml includes the featured BoardView page'
         }
         else {
             Fail 'sitemap.xml is stale: featured BoardView page is missing'
         }
+        if ($sitemap.Contains("<loc>$directoryUrl</loc>")) {
+            Pass 'sitemap.xml includes the BoardView crawl directory'
+        }
+        else {
+            Fail 'sitemap.xml is stale: BoardView crawl directory is missing'
+        }
     }
     catch {
         Fail "Could not inspect public\sitemap.xml - $($_.Exception.Message)"
+    }
+}
+
+if (Test-Path -LiteralPath 'public\boardview\directory.html' -PathType Leaf) {
+    try {
+        $directoryHtml = Get-Content -LiteralPath 'public\boardview\directory.html' -Raw -Encoding UTF8
+        $directoryLinkCount = ([regex]::Matches($directoryHtml, 'href="/boardview/item/')).Count
+        if ($directoryLinkCount -gt 100) {
+            Pass "BoardView crawl directory contains $directoryLinkCount direct file links"
+        }
+        else {
+            Fail "BoardView crawl directory looks unexpectedly small: $directoryLinkCount direct file links"
+        }
+    }
+    catch {
+        Fail "Could not inspect public\boardview\directory.html - $($_.Exception.Message)"
     }
 }
 
