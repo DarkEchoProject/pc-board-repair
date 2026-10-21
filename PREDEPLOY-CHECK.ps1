@@ -52,6 +52,7 @@ Check-File 'src\header-entry.js' 100
 $requiredPages = @(
     'public\index.html',
     'public\boardview\index.html',
+    'public\boardview\featured.html',
     'public\bios\index.html',
     'public\diagnostics\index.html',
     'public\component-testing\index.html',
@@ -64,6 +65,26 @@ $requiredPages = @(
 
 foreach ($page in $requiredPages) {
     Check-File $page 100
+}
+
+Write-Host ""
+Write-Host "Checking sitemap output..."
+Check-File 'public\sitemap.xml' 100
+
+if (Test-Path -LiteralPath 'public\sitemap.xml' -PathType Leaf) {
+    try {
+        $sitemap = Get-Content -LiteralPath 'public\sitemap.xml' -Raw -Encoding UTF8
+        $featuredUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/featured.html'
+        if ($sitemap.Contains("<loc>$featuredUrl</loc>")) {
+            Pass 'sitemap.xml includes the featured BoardView page'
+        }
+        else {
+            Fail 'sitemap.xml is stale: featured BoardView page is missing'
+        }
+    }
+    catch {
+        Fail "Could not inspect public\sitemap.xml - $($_.Exception.Message)"
+    }
 }
 
 Write-Host ""
