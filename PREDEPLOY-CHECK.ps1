@@ -35,6 +35,49 @@ function Check-Absent([string]$path) {
     Pass "Legacy/dead file absent: $path"
 }
 
+function Ensure-GeneratedSeoArtifacts {
+    $builder = Join-Path $root 'BUILD-SITEMAP.ps1'
+    $sitemapPath = Join-Path $root 'public\sitemap.xml'
+    $directoryPath = Join-Path $root 'public\boardview\directory.html'
+    $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html'
+    $needsBuild = $false
+
+    if (-not (Test-Path -LiteralPath $directoryPath -PathType Leaf)) {
+        $needsBuild = $true
+    }
+    elseif (-not (Test-Path -LiteralPath $sitemapPath -PathType Leaf)) {
+        $needsBuild = $true
+    }
+    else {
+        try {
+            $sitemapText = Get-Content -LiteralPath $sitemapPath -Raw -Encoding UTF8
+            if (-not $sitemapText.Contains("<loc>$directoryUrl</loc>")) {
+                $needsBuild = $true
+            }
+        }
+        catch {
+            $needsBuild = $true
+        }
+    }
+
+    if (-not $needsBuild) { return }
+
+    if (-not (Test-Path -LiteralPath $builder -PathType Leaf)) {
+        Write-Host '[FAIL] Missing BUILD-SITEMAP.ps1; generated SEO artifacts cannot be refreshed.' -ForegroundColor Red
+        exit 1
+    }
+
+    Write-Host 'Refreshing generated sitemap and BoardView crawl directory before pre-deploy checks...' -ForegroundColor Cyan
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $builder
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host '[FAIL] BUILD-SITEMAP.ps1 failed; pre-deploy checks cannot continue.' -ForegroundColor Red
+        exit 1
+    }
+    Write-Host ''
+}
+
+Ensure-GeneratedSeoArtifacts
+
 Write-Host "=========================================="
 Write-Host "PC Board Repair - Pre-deploy checks"
 Write-Host "=========================================="
