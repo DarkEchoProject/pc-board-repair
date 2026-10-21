@@ -70,6 +70,7 @@ function Escape-Xml([string]$Value) {
 $staticPaths = @(
     '/',
     '/boardview/index.html',
+    '/boardview/featured.html',
     '/boardview/hp-compaq-dc5800-c453-vrm-repair.html',
     '/bios/index.html',
     '/bios/intel.html',
