@@ -8,7 +8,7 @@ GOOGLE_CLIENT_ID = "688045496018-0l0ok4kt8nv7rp2c294ktep51rt3s0bp.apps.googleuse
 [assets]
 directory = "./public"
 binding = "ASSETS"
-run_worker_first = [ "/api/*", "/download/*", "/downloads/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/sitemap.xml" ]
+run_worker_first = [ "/api/*", "/download/*", "/downloads/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/sitemap.xml", "/about", "/contact", "/community", "/privacy", "/terms", "/disclaimer", "/copyright", "/search", "/login" ]
 
 [[durable_objects.bindings]]
 name = "CHAT_ROOM"
@@ -17,5 +17,6 @@ class_name = "ChatRoom"
 [exports.ChatRoom]
 type = "durable-object"
 storage = "sqlite"
+
 
 
