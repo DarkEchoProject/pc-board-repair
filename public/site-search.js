@@ -1,7 +1,7 @@
-(()=>{
+﻿(()=>{
   'use strict';
 
-  const BOARD_DATA='/data/boards.json';
+  const BOARD_DATA=['/data/boards.json','/data/boards-large.json'];
   let indexPromise=null;
 
   const currentLang=()=>{
@@ -226,17 +226,36 @@
     return matched===tokens.length||text.includes(q)||(qCompact&&textCompact.includes(qCompact))?score:0;
   }
 
-  async function buildIndex(){
-    const staticIndex=staticEntries.map(e=>({...e,_searchText:searchableText(e)}));
-    let boards=[];
+  async function loadBoardData(path){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),12000);
     try{
-      const response=await fetch(BOARD_DATA,{cache:'no-store'});
+      const response=await fetch(path,{cache:'no-store',signal:controller.signal});
       if(!response.ok)throw new Error(`HTTP ${response.status}`);
       const data=await response.json();
-      if(Array.isArray(data))boards=data;
+      return Array.isArray(data)?data:[];
     }catch(err){
-      console.warn('PCBR site search: BoardView database unavailable.',err);
+      console.warn(`PCBR site search: ${path} unavailable.`,err);
+      return [];
+    }finally{
+      clearTimeout(timeout);
     }
+  }
+
+  async function buildIndex(){
+    const staticIndex=staticEntries.map(e=>({...e,_searchText:searchableText(e)}));
+    const groups=await Promise.all(BOARD_DATA.map(loadBoardData));
+    const boards=[];
+    const seen=new Set();
+
+    for(const board of groups.flat()){
+      if(!board||typeof board!=='object')continue;
+      const key=String(board.file||'').trim().toLowerCase();
+      if(!key||seen.has(key))continue;
+      seen.add(key);
+      boards.push(board);
+    }
+
     const boardIndex=boards.map(boardEntry).map(e=>({...e,_searchText:searchableText(e)}));
     return [...boardIndex,...staticIndex];
   }
@@ -274,3 +293,4 @@
 
   window.PCBRSiteSearch={getIndex,search,normalize,compact,label,currentLang};
 })();
+
