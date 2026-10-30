@@ -48,6 +48,7 @@
       {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
       {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:path=>path==='/contact.html'},
       {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'},
+      {href:'https://t.me/rdRepairLB',ar:'✈ انضم لتلغرام',en:'✈ Join Telegram',active:()=>false,external:true,telegram:true},
       {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}
     ];
 
