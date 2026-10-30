@@ -31,7 +31,6 @@
   function standardizeHeaderNav(){
     const header=document.querySelector('header');
     if(!header)return;
-
     let nav=header.querySelector('nav');
     if(!nav){
       nav=document.createElement('nav');
@@ -39,123 +38,35 @@
       if(account)header.insertBefore(nav,account);else header.append(nav);
     }
 
-    nav.classList.add('pcbrCompactNav');
-
     const lang=currentLang();
-    const path=location.pathname;
-
-    const primary=[
-      {href:'/',ar:'الرئيسية',en:'Home',active:p=>p==='/'||p==='/index.html',home:true},
-      {href:'/boardview/index.html',ar:'BoardView',en:'BoardView',active:p=>p.startsWith('/boardview/')},
-      {href:'/bios/index.html',ar:'BIOS',en:'BIOS',active:p=>p.startsWith('/bios/')},
-      {href:'/diagnostics/index.html',ar:'التشخيص',en:'Diagnostics',active:p=>p.startsWith('/diagnostics/')},
-      {href:'/component-testing/index.html',ar:'فحص القطع',en:'Testing',active:p=>p.startsWith('/component-testing/')}
-    ];
-
-    const secondary=[
-      {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:p=>p==='/community.html'},
-      {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:p=>p==='/contact.html'},
-      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:p=>p==='/search.html'},
-      {href:'https://t.me/rdRepairLB',ar:'✈ Telegram',en:'✈ Telegram',active:()=>false,external:true,telegram:true},
+    const items=[
+      {href:'/',ar:'الرئيسية',en:'Home',active:path=>path==='/'||path==='/index.html'},
+      {href:'/boardview/index.html',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
+      {href:'/bios/index.html',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
+      {href:'/diagnostics/index.html',ar:'التشخيص',en:'Diagnostics',active:path=>path.startsWith('/diagnostics/')},
+      {href:'/component-testing/index.html',ar:'فحص القطع',en:'Component Testing',active:path=>path.startsWith('/component-testing/')},
+      {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
+      {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:path=>path==='/contact.html'},
+      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'},
+      {href:'https://t.me/rdRepairLB',ar:'✈ انضم لتلغرام',en:'✈ Join Telegram',active:()=>false,external:true,telegram:true},
       {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}
     ];
 
-    function makeLink(item,extraClass=''){
+    const path=location.pathname;
+    nav.replaceChildren(...items.map(item=>{
       const a=document.createElement('a');
       a.href=item.href;
       a.textContent=item[lang];
-      if(extraClass)a.className=extraClass;
       if(item.external){a.target='_blank';a.rel='noopener noreferrer';}
-      if(item.telegram)a.classList.add('pcbrTelegramLink');
       if(item.youtube){
-        a.classList.add('pcbrYoutubeLink');
         a.dataset.pcbrYoutubeChannel='nav';
+        a.style.cssText='color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap';
       }
       if(item.active(path))a.setAttribute('aria-current','page');
       return a;
-    }
-
-    const nodes=[];
-
-    primary.forEach(item=>{
-      nodes.push(makeLink(item,item.home?'pcbrPrimaryNavLink pcbrHomeNavLink':'pcbrPrimaryNavLink'));
-    });
-
-    const wrap=document.createElement('div');
-    wrap.className='pcbrMoreWrap';
-
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='pcbrMoreButton';
-    button.setAttribute('aria-expanded','false');
-    button.setAttribute('aria-haspopup','true');
-    button.innerHTML=`<span class="pcbrMoreDesktop">${lang==='en'?'More':'المزيد'} ▾</span><span class="pcbrMoreMobile">☰ ${lang==='en'?'Menu':'القائمة'}</span>`;
-
-    const menu=document.createElement('div');
-    menu.className='pcbrMorePanel';
-    menu.hidden=true;
-
-    const mobilePrimary=primary.filter(x=>!x.home);
-    mobilePrimary.forEach(item=>{
-      const a=makeLink(item,'pcbrMenuPrimaryMobile');
-      a.addEventListener('click',()=>closeMenu());
-      menu.append(a);
-    });
-
-    secondary.forEach(item=>{
-      const a=makeLink(item);
-      a.addEventListener('click',()=>closeMenu());
-      menu.append(a);
-    });
-
-    function openMenu(){
-      menu.hidden=false;
-      wrap.classList.add('isOpen');
-      button.setAttribute('aria-expanded','true');
-    }
-
-    function closeMenu(){
-      menu.hidden=true;
-      wrap.classList.remove('isOpen');
-      button.setAttribute('aria-expanded','false');
-    }
-
-    button.addEventListener('click',e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      if(menu.hidden)openMenu();else closeMenu();
-    });
-
-    wrap.addEventListener('click',e=>e.stopPropagation());
-    wrap.append(button,menu);
-    nodes.push(wrap);
-
-    nav.replaceChildren(...nodes);
-
-    if(!document.documentElement.dataset.pcbrMoreOutsideClose){
-      document.documentElement.dataset.pcbrMoreOutsideClose='1';
-      document.addEventListener('click',()=>{
-        document.querySelectorAll('header .pcbrMoreWrap.isOpen').forEach(el=>{
-          const panel=el.querySelector('.pcbrMorePanel');
-          const btn=el.querySelector('.pcbrMoreButton');
-          if(panel)panel.hidden=true;
-          if(btn)btn.setAttribute('aria-expanded','false');
-          el.classList.remove('isOpen');
-        });
-      });
-
-      document.addEventListener('keydown',e=>{
-        if(e.key!=='Escape')return;
-        document.querySelectorAll('header .pcbrMoreWrap.isOpen').forEach(el=>{
-          const panel=el.querySelector('.pcbrMorePanel');
-          const btn=el.querySelector('.pcbrMoreButton');
-          if(panel)panel.hidden=true;
-          if(btn){btn.setAttribute('aria-expanded','false');btn.focus();}
-          el.classList.remove('isOpen');
-        });
-      });
-    }
+    }));
   }
+
   function fileKey(value){
     const s=String(value??'');
     let h=2166136261;
