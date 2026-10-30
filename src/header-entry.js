@@ -10,7 +10,7 @@ class HeaderUiHead {
 
 class BoardviewFooterLinks {
   element(element) {
-    element.append('<a href="/boardview/featured.html">ملفات مختارة</a>', { html: true });
+    element.append('<a href="/boardview/featured.html">ملفات مختارة</a><a href="/boardview/directory.html">فهرس BoardView</a>', { html: true });
   }
 }
 
