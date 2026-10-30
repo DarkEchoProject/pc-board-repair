@@ -54,6 +54,27 @@ function escapeHtml(value) {
   })[ch]);
 }
 
+function collectHtmlPaths(relativeDir) {
+  const root = path.join(publicDir, relativeDir);
+  if (!fs.existsSync(root)) return [];
+
+  const results = [];
+
+  function walk(dir) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.html')) {
+        results.push('/' + path.relative(publicDir, full).split(path.sep).join('/'));
+      }
+    }
+  }
+
+  walk(root);
+  return results;
+}
 const staticPaths = [
   '/',
   '/boardview/index.html',
@@ -77,6 +98,9 @@ const staticPaths = [
   '/diagnostics/post-beep-codes.html',
   '/diagnostics/vrm-cpu-ram.html',
   '/component-testing/index.html',
+  ...collectHtmlPaths('diagnostics'),
+  ...collectHtmlPaths('component-testing'),
+  ...collectHtmlPaths('bios'),
 ];
 
 const all = [...readJsonArray(boardsJson), ...readJsonArray(boardsLargeJson)];

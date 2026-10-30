@@ -3,6 +3,7 @@
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/index.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/featured.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/hp-compaq-dc5800-c453-vrm-repair.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/index.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/bios/intel.html</loc></url>
@@ -21,6 +22,21 @@
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/index.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/clock-reset-diagnosis.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/power-sequence-diagnosis.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/ram-vdimm-spd-diagnosis.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-pwm-mosfet-diagnosis.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bjt-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bridge-rectifier-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/capacitor-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/diode-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/fuse-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/inductor-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing.html</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/resistor-testing.html</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/pcg08e/dell-optiplex-780-arrowhead-btx-arrowhead-btx</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/m2sklj/asrock-h81m-vg4-70-mxgs80-a04-rev-1-00-2-02</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/1usc29/asrock-990fx-extreme4-70-mxgid0-a02-rev-1-06</loc></url>
@@ -4192,19 +4208,4 @@
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/11r4anc/other-zam80-la-a911p-rev-1-0-a00</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/1ye75q7/other-zavc0-la-b012p-rev-1-0-a00</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/boardview/item/1stgs5g/other-zbz00-la-a971p-rev-1-0-a00</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/resistor-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/capacitor-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/diode-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bjt-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/inductor-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/fuse-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bridge-rectifier-testing.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-pwm-mosfet-diagnosis.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/ram-vdimm-spd-diagnosis.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/clock-reset-diagnosis.html</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/power-sequence-diagnosis.html</loc></url>
 </urlset>
