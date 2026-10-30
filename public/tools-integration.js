@@ -214,9 +214,14 @@
 
     let board=null;
     try{
-      const r=await fetch('/data/boards.json',{cache:'no-store'});
-      if(!r.ok)return;
-      const boards=normalizeBoards(await r.json());
+      const payloads=await Promise.all(
+        ['/data/boards.json','/data/boards-large.json'].map(async url=>{
+          const r=await fetch(url,{cache:'no-store'});
+          if(!r.ok)return [];
+          return r.json();
+        })
+      );
+      const boards=normalizeBoards(payloads.flat());
       board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
     }catch{return;}
     if(!board)return;
