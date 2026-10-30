@@ -252,12 +252,12 @@ async function finishGoogleAuth(request, env) {
 class BrandHead {
   element(element) {
     element.prepend(
-      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css?v=20261030-7"><link rel="stylesheet" href="/auth.css?v=20261030-7"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261030-7" defer></script><script src="/i18n-extra.js?v=20261030-7" defer></script>`,
+      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css?v=20261030-7"><link rel="stylesheet" href="/auth.css?v=20261030-7"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261030-11" defer></script><script src="/i18n-extra.js?v=20261030-7" defer></script>`,
       { html: true },
     );
 
     element.append(
-      `<link rel="stylesheet" href="/style.css?v=20261030-7">`,
+      `<link rel="stylesheet" href="/style.css?v=20261030-11">`,
       { html: true },
     );
   }

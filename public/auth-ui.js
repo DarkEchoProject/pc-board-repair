@@ -28,6 +28,55 @@
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   }
 
+  function closeAllMoreMenusV5(except=null){
+    document.querySelectorAll('header .pcbrMoreWrap.isOpen').forEach(wrap=>{
+      if(except&&wrap===except)return;
+      const panel=wrap.querySelector('.pcbrMorePanel');
+      const btn=wrap.querySelector('.pcbrMoreButton');
+      if(panel)panel.hidden=true;
+      if(btn)btn.setAttribute('aria-expanded','false');
+      wrap.classList.remove('isOpen');
+    });
+  }
+
+  function ensureMoreMenuHandlersV5(){
+    if(document.documentElement.dataset.pcbrMoreDelegated==='5')return;
+    document.documentElement.dataset.pcbrMoreDelegated='5';
+
+    document.addEventListener('click',e=>{
+      const btn=e.target.closest?.('.pcbrMoreButton');
+
+      if(btn){
+        e.preventDefault();
+        e.stopPropagation();
+
+        const wrap=btn.closest('.pcbrMoreWrap');
+        const panel=wrap?.querySelector('.pcbrMorePanel');
+        if(!wrap||!panel)return;
+
+        const openNow=panel.hidden;
+        closeAllMoreMenusV5(wrap);
+
+        panel.hidden=!openNow;
+        wrap.classList.toggle('isOpen',openNow);
+        btn.setAttribute('aria-expanded',String(openNow));
+        return;
+      }
+
+      if(!e.target.closest?.('.pcbrMoreWrap')){
+        closeAllMoreMenusV5();
+      }
+    },true);
+
+    document.addEventListener('keydown',e=>{
+      if(e.key!=='Escape')return;
+      const btn=document.querySelector('header .pcbrMoreWrap.isOpen .pcbrMoreButton');
+      closeAllMoreMenusV5();
+      btn?.focus();
+    });
+  }
+
+  ensureMoreMenuHandlersV5();
   function standardizeHeaderNav(){
     const header=document.querySelector('header');
     if(!header)return;
@@ -87,6 +136,7 @@
     const button=document.createElement('button');
     button.type='button';
     button.className='pcbrMoreButton';
+    button.dataset.pcbrMenuVersion='5';
     button.setAttribute('aria-expanded','false');
     button.setAttribute('aria-haspopup','true');
     button.innerHTML=`<span class="pcbrMoreDesktop">${lang==='en'?'More':'المزيد'} ▾</span><span class="pcbrMoreMobile">☰ ${lang==='en'?'Menu':'القائمة'}</span>`;
@@ -119,14 +169,7 @@
       wrap.classList.remove('isOpen');
       button.setAttribute('aria-expanded','false');
     }
-
-    button.addEventListener('click',e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      if(menu.hidden)openMenu();else closeMenu();
-    });
-
-    wrap.addEventListener('click',e=>e.stopPropagation());
+wrap.addEventListener('click',e=>e.stopPropagation());
     wrap.append(button,menu);
     nodes.push(wrap);
 
