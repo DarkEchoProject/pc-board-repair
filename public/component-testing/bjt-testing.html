@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر | PC Board Repair</title>
+<meta name="description" content="شرح فحص ترانزستور BJT بالأفوميتر وتحديد Base وCollector وEmitter وقراءات NPN وPNP واكتشاف الشورت والقطع.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/component-testing/bjt-testing.html">
+<link rel="stylesheet" href="../style.css">
+
+<style>
+.articleHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:22px}
+.articleHero h1{margin:8px 0}.articleTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 9px;border-radius:999px;font-size:12px}
+.articleGrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px}.articleMain{min-width:0}
+.articleToc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}
+.articleToc a{display:block;padding:7px 0;color:#bcd0e7;text-decoration:none}.articleToc a:hover{color:#56d6ff}
+.articleSection{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}
+.articleSection h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}
+.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}
+.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.warnLocal{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:14px;padding:14px;margin:16px 0}
+.noteBox{background:#102238;border:1px solid #2a4e72;border-radius:14px;padding:14px;margin:14px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}
+.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}
+.articleFigure{margin:18px 0;background:#08131f;border:1px solid #203a5b;border-radius:16px;padding:12px;overflow:hidden}.articleFigure svg{display:block;width:100%;height:auto;max-height:340px}
+.articleFigure figcaption{color:#9fb6d1;font-size:13px;margin-top:9px;text-align:center}
+.quickFlow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.quickFlow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}
+.quickFlow b{display:block;color:#8edfff;margin-bottom:5px}.relatedLinks{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
+</style>
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر", "inLanguage": "ar", "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/component-testing/bjt-testing.html", "isPartOf": {"@type": "WebSite", "name": "PC Board Repair", "url": "https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4">
+</head>
+<body>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../diagnostics/index.html">التشخيص</a><a href="../component-testing/index.html">فحص القطع</a></nav></header>
+<main class="wrap">
+<div class="crumb"><a href="../index.html">الرئيسية</a> ← <a href="../component-testing/index.html">فحص القطع</a> ← 🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر</div>
+<section class="articleHero"><span class="articleTag">BJT • NPN • PNP</span><h1>🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر</h1><p class="muted">ترانزستور BJT يمكن فهمه أثناء الفحص كوصلتي ديود تشتركان في القاعدة Base.</p></section>
+<div class="warnLocal"><b>قاعدة سلامة:</b> قياسات المقاومة والاستمرارية والديود تتم مع فصل الطاقة. عند القياس الحي استخدم مدى الجهد المناسب وتجنب قصر نقاط متجاورة بالمجس.</div>
+<div class="articleGrid"><article class="articleMain">
+
+<figure class="articleFigure">
+<svg viewBox="0 0 900 320" role="img" aria-label="🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="25" width="860" height="270" rx="24" fill="#0a1626" stroke="#203a5b" stroke-width="3"/>
+<text x="450" y="78" text-anchor="middle" fill="#8edfff" font-size="30" font-family="Arial">🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر</text>
+<line x1="220" y1="173" x2="280" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="268,165 280,173 268,181" fill="#20bdf2"/><line x1="420" y1="173" x2="480" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="468,165 480,173 468,181" fill="#20bdf2"/><line x1="620" y1="173" x2="680" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="668,165 680,173 668,181" fill="#20bdf2"/>
+<rect x="80" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="150" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">Base</text><rect x="280" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="350" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">B-E</text><rect x="480" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="550" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">B-C</text><rect x="680" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="750" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">C-E</text>
+<text x="450" y="265" text-anchor="middle" fill="#9fb6d1" font-size="18" font-family="Arial">PC Board Repair — مخطط توضيحي مبسط</text>
+</svg>
+<figcaption>🔺 فحص ترانزستور BJT NPN وPNP بالأفوميتر — الرسم مبسط لتوضيح ترتيب الفحص وليس مخطط دائرة خاص بلوحة معينة.</figcaption>
+</figure>
+
+<section id="s1" class="articleSection"><h2><span class="stepNum">1</span>حدد B وC وE</h2><p>ترتيب الأرجل يختلف بين القطع والحزم. استخدم رقم القطعة أو المخطط، ولا تفترض أن الأرجل ثابتة.</p></section><section id="s2" class="articleSection"><h2><span class="stepNum">2</span>فحص NPN</h2><table class="measureTable"><thead><tr><th>القياس</th><th>المتوقع</th></tr></thead><tbody><tr><td>الأحمر على Base والأسود على Emitter</td><td>نحو 0.55–0.75V</td></tr><tr><td>الأحمر على Base والأسود على Collector</td><td>نحو 0.55–0.75V</td></tr><tr><td>عكس القياسين</td><td>OL غالبًا</td></tr><tr><td>C ↔ E</td><td>OL غالبًا بالاتجاهين خارج الدائرة</td></tr></tbody></table></section><section id="s3" class="articleSection"><h2><span class="stepNum">3</span>فحص PNP</h2><p>في PNP تنعكس قطبية المجسات بالنسبة إلى NPN: الأسود على Base يعطي عادة الوصلتين الأماميتين نحو E وC.</p></section><section id="s4" class="articleSection"><h2><span class="stepNum">4</span>علامات التلف الشائعة</h2><table class="measureTable"><thead><tr><th>النتيجة</th><th>الاشتباه</th></tr></thead><tbody><tr><td>C-E قريب من 0 بالاتجاهين</td><td><span class='bad'>شورت</span></td></tr><tr><td>لا توجد وصلتا B-E وB-C</td><td>قطع داخلي أو أرجل محددة خطأ</td></tr><tr><td>كل الأرجل توصل ببعضها</td><td>تلف قوي أو تأثير دائرة موازية</td></tr></tbody></table></section><section id="s5" class="articleSection"><h2><span class="stepNum">5</span>متى ترفع الترانزستور؟</h2><ul class="checklist"><li>إذا ظهرت قراءات في الاتجاهين.</li><li>إذا كان C-E منخفضًا لكن الدائرة تحتوي مقاومات موازية.</li><li>إذا كان الترانزستور ضمن دائرة قيادة مع دايودات ومقاومات كثيرة.</li></ul></section><section id="s6" class="articleSection"><h2><span class="stepNum">6</span>قرار سريع</h2><p>وصلتان متشابهتان من Base إلى E وC مع C-E مفتوح غالبًا علامة جيدة، لكن التأكيد النهائي يكون خارج الدائرة عند الشك.</p></section>
+<section class="articleSection"><h2>روابط مرتبطة</h2><div class="relatedLinks"><a class="imageBtn" href="diode-testing.html">فحص الديود</a><a class="imageBtn" href="mosfet-testing.html">MOSFET</a></div></section>
+</article>
+<aside class="articleToc"><b>المحتويات</b><a href="#s1">حدد الأرجل</a><a href="#s2">NPN</a><a href="#s3">PNP</a><a href="#s4">الأعطال</a><a href="#s5">داخل البورد</a><a href="#s6">قرار سريع</a></aside>
+</div>
+</main>
+<footer><div class="footerLinks"><a href="../diagnostics/index.html">التشخيص</a><a href="../component-testing/index.html">فحص القطع</a><a href="../community.html">غرفة الصيانة</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>
+</body></html>

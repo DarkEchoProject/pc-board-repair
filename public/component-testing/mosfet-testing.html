@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>⚡ فحص MOSFET بالأفوميتر خطوة بخطوة | PC Board Repair</title>
+<meta name="description" content="شرح عملي لفحص MOSFET N-Channel وP-Channel بالأفوميتر: Gate وDrain وSource وBody Diode والشورت وتأثير شحن البوابة والقياس داخل البورد.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing.html">
+<link rel="stylesheet" href="../style.css">
+
+<style>
+.articleHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:22px}
+.articleHero h1{margin:8px 0}.articleTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 9px;border-radius:999px;font-size:12px}
+.articleGrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px}.articleMain{min-width:0}
+.articleToc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}
+.articleToc a{display:block;padding:7px 0;color:#bcd0e7;text-decoration:none}.articleToc a:hover{color:#56d6ff}
+.articleSection{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}
+.articleSection h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}
+.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}
+.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.warnLocal{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:14px;padding:14px;margin:16px 0}
+.noteBox{background:#102238;border:1px solid #2a4e72;border-radius:14px;padding:14px;margin:14px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}
+.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}
+.articleFigure{margin:18px 0;background:#08131f;border:1px solid #203a5b;border-radius:16px;padding:12px;overflow:hidden}.articleFigure svg{display:block;width:100%;height:auto;max-height:340px}
+.articleFigure figcaption{color:#9fb6d1;font-size:13px;margin-top:9px;text-align:center}
+.quickFlow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.quickFlow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}
+.quickFlow b{display:block;color:#8edfff;margin-bottom:5px}.relatedLinks{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
+</style>
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "⚡ فحص MOSFET بالأفوميتر خطوة بخطوة", "inLanguage": "ar", "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing.html", "isPartOf": {"@type": "WebSite", "name": "PC Board Repair", "url": "https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4">
+</head>
+<body>
+<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="../diagnostics/index.html">التشخيص</a><a href="../component-testing/index.html">فحص القطع</a></nav></header>
+<main class="wrap">
+<div class="crumb"><a href="../index.html">الرئيسية</a> ← <a href="../component-testing/index.html">فحص القطع</a> ← ⚡ فحص MOSFET بالأفوميتر خطوة بخطوة</div>
+<section class="articleHero"><span class="articleTag">MOSFET • Diode Mode • Ω</span><h1>⚡ فحص MOSFET بالأفوميتر خطوة بخطوة</h1><p class="muted">يُفحص MOSFET على مرحلتين: أولًا البحث عن شورت بين الأرجل، ثم فهم Body Diode وحالة Gate. القياس داخل البورد قد يتأثر بباقي مرحلة الـVRM.</p></section>
+<div class="warnLocal"><b>قاعدة سلامة:</b> قياسات المقاومة والاستمرارية والديود تتم مع فصل الطاقة. عند القياس الحي استخدم مدى الجهد المناسب وتجنب قصر نقاط متجاورة بالمجس.</div>
+<div class="articleGrid"><article class="articleMain">
+
+<figure class="articleFigure">
+<svg viewBox="0 0 900 320" role="img" aria-label="⚡ فحص MOSFET بالأفوميتر خطوة بخطوة" xmlns="http://www.w3.org/2000/svg">
+<rect x="20" y="25" width="860" height="270" rx="24" fill="#0a1626" stroke="#203a5b" stroke-width="3"/>
+<text x="450" y="78" text-anchor="middle" fill="#8edfff" font-size="30" font-family="Arial">⚡ فحص MOSFET بالأفوميتر خطوة بخطوة</text>
+<line x1="220" y1="173" x2="280" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="268,165 280,173 268,181" fill="#20bdf2"/><line x1="420" y1="173" x2="480" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="468,165 480,173 468,181" fill="#20bdf2"/><line x1="620" y1="173" x2="680" y2="173" stroke="#20bdf2" stroke-width="6"/><polygon points="668,165 680,173 668,181" fill="#20bdf2"/>
+<rect x="80" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="150" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">Gate</text><rect x="280" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="350" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">Drain</text><rect x="480" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="550" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">Source</text><rect x="680" y="135" width="140" height="75" rx="14" fill="#102238" stroke="#2a4e72" stroke-width="3"/><text x="750" y="180" text-anchor="middle" fill="#eef5ff" font-size="22" font-family="Arial">Body Diode</text>
+<text x="450" y="265" text-anchor="middle" fill="#9fb6d1" font-size="18" font-family="Arial">PC Board Repair — مخطط توضيحي مبسط</text>
+</svg>
+<figcaption>⚡ فحص MOSFET بالأفوميتر خطوة بخطوة — الرسم مبسط لتوضيح ترتيب الفحص وليس مخطط دائرة خاص بلوحة معينة.</figcaption>
+</figure>
+
+<section id="s1" class="articleSection"><h2><span class="stepNum">1</span>حدد Gate وDrain وSource</h2><p>لا تعتمد على شكل القطعة وحده. ابحث عن رقم MOSFET أو استخدم المخطط/BoardView لتحديد الأرجل. في كثير من حزم SO-8 يكون Drain على عدة أرجل متصلة داخليًا، لكن الترتيب ليس قاعدة مطلقة.</p></section><section id="s2" class="articleSection"><h2><span class="stepNum">2</span>فحص Gate إلى Source وDrain</h2><table class="measureTable"><thead><tr><th>القياس</th><th>المتوقع غالبًا</th></tr></thead><tbody><tr><td>Gate ↔ Source</td><td><span class='good'>مقاومة عالية جدًا أو OL</span></td></tr><tr><td>Gate ↔ Drain</td><td><span class='good'>مقاومة عالية جدًا أو OL</span></td></tr><tr><td>قيمة قريبة من 0Ω</td><td><span class='bad'>اشتباه تلف قوي في بوابة MOSFET</span></td></tr></tbody></table></section><section id="s3" class="articleSection"><h2><span class="stepNum">3</span>فحص Drain ↔ Source</h2><p>بوضع Diode قد ترى Body Diode في اتجاه واحد وOL بالعكس. إذا كانت القراءة قريبة جدًا من الصفر بالاتجاهين بعد تفريغ Gate فهناك شورت محتمل.</p><table class="measureTable"><thead><tr><th>الحالة</th><th>التفسير</th></tr></thead><tbody><tr><td>0 أو قريب جدًا من 0 بالاتجاهين</td><td><span class='bad'>شورت محتمل</span></td></tr><tr><td>Body Diode باتجاه واحد</td><td><span class='good'>سلوك طبيعي ممكن</span></td></tr><tr><td>القراءة تتغير بعد لمس Gate</td><td>Gate شُحنت وقد فتح MOSFET مؤقتًا</td></tr></tbody></table></section><section id="s4" class="articleSection"><h2><span class="stepNum">4</span>فرّغ Gate قبل إعادة القياس</h2><p>قصّر Gate مع Source لحظيًا بمقاومة مناسبة أو ملقط مع فصل الطاقة لتفريغ شحنة البوابة، ثم أعد اختبار D-S. هذا يمنع الحكم الخاطئ بسبب فتح MOSFET مؤقتًا.</p></section><section id="s5" class="articleSection"><h2><span class="stepNum">5</span>القياس داخل مرحلة VRM</h2><ul class="checklist"><li>قارن MOSFETات المراحل المتشابهة.</li><li>إذا كانت كل المراحل تعطي قراءة متقاربة فربما هي طبيعة الدائرة.</li><li>عند الشك ارفع MOSFET أو اعزل الملف/المرحلة للتأكيد.</li><li>High-Side وLow-Side لا تتوقع منهما نفس كل القراءات دائمًا.</li></ul></section><section id="s6" class="articleSection"><h2><span class="stepNum">6</span>جدول قرار سريع</h2><table class="measureTable"><thead><tr><th>النتيجة</th><th>الخطوة التالية</th></tr></thead><tbody><tr><td>G-S مقصور</td><td>استبدال MOSFET بعد التأكد خارج الدائرة.</td></tr><tr><td>D-S مقصور</td><td>افحص MOSFET وخط الحمل قبل التشغيل.</td></tr><tr><td>Gate سليمة وD-S طبيعي</td><td>انتقل لفحص إشارة Gate/PWM والجهود.</td></tr><tr><td>قراءة غريبة داخل البورد</td><td>اعزل القطعة ثم أعد القياس.</td></tr></tbody></table></section>
+<section class="articleSection"><h2>روابط مرتبطة</h2><div class="relatedLinks"><a class="imageBtn" href="../diagnostics/vrm-pwm-mosfet-diagnosis.html">VRM وPWM</a><a class="imageBtn" href="../diagnostics/short-circuit.html">تشخيص الشورت</a></div></section>
+</article>
+<aside class="articleToc"><b>المحتويات</b><a href="#s1">تحديد الأرجل</a><a href="#s2">فحص Gate</a><a href="#s3">Drain Source</a><a href="#s4">تفريغ Gate</a><a href="#s5">داخل البورد</a><a href="#s6">قرار سريع</a></aside>
+</div>
+</main>
+<footer><div class="footerLinks"><a href="../diagnostics/index.html">التشخيص</a><a href="../component-testing/index.html">فحص القطع</a><a href="../community.html">غرفة الصيانة</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>
+</body></html>

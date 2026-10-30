@@ -31,6 +31,18 @@
 </div>
 
 <section class="startBox"><b>قاعدة البداية:</b><p class="muted">قبل أي قياس على اللوحة افصل الكهرباء، افحص بصريًا، ثم استخدم مزود طاقة معروف السلامة. لا تعمل على الجانب الابتدائي لمزود الطاقة المتصل بالتيار إذا لم تكن مؤهلًا لذلك.</p></section>
+<section id="pcbrExtendedDiagnosticsV2" class="startBox" aria-label="شروحات تشخيص موسعة">
+<h2>📘 شروحات تشخيص موسعة</h2>
+<p class="muted">مقالات متقدمة لتتبع الإشارات والتغذيات وتحديد مرحلة توقف اللوحة.</p>
+<div class="diagGrid">
+<a class="diagCard" href="bios-chip-diagnosis.html"><div class="diagIcon">💾</div><span class="diagTag">شرح تفصيلي</span><h2>تشخيص شريحة BIOS وSPI على اللوحة الأم</h2><p class="muted">قبل إعادة برمجة BIOS، تأكد أن الشريحة تحصل على تغذية وأن خطوط SPI ليست مقصورة أو محجوزة بمستوى خاطئ.</p></a>
+<a class="diagCard" href="vrm-pwm-mosfet-diagnosis.html"><div class="diagIcon">🔋</div><span class="diagTag">شرح تفصيلي</span><h2>تشخيص VRM وPWM وMOSFET خطوة بخطوة</h2><p class="muted">إذا كان Vcore = 0V، لا تبدأ بتغيير MOSFET عشوائيًا. اتبع التسلسل من دخل 12V إلى تحكم PWM ثم Gate ثم الملف فالخرج.</p></a>
+<a class="diagCard" href="ram-vdimm-spd-diagnosis.html"><div class="diagIcon">🧠</div><span class="diagTag">شرح تفصيلي</span><h2>تشخيص RAM وVDIMM وSPD عندما لا تُقرأ الذاكرة</h2><p class="muted">عندما تعمل اللوحة مع RAM وتفشل مع أخرى، افصل بين عطل الموديول نفسه وعطل السلوت أو التغذية أو SPD.</p></a>
+<a class="diagCard" href="atx-standby-ps-on-pwr-ok.html"><div class="diagIcon">⚡</div><span class="diagTag">شرح تفصيلي</span><h2>تشخيص 5VSB وPS_ON وPWR_OK في لوحات ATX</h2><p class="muted">تسلسل ATX يعطيك طريقة منظمة لمعرفة هل العطل في PSU، زر التشغيل، SIO/EC، أو خطوط الباور الرئيسية.</p></a>
+<a class="diagCard" href="clock-reset-diagnosis.html"><div class="diagIcon">⏱️</div><span class="diagTag">شرح تفصيلي</span><h2>تشخيص Clock وReset عند توقف POST</h2><p class="muted">إذا كانت تغذيات اللوحة موجودة لكن لا POST، تصبح إشارات Clock وReset من أهم ما يحدد هل المنصة بدأت العمل فعليًا.</p></a>
+<a class="diagCard" href="power-sequence-diagnosis.html"><div class="diagIcon">🔄</div><span class="diagTag">شرح تفصيلي</span><h2>فهم Power Sequence وتشخيص أين يتوقف تشغيل اللوحة</h2><p class="muted">بدل قياس كل شيء عشوائيًا، تتبع التسلسل: ما الخط الذي يجب أن يظهر أولًا؟ وما الإشارة التي تسمح للمرحلة التالية بالعمل؟</p></a>
+</div>
+</section>
 </main>
 <footer><div class="footerLinks"><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body>

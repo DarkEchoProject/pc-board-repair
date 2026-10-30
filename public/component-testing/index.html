@@ -48,6 +48,18 @@
 </div>
 
 <section class="tips"><h2>قواعد مهمة أثناء الفحص</h2><ul><li>لا تعتبر صفارة الأفوميتر وحدها دليل شورت؛ راقب قيمة الأوم ونوع الخط.</li><li>دائمًا قارن القياس في الاتجاهين عند الديود والترانزستور.</li><li>قبل الحكم على القطعة داخل البورد، افصل رجلًا منها إذا كانت الدائرة المحيطة تؤثر على القراءة.</li><li>في MOSFET وBJT تأكد أولًا من Pinout الصحيح للقطعة.</li><li>على خطوط Vcore وVDIMM قد تكون المقاومة إلى الأرضي منخفضة طبيعيًا.</li><li>المكثفات الكبيرة قد تحتفظ بجهد خطير حتى بعد فصل الكهرباء؛ تأكد من تفريغها بطريقة آمنة قبل لمس الدائرة.</li></ul></section>
+<section id="pcbrExtendedGuidesV2" class="tips" aria-label="شروحات فحص موسعة">
+<h2>📚 شروحات فحص موسعة</h2>
+<p class="mini">مقالات عملية مستقلة مع خطوات القياس والجداول والقراءات المتوقعة.</p>
+<div class="partGrid">
+<a class="partCard" style="text-decoration:none;color:inherit" href="mosfet-testing.html"><div class="partIcon">⚡</div><span class="tag">شرح تفصيلي</span><h2>فحص MOSFET بالأفوميتر خطوة بخطوة</h2><p class="mini">يُفحص MOSFET على مرحلتين: أولًا البحث عن شورت بين الأرجل، ثم فهم Body Diode وحالة Gate. القياس داخل البورد قد يتأثر بباقي مرحلة الـVRM.</p></a>
+<a class="partCard" style="text-decoration:none;color:inherit" href="diode-testing.html"><div class="partIcon">▶️</div><span class="tag">شرح تفصيلي</span><h2>فحص الديود بالأفوميتر وDiode Mode</h2><p class="mini">أفضل وضع لفحص الديود هو Diode Mode لأنه يعرض هبوط الجهد الأمامي مباشرة بدل الاعتماد على صفارة الاستمرارية.</p></a>
+<a class="partCard" style="text-decoration:none;color:inherit" href="bjt-testing.html"><div class="partIcon">🔺</div><span class="tag">شرح تفصيلي</span><h2>فحص ترانزستور BJT NPN وPNP بالأفوميتر</h2><p class="mini">ترانزستور BJT يمكن فهمه أثناء الفحص كوصلتي ديود تشتركان في القاعدة Base.</p></a>
+<a class="partCard" style="text-decoration:none;color:inherit" href="inductor-testing.html"><div class="partIcon">🌀</div><span class="tag">شرح تفصيلي</span><h2>فحص الملف Coil / Inductor بالأفوميتر</h2><p class="mini">الملف السليم في دوائر القدرة غالبًا مقاومته DC منخفضة جدًا، لذلك صفارة الاستمرارية على طرفيه طبيعية وليست شورتًا.</p></a>
+<a class="partCard" style="text-decoration:none;color:inherit" href="fuse-testing.html"><div class="partIcon">🧯</div><span class="tag">شرح تفصيلي</span><h2>فحص الفيوز Fuse بالأفوميتر وتتبع سبب احتراقه</h2><p class="mini">الفيوز ليس سبب العطل في معظم الحالات بل نتيجة له. استبداله بدون البحث عن سبب القطع قد يؤدي لاحتراق الفيوز الجديد فورًا.</p></a>
+<a class="partCard" style="text-decoration:none;color:inherit" href="bridge-rectifier-testing.html"><div class="partIcon">◇</div><span class="tag">شرح تفصيلي</span><h2>فحص جسر التوحيد Bridge Rectifier بالأفوميتر</h2><p class="mini">جسر التوحيد يحتوي أربع وصلات ديود مرتبة لتحويل AC إلى DC. فحصه يصبح سهلًا عندما تتعامل معه كأربع ديودات داخل حزمة واحدة.</p></a>
+</div>
+</section>
 </main>
 <footer><div class="footerLinks"><a href="../diagnostics/index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body>
