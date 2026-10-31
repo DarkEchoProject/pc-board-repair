@@ -83,6 +83,17 @@
       .filter(x=>x&&typeof x.file==='string'&&x.file.trim());
   }
 
+  function getInjectedBoard(expectedKey){
+    const node=document.getElementById('pcbr-board-data');
+    if(!node)return null;
+    try{
+      const board=JSON.parse(node.textContent||'null');
+      if(!board||typeof board.file!=='string')return null;
+      return fileKey(board.file)===String(expectedKey||'').toLowerCase()?board:null;
+    }catch{
+      return null;
+    }
+  }
   function isTrue(value){
     return value===true||value===1||String(value??'').toLowerCase()==='true'||String(value??'')==='1';
   }
@@ -159,21 +170,26 @@
       cleaned:'Cleaned',verified:'Verified',unverified:'غير موثّق',copy:'نسخ SHA-256',copied:'تم النسخ'
     };
 
-    let board=null;
-    try{
-      const payloads=await Promise.all(
-        ['/data/boards.json','/data/boards-large.json'].map(async url=>{
-          try{
-            const r=await fetch(url,{cache:'no-store'});
-            return r.ok?await r.json():[];
-          }catch{
-            return [];
-          }
-        })
-      );
-      const boards=normalizeBoards(payloads.flat());
-      board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
-    }catch{}
+    let board=getInjectedBoard(match[1]);
+
+    if(!board){
+      try{
+        const payloads=await Promise.all(
+          ['/data/boards.json','/data/boards-large.json'].map(async url=>{
+            try{
+              const r=await fetch(url,{cache:'no-store'});
+              return r.ok?await r.json():[];
+            }catch{
+              return [];
+            }
+          })
+        );
+
+        const boards=normalizeBoards(payloads.flat());
+        board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
+      }catch{}
+    }
+
     if(!board)return;
 
     let size=Number(board.size_bytes??board.sizeBytes??board.file_size??board.fileSize??0)||0;

@@ -44,6 +44,12 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
 }[c]));
 
 const norm = (value) => String(value ?? "").trim().toLowerCase();
+const safeJsonForHtml = (value) => JSON.stringify(value)
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026")
+  .replace(/\u2028/g, "\\u2028")
+  .replace(/\u2029/g, "\\u2029");
 
 async function readJsonAsset(assets, path, required = false) {
   const response = await assets.fetch(new Request(`${SITE}${path}`));
@@ -214,6 +220,18 @@ class BoardSeoAfter {
   }
 }
 
+class BoardDataHead {
+  constructor(board) {
+    this.board = board;
+  }
+  element(element) {
+    element.append(
+      `<script type="application/json" id="pcbr-board-data">${safeJsonForHtml(this.board)}</script>`,
+      { html: true },
+    );
+  }
+}
+
 async function withBoardSeo(request, response, env) {
   if (!response.ok || request.method !== "GET") return response;
   const contentType = response.headers.get("content-type") || "";
@@ -229,6 +247,7 @@ async function withBoardSeo(request, response, env) {
     if (!board) return response;
     const html = boardSeoBlock(board, similarBoards(board, boards));
     return new HTMLRewriter()
+      .on("head", new BoardDataHead(board))
       .on("article.boardDetail", new BoardSeoAfter(html))
       .transform(response);
   } catch {

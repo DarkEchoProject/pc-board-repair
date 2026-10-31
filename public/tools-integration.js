@@ -26,6 +26,21 @@
       .filter(item=>item&&typeof item.file==='string'&&item.file.trim());
   }
 
+  function getInjectedBoard(expectedKey){
+    const node=document.getElementById('pcbr-board-data');
+    if(!node)return null;
+
+    try{
+      const board=JSON.parse(node.textContent||'null');
+      if(!board||typeof board.file!=='string')return null;
+
+      return fileKey(board.file)===String(expectedKey||'').toLowerCase()
+        ? board
+        : null;
+    }catch{
+      return null;
+    }
+  }
   function addStyles(){
     if(document.getElementById('pcbrReaderGridStyles'))return;
     const style=document.createElement('style');
@@ -212,18 +227,25 @@
     const actions=document.querySelector('.boardActions');
     if(!actions)return;
 
-    let board=null;
-    try{
-      const payloads=await Promise.all(
-        ['/data/boards.json','/data/boards-large.json'].map(async url=>{
-          const r=await fetch(url,{cache:'no-store'});
-          if(!r.ok)return [];
-          return r.json();
-        })
-      );
-      const boards=normalizeBoards(payloads.flat());
-      board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
-    }catch{return;}
+    let board=getInjectedBoard(match[1]);
+
+    if(!board){
+      try{
+        const payloads=await Promise.all(
+          ['/data/boards.json','/data/boards-large.json'].map(async url=>{
+            const r=await fetch(url,{cache:'no-store'});
+            if(!r.ok)return [];
+            return r.json();
+          })
+        );
+
+        const boards=normalizeBoards(payloads.flat());
+        board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
+      }catch{
+        return;
+      }
+    }
+
     if(!board)return;
 
     addStyles();
