@@ -9,6 +9,7 @@ const boardsJson = path.join(publicDir, 'data', 'boards.json');
 const boardsLargeJson = path.join(publicDir, 'data', 'boards-large.json');
 const sitemapOutput = path.join(publicDir, 'sitemap.xml');
 const directoryOutput = path.join(publicDir, 'boardview', 'directory.html');
+const homeDataOutput = path.join(publicDir, 'data', 'home-data.json');
 const site = 'https://pc-board-repair.alinasser00001.workers.dev';
 
 function readJsonArray(filePath) {
@@ -107,6 +108,10 @@ const all = [...readJsonArray(boardsJson), ...readJsonArray(boardsLargeJson)];
 const seenFiles = new Set();
 const boardPaths = [];
 const directoryItems = [];
+const homeRecords = [];
+const homeBrands = new Set();
+const homeTypes = new Set();
+let homeImageCount = 0;
 
 for (const board of all) {
   const brand = String(board?.brand ?? '').trim();
@@ -117,18 +122,63 @@ for (const board of all) {
   if (seenFiles.has(identity)) continue;
   seenFiles.add(identity);
 
+  const model = String(board?.model ?? '').trim();
+  const boardNo = String(board?.board ?? '').trim();
+  const revision = String(board?.revision ?? '').trim();
+  const type = String(board?.type ?? '').trim();
+  const key = fileKey(file);
   const slug = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join('-'));
-  const itemPath = `/boardview/item/${fileKey(file)}/${slug}`;
+  const itemPath = `/boardview/item/${key}/${slug}`;
+
   boardPaths.push(itemPath);
+
   directoryItems.push({
     brand,
-    model: String(board?.model ?? '').trim(),
-    board: String(board?.board ?? '').trim(),
-    revision: String(board?.revision ?? '').trim(),
-    type: String(board?.type ?? '').trim(),
+    model,
+    board: boardNo,
+    revision,
+    type,
     path: itemPath,
   });
+
+  homeRecords.push({
+    key,
+    brand,
+    model,
+    board: boardNo,
+    revision,
+    type,
+    added: String(board?.added_at ?? board?.addedAt ?? '').trim(),
+  });
+
+  homeBrands.add(brand);
+  if (type) homeTypes.add(type);
+  if (board?.image) homeImageCount += 1;
 }
+
+const toHomeCard = ({ added, ...card }) => card;
+const datedHomeRecords = homeRecords.filter(item => item.added);
+const latestHomeRecords = (
+  datedHomeRecords.length >= 6
+    ? [...datedHomeRecords]
+        .sort((a, b) => new Date(b.added) - new Date(a.added))
+        .slice(0, 6)
+    : homeRecords.slice(-6).reverse()
+);
+
+const homeData = {
+  stats: {
+    boardCount: homeRecords.length,
+    brandCount: homeBrands.size,
+    imageCount: homeImageCount,
+    typeCount: homeTypes.size,
+  },
+  latest: latestHomeRecords.map(toHomeCard),
+  cards: homeRecords.map(toHomeCard),
+};
+
+fs.mkdirSync(path.dirname(homeDataOutput), { recursive: true });
+fs.writeFileSync(homeDataOutput, JSON.stringify(homeData), 'utf8');
 
 const urls = [...new Set([...staticPaths, ...boardPaths])];
 const sitemap = [
@@ -192,5 +242,6 @@ fs.writeFileSync(directoryOutput, directory.join('\n'), 'utf8');
 
 console.log(`Static sitemap built: ${urls.length} URL(s)`);
 console.log(`Static BoardView directory built: ${directoryItems.length} file link(s)`);
+console.log(`Homepage data built: ${homeRecords.length} lightweight card(s)`);
 console.log(sitemapOutput);
 console.log(directoryOutput);

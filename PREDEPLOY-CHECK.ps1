@@ -39,6 +39,7 @@ function Ensure-GeneratedSeoArtifacts {
     $builder = Join-Path $root 'BUILD-SITEMAP.ps1'
     $sitemapPath = Join-Path $root 'public\sitemap.xml'
     $directoryPath = Join-Path $root 'public\boardview\directory.html'
+    $homeDataPath = Join-Path $root 'public\data\home-data.json'
     $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html'
     $needsBuild = $false
 
@@ -57,6 +58,28 @@ function Ensure-GeneratedSeoArtifacts {
         }
         catch {
             $needsBuild = $true
+        }
+    }
+    if (-not $needsBuild) {
+        if (-not (Test-Path -LiteralPath $homeDataPath -PathType Leaf)) {
+            $needsBuild = $true
+        }
+        else {
+            $homeTime = (Get-Item -LiteralPath $homeDataPath).LastWriteTimeUtc
+
+            foreach ($source in @(
+                (Join-Path $root 'public\data\boards.json'),
+                (Join-Path $root 'public\data\boards-large.json'),
+                (Join-Path $root 'scripts\build-sitemap.mjs')
+            )) {
+                if (
+                    (Test-Path -LiteralPath $source -PathType Leaf) -and
+                    (Get-Item -LiteralPath $source).LastWriteTimeUtc -gt $homeTime
+                ) {
+                    $needsBuild = $true
+                    break
+                }
+            }
         }
     }
 
@@ -117,6 +140,7 @@ Write-Host ""
 Write-Host "Checking sitemap and crawl-directory output..."
 Check-File 'public\sitemap.xml' 100
 Check-File 'public\boardview\directory.html' 10000
+Check-File 'public\data\home-data.json' 1000
 
 if (Test-Path -LiteralPath 'public\sitemap.xml' -PathType Leaf) {
     try {
@@ -223,6 +247,7 @@ Write-Host "Checking data files..."
 $jsonFiles = @(
     'public\data\boards.json',
     'public\data\boards-large.json',
+    'public\data\home-data.json',
     'public\data\videos.json'
 )
 
