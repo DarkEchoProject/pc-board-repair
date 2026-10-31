@@ -116,6 +116,7 @@ Check-File 'src\app.js' 100
 Check-File 'src\entry.js' 100
 Check-File 'src\seo-entry.js' 100
 Check-File 'src\header-entry.js' 100
+Check-File 'public\qrcode.min.js' 1000
 
 $requiredPages = @(
     'public\index.html',

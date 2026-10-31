@@ -8,13 +8,19 @@
     i18n.dataset.pcbrI18n='1';
     document.head.append(i18n);
   }
-  if(!document.querySelector('script[data-pcbr-i18n-title]')){
+  const needsTitleFix=
+    location.pathname==='/diagnostics/post-beep-codes.html'||
+    location.pathname==='/diagnostics/vrm-cpu-ram.html';
+
+  if(needsTitleFix&&!document.querySelector('script[data-pcbr-i18n-title]')){
     const titleFix=document.createElement('script');
     titleFix.src='/i18n-title-fix.js';
     titleFix.dataset.pcbrI18nTitle='1';
     document.head.append(titleFix);
   }
-  if(!document.querySelector('script[data-pcbr-site-search-boot]')){
+  const isHomepage=location.pathname==='/'||location.pathname==='/index.html';
+
+  if(isHomepage&&!document.querySelector('script[data-pcbr-site-search-boot]')){
     const searchBoot=document.createElement('script');
     searchBoot.src='/site-search-boot.js?v=20261013-1';
     searchBoot.dataset.pcbrSiteSearchBoot='1';
@@ -28,6 +34,483 @@
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   }
 
+  let pcbrSharePanel=null;
+  let pcbrQrOverlay=null;
+  let pcbrQrLoader=null;
+
+  function ensureShareStyles(){
+    if(document.getElementById('pcbrShareStyles'))return;
+
+    const style=document.createElement('style');
+    style.id='pcbrShareStyles';
+    style.textContent=`
+      .pcbrSharePanel{
+        position:fixed;
+        z-index:10020;
+        min-width:230px;
+        padding:9px;
+        border-radius:14px;
+        background:#0b1729;
+        border:1px solid #315b7f;
+        box-shadow:0 18px 50px #0009;
+      }
+
+      .pcbrSharePanel a,
+      .pcbrSharePanel button{
+        width:100%;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:11px 13px;
+        margin:2px 0;
+        border:0;
+        border-radius:9px;
+        background:transparent;
+        color:#eef5ff;
+        text-decoration:none;
+        font:inherit;
+        cursor:pointer;
+        text-align:start;
+      }
+
+      .pcbrSharePanel a:hover,
+      .pcbrSharePanel button:hover{
+        background:#142b46;
+      }
+
+      .pcbrShareWhatsApp{color:#64e68a!important}
+      .pcbrShareFacebook{color:#74a7ff!important}
+      .pcbrShareTelegram{color:#62cdf5!important}
+
+      .pcbrQrOverlay{
+        position:fixed;
+        inset:0;
+        z-index:10030;
+        background:#000b;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:18px;
+      }
+
+      .pcbrQrDialog{
+        width:min(92vw,380px);
+        background:#0b1729;
+        border:1px solid #315b7f;
+        border-radius:18px;
+        padding:20px;
+        box-shadow:0 24px 80px #000c;
+        text-align:center;
+      }
+
+      .pcbrQrTop{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:12px;
+        margin-bottom:15px;
+      }
+
+      .pcbrQrTop strong{
+        font-size:18px;
+      }
+
+      .pcbrQrClose{
+        border:0;
+        background:#162b44;
+        color:#fff;
+        width:36px;
+        height:36px;
+        border-radius:50%;
+        cursor:pointer;
+        font-size:20px;
+      }
+
+      .pcbrQrCode{
+        display:inline-block;
+        background:#fff;
+        padding:14px;
+        border-radius:12px;
+        margin:8px auto 14px;
+      }
+
+      .pcbrQrCode canvas{
+        display:block!important;
+        margin:auto!important;
+      }
+
+      .pcbrQrCode img{
+        display:none!important;
+      }
+
+      .pcbrQrUrl{
+        font-size:12px;
+        color:#9fb6d1;
+        overflow-wrap:anywhere;
+        margin:8px 0 14px;
+      }
+
+      .pcbrQrCopy{
+        border:1px solid #315b7f;
+        background:#102840;
+        color:#fff;
+        border-radius:10px;
+        padding:10px 15px;
+        cursor:pointer;
+        font:inherit;
+      }
+    `;
+    document.head.append(style);
+  }
+
+  function closeSharePanel(){
+    if(pcbrSharePanel){
+      pcbrSharePanel.remove();
+      pcbrSharePanel=null;
+    }
+  }
+
+  function openShareMenu(anchor,lang){
+    ensureShareStyles();
+
+    if(pcbrSharePanel){
+      closeSharePanel();
+      return;
+    }
+
+    const url=location.href;
+    const title=document.title||'PC Board Repair';
+
+    const panel=document.createElement('div');
+    panel.className='pcbrSharePanel';
+
+    const addLink=(label,href,className)=>{
+      const a=document.createElement('a');
+      a.textContent=label;
+      a.href=href;
+      a.target='_blank';
+      a.rel='noopener noreferrer';
+      if(className)a.className=className;
+      panel.append(a);
+    };
+
+    addLink(
+      '🟢 WhatsApp',
+      `https://wa.me/?text=${encodeURIComponent(title+'\n'+url)}`,
+      'pcbrShareWhatsApp'
+    );
+
+    addLink(
+      '🔵 Facebook',
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      'pcbrShareFacebook'
+    );
+
+    addLink(
+      '✈ Telegram',
+      `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      'pcbrShareTelegram'
+    );
+
+    const qrShare=document.createElement('button');
+    qrShare.type='button';
+    qrShare.id='pcbrShareQrButton';
+    qrShare.textContent=lang==='en'?'▦ QR code':'▦ باركود';
+
+    qrShare.addEventListener('click',event=>{
+      event.preventDefault();
+      event.stopPropagation();
+
+      closeSharePanel();
+
+      setTimeout(()=>{
+        openQrModal(lang);
+      },0);
+    });
+
+    panel.append(qrShare);
+
+    const copy=document.createElement('button');
+    copy.type='button';
+    copy.textContent=lang==='en'?'🔗 Copy link':'🔗 نسخ الرابط';
+
+    copy.addEventListener('click',async()=>{
+      try{
+        await navigator.clipboard.writeText(url);
+        copy.textContent=lang==='en'?'✓ Copied':'✓ تم نسخ الرابط';
+        setTimeout(()=>{
+          copy.textContent=lang==='en'?'🔗 Copy link':'🔗 نسخ الرابط';
+        },1500);
+      }catch{}
+    });
+
+    panel.append(copy);
+
+    panel.addEventListener('click',e=>e.stopPropagation());
+    document.body.append(panel);
+    pcbrSharePanel=panel;
+
+    const rect=anchor.getBoundingClientRect();
+    const width=230;
+
+    let left=rect.right-width;
+    if(left<10)left=10;
+    if(left+width>window.innerWidth-10)
+      left=window.innerWidth-width-10;
+
+    panel.style.left=left+'px';
+    panel.style.top=(rect.bottom+8)+'px';
+
+    setTimeout(()=>{
+      document.addEventListener('click',closeSharePanel,{once:true});
+    },0);
+  }
+
+  function loadQrLibrary(){
+    if(window.QRCode)return Promise.resolve(window.QRCode);
+    if(pcbrQrLoader)return pcbrQrLoader;
+
+    pcbrQrLoader=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='/qrcode.min.js?v=1';
+      script.onload=()=>window.QRCode?resolve(window.QRCode):reject(new Error('QRCode unavailable'));
+      script.onerror=reject;
+      document.head.append(script);
+    });
+
+    return pcbrQrLoader;
+  }
+
+  async function openQrModal(lang){
+    ensureShareStyles();
+    closeSharePanel();
+
+    if(pcbrQrOverlay){
+      pcbrQrOverlay.remove();
+      pcbrQrOverlay=null;
+    }
+
+    const overlay=document.createElement('div');
+    overlay.className='pcbrQrOverlay';
+
+    const dialog=document.createElement('div');
+    dialog.className='pcbrQrDialog';
+
+    const top=document.createElement('div');
+    top.className='pcbrQrTop';
+
+    const title=document.createElement('strong');
+    title.textContent=lang==='en'
+      ? 'QR code for this page'
+      : 'باركود هذه الصفحة';
+
+    const close=document.createElement('button');
+    close.type='button';
+    close.className='pcbrQrClose';
+    close.textContent='×';
+
+    const qr=document.createElement('div');
+    qr.className='pcbrQrCode';
+
+    const urlText=document.createElement('div');
+    urlText.className='pcbrQrUrl';
+    urlText.textContent=location.href;
+
+
+    const copy=document.createElement('button');
+    copy.type='button';
+    copy.className='pcbrQrCopy';
+    copy.textContent=lang==='en'?'Copy link':'نسخ الرابط';
+
+    top.append(title,close);
+    dialog.append(top,qr,urlText,copy);
+    overlay.append(dialog);
+    document.body.append(overlay);
+
+    pcbrQrOverlay=overlay;
+
+    const closeModal=()=>{
+      overlay.remove();
+      if(pcbrQrOverlay===overlay)pcbrQrOverlay=null;
+    };
+
+    close.addEventListener('click',closeModal);
+
+    overlay.addEventListener('click',e=>{
+      if(e.target===overlay)closeModal();
+    });
+
+    copy.addEventListener('click',async()=>{
+      try{
+        await navigator.clipboard.writeText(location.href);
+        copy.textContent=lang==='en'?'✓ Copied':'✓ تم النسخ';
+      }catch{}
+    });
+
+    try{
+      await loadQrLibrary();
+
+      new window.QRCode(qr,{
+        text:location.href,
+        width:220,
+        height:220,
+        colorDark:'#06111f',
+        colorLight:'#ffffff',
+        correctLevel:window.QRCode.CorrectLevel.M
+      });
+    }catch{
+      qr.textContent=lang==='en'
+        ? 'Could not create QR code'
+        : 'تعذر إنشاء الباركود';
+    }
+  }
+  let pcbrMoreMenuPanel=null;
+  let pcbrMoreMenuAnchor=null;
+  let pcbrMoreMenuCleanup=null;
+
+  function ensurePcbrMoreMenuStyles(){
+    if(document.getElementById('pcbrMoreMenuStyles'))return;
+
+    const style=document.createElement('style');
+    style.id='pcbrMoreMenuStyles';
+    style.textContent=`
+      .pcbrMoreMenuPanel{
+        position:fixed;
+        z-index:10040;
+        min-width:210px;
+        padding:8px;
+        border:1px solid #315b7f;
+        border-radius:13px;
+        background:#0b1729;
+        box-shadow:0 18px 50px rgba(0,0,0,.6);
+      }
+
+      .pcbrMoreMenuPanel a{
+        display:block;
+        padding:11px 13px;
+        margin:2px 0;
+        border-radius:8px;
+        color:#eef5ff;
+        text-decoration:none;
+        white-space:nowrap;
+      }
+
+      .pcbrMoreMenuPanel a:hover,
+      .pcbrMoreMenuPanel a:focus{
+        background:#142b46;
+        outline:none;
+      }
+    `;
+
+    document.head.append(style);
+  }
+
+  function closePcbrMoreMenu(){
+    if(pcbrMoreMenuCleanup){
+      const cleanup=pcbrMoreMenuCleanup;
+      pcbrMoreMenuCleanup=null;
+      cleanup();
+    }
+
+    if(pcbrMoreMenuPanel){
+      pcbrMoreMenuPanel.remove();
+      pcbrMoreMenuPanel=null;
+    }
+
+    if(pcbrMoreMenuAnchor){
+      pcbrMoreMenuAnchor.setAttribute('aria-expanded','false');
+      pcbrMoreMenuAnchor=null;
+    }
+  }
+
+  function openPcbrMoreMenu(anchor,lang){
+    if(pcbrMoreMenuPanel && pcbrMoreMenuAnchor===anchor){
+      closePcbrMoreMenu();
+      return;
+    }
+
+    closePcbrMoreMenu();
+    ensurePcbrMoreMenuStyles();
+
+    const panel=document.createElement('div');
+    panel.className='pcbrMoreMenuPanel';
+    panel.setAttribute('role','menu');
+
+    const items=[
+      {
+        href:'/diagnostics/index.html',
+        ar:'🔧 التشخيص',
+        en:'🔧 Diagnostics'
+      },
+      {
+        href:'/component-testing/index.html',
+        ar:'🔬 فحص القطع',
+        en:'🔬 Component Testing'
+      },
+      {
+        href:'/contact.html',
+        ar:'✉ اتصل بنا',
+        en:'✉ Contact'
+      }
+    ];
+
+    for(const item of items){
+      const link=document.createElement('a');
+      link.href=item.href;
+      link.textContent=item[lang];
+      link.setAttribute('role','menuitem');
+      panel.append(link);
+    }
+
+    document.body.append(panel);
+
+    pcbrMoreMenuPanel=panel;
+    pcbrMoreMenuAnchor=anchor;
+    anchor.setAttribute('aria-expanded','true');
+
+    const rect=anchor.getBoundingClientRect();
+    const width=panel.offsetWidth;
+
+    let left=rect.right-width;
+
+    if(left<8)left=8;
+    if(left+width>window.innerWidth-8){
+      left=window.innerWidth-width-8;
+    }
+
+    panel.style.left=left+'px';
+    panel.style.top=(rect.bottom+7)+'px';
+
+    const outside=e=>{
+      if(
+        pcbrMoreMenuPanel &&
+        !pcbrMoreMenuPanel.contains(e.target) &&
+        e.target!==pcbrMoreMenuAnchor
+      ){
+        closePcbrMoreMenu();
+      }
+    };
+
+    const escape=e=>{
+      if(e.key==='Escape'){
+        const oldAnchor=pcbrMoreMenuAnchor;
+        closePcbrMoreMenu();
+        if(oldAnchor)oldAnchor.focus();
+      }
+    };
+
+    const repositionClose=()=>closePcbrMoreMenu();
+
+    document.addEventListener('pointerdown',outside,true);
+    document.addEventListener('keydown',escape);
+    window.addEventListener('resize',repositionClose);
+
+    pcbrMoreMenuCleanup=()=>{
+      document.removeEventListener('pointerdown',outside,true);
+      document.removeEventListener('keydown',escape);
+      window.removeEventListener('resize',repositionClose);
+    };
+  }
   function standardizeHeaderNav(){
     const header=document.querySelector('header');
     if(!header)return;
@@ -40,14 +523,11 @@
 
     const lang=currentLang();
     const items=[
-      {href:'/',ar:'الرئيسية',en:'Home',active:path=>path==='/'||path==='/index.html'},
       {href:'/boardview/index.html',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
       {href:'/bios/index.html',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
-      {href:'/diagnostics/index.html',ar:'التشخيص',en:'Diagnostics',active:path=>path.startsWith('/diagnostics/')},
-      {href:'/component-testing/index.html',ar:'فحص القطع',en:'Component Testing',active:path=>path.startsWith('/component-testing/')},
+      {href:'#',ar:'المزيد ▾',en:'More ▾',active:()=>false,moreMenu:true},
       {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
-      {href:'/contact.html',ar:'اتصل بنا',en:'Contact',active:path=>path==='/contact.html'},
-      {href:'/search.html',ar:'🔎 البحث',en:'🔎 Search',active:path=>path==='/search.html'},
+      {href:'#',ar:'↗ مشاركة',en:'↗ Share',active:()=>false,shareMenu:true},
       {href:'https://t.me/rdRepairLB',ar:'✈ انضم لتلغرام',en:'✈ Join Telegram',active:()=>false,external:true,telegram:true},
       {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}
     ];
@@ -58,6 +538,24 @@
       a.href=item.href;
       a.textContent=item[lang];
       if(item.external){a.target='_blank';a.rel='noopener noreferrer';}
+      if(item.moreMenu){
+        a.setAttribute('aria-haspopup','menu');
+        a.setAttribute('aria-expanded','false');
+
+        a.addEventListener('click',event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          openPcbrMoreMenu(a,lang);
+        });
+      }
+      if(item.shareMenu){
+        a.addEventListener('click',event=>{
+          event.preventDefault();
+          event.stopPropagation();
+          openShareMenu(a,lang);
+        });
+      }
+
       if(item.youtube){
         a.dataset.pcbrYoutubeChannel='nav';
         a.style.cssText='color:#fff;background:#ff0033;border:1px solid #ff0033;border-radius:10px;padding:6px 10px;text-decoration:none;font-weight:700;white-space:nowrap';
