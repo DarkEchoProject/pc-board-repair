@@ -166,27 +166,49 @@ function finalize(response) {
 }
 
 function similarBoards(board, boards) {
+  const identity = norm(board.file);
   const brand = norm(board.brand);
   const model = norm(board.model);
   const boardNo = norm(board.board);
   const platform = norm(board.platform);
   const type = norm(board.type);
+  const eligible = boards.filter(item => item && item.file && norm(item.file) !== identity);
+  const selected = [];
+  const used = new Set([identity]);
+  const add = item => {
+    if (!item || !item.file || used.has(norm(item.file))) return;
+    used.add(norm(item.file));
+    selected.push(item);
+  };
 
-  return boards
-    .filter(item => norm(item.file) !== norm(board.file))
-    .map(item => {
-      let score = 0;
-      if (brand && norm(item.brand) === brand) score += 1;
-      if (boardNo && norm(item.board) === boardNo) score += 7;
-      if (model && norm(item.model) === model) score += 6;
-      if (platform && norm(item.platform) === platform) score += 2;
-      if (type && norm(item.type) === type) score += 1;
-      return { item, score };
-    })
-    .filter(entry => entry.score >= 6)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 4)
-    .map(entry => entry.item);
+  // Prefer genuine model/board matches, then other files from the same manufacturer.
+  const ranked = eligible.map(item => {
+    let score = 0;
+    if (brand && norm(item.brand) === brand) score += 3;
+    if (boardNo && norm(item.board) === boardNo) score += 20;
+    if (model && norm(item.model) === model) score += 16;
+    if (platform && norm(item.platform) === platform) score += 5;
+    if (type && norm(item.type) === type) score += 1;
+    return { item, score };
+  }).sort((a, b) => b.score - a.score ||
+    String(a.item.model || a.item.board || a.item.file).localeCompare(String(b.item.model || b.item.board || b.item.file), "en"));
+  for (const entry of ranked) {
+    if (entry.score < 3 || selected.length >= 4) break;
+    add(entry.item);
+  }
+
+  // Fallback for unique boards: link to neighbouring catalogue entries as well.
+  // This ensures each archive item has several real HTML links, even with no close match.
+  const sorted = [...boards].filter(item => item && item.file).sort((a, b) =>
+    String(a.brand || "").localeCompare(String(b.brand || ""), "en") ||
+    String(a.model || a.board || a.file).localeCompare(String(b.model || b.board || b.file), "en") ||
+    String(a.file).localeCompare(String(b.file), "en"));
+  const position = sorted.findIndex(item => norm(item.file) === identity);
+  for (let step = 1; position !== -1 && selected.length < 6 && step < sorted.length; step++) {
+    add(sorted[(position + step) % sorted.length]);
+    if (selected.length < 6) add(sorted[(position - step + sorted.length) % sorted.length]);
+  }
+  return selected.slice(0, 6);
 }
 
 function boardSeoBlock(board, similar) {
@@ -208,10 +230,10 @@ function boardSeoBlock(board, similar) {
   ].filter(Boolean).join(" ");
 
   const similarHtml = similar.length
-    ? `<div><h3>ملفات قريبة من نفس الموديل أو رقم البورد</h3><div class="grid">${similar.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision, item.type].filter(Boolean).join(" • ") || item.file)}</p></a>`).join("")}</div></div>`
+    ? `<div><h3>ملفات BoardView مرتبطة ومقترحة</h3><div class="grid">${similar.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision, item.type].filter(Boolean).join(" • ") || item.file)}</p></a>`).join("")}</div></div>`
     : "";
 
-  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
+  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو <a href="/boardview/directory.html">فهرس جميع موديلات BoardView</a> أو <a href="/boardview/featured.html">الملفات المختارة</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
 }
 
 class BoardSeoAfter {
