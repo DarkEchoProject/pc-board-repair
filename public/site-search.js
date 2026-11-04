@@ -1,4 +1,4 @@
-﻿(()=>{
+(()=>{
   'use strict';
 
   const BOARD_DATA=['/data/boards.json','/data/boards-large.json'];
@@ -257,7 +257,28 @@
     }
 
     const boardIndex=boards.map(boardEntry).map(e=>({...e,_searchText:searchableText(e)}));
-    return [...boardIndex,...staticIndex];
+    const biosRows = await loadBoardData('/data/bios.json');
+    const biosIndex = biosRows
+      .filter(item => item && item.file && item.download_url)
+      .map(item => {
+        const name = String(item.file);
+        const brand = String(item.brand || 'Other');
+        return {
+          type: 'bios',
+          url: `/bios/index.html?q=${encodeURIComponent(name)}`,
+          titleAr: `BIOS — ${name}`,
+          titleEn: `BIOS — ${name}`,
+          subtitleAr: `ملف BIOS • ${brand}`,
+          subtitleEn: `BIOS file • ${brand}`,
+          keywords: `${brand} ${name} ${item.relative_path || ''} BIOS بيوس`,
+          brand,
+          model: name,
+          fileName: name
+        };
+      })
+      .map(e => ({ ...e, _searchText: searchableText(e) }));
+
+    return [...boardIndex,...biosIndex,...staticIndex];
   }
 
   function getIndex(){

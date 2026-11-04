@@ -19,6 +19,8 @@
   let selectedCompany='';
   let brands=[];
   if(!search||!results||!countEl||!pager||!reset)return;
+  const initialQuery = new URLSearchParams(location.search).get('q');
+  if(initialQuery)search.value=initialQuery;
 
   const normalize=value=>String(value??'').toLowerCase().normalize('NFKC')
     .replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه')
