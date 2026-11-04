@@ -1,0 +1,31 @@
+/* BIOS by company: uses BoardView's shared card, filter and pagination styles. */
+.biosPage{max-width:1180px}
+.biosStats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0 24px}
+.biosFilterGrid{display:grid;grid-template-columns:minmax(250px,2fr) minmax(170px,1fr);gap:10px}
+.biosFilterGridSingle{grid-template-columns:1fr}
+.biosPage .companyGrid{grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:16px}
+.biosPage .companyGrid .card{display:block;min-width:0}
+.biosPage .companyGrid .card h3{font-size:23px;margin:0 0 7px;color:#eaf6ff}
+.biosPage .companyGrid .card p{font-size:13px;min-height:45px;margin:4px 0 15px;overflow-wrap:anywhere}
+.biosPage .countBadge{font-weight:700}
+.biosResults{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+.biosFile{display:flex;flex-direction:column;gap:12px;min-width:0;background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:19px}
+.biosFile:hover{border-color:#20bdf2}
+.biosFileTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.biosFileType{font-size:12px;color:#91acc9;direction:ltr}
+.biosFile h3{font-size:18px;line-height:1.55;font-weight:700;margin:0;overflow-wrap:anywhere;unicode-bidi:plaintext}
+.biosDownload{align-self:flex-start;display:inline-block;text-decoration:none;background:#20bdf2;color:#03101b;font-weight:900;padding:10px 18px;border-radius:11px;margin-top:auto}
+.biosDownload:hover{background:#7de5ff}
+.biosEmpty{grid-column:1/-1;background:#0a1626;border:1px dashed #365573;border-radius:14px;padding:25px;color:#a9c1dc}
+.biosBack{margin-top:25px}
+.biosCompanyCount{display:inline-flex;align-items:baseline;gap:12px;border:1px solid #203a5b;border-radius:13px;background:#0d1a2d;padding:12px 20px;margin:4px 0 17px}
+.biosCompanyCount strong{font-size:29px;color:#56d6ff;line-height:1}
+.biosCompanyCount span{color:#a9c1dc;font-size:14px}
+.biosLegacy{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:27px 0 10px;color:#9fb6d1;font-size:14px}
+.biosLegacy a{color:#8edfff}
+.biosPage .warn{margin-top:25px}
+.biosPage [hidden]{display:none!important}
+html[data-theme="light"] .biosFile,html[data-theme="light"] .biosCompanyCount{background:#f1f7fb;border-color:#a9cbdc;color:#11243a}
+html[data-theme="light"] .biosFile h3,html[data-theme="light"] .biosPage .companyGrid .card h3{color:#11243a}
+@media(max-width:760px){.biosFilterGrid,.biosResults{grid-template-columns:1fr}.biosPage .companyGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.biosPage .companyGrid{grid-template-columns:1fr}.biosStats{gap:8px}.biosFile{padding:15px}.biosDownload{width:100%;text-align:center}}
