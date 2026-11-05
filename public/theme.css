@@ -1,0 +1,177 @@
+/* PC Board Repair Theme + SVG Icons v1
+   Default = existing dark design. Light theme is opt-in and stored in localStorage. */
+
+.pcbrThemeToggle{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:42px;
+  height:38px;
+  padding:0 10px;
+  border:1px solid #315373;
+  border-radius:10px;
+  background:#0d1a2d;
+  color:#dbe9ff;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+  transition:.18s ease;
+}
+.pcbrThemeToggle:hover{border-color:#20bdf2;transform:translateY(-1px)}
+.pcbrThemeToggle .pcbrThemeText{font-size:12px;white-space:nowrap}
+
+.ico.pcbrSvgIcon{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:48px;
+  font-size:0!important;
+}
+.ico.pcbrSvgIcon img{
+  width:48px;
+  height:48px;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 7px 14px rgba(32,189,242,.16));
+}
+.card:hover .ico.pcbrSvgIcon img{transform:scale(1.05)}
+.ico.pcbrSvgIcon img{transition:transform .18s ease}
+
+@media(max-width:700px){
+  .pcbrThemeToggle{align-self:center;height:36px}
+  .pcbrThemeToggle .pcbrThemeText{display:none}
+  .ico.pcbrSvgIcon{justify-content:center}
+}
+
+/* ---------- Light theme ---------- */
+:root[data-theme="light"] body{
+  background:#f4f7fb!important;
+  color:#17253a!important;
+}
+:root[data-theme="light"] header{
+  background:rgba(255,255,255,.94)!important;
+  border-bottom-color:#d6e0eb!important;
+  box-shadow:0 6px 22px rgba(24,53,82,.08);
+}
+:root[data-theme="light"] .logo,
+:root[data-theme="light"] a{color:#17324d}
+:root[data-theme="light"] nav a{color:#29445f!important}
+:root[data-theme="light"] nav a:hover,
+:root[data-theme="light"] nav a[aria-current="page"]{color:#007fae!important;border-bottom-color:#0aa9df!important}
+
+:root[data-theme="light"] .hero{
+  background:radial-gradient(circle at top,#dff4ff,#f4f7fb 66%)!important;
+  border-bottom-color:#d9e5ef!important;
+}
+:root[data-theme="light"] .muted,
+:root[data-theme="light"] .mini,
+:root[data-theme="light"] .note,
+:root[data-theme="light"] .smallText,
+:root[data-theme="light"] .fileMeta,
+:root[data-theme="light"] footer{color:#5d7289!important}
+
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .fileCard,
+:root[data-theme="light"] .infoPanel,
+:root[data-theme="light"] .policyBox,
+:root[data-theme="light"] .boardCard,
+:root[data-theme="light"] .homeStat,
+:root[data-theme="light"] .miniFile,
+:root[data-theme="light"] .dynamicSection,
+:root[data-theme="light"] .homeSearchSection,
+:root[data-theme="light"] .chatShell,
+:root[data-theme="light"] .chatMessage,
+:root[data-theme="light"] .chatForm,
+:root[data-theme="light"] .chatRules,
+:root[data-theme="light"] .diagHero,
+:root[data-theme="light"] .diagCard,
+:root[data-theme="light"] .startBox,
+:root[data-theme="light"] .testHero,
+:root[data-theme="light"] .partCard,
+:root[data-theme="light"] .tips,
+:root[data-theme="light"] .articleHero,
+:root[data-theme="light"] .articleSection,
+:root[data-theme="light"] .articleToc,
+:root[data-theme="light"] .guideHero,
+:root[data-theme="light"] .step,
+:root[data-theme="light"] .toc,
+:root[data-theme="light"] .pcbrFileMetaPanel,
+:root[data-theme="light"] .pcbrMetaTile{
+  background:#ffffff!important;
+  border-color:#d4e0eb!important;
+  color:#17253a!important;
+  box-shadow:none!important;
+}
+
+:root[data-theme="light"] .downloadBox{
+  background:linear-gradient(135deg,#e8f7ff,#f7fbff)!important;
+  border-color:#12aada!important;
+  color:#17253a!important;
+}
+:root[data-theme="light"] .noteBox,
+:root[data-theme="light"] .decision,
+:root[data-theme="light"] .quickFlow div,
+:root[data-theme="light"] .flow div,
+:root[data-theme="light"] .emptyState,
+:root[data-theme="light"] .boardPlaceholder,
+:root[data-theme="light"] .replyBar,
+:root[data-theme="light"] .replyQuote{
+  background:#f5f9fd!important;
+  border-color:#c9d9e8!important;
+  color:#334b63!important;
+}
+:root[data-theme="light"] .brandTag,
+:root[data-theme="light"] .countBadge,
+:root[data-theme="light"] .diagTag,
+:root[data-theme="light"] .tag,
+:root[data-theme="light"] .articleTag{
+  background:#e9f7fd!important;
+  border-color:#acd9ea!important;
+  color:#087ca7!important;
+}
+
+:root[data-theme="light"] .searchBox,
+:root[data-theme="light"] .homeSearchInput,
+:root[data-theme="light"] .chatInput,
+:root[data-theme="light"] input,
+:root[data-theme="light"] textarea,
+:root[data-theme="light"] select{
+  background:#fff!important;
+  color:#17253a!important;
+  border-color:#b9ccdc!important;
+}
+:root[data-theme="light"] .searchBox:focus,
+:root[data-theme="light"] .homeSearchInput:focus,
+:root[data-theme="light"] .chatInput:focus{
+  border-color:#0aa9df!important;
+  box-shadow:0 0 0 3px rgba(10,169,223,.14)!important;
+}
+
+:root[data-theme="light"] .imageBtn{
+  color:#22425f!important;
+  border-color:#9cb7cc!important;
+  background:#fff!important;
+}
+:root[data-theme="light"] .imageBtn:hover{background:#edf8fd!important;border-color:#0aa9df!important}
+:root[data-theme="light"] .miniFile h3 a,
+:root[data-theme="light"] .chatMessageTop strong{color:#17253a!important}
+:root[data-theme="light"] .reading th,
+:root[data-theme="light"] .measureTable th{background:#eaf6fc!important;color:#087ca7!important}
+:root[data-theme="light"] .reading td,
+:root[data-theme="light"] .reading th,
+:root[data-theme="light"] .measureTable td,
+:root[data-theme="light"] .measureTable th{border-color:#c9d8e5!important}
+:root[data-theme="light"] .articleFigure{background:#eef5fa!important;border-color:#cad9e6!important}
+:root[data-theme="light"] .mono{background:#edf3f8!important;color:#233f59!important}
+:root[data-theme="light"] footer{border-top-color:#d9e4ee!important}
+:root[data-theme="light"] .footerLinks a{color:#526d85!important}
+:root[data-theme="light"] .pcbrThemeToggle{
+  background:#fff;
+  color:#1d3b57;
+  border-color:#a9bfd2;
+}
+
+/* Theme toggle: icon only */
+.pcbrThemeToggle .pcbrThemeText{display:none!important}

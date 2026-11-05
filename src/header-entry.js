@@ -4,6 +4,7 @@ export { ChatRoom };
 
 class HeaderUiHead {
   element(element) {
+    element.append('<script>try{document.documentElement.dataset.theme=localStorage.getItem("pcbr-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script><link rel="stylesheet" href="/theme.css?v=20261105-3"><script src="/theme.js?v=20261105-3" defer></script>', { html: true });
     element.append('<script src="/youtube-integration.js?v=20261020-9" defer></script>', { html: true });
     element.append('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token":"d776a04c82684fbaa3c8e9f78d77cb26"}\'></script>', { html: true });
   }
@@ -11,7 +12,7 @@ class HeaderUiHead {
 
 class BoardviewFooterLinks {
   element(element) {
-    element.append('<a href="/boardview/featured.html">ملفات مختارة</a><a href="/boardview/directory.html">فهرس BoardView</a>', { html: true });
+    element.append('<a href="/boardview/featured.html">┘à┘┘╪د╪ز ┘à╪«╪ز╪د╪▒╪ر</a><a href="/boardview/directory.html">┘┘ç╪▒╪│ BoardView</a>', { html: true });
   }
 }
 
