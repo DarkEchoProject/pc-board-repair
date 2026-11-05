@@ -34,7 +34,7 @@
   <div class="homeStat"><strong id="homeBoardCount">—</strong><span>ملف BoardView وصيانة</span></div>
   <div class="homeStat"><strong id="homeBrandCount">—</strong><span>شركة مصنّعة</span></div>
   <div class="homeStat"><strong id="homeImageCount">—</strong><span>ملفًا مع صورة لوحة</span></div>
-  <div class="homeStat"><strong id="homeTypeCount">—</strong><span>أنواع ملفات مختلفة</span></div>
+  <div class="homeStat"><strong id="homeBiosCount">—</strong><span>💾 ملفات BIOS</span></div>
   <div class="homeStat visitStat"><strong id="homeVisitCount">—</strong><span>زيارة مسجلة للموقع</span></div>
 </section>
 
@@ -74,7 +74,13 @@ async function loadHome(){
   document.getElementById('homeBoardCount').textContent=Number(stats.boardCount||0).toLocaleString('ar');
   document.getElementById('homeBrandCount').textContent=Number(stats.brandCount||0).toLocaleString('ar');
   document.getElementById('homeImageCount').textContent=Number(stats.imageCount||0).toLocaleString('ar');
-  document.getElementById('homeTypeCount').textContent=Number(stats.typeCount||0).toLocaleString('ar');
+  fetch('/data/bios.json',{cache:'no-store'})
+    .then(r=>{if(!r.ok)throw new Error('BIOS catalog unavailable');return r.json();})
+    .then(items=>{
+      document.getElementById('homeBiosCount').textContent=
+        Array.isArray(items)?items.length.toLocaleString('ar'):'—';
+    })
+    .catch(()=>{document.getElementById('homeBiosCount').textContent='—';});
 
   document.getElementById('latestFiles').innerHTML=
     latest.map(b=>miniCard(b,0)).join('')||
