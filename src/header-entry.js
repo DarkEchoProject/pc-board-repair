@@ -10,18 +10,12 @@ class HeaderUiHead {
   }
 }
 
-class BoardviewFooterLinks {
-  element(element) {
-    element.append('<a href="/boardview/featured.html">┘à┘┘╪د╪ز ┘à╪«╪ز╪د╪▒╪ر</a><a href="/boardview/directory.html">┘┘ç╪▒╪│ BoardView</a>', { html: true });
-  }
-}
 
 function withHeaderUi(response) {
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
   return new HTMLRewriter()
     .on("head", new HeaderUiHead())
-    .on(".footerLinks", new BoardviewFooterLinks())
     .transform(response);
 }
 

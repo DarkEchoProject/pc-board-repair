@@ -94,7 +94,7 @@
       setTheme(getTheme(),false);
     }
     addThemeToggle();
-    replaceSectionIcons();
+    // replaceSectionIcons(); // Disabled: SVG files are missing
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
