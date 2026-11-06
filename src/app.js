@@ -44,7 +44,7 @@ function getCookie(request, name) {
 
 function safeNext(value) {
   const next = String(value || "").trim();
-  if (!next.startsWith("/") || next.startsWith("//") || next.startsWith("/api/auth/")) return "/";
+  if (!next.startsWith("/") || next.startsWith("//") || next.includes("\\") || next.startsWith("/api/auth/")) return "/";
   return next.slice(0, 1000);
 }
 
