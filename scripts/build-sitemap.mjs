@@ -180,7 +180,12 @@ const homeData = {
 fs.mkdirSync(path.dirname(homeDataOutput), { recursive: true });
 fs.writeFileSync(homeDataOutput, JSON.stringify(homeData), 'utf8');
 
-const urls = [...new Set([...staticPaths, ...boardPaths])];
+function toPublicUrlPath(p) {
+  if (p.endsWith('/index.html')) return p.slice(0, -'index.html'.length);
+  if (p.endsWith('.html')) return p.slice(0, -'.html'.length);
+  return p;
+}
+const urls = [...new Set([...staticPaths.map(toPublicUrlPath), ...boardPaths])];
 const sitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -209,7 +214,7 @@ directory.push('<meta charset="utf-8"><meta name="viewport" content="width=devic
 directory.push('<title>فهرس جميع ملفات BoardView | PC Board Repair</title>');
 directory.push('<meta name="description" content="فهرس HTML ثابت لجميع ملفات BoardView في PC Board Repair، مرتب حسب الشركة مع روابط مباشرة إلى صفحات الملفات لتسهيل التصفح والزحف.">');
 directory.push('<meta name="robots" content="index,follow">');
-directory.push(`<link rel="canonical" href="${site}/boardview/directory.html">`);
+directory.push(`<link rel="canonical" href="${site}/boardview/directory">`);
 directory.push('<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../boardview-extra.css">');
 directory.push('</head>');
 directory.push('<body>');
