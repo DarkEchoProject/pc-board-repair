@@ -101,7 +101,7 @@ const staticPaths = [
   '/component-testing/index.html',
   ...collectHtmlPaths('diagnostics'),
   ...collectHtmlPaths('component-testing'),
-  ...collectHtmlPaths('bios'),
+  ...collectHtmlPaths('bios').filter(p => p !== '/bios/company.html'),
 ];
 
 const all = [...readJsonArray(boardsJson), ...readJsonArray(boardsLargeJson)];
