@@ -339,7 +339,7 @@ export default {
     const url = new URL(request.url);
 
     if (url.pathname === "/admin" || url.pathname === "/admin/") {
-      return Response.redirect(`${SITE}/admin.html`, 302);
+      return env.ASSETS.fetch(request);
     }
 
     if (url.pathname === "/admin.html") {
