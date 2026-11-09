@@ -40,7 +40,7 @@ function Ensure-GeneratedSeoArtifacts {
     $sitemapPath = Join-Path $root 'public\sitemap.xml'
     $directoryPath = Join-Path $root 'public\boardview\directory.html'
     $homeDataPath = Join-Path $root 'public\data\home-data.json'
-    $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html'
+    $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory'
     $needsBuild = $false
 
     if (-not (Test-Path -LiteralPath $directoryPath -PathType Leaf)) {
@@ -146,8 +146,8 @@ Check-File 'public\data\home-data.json' 1000
 if (Test-Path -LiteralPath 'public\sitemap.xml' -PathType Leaf) {
     try {
         $sitemap = Get-Content -LiteralPath 'public\sitemap.xml' -Raw -Encoding UTF8
-        $featuredUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/featured.html'
-        $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory.html'
+        $featuredUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/featured'
+        $directoryUrl = 'https://pc-board-repair.alinasser00001.workers.dev/boardview/directory'
         if ($sitemap.Contains("<loc>$featuredUrl</loc>")) {
             Pass 'sitemap.xml includes the featured BoardView page'
         }

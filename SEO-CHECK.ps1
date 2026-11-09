@@ -132,11 +132,11 @@ else {
     Fail "sitemap.xml contains $($forbiddenUrls.Count) URL(s) that should not be indexed"
 }
 
-$featuredUrl = "$Site/boardview/featured.html"
-$directoryUrl = "$Site/boardview/directory.html"
+$featuredUrl = "$Site/boardview/featured"
+$directoryUrl = "$Site/boardview/directory"
 $requiredUrls = @(
     "$Site/",
-    "$Site/boardview/index.html",
+    "$Site/boardview/",
     $featuredUrl,
     $directoryUrl
 )
