@@ -1,39 +1,11 @@
 import appWorker, { ChatRoom } from "./app.js";
+import { boardPath, fileKey, mergeBoards, normalizeBoards } from "./board-catalog.js";
+import { companies } from "../.wrangler/pcbr-company-index.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 const RELEASE_PREFIX = "/DarkEchoProject/pc-board-repair/releases/download/";
 let mergedBoardsCache = null;
 let largeBoardsCache = null;
-
-const normalizeBoards = (all) => (Array.isArray(all) ? all : [])
-  .flatMap(item => Array.isArray(item?.value) ? item.value : [item])
-  .filter(item => item && typeof item.brand === "string" && item.brand.trim() && typeof item.file === "string" && item.file.trim());
-
-const fileKey = (value) => {
-  const s = String(value ?? "");
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0).toString(36);
-};
-
-const textSlug = (value) => {
-  const slug = String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 120);
-  return slug || "boardview";
-};
-
-const boardPath = (board) => {
-  const readable = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"));
-  return `/boardview/item/${fileKey(board.file)}/${readable}`;
-};
 
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;",
@@ -74,15 +46,7 @@ async function getMergedBoards(env) {
     getLargeBoards(env),
   ]);
 
-  const merged = [];
-  const seen = new Set();
-  for (const board of [...base, ...large]) {
-    const key = String(board.file || "").trim().toLowerCase();
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    merged.push(board);
-  }
-  mergedBoardsCache = merged;
+  mergedBoardsCache = mergeBoards(base, large);
   return mergedBoardsCache;
 }
 
@@ -219,7 +183,7 @@ function boardSeoBlock(board, similar) {
   const platform = escapeHtml(board.platform || "");
   const type = escapeHtml(board.type || "BoardView");
   const file = escapeHtml(board.file || "");
-  const companyUrl = `/boardview/company.html?brand=${encodeURIComponent(board.brand)}`;
+  const companyUrl = `/boardview/company?brand=${encodeURIComponent(board.brand)}`;
 
   const facts = [
     `هذه الصفحة مخصصة لملف ${type} الخاص بلوحة ${brand}${board.model ? ` ${model}` : ""}.`,
@@ -305,44 +269,80 @@ async function withCustom404(request, response, env) {
   });
 }
 
-async function validateCompanyRoute(request, env) {
+function renderCompanyPage(response, company, isBios, canonical) {
+  const title = `${company.brand} ${isBios ? "BIOS" : "BoardView"} | PC Board Repair`;
+  const heading = isBios ? `ملفات BIOS — ${company.brand}` : `${company.brand} BoardView`;
+  const description = isBios
+    ? `تصفح ملفات BIOS الخاصة بشركة ${company.brand} وابحث بالموديل أو رقم اللوحة.`
+    : `تصفح خرائط BoardView الخاصة بشركة ${company.brand} حسب الموديل ورقم اللوحة والإصدار.`;
+  const count = company.count.toLocaleString("ar-LB");
+  const links = company.examples.map(({ label, href }) =>
+    `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`,
+  ).join("");
+  const text = value => ({ element(element) { element.setInnerContent(value); } });
+
+  return new HTMLRewriter()
+    .on("title", text(title))
+    .on('meta[name="description"]', {
+      element(element) { element.setAttribute("content", description); },
+    })
+    .on("head", {
+      element(element) {
+        element.append(`<link rel="canonical" href="${escapeHtml(canonical)}">`, { html: true });
+      },
+    })
+    .on(isBios ? "#biosCompanyHeading" : "#title", text(heading))
+    .on(isBios ? "#biosCompanyDescription" : "#intro", text(description))
+    .on(isBios ? "#biosCrumbBrand" : "#crumbBrand", text(company.brand))
+    .on(isBios ? "#biosCompanyTotal" : "#totalStat", text(count))
+    .on(isBios ? "#biosResultCount" : "#resultCount", text(`عدد ملفات الشركة ${count}`))
+    .on(isBios ? "#biosResults" : "#list", {
+      element(element) {
+        element.setInnerContent(`<section class="sectionBlock"><h2>نماذج من ملفات الشركة</h2><ul>${links}</ul></section>`, { html: true });
+      },
+    })
+    .transform(response);
+}
+
+async function companyPageResponse(request, env, ctx) {
   const url = new URL(request.url);
-  if (url.pathname !== "/boardview/company.html") return null;
+  const match = url.pathname.match(/^\/(boardview|bios)\/company(?:\.html)?\/?$/);
+  if (!match) return null;
   if (request.method !== "GET" && request.method !== "HEAD") return null;
 
-  const requestedBrand = String(url.searchParams.get("brand") || "").trim();
-  if (!requestedBrand) {
-    return new Response("Not Found", {
+  const requestedBrand = url.searchParams.get("brand");
+  const section = match[1];
+  const company = companies[section].get(norm(requestedBrand));
+  const headOnly = request.method === "HEAD";
+  if (!company) {
+    return new Response(headOnly ? null : "Not Found", {
       status: 404,
-      headers: {
-        "content-type": "text/plain; charset=utf-8",
-        "cache-control": "no-store",
-      },
+      headers: { "cache-control": "no-store" },
     });
   }
 
+  const companyPath = `/${section}/company`;
+  if (url.pathname !== companyPath || requestedBrand !== company.brand || url.searchParams.getAll("brand").length !== 1) {
+    url.pathname = companyPath;
+    url.searchParams.set("brand", company.brand);
+    return Response.redirect(url, 301);
+  }
+
   try {
-    const boards = await getMergedBoards(env);
-    const canonicalBrand = boards.find(board => norm(board.brand) === norm(requestedBrand))?.brand || "";
-    if (!canonicalBrand) {
-      return new Response("Not Found", {
-        status: 404,
-        headers: {
-          "content-type": "text/plain; charset=utf-8",
-          "cache-control": "no-store",
-        },
-      });
-    }
+    const templateRequest = new Request(new URL(companyPath, url), { method: request.method });
+    const template = await appWorker.fetch(templateRequest, env, ctx);
+    if (!template.ok) throw new Error("Company page template unavailable");
 
-    const canonicalPath = `/boardview/company.html?brand=${encodeURIComponent(canonicalBrand)}`;
-    const currentPath = `${url.pathname}${url.search}`;
-    if (currentPath !== canonicalPath) {
-      return Response.redirect(`${SITE}${canonicalPath}`, 301);
-    }
-
-    return null;
+    // Asset validators belong to the shared template, while each company has its own HTML.
+    const headers = new Headers(template.headers);
+    headers.delete("etag");
+    headers.delete("last-modified");
+    headers.delete("content-length");
+    const response = new Response(headOnly ? null : template.body, { headers });
+    const canonical = `${SITE}${companyPath}?brand=${encodeURIComponent(company.brand)}`;
+    return headOnly ? response : renderCompanyPage(response, company, section === "bios", canonical);
   } catch {
-    return new Response("Temporary error", {
+    return new Response(headOnly ? null : "Temporary error", {
       status: 503,
       headers: { "cache-control": "no-store" },
     });
@@ -355,7 +355,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    const companyResponse = await validateCompanyRoute(request, env);
+    const companyResponse = await companyPageResponse(request, env, ctx);
     if (companyResponse) {
       const response = await withCustom404(request, companyResponse, env);
       return finalize(response);
