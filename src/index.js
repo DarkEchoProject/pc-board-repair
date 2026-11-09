@@ -155,7 +155,7 @@ function boardPage(board, related) {
 <body>
 <header><a class="logo" href="/index.html">⚙️ PC Board Repair</a><nav><a href="/index.html">الرئيسية</a><a href="/boardview/index.html">BoardView</a><a href="/bios/index.html">BIOS</a><a href="/community.html">غرفة الصيانة</a><a href="/contact.html">اتصل بنا</a></nav></header>
 <main class="wrap">
-<div class="crumb"><a href="/index.html">الرئيسية</a> ← <a href="/boardview/index.html">BoardView</a> ← <a href="/boardview/company.html?brand=${encodeURIComponent(board.brand)}">${brand}</a> ← ${model}</div>
+<div class="crumb"><a href="/index.html">الرئيسية</a> ← <a href="/boardview/index.html">BoardView</a> ← <a href="/boardview/company?brand=${encodeURIComponent(board.brand)}">${brand}</a> ← ${model}</div>
 <article class="boardDetail">
   <div>${imageBlock}</div>
   <div class="boardInfo">

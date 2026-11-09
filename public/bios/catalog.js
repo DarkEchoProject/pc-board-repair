@@ -1,3 +1,5 @@
+import { normalizeBiosCatalog } from './catalog-data.js';
+
 (()=>{
   'use strict';
   const dataUrl='/data/bios.json';
@@ -26,14 +28,6 @@
     .replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه')
     .replace(/[ًٌٍَُِّْـ]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
   const compact=value=>normalize(value).replace(/\s+/g,'');
-  const safeDownload=value=>{
-    try{
-      const u=new URL(String(value??''));
-      if(u.origin!=='https://github.com')return '';
-      if(!u.pathname.startsWith('/DarkEchoProject/pc-board-repair/releases/download/'))return '';
-      return u.href;
-    }catch{return '';}
-  };
   const friendlyName=item=>String(item.file||'BIOS').replace(/\.(rar|zip|7z)$/i,'').trim();
   const fileType=item=>{const match=String(item.file||'').match(/\.(rar|zip|7z)$/i);return match?match[1].toUpperCase():'BIOS';};
   function empty(message,container=results){
@@ -63,7 +57,7 @@
     brands.forEach(name=>{
       const items=sortedCompanyItems(records.filter(r=>r.brand===name));
       const tile=document.createElement('a');
-      tile.className='card';tile.href=`company.html?brand=${encodeURIComponent(name)}`;
+      tile.className='card';tile.href=`/bios/company?brand=${encodeURIComponent(name)}`;
       const title=document.createElement('h3');title.textContent=name;
       const example=document.createElement('p');example.className='muted';
       example.textContent=items.slice(0,3).map(friendlyName).join('، ')+(items.length>3?'…':'');
@@ -74,9 +68,9 @@
   }
   function filtered(){
     const terms=normalize(search.value).split(/\s+/).filter(Boolean);
-    const b=companyMode?selectedCompany:(brandSelect?.value||'');
+    const b=companyMode?selectedCompany.toLowerCase():(brandSelect?.value||'');
     return records.filter(item=>{
-      if(b&&item.brand!==b)return false;
+      if(b&&(companyMode?item.brand.toLowerCase():item.brand)!==b)return false;
       if(!terms.length)return true;
       const text=`${item.brand} ${item.file} ${item.relative_path||''}`;
       const hay=normalize(text);const packed=compact(text);
@@ -136,16 +130,7 @@
     try{
       const response=await fetch(dataUrl,{cache:'no-store'});
       if(!response.ok)throw new Error(`HTTP ${response.status}`);
-      const payload=await response.json();
-      if(!Array.isArray(payload))throw new Error('The BIOS catalog must be a JSON array.');
-      const seen=new Set();
-      records=payload.filter(item=>{
-        if(!item||typeof item!=='object')return false;
-        const sha=String(item.sha256||'').toLowerCase();
-        const url=safeDownload(item.download_url);
-        if(!/^[0-9a-f]{64}$/.test(sha)||seen.has(sha)||!url||!item.file)return false;
-        seen.add(sha);item.download_url=url;item.brand=String(item.brand||'Other').trim()||'Other';return true;
-      });
+      records=normalizeBiosCatalog(await response.json());
       brands=[...new Set(records.map(i=>i.brand))].sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'}));
       if(companyMode){
         const requested=new URLSearchParams(location.search).get('brand')||'';
@@ -157,7 +142,7 @@
           empty('لم يتم العثور على الشركة المطلوبة.');
           countEl.textContent='لا توجد ملفات';return;
         }
-        const total=records.filter(r=>r.brand===selectedCompany).length;
+        const total=records.filter(r=>r.brand.toLowerCase()===selectedCompany.toLowerCase()).length;
         byId('biosCompanyHeading').textContent=`ملفات BIOS — ${selectedCompany}`;
         byId('biosCrumbBrand').textContent=selectedCompany;
         byId('biosCompanyDescription').textContent=`تصفح ملفات BIOS الخاصة بشركة ${selectedCompany} أو ابحث برقم البورد والموديل.`;

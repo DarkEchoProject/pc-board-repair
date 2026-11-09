@@ -10,6 +10,10 @@ directory = "./public"
 binding = "ASSETS"
 run_worker_first = [ "/api/*", "/download/*", "/downloads/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/sitemap.xml", "/about", "/contact", "/community", "/privacy", "/terms", "/disclaimer", "/copyright", "/search", "/login", "/admin", "/admin/" ]
 
+[build]
+command = "node scripts/build-company-index.mjs"
+watch_dir = ["public/data", "public/bios", "scripts", "src"]
+
 [[durable_objects.bindings]]
 name = "CHAT_ROOM"
 class_name = "ChatRoom"
