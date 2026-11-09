@@ -20,7 +20,7 @@
       let script=document.querySelector('script[src^="/site-search.js"]');
       if(!script){
         script=document.createElement('script');
-        script.src='/site-search.js?v=20261104172350';
+        script.src='/site-search.js?v=20261109-2';
         script.dataset.pcbrSiteSearch='1';
         document.head.append(script);
       }

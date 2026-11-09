@@ -1,6 +1,7 @@
 import appWorker, { ChatRoom } from "./app.js";
 import { boardPath, fileKey, mergeBoards, normalizeBoards } from "./board-catalog.js";
 import { companies } from "../.wrangler/pcbr-company-index.js";
+import { biosModelForBoard } from "../public/bios/model-pages.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 const RELEASE_PREFIX = "/DarkEchoProject/pc-board-repair/releases/download/";
@@ -184,6 +185,10 @@ function boardSeoBlock(board, similar) {
   const type = escapeHtml(board.type || "BoardView");
   const file = escapeHtml(board.file || "");
   const companyUrl = `/boardview/company?brand=${encodeURIComponent(board.brand)}`;
+  const biosPage = biosModelForBoard(fileKey(board.file));
+  const biosLink = biosPage
+    ? `<p class="muted">راجع <a href="${escapeHtml(biosPage.href)}">ملفات BIOS لـ ${escapeHtml(biosPage.title)}</a> وبيانات المطابقة قبل اختيار الأرشيف.</p>`
+    : "";
 
   const facts = [
     `هذه الصفحة مخصصة لملف ${type} الخاص بلوحة ${brand}${board.model ? ` ${model}` : ""}.`,
@@ -197,7 +202,7 @@ function boardSeoBlock(board, similar) {
     ? `<div><h3>ملفات BoardView مرتبطة ومقترحة</h3><div class="grid">${similar.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision, item.type].filter(Boolean).join(" • ") || item.file)}</p></a>`).join("")}</div></div>`
     : "";
 
-  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو <a href="/boardview/directory.html">فهرس جميع موديلات BoardView</a> أو <a href="/boardview/featured.html">الملفات المختارة</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
+  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو <a href="/boardview/directory.html">فهرس جميع موديلات BoardView</a> أو <a href="/boardview/featured.html">الملفات المختارة</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${biosLink}${similarHtml}</section>`;
 }
 
 class BoardSeoAfter {

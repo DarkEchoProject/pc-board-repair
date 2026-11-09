@@ -257,7 +257,10 @@
     }
 
     const boardIndex=boards.map(boardEntry).map(e=>({...e,_searchText:searchableText(e)}));
-    const biosRows = await loadBoardData('/data/bios.json');
+    const [biosRows, modelPages] = await Promise.all([
+      loadBoardData('/data/bios.json'),
+      import('./bios/model-pages.js').catch(() => null),
+    ]);
     const biosIndex = biosRows
       .filter(item => item && item.file && item.download_url)
       .map(item => {
@@ -265,7 +268,7 @@
         const brand = String(item.brand || 'Other');
         return {
           type: 'bios',
-          url: `/bios/index.html?q=${encodeURIComponent(name)}`,
+          url: modelPages?.biosArchivePage(item.sha256) || `/bios/index.html?q=${encodeURIComponent(name)}`,
           titleAr: `BIOS — ${name}`,
           titleEn: `BIOS — ${name}`,
           subtitleAr: `ملف BIOS • ${brand}`,

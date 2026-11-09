@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="/bios/catalog.css?v=20261104-2">
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
-<script type="module" src="/bios/catalog.js?v=20261109-1"></script>
+<script type="module" src="/bios/catalog.js?v=20261109-2"></script>
 <link rel="stylesheet" href="/bios/bios-polish-v3.css?v=3">
 <!-- PCBR-BIOS-LOCAL-SHELL-V4-START -->
 <script>
@@ -45,6 +45,14 @@ if (location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
       <select id="biosBrand" class="filterSelect" aria-label="الشركة"><option value="">كل الشركات</option></select>
     </div>
     <div class="filterActions"><span id="biosResultCount" class="resultCount" aria-live="polite">جاري تحميل الفهرس...</span><button id="biosReset" class="resetBtn" type="button">مسح الفلاتر</button></div>
+  </section>
+
+  <section class="sectionBlock" aria-labelledby="biosModelsTitle">
+    <h2 id="biosModelsTitle">ملفات BIOS حسب رقم اللوحة</h2>
+    <div class="grid">
+      <a class="card" href="/bios/hp-prodesk-400-ms-7860"><h3><bdi>HP ProDesk 400 — MS-7860</bdi></h3><p class="muted">أرشيفا H81-004 وH87-004 ومراجع BoardView حسب إصدار اللوحة.</p></a>
+      <a class="card" href="/bios/dell-xps-15-9550-la-c361p"><h3><bdi>Dell XPS 15 9550 — LA-C361P</bdi></h3><p class="muted">ملف BIOS ومراجع مقارنة رقم اللوحة وإصدارها.</p></a>
+    </div>
   </section>
 
   <h2 id="biosCompaniesTitle">الشركات</h2>

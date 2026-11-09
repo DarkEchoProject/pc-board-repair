@@ -1,4 +1,5 @@
 import { normalizeBiosCatalog } from './catalog-data.js';
+import { biosArchivePage } from './model-pages.js';
 
 (()=>{
   'use strict';
@@ -41,7 +42,14 @@ import { normalizeBiosCatalog } from './catalog-data.js';
     const company=document.createElement('span');company.className='brandTag';company.textContent=item.brand;
     const type=document.createElement('span');type.className='biosFileType';type.textContent=fileType(item);
     head.append(company,type);
-    const name=document.createElement('h3');name.textContent=item.file;
+    const name=document.createElement('h3');
+    const detailUrl=biosArchivePage(item.sha256);
+    if(detailUrl){
+      const detail=document.createElement('a');detail.href=detailUrl;detail.textContent=item.file;
+      name.append(detail);
+    }else{
+      name.textContent=item.file;
+    }
     const link=document.createElement('a');link.className='biosDownload';
     link.textContent='⬇️ تحميل BIOS';link.href=item.download_url;
     link.target='_blank';link.rel='noopener noreferrer';
