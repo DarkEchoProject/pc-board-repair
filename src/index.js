@@ -91,6 +91,7 @@ class AnalyticsHead {
 }
 
 function withAnalytics(response) {
+  if (response.status === 304) return response;
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
   return new HTMLRewriter().on("head", new AnalyticsHead()).transform(response);

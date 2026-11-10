@@ -95,6 +95,7 @@ class IntegrationHead {
 }
 
 function withIntegrations(response) {
+  if (response.status === 304) return response;
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
   return new HTMLRewriter()
@@ -118,7 +119,7 @@ function withSecurityHeaders(response) {
     );
   }
 
-  return new Response(response.body, {
+  return new Response(response.status === 304 ? null : response.body, {
     status: response.status,
     statusText: response.statusText,
     headers,

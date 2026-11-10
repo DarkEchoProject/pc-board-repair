@@ -1,4 +1,4 @@
-﻿name = "pc-board-repair"
+name = "pc-board-repair"
 main = "src/header-entry.js"
 compatibility_date = "2026-10-02"
 
@@ -22,5 +22,11 @@ class_name = "ChatRoom"
 type = "durable-object"
 storage = "sqlite"
 
+[observability]
+enabled = true
 
+[observability.logs]
+invocation_logs = true
 
+[observability.issues]
+enabled = true

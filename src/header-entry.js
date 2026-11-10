@@ -12,6 +12,7 @@ class HeaderUiHead {
 
 
 function withHeaderUi(response) {
+  if (response.status === 304) return response;
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
   return new HTMLRewriter()

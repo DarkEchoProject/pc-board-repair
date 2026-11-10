@@ -8,7 +8,7 @@ const FAVICON_TAG = '<link rel="icon" href="/favicon.svg" type="image/svg+xml" s
 function responseFromText(response, text) {
   const headers = new Headers(response.headers);
   headers.set("content-length", new TextEncoder().encode(text).byteLength.toString());
-  return new Response(text, {
+  return new Response(response.status === 304 ? null : text, {
     status: response.status,
     statusText: response.statusText,
     headers,
@@ -16,6 +16,7 @@ function responseFromText(response, text) {
 }
 
 async function withSiteFavicon(response) {
+  if (response.status === 304) return response;
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
 
@@ -44,7 +45,7 @@ export default {
       const headers = new Headers(response.headers);
       headers.set("content-type", "application/xml; charset=utf-8");
       headers.set("cache-control", "public, max-age=300");
-      return new Response(response.body, {
+      return new Response(response.status === 304 ? null : response.body, {
         status: response.status,
         statusText: response.statusText,
         headers,
