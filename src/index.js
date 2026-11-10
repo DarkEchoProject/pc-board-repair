@@ -97,8 +97,19 @@ function withAnalytics(response) {
 }
 
 function boardPage(board, related) {
+  const modelLabel = String(board.model || "BoardView");
+  const revisionLabel = String(board.revision || "").trim();
+  const revisionInModel = revisionLabel && `-${textSlug(modelLabel)}-`.includes(`-${textSlug(revisionLabel)}-`);
+  const heading = `${board.brand} ${modelLabel}${revisionLabel && !revisionInModel ? ` ${revisionLabel}` : ""}`;
+  const boardNumber = String(board.board || "").trim();
+  const numberSuffix = boardNumber && boardNumber.toLowerCase() !== modelLabel.trim().toLowerCase()
+    ? ` ${boardNumber}`
+    : "";
+  const typeSuffix = board.model ? " BoardView" : "";
+  const pageTitle = `${heading}${numberSuffix}${typeSuffix}`;
+  const pageName = `${heading}${typeSuffix}`;
   const brand = escapeHtml(board.brand);
-  const model = escapeHtml(board.model || "BoardView");
+  const model = escapeHtml(modelLabel);
   const boardNo = escapeHtml(board.board || "");
   const revision = escapeHtml(board.revision || "");
   const platform = escapeHtml(board.platform || "");
@@ -123,7 +134,7 @@ function boardPage(board, related) {
   const structured = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${board.brand} ${board.model || ""} BoardView`,
+    name: pageName,
     url: canonical,
     description,
     isPartOf: { "@type": "WebSite", name: "PC Board Repair", url: `${SITE}/` },
@@ -141,11 +152,11 @@ function boardPage(board, related) {
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${brand} ${model}${boardNo ? ` ${boardNo}` : ""} BoardView | PC Board Repair</title>
+<title>${escapeHtml(pageTitle)} | PC Board Repair</title>
 <meta name="description" content="${escapeHtml(description)}">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="${canonical}">
-<meta property="og:title" content="${brand} ${model} BoardView">
+<meta property="og:title" content="${escapeHtml(pageName)}">
 <meta property="og:description" content="${escapeHtml(description)}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${canonical}">
@@ -160,7 +171,7 @@ function boardPage(board, related) {
   <div>${imageBlock}</div>
   <div class="boardInfo">
     <span class="brandTag">${brand}</span>
-    <h1>${brand} ${model}</h1>
+    <h1>${escapeHtml(heading)}</h1>
     <p class="muted">صفحة مستقلة لملف الصيانة. تحقق من رقم البورد وRevision قبل التحميل والاستخدام.</p>
     <div class="detailList">${details}</div>
     ${note ? `<p class="fileMeta">${note}</p>` : ""}
