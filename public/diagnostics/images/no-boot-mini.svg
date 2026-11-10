@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="monitor" viewBox="0 0 120 84">
+    <path d="M53 67h14v8h14v4H39v-4h14z" fill="#5b8aa6"/>
+    <rect x="6" y="5" width="108" height="63" rx="9" fill="#17354d" stroke="#659fbc" stroke-width="3"/>
+    <rect x="13" y="12" width="94" height="47" rx="4" fill="#081929"/>
+    <circle cx="102" cy="63.5" r="2" fill="#80d9ee"/>
+  </symbol>
+
+  <symbol id="trace" viewBox="0 0 120 84">
+    <path d="M24 23h41M24 31h62M24 39h30M24 47h51" fill="none" stroke="#82d3e8" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="logo" viewBox="0 0 120 84">
+    <path d="m60 17 16 10-16 11-16-11z" fill="#83e4f6"/>
+    <path d="m44 27 16 11v7L44 34zm32 0L60 38v7l16-11z" fill="#397a9a"/>
+    <path d="M46 51h28" stroke="#a8c6dc" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="inspect" viewBox="0 0 120 84">
+    <path d="M24 23h26M24 33h21M24 43h26" stroke="#749db9" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="71" cy="32" r="11" fill="none" stroke="#91eafa" stroke-width="4"/>
+    <path d="m79 40 10 10" stroke="#91eafa" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="boot-error" viewBox="0 0 120 84">
+    <path d="m30 19 13 23H17z" fill="#e9b96c"/>
+    <path d="M30 26v7m0 4v.5" stroke="#24374a" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M52 25h38M52 35h31M52 45h21" stroke="#c1daed" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="usb" viewBox="0 0 120 84">
+    <path d="M21 36h19" stroke="#83e4f6" stroke-width="4" stroke-linecap="round"/>
+    <rect x="39" y="26" width="26" height="20" rx="4" fill="#276784" stroke="#83e4f6" stroke-width="3"/>
+    <path d="M65 31h10m-10 10h10" stroke="#83e4f6" stroke-width="3"/>
+    <path d="M86 29v14m0-7h10" stroke="#749db9" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="post" viewBox="0 0 120 84">
+    <path d="M20 39h12l7-14 12 24 11-22 7 12h29" fill="none" stroke="#f4c475" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="drive" viewBox="0 0 120 84">
+    <rect x="31" y="22" width="58" height="29" rx="5" fill="#164358" stroke="#83e4f6" stroke-width="3"/>
+    <path d="M41 32h38M42 42h1m7 0h1" stroke="#b3e9f6" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="missing-drive" viewBox="0 0 120 84">
+    <rect x="30" y="21" width="60" height="31" rx="5" fill="none" stroke="#7195ab" stroke-width="3" stroke-dasharray="5 4"/>
+    <path d="m53 29 14 14m0-14-14 14" stroke="#ffae9a" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="connect-drive" viewBox="0 0 120 84">
+    <rect x="20" y="25" width="38" height="22" rx="4" fill="#1c4960" stroke="#83e4f6" stroke-width="3"/>
+    <path d="M28 35h22m8 1h19m-6-6 6 6-6 6" stroke="#83e4f6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M89 25v22m8-22v22" stroke="#b6d4e9" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="intermittent" viewBox="0 0 120 84">
+    <rect x="19" y="25" width="40" height="22" rx="4" fill="#1c4960" stroke="#83e4f6" stroke-width="3"/>
+    <path d="M28 35h22m13 1h8m7 0h7m8 0h7" stroke="#f4c475" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="boot-menu" viewBox="0 0 120 84">
+    <rect x="23" y="20" width="74" height="15" rx="4" fill="#19516b" stroke="#83e4f6" stroke-width="2"/>
+    <path d="m29 24 4 4-4 4m12-4h44M27 44h60" stroke="#b9deee" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="windows" viewBox="0 0 120 84">
+    <path d="M47 17h11v11H47zm15 0h11v11H62zM47 32h11v11H47zm15 0h11v11H62z" fill="#85ddf3"/>
+    <g fill="#83e4f6">
+      <circle cx="52" cy="51" r="2"/>
+      <circle cx="60" cy="51" r="2" opacity=".7"/>
+      <circle cx="68" cy="51" r="2" opacity=".4"/>
+    </g>
+  </symbol>
+
+  <symbol id="stop-code" viewBox="0 0 120 84">
+    <rect x="13" y="12" width="94" height="47" rx="4" fill="#1662a0"/>
+    <path d="M28 27h1m8 0h1m-11 11q7-7 14 0M50 26h42M50 36h31M50 46h39" fill="none" stroke="#e8f6ff" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="blank" viewBox="0 0 120 84">
+    <rect x="13" y="12" width="94" height="47" rx="4" fill="#060f19"/>
+    <path d="M24 25h13" stroke="#d5e6ef" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="safe" viewBox="0 0 120 84">
+    <rect x="30" y="21" width="60" height="30" rx="5" fill="#153d57" stroke="#81cde6" stroke-width="3"/>
+    <path d="M31 29h58m-49 8h15m-15 7h25" stroke="#b6deee" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="repair" viewBox="0 0 120 84">
+    <rect x="24" y="20" width="30" height="14" rx="3" fill="#357aa6"/>
+    <rect x="61" y="20" width="35" height="14" rx="3" fill="#357aa6"/>
+    <rect x="24" y="39" width="72" height="13" rx="3" fill="#164d6d" stroke="#9ae6fc" stroke-width="2"/>
+    <path d="M33 46h29" stroke="#bfe9f6" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="locked" viewBox="0 0 120 84">
+    <path d="M50 33v-5a10 10 0 0 1 20 0v5" stroke="#f4c475" stroke-width="4" fill="none"/>
+    <rect x="45" y="31" width="30" height="20" rx="4" fill="#e9b96c"/>
+    <path d="M60 38v5" stroke="#27364a" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="success" viewBox="0 0 120 84">
+    <circle cx="60" cy="36" r="17" fill="#174e51" stroke="#84e2bb" stroke-width="3"/>
+    <path d="m52 36 6 6 10-12" fill="none" stroke="#b9f7dd" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="message" viewBox="0 0 120 84">
+    <path d="M35 20h50a5 5 0 0 1 5 5v17a5 5 0 0 1-5 5H54l-12 7v-7h-7a5 5 0 0 1-5-5V25a5 5 0 0 1 5-5Z" fill="#194d67" stroke="#90e8fa" stroke-width="3"/>
+    <path d="M40 30h40M40 38h29" stroke="#caedf6" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="power" viewBox="0 0 120 84">
+    <path d="M60 19v14m-9-9a15 15 0 1 0 18 0" fill="none" stroke="#8ba6ba" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+</svg>

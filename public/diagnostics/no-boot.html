@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>يظهر شعار الشركة لكن ويندوز لا يقلع | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لتشخيص فشل إقلاع ويندوز، من التوقف عند شعار الشركة إلى اختفاء SSD ورسالة No Bootable Device وشاشة الإصلاح التلقائي.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-boot">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "يظهر شعار الشركة لكن ويندوز لا يقلع",
+    "inLanguage": "ar",
+    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-boot",
+    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
+  }
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← تعذّر الإقلاع</div>
+  <section class="bootHero" aria-labelledby="boot-title">
+    <div class="bootMeta"><span>المسار 01</span><span dir="ltr">No Boot</span><span>لابتوب ومكتبي</span></div>
+    <h1 id="boot-title">يظهر شعار الشركة لكن ويندوز لا يقلع</h1>
+    <p>اختر آخر شيء يظهر على الشاشة. ستعرف هل توقف الجهاز عند فحص البدء، أم عند البحث عن القرص، أم أثناء تحميل ويندوز.</p>
+    <ol class="bootStages" aria-label="مراحل بدء التشغيل">
+      <li><b>١</b><span>فحص الجهاز <bdi>POST</bdi></span></li>
+      <li><b>٢</b><span>اختيار قرص الإقلاع</span></li>
+      <li><b>٣</b><span>تحميل ويندوز</span></li>
+    </ol>
+  </section>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال بينها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="inspect" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ما آخر شيء يظهر على الشاشة؟</h2>
+      <p>إذا كنت ترى شعار الشركة، راقب ما يظهر بعده، مثل النقاط الدوّارة أو رسالة الخطأ.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#logo-stuck"><strong>يبقى على شعار الشركة</strong><span>الشعار ثابت ولا تظهر رسالة أو نقاط تحميل.</span></a>
+        <a class="bootChoice" href="#storage-check"><strong dir="ltr">No Bootable Device</strong><span>أو رسالة <bdi>Operating System Not Found</bdi>.</span></a>
+        <a class="bootChoice" href="#windows-start"><strong>تظهر نقاط تحميل ويندوز أو شاشة إصلاح</strong><span>أو يتكرر بدء التشغيل وتظهر شاشة زرقاء.</span></a>
+        <a class="bootChoice" href="#blank-screen"><strong>الشاشة تسود بعد ظهور الشعار</strong><span>قد ترى مؤشرًا أو تسمع صوت دخول ويندوز.</span></a>
+        <a class="bootChoice" href="#identify"><strong>لم أحدد بعد أين يتوقف</strong><span>طريقة بسيطة لتسجيل ما يحدث من لحظة التشغيل.</span></a>
+      </div>
+      <p class="bootRelated">إذا كانت الشاشة سوداء من لحظة التشغيل، افتح <a href="/diagnostics/no-display">مسار يعمل ولا توجد صورة</a>.</p>
+    </section>
+
+    <section class="bootStep" id="identify" data-boot-step="تحديد العَرَض" data-boot-demo="inspect" aria-labelledby="identify-title">
+      <h2 id="identify-title" tabindex="-1">راقب محاولة تشغيل واحدة</h2>
+      <ol>
+        <li>تأكد أن الشاشة على المدخل الصحيح. شغّل الجهاز وراقب الشاشة من لحظة الضغط على زر التشغيل.</li>
+        <li>سجّل هل يظهر شعار الشركة، ثم هل تظهر نقاط دوّارة أو رسالة مكتوبة أو مؤشر.</li>
+        <li>إذا كانت الرسالة تختفي بسرعة، صوّر المحاولة بهاتفك واقرأ آخر شاشة من التسجيل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#start"><strong>عرفت الآن ما يظهر</strong><span>اختر العَرَض المطابق من البداية.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display" data-boot-demo="blank"><strong>الجهاز يعمل والشاشة سوداء منذ البداية</strong><span>ابدأ بفحص مسار الصورة وفحص بدء التشغيل.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-power" data-boot-demo="power"><strong>الجهاز لا يستجيب أصلًا</strong><span>انتقل إلى مسار عدم التشغيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="logo-stuck" data-boot-step="فحص البدء" data-boot-demo="logo" aria-labelledby="logo-stuck-title">
+      <h2 id="logo-stuck-title" tabindex="-1">هل يتجاوز الجهاز شعار الشركة؟</h2>
+      <ol>
+        <li>إذا كانت الشاشة تعرض تحديثًا جاريًا، دعه يكتمل. عند ثبات الشعار فقط، أطفئ الجهاز وافصل الملحقات غير الضرورية مثل أقراص USB وقاعدة التوصيل والطابعة.</li>
+        <li>أعد التشغيل مرة. جرّب الدخول إلى <bdi>BIOS / UEFI Setup</bdi> بالمفتاح المذكور على شاشة البدء أو في دليل جهازك.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#external-device"><strong>أقلع بعد فصل الملحقات</strong><span>حدّد الملحق الذي أعاد المشكلة.</span></a>
+        <a class="bootChoice" href="#storage-check"><strong>فتحت BIOS لكن ويندوز لا يقلع</strong><span>تحقق من ظهور قرص النظام في قائمة التخزين.</span></a>
+        <a class="bootChoice" href="#post-check"><strong>يبقى على الشعار ولا يفتح BIOS</strong><span>ابحث عن صفارات أو نمط لمبات التشخيص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="external-device" data-boot-step="فحص الملحقات" data-boot-demo="usb" aria-labelledby="external-device-title">
+      <h2 id="external-device-title" tabindex="-1">هل تعود المشكلة مع ملحق محدد؟</h2>
+      <p>أطفئ الجهاز. أعد توصيل ملحق واحد فقط ثم شغّل. إذا عادت المشكلة مع قرص USB أو قاعدة توصيل بعينها، سجّل اسمها والمنفذ الذي استُخدم. إذا كان الملحق قرصًا خارجيًا، افحص أيضًا أي جهاز يختاره الكمبيوتر للإقلاع.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#boot-entry"><strong>المشكلة مع قرص USB موصول</strong><span>تأكد أن الجهاز يحاول الإقلاع من القرص الداخلي.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>يقلع بشكل طبيعي الآن</strong><span>سجّل الاختبار الذي غيّر النتيجة.</span></a>
+        <a class="bootChoice" href="#report"><strong>يتوقف عند توصيل ملحق بعينه</strong><span>سجّل الملحق والمنفذ ونتيجة المحاولة من دونه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="post-check" data-boot-step="فحص البدء" data-boot-demo="post" aria-labelledby="post-check-title">
+      <h2 id="post-check-title" tabindex="-1">التوقف قد يكون أثناء فحص الجهاز</h2>
+      <p>سجّل موديل الجهاز وعدد الصفارات أو نمط وميض اللمبات إن وجد. طابق النمط مع دليل الشركة للموديل نفسه. إذا ظهرت قائمة فحوصات قبل الإقلاع، يمكنك تدوين رمز الخطأ الناتج منها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/post-beep-codes" data-boot-demo="post"><strong>افتح دليل POST والصفارات</strong><span>تابع تشخيص المرحلة التي لا تكتمل.</span></a>
+        <a class="bootChoice" href="#find-storage"><strong>تمكّنت من دخول BIOS</strong><span>افتح معلومات التخزين كما في الرسم التوضيحي.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج إلى تسجيل نتيجة الفحص</strong><span>جهّز ما يلزم لمتابعة التشخيص حسب الموديل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="storage-check" data-boot-step="التعرّف على القرص" data-boot-demo="boot-error" aria-labelledby="storage-check-title">
+      <h2 id="storage-check-title" tabindex="-1">هل يظهر اسم قرص النظام في BIOS؟</h2>
+      <p>ابحث عن اسم <bdi>SSD</bdi> أو <bdi>HDD</bdi> وسعته في <strong>معلومات التخزين</strong>. هذه القائمة تعرض الأقراص التي يتعرف عليها الجهاز. ستفحص خيار الإقلاع في خطوة منفصلة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#boot-entry"><strong>نعم، يظهر الاسم والسعة</strong><span>تحقق الآن من خيار بدء تشغيل ويندوز.</span></a>
+        <a class="bootChoice" href="#drive-missing"><strong>لا، القرص غائب أو يظهر أحيانًا</strong><span>حدّد متى بدأ اختفاء القرص.</span></a>
+        <a class="bootChoice" href="#find-storage"><strong>لم أفحص بعد</strong><span>شاهد أين تبحث وكيف تعرف أن القرص ظاهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="find-storage" data-boot-step="التعرّف على القرص" data-boot-demo="drive" aria-labelledby="find-storage-title">
+      <h2 id="find-storage-title" tabindex="-1">أين أرى القرص في BIOS؟</h2>
+      <ol>
+        <li>استخدم مفتاح <bdi>Setup</bdi> الخاص بموديلك من شاشة الشعار أو دليل الشركة. قد يُسمّى <bdi>BIOS Setup</bdi> أو <bdi>UEFI Setup</bdi>.</li>
+        <li>ابحث عن صفحة مثل <bdi>Storage</bdi> أو <bdi>System Information</bdi> أو <bdi>NVMe Configuration</bdi>. الأسماء تختلف بين الأجهزة.</li>
+        <li>طابق اسم القرص وسعته. عبارة <bdi>Not detected</bdi> بجانب منفذ غير مستخدم عادية. ركّز على القرص الذي يحتوي ويندوز.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/no-boot-storage.svg" width="520" height="280" alt="رسم لقائمة معلومات التخزين، يظهر فيها قرص NVMe بسعة 512 جيجابايت ومنفذ SATA غير مستخدم." decoding="async">
+        <figcaption>رسم توضيحي. السطر المميز يبيّن اسم القرص وسعته. يمكنك الخروج من BIOS دون حفظ تغييرات.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#boot-entry"><strong>وجدت اسم القرص</strong><span>انتقل إلى قائمة خيارات الإقلاع.</span></a>
+        <a class="bootChoice" href="#drive-missing"><strong>القرص غير موجود في معلومات التخزين</strong><span>ابدأ بفحص سبب عدم التعرّف.</span></a>
+        <a class="bootChoice" href="#setup-help"><strong>لم أجد القائمة أو مفتاح الدخول</strong><span>اعرف ما تبحث عنه في دليل الموديل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="setup-help" data-boot-step="التعرّف على القرص" data-boot-demo="inspect" aria-labelledby="setup-help-title">
+      <h2 id="setup-help-title" tabindex="-1">اعثر على القائمة الخاصة بموديل جهازك</h2>
+      <p>اقرأ اسم الموديل الكامل من الملصق أو من شاشة البداية. عند التشغيل ابحث أسفل الشعار عن <bdi>Setup</bdi> ومفتاحه، أو عن <bdi>Boot Menu</bdi> ومفتاحه لاختيار الإقلاع المؤقت. داخل BIOS، ابحث عن <bdi>Storage</bdi> أو <bdi>System Information</bdi>. إذا لم تجد صفحة الأقراص، سجّل الموديل وما ظهر على الشاشة حتى نتابع معك.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#find-storage"><strong>وجدت طريقة الوصول للمعلومات</strong><span>ارجع إلى خطوات التحقق من الاسم والسعة.</span></a>
+        <a class="bootChoice" href="#boot-entry"><strong>وجدت طريقة فتح قائمة الإقلاع</strong><span>ابحث عن الخيار المرتبط بقرص ويندوز.</span></a>
+        <a class="bootChoice" href="#post-check"><strong>الجهاز يتجمّد ولا يفتح الإعدادات</strong><span>انتقل إلى فحص POST.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد المعلومات لهذا الموديل</strong><span>سجّل الموديل وما تراه قبل الحكم على القرص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="drive-missing" data-boot-step="القرص غير ظاهر" data-boot-demo="missing-drive" aria-labelledby="drive-missing-title">
+      <h2 id="drive-missing-title" tabindex="-1">متى اختفى القرص؟</h2>
+      <p>إذا كان قرص النظام غائبًا من معلومات التخزين، ابدأ بالقرص واتصاله. بعد عودة ظهوره يمكنك فحص الإقلاع من جديد.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#new-drive"><strong>المشكلة بدأت بعد تركيب قرص</strong><span>تحقق من توافق القرص مع المنفذ.</span></a>
+        <a class="bootChoice" href="#intermittent-drive"><strong>كان يعمل، أو يختفي ويعود</strong><span>سجّل سلوك القرص واحفظ بياناتك عند ظهوره.</span></a>
+        <a class="bootChoice" href="#find-storage"><strong>لم أتحقق من معلومات التخزين</strong><span>تأكد من المكان الصحيح قبل متابعة الفحص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="new-drive" data-boot-step="القرص غير ظاهر" data-boot-demo="connect-drive" aria-labelledby="new-drive-title">
+      <h2 id="new-drive-title" tabindex="-1">تحقق من توافق القرص والمنفذ</h2>
+      <p>راجع دليل موديل اللوحة أو اللابتوب. بعض شقوق <bdi>M.2</bdi> تدعم <bdi>NVMe</bdi> وبعضها يدعم <bdi>SATA</bdi> أو النوعين. إذا كان القرص <bdi>SATA</bdi> سلكيًا، افحص كابل البيانات وكابل الطاقة بعد إطفاء الجهاز وفصل الكهرباء. في اللابتوب اتبع دليل الصيانة عند إعادة التركيب.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#boot-entry"><strong>ظهر القرص بعد التحقق</strong><span>إذا كان يحتوي ويندوز، افحص خيار الإقلاع.</span></a>
+        <a class="bootChoice" href="#report"><strong>ما زال غائبًا</strong><span>سجّل موديل القرص واللوحة ونوع المنفذ.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="intermittent-drive" data-boot-step="القرص غير ظاهر" data-boot-demo="intermittent" aria-labelledby="intermittent-drive-title">
+      <h2 id="intermittent-drive-title" tabindex="-1">القرص كان يعمل أو يختفي أثناء الفحص</h2>
+      <p>إذا عاد القرص وأمكنك قراءة الملفات، احفظ المهم منها أولًا. سجّل هل اختفى بعد سخونة أو إعادة تشغيل، وهل يظهر في فحص التخزين المدمج. إذا أعطى الفحص رمز خطأ، احتفظ به مع موديل القرص.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#storage-check"><strong>عاد القرص للظهور</strong><span>تحقق من استقرار ظهوره قبل متابعة الإقلاع.</span></a>
+        <a class="bootChoice" href="#report"><strong>القرص غائب أو فشل فحصه</strong><span>جهّز نتيجة الفحص وحالة النسخة الاحتياطية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="boot-entry" data-boot-step="خيار الإقلاع" data-boot-demo="boot-menu" aria-labelledby="boot-entry-title">
+      <h2 id="boot-entry-title" tabindex="-1">القرص ظاهر. هل يوجد خيار للإقلاع منه؟</h2>
+      <p>افتح <bdi>Boot Menu</bdi> أو اعرض <bdi>Boot Order</bdi>. في كثير من أجهزة <bdi>UEFI</bdi> يظهر تثبيت ويندوز باسم <bdi>Windows Boot Manager</bdi>. قد يظهر اسم القرص بدل ذلك على بعض الأجهزة. تحقق أنه الخيار المرتبط بقرص النظام، خصوصًا إذا كان لديك أكثر من قرص.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/no-boot-menu.svg" width="520" height="280" alt="رسم لقائمة الإقلاع المؤقتة فيها Windows Boot Manager على القرص الداخلي وخيار منفصل لقرص USB." decoding="async">
+        <figcaption>رسم توضيحي. قائمة الإقلاع تعرض طرق بدء التشغيل، وقائمة التخزين تعرض الأقراص المكتشفة.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#try-boot-entry"><strong>وجدت خيار قرص النظام</strong><span>جرّبه مرة من قائمة الإقلاع المؤقتة.</span></a>
+        <a class="bootChoice" href="#missing-boot-entry"><strong>القرص ظاهر لكن خيار الإقلاع غائب</strong><span>تأكد من القرص والتثبيت واتجه إلى الاسترداد عند الحاجة.</span></a>
+        <a class="bootChoice" href="#setup-help"><strong>لم أجد طريقة فتح قائمة الإقلاع</strong><span>راجع مفتاح Boot Menu في دليل الموديل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="try-boot-entry" data-boot-step="خيار الإقلاع" data-boot-demo="boot-menu" aria-labelledby="try-boot-entry-title">
+      <h2 id="try-boot-entry-title" tabindex="-1">جرّب خيار قرص النظام مرة واحدة</h2>
+      <p>اختر <bdi>Windows Boot Manager</bdi> الخاص بقرص ويندوز من قائمة الإقلاع المؤقتة، أو اسم القرص عندما يكون هو الخيار المعروض. سجّل النتيجة. الاختيار المؤقت يساعدك على اختبار الخيار قبل تغيير ترتيب الإقلاع.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>دخلت إلى ويندوز</strong><span>سجّل الخيار الذي نجح.</span></a>
+        <a class="bootChoice" href="#windows-start"><strong>ظهر شعار ويندوز أو بدأ الإصلاح التلقائي</strong><span>تابع من مرحلة تحميل النظام.</span></a>
+        <a class="bootChoice" href="#missing-boot-entry"><strong>استمرت رسالة خطأ الإقلاع</strong><span>احفظ الرسالة وافحص خيارات الاسترداد.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="missing-boot-entry" data-boot-step="خيار الإقلاع" data-boot-demo="boot-error" aria-labelledby="missing-boot-entry-title">
+      <h2 id="missing-boot-entry-title" tabindex="-1">القرص ظاهر لكن خيار الإقلاع غائب أو يفشل</h2>
+      <p>تأكد أن القرص الذي قرأت اسمه هو القرص الذي عليه تثبيت ويندوز. يمكن أن يظهر قرص جديد فارغ في التخزين من دون خيار إقلاع. إذا كان القرص نفسه يقلع سابقًا، سجّل الرسالة وأي تبديل للقرص أو تغيير في BIOS سبقها.</p>
+      <p class="bootNote">في هذه الخطوة يكفي تسجيل وضع الإقلاع وإعدادات التخزين الحالية. تغيير <bdi>UEFI / Legacy</bdi> أو <bdi>AHCI / RAID / VMD</bdi> قد يمنع تثبيتًا قائمًا من الإقلاع.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#startup-repair"><strong>تثبيت ويندوز موجود وتظهر خيارات الاسترداد</strong><span>افتح خطوات إصلاح بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#recovery-help"><strong>تثبيت ويندوز موجود ولا تظهر خيارات الاسترداد</strong><span>تحقق من طرق فتحها حسب الجهاز.</span></a>
+        <a class="bootChoice" href="#report"><strong>القرص جديد أو لا أعرف ما المثبّت عليه</strong><span>سجّل القرص والتغييرات قبل اختيار خطوة الإصلاح.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="windows-start" data-boot-step="تحميل ويندوز" data-boot-demo="windows" aria-labelledby="windows-start-title">
+      <h2 id="windows-start-title" tabindex="-1">ماذا يحدث عند تحميل ويندوز؟</h2>
+      <p>ظهور النقاط الدوّارة أو شاشة إصلاح ويندوز يساعد في تحديد المرحلة. إذا كانت الشاشة تعرض نسبة تحديث تتغير، أعطِ التحديث وقتًا ليكتمل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#startup-repair"><strong>إصلاح تلقائي أو قائمة استرداد</strong><span>جرّب أداة إصلاح بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#stop-code"><strong>شاشة زرقاء أو رمز خطأ</strong><span>سجّل الرمز ومتى ظهر.</span></a>
+        <a class="bootChoice" href="#blank-screen"><strong>صارت الشاشة سوداء</strong><span>اعرف هل يتابع النظام العمل من دون صورة.</span></a>
+        <a class="bootChoice" href="#recovery-help"><strong>يبقى على النقاط ولا تظهر خيارات</strong><span>اعرف كيف تصل إلى بيئة الاسترداد.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stop-code" data-boot-step="تحميل ويندوز" data-boot-demo="stop-code" aria-labelledby="stop-code-title">
+      <h2 id="stop-code-title" tabindex="-1">سجّل رمز الشاشة الزرقاء قبل المحاولة التالية</h2>
+      <p>صوّر <bdi>Stop code</bdi> وسجّل هل ظهر بعد تحديث أو تبديل قرص أو تعريف جديد. رمز <bdi>INACCESSIBLE_BOOT_DEVICE</bdi> يوجّهك إلى فحص التخزين والإقلاع. إذا ظهر رمز آخر، دوّن نصّه كما هو واختر الخطوة التالية حسب إمكان الوصول إلى الاسترداد.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#storage-check"><strong>الرمز يتعلق بقرص الإقلاع</strong><span>تحقق من اكتشاف قرص ويندوز أولًا.</span></a>
+        <a class="bootChoice" href="#safe-mode"><strong>تظهر بيئة الاسترداد</strong><span>اعرف كيف تختبر الإقلاع بالوضع الآمن.</span></a>
+        <a class="bootChoice" href="#report"><strong>الرمز يتكرر أو تختلف الرموز</strong><span>احتفظ بالرموز وتوقيت ظهورها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="blank-screen" data-boot-step="الصورة بعد الشعار" data-boot-demo="blank" aria-labelledby="blank-screen-title">
+      <h2 id="blank-screen-title" tabindex="-1">هل يتابع ويندوز العمل بعد اختفاء الصورة؟</h2>
+      <p>تحقق من مدخل الشاشة والكابل. في اللابتوب يمكنك تجربة شاشة خارجية سليمة. سجّل هل ترى مؤشر الماوس أو شاشة تسجيل الدخول أو تسمع صوت دخول ويندوز. المؤشر النصي الصغير الذي يومض قبل تحميل ويندوز حالة مختلفة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#safe-mode"><strong>أسمع دخول ويندوز أو يظهر مؤشر الماوس</strong><span>تحقق من الصورة والوضع الآمن إن توفر.</span></a>
+        <a class="bootChoice" href="#storage-check"><strong>مؤشر نصي يومض أو رسالة عن قرص الإقلاع</strong><span>ابدأ بفحص القرص وخيار الإقلاع.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display" data-boot-demo="blank"><strong>لا تظهر صورة حتى عند بدء التشغيل</strong><span>انتقل إلى مسار No Display.</span></a>
+        <a class="bootChoice" href="#identify"><strong>لم أتمكن من تحديد العلامة</strong><span>راقب محاولة تشغيل واحدة وسجّل ما يظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="safe-mode" data-boot-step="تحميل ويندوز" data-boot-demo="safe" aria-labelledby="safe-mode-title">
+      <h2 id="safe-mode-title" tabindex="-1">هل تظهر الصورة أو يقلع النظام في الوضع الآمن؟</h2>
+      <ol>
+        <li>في بيئة الاسترداد، افتح <bdi>Troubleshoot</bdi> ثم <bdi>Advanced options</bdi>.</li>
+        <li>اختر <bdi>Startup Settings</bdi> ثم <bdi>Restart</bdi>. بعد إعادة التشغيل اختر <bdi>Enable Safe Mode</bdi> بالمفتاح المعروض بجانبه، عادةً <bdi>4</bdi> أو <bdi>F4</bdi>.</li>
+        <li>إذا اشتغل الجهاز في الوضع الآمن، سجّل هل بدأ العطل بعد تحديث أو تثبيت تعريف عرض.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>يعمل في الوضع الآمن فقط</strong><span>سجّل آخر تحديث أو تعريف وما حدث في الوضع العادي.</span></a>
+        <a class="bootChoice" href="#startup-repair"><strong>بيئة الاسترداد تعمل لكن الوضع الآمن يفشل</strong><span>افحص خيار إصلاح بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#recovery-help"><strong>لا أستطيع فتح بيئة الاسترداد</strong><span>راجع طريقة الوصول المتاحة لجهازك.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="startup-repair" data-boot-step="استرداد ويندوز" data-boot-demo="repair" aria-labelledby="startup-repair-title">
+      <h2 id="startup-repair-title" tabindex="-1">افتح إصلاح بدء التشغيل</h2>
+      <p>من شاشة الاسترداد، اختر <bdi>Troubleshoot</bdi> ثم <bdi>Advanced options</bdi> ثم <bdi>Startup Repair</bdi>. اختر إعادة التشغيل إذا طلبت الشاشة ذلك. بعد انتهاء المحاولة، سجّل النص الذي يظهر.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/no-boot-recovery.svg" width="520" height="280" alt="رسم لخيارات استرداد ويندوز بالترتيب، استكشاف الأخطاء وإصلاحها ثم الخيارات المتقدمة ثم إصلاح بدء التشغيل." decoding="async">
+        <figcaption>رسم توضيحي لترتيب الاختيارات. قد تظهر القوائم مترجمة بحسب لغة ويندوز.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>اشتغل ويندوز بعد الإصلاح</strong><span>دوّن النتيجة وأعد التحقق عند تشغيل الجهاز لاحقًا.</span></a>
+        <a class="bootChoice" href="#bitlocker"><strong>ظهرت شاشة BitLocker</strong><span>اعرف أين تجد مفتاح الاسترداد الخاص بالجهاز.</span></a>
+        <a class="bootChoice" href="#recovery-help"><strong>فشل الإصلاح أو الخيار غير موجود</strong><span>سجّل الرسالة وتحقق من خيارات الاسترداد المتاحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="bitlocker" data-boot-step="استرداد ويندوز" data-boot-demo="locked" aria-labelledby="bitlocker-title">
+      <h2 id="bitlocker-title" tabindex="-1">ويندوز يطلب مفتاح استرداد BitLocker</h2>
+      <p>اقرأ <bdi>Recovery key ID</bdi> من الشاشة. ابحث عن المعرّف نفسه في مفاتيح استرداد BitLocker المحفوظة في حساب Microsoft الذي أعدّ الجهاز، أو في النسخة المطبوعة إن وُجدت. إذا كان جهاز عمل، اطلب المفتاح من مسؤول تقنية المعلومات. أدخل المفتاح في شاشة الجهاز نفسه واحتفظ به خاصًا.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#startup-repair"><strong>وجدت المفتاح وفتحت بيئة الاسترداد</strong><span>ارجع إلى خطوة إصلاح بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#report"><strong>المفتاح غير متاح الآن</strong><span>سجّل أن الاسترداد متوقف بانتظار المفتاح.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="recovery-help" data-boot-step="استرداد ويندوز" data-boot-demo="repair" aria-labelledby="recovery-help-title">
+      <h2 id="recovery-help-title" tabindex="-1">لم تظهر خيارات الاسترداد أو لم ينجح الإصلاح</h2>
+      <p>ابدأ بالتأكد أن قرص النظام يظهر في BIOS. إذا كان ظاهرًا، سجّل الخطأ الذي رأيته ثم استخدم طريقة الاسترداد المتاحة لديك.</p>
+      <ul>
+        <li>إذا وصلت إلى شاشة تسجيل الدخول، اضغط باستمرار على <bdi>Shift</bdi> أثناء اختيار <bdi>Restart</bdi> من قائمة الطاقة.</li>
+        <li>إذا ظهرت شاشة الإصلاح التلقائي، افتح <bdi>Advanced options</bdi>. وإذا كانت لديك وسائط تثبيت ويندوز رسمية، اختر «إصلاح الكمبيوتر» من شاشة الإعداد.</li>
+      </ul>
+      <p>قبل إعادة تعيين النظام أو تثبيته، تحقّق من حفظ ملفاتك المهمة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#storage-check"><strong>لم أتأكد أن القرص ظاهر</strong><span>ارجع إلى سؤال التعرّف على القرص.</span></a>
+        <a class="bootChoice" href="#safe-mode"><strong>ظهرت خيارات متقدمة بعد الدخول للاسترداد</strong><span>جرّب الوضع الآمن إن ظهر خيار إعدادات بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#report"><strong>ما زال الإقلاع متعذرًا</strong><span>سجّل نتيجة الإصلاح والفحص قبل اختيار خطوة أخرى.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="نتيجة الفحص" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">اشتغل ويندوز. سجّل ما الذي تغيّر</h2>
+      <p>دوّن إن كان الإقلاع نجح بعد فصل ملحق أو اختيار مدخل إقلاع أو تشغيل الإصلاح. بعد حفظ العمل، تحقّق من الإقلاع مرة أخرى إذا لزم. إذا كان القرص يختفي أو ظهرت أخطاء تخزين، احفظ الملفات المهمة وتابع نتيجة فحصه.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#start"><strong>عاد العطل</strong><span>اختر العَرَض الذي يظهر الآن.</span></a>
+        <a class="bootChoice" href="#report"><strong>أشارك نتيجة الفحص في غرفة الصيانة</strong><span>اكتب ما حدث والخطوة التي نجحت معك.</span></a>
+        <a class="bootChoice" href="/diagnostics/" data-boot-demo="inspect"><strong>انتهى الفحص</strong><span>العودة إلى مسارات التشخيص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع التشخيص معك</h2>
+      <p>إذا بقي العطل أو توقفت عند خطوة لم تعرف كيف تكملها، اكتب لنا ما ظهر على جهازك. حتى لو كانت النتيجة مجرد شعار ثابت أو رسالة قصيرة، فهي تساعدنا على معرفة أين توقف التشغيل وما الفحص المناسب بعده.</p>
+      <p><strong>سنقرأ مشاركتك بعناية ونردّ عليك في غرفة الصيانة.</strong> سنبدأ من آخر خطوة وصلت إليها ونشرح لك الفحص التالي بطريقة بسيطة. إذا احتجنا تفاصيل أو قياسًا إضافيًا، سنوضح لك ما الذي تبحث عنه وأين تجده. بعد التجربة ارجع إلى نفس المشاركة واكتب النتيجة حتى نتابع معك بدقة.</p>
+      <div class="bootRoomDetails">
+        <h3>ما الذي تكتبه في رسالة العطل؟</h3>
+        <ul>
+          <li>الشركة والموديل الكامل وآخر شاشة رأيتها عند التشغيل.</li>
+          <li>نص الخطأ أو رمزه، وأي تغيير حدث قبل ظهور المشكلة.</li>
+          <li>هل ظهر القرص في BIOS؟ وهل وجدت له خيار إقلاع؟</li>
+          <li>ما الخطوة التي جرّبتها وما النتيجة؟ إذا بقي فحص ما، اكتب «لم أفحص بعد».</li>
+        </ul>
+        <p>إذا ظهر زر «تسجيل الدخول للمشاركة»، استخدمه لتتمكّن من الكتابة. اختر <strong>«مناقشة عطل»</strong> واكتب ملخصًا قصيرًا. اذكر أن الجهاز طلب مفتاح BitLocker إذا ظهر هذا الطلب، واحتفظ بالمفتاح وكلمات المرور لنفسك.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأرسل وصف العطل ونتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة نتيجة مختلفة</strong><span>ارجع إلى آخر ما يظهر على الشاشة.</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>

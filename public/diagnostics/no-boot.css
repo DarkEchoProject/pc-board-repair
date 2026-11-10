@@ -1,0 +1,409 @@
+.bootGuide {
+  --boot-panel: #0d1b2e;
+  --boot-raised: #132840;
+  --boot-highlight: #17364d;
+  --boot-line: #315373;
+  --boot-text: #f0f6ff;
+  --boot-muted: #bacde1;
+  --boot-accent: #82e5fb;
+  --boot-glow: #123f59;
+  max-width: 1060px;
+  color: var(--boot-text);
+}
+
+:root[data-theme="light"] .bootGuide {
+  --boot-panel: #fff;
+  --boot-raised: #f2f8fc;
+  --boot-highlight: #e1f2fb;
+  --boot-line: #aac6d8;
+  --boot-text: #132a41;
+  --boot-muted: #39536b;
+  --boot-accent: #076486;
+  --boot-glow: #d7edf8;
+}
+
+.bootHero, .bootStep {
+  border: 1px solid var(--boot-line);
+  border-radius: 20px;
+  padding: clamp(18px, 4vw, 36px);
+  background: var(--boot-panel);
+}
+
+.bootHero {
+  margin-block-end: 22px;
+  background: radial-gradient(ellipse at top right, var(--boot-glow), transparent 72%), var(--boot-panel);
+}
+
+.bootHero h1 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  line-height: 1.3;
+}
+
+.bootHero p, .bootStep > p, .bootStep > ol, .bootStep > ul, .bootRoomDetails p, .bootRoomDetails li {
+  color: var(--boot-muted);
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.bootHero p {
+  max-width: 62ch;
+  margin-block: 0 18px;
+}
+
+.bootMeta, .bootControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.bootMeta span, .bootControls span {
+  color: var(--boot-accent);
+  border: 1px solid var(--boot-line);
+  background: var(--boot-raised);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: .88rem;
+}
+
+.bootStages {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+}
+
+.bootStages li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--boot-line);
+  border-radius: 10px;
+  padding: 4px 9px;
+  color: var(--boot-muted);
+  font-size: .9rem;
+}
+
+.bootStages li > b {
+  color: var(--boot-accent);
+}
+
+.bootFlow, .bootStep {
+  scroll-margin-block-start: 110px;
+}
+
+.bootControls {
+  position: static;
+  justify-content: space-between;
+  margin: 0 0 10px;
+}
+
+.bootControlLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 4px;
+}
+
+.bootGuide .bootControls a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 5px 10px;
+  margin: 0;
+  font-size: .95rem;
+  color: var(--boot-accent);
+}
+
+.bootStep {
+  margin-block-end: 16px;
+}
+
+.bootGuide [hidden], .bootGuide .bootControls [hidden] {
+  display: none;
+}
+
+.bootStep h2 {
+  margin: 0 0 10px;
+  color: var(--boot-text);
+  font-size: clamp(1.28rem, 2.4vw, 1.8rem);
+  line-height: 1.45;
+}
+
+.bootStepHeading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-end: 10px;
+}
+
+.bootStepHeading h2 {
+  margin: 0;
+}
+
+.bootStep > p, .bootStep > ol, .bootStep > ul {
+  margin-block: 0 14px;
+}
+
+.bootStep > ol, .bootStep > ul, .bootRoomDetails ul {
+  padding-inline-start: 1.4em;
+}
+
+.bootStep li + li {
+  margin-block-start: 6px;
+}
+
+.bootChoices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-block-start: 16px;
+}
+
+.bootGuide .bootChoice {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  min-height: 76px;
+  border: 1px solid var(--boot-line);
+  border-radius: 13px;
+  padding: 12px 14px 12px 40px;
+  background: var(--boot-raised);
+  color: var(--boot-text);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.bootChoice > strong {
+  line-height: 1.5;
+}
+
+.bootChoice > strong[dir="ltr"] {
+  text-align: right;
+}
+
+.bootChoice > span {
+  color: var(--boot-muted);
+  font-size: .9rem;
+  line-height: 1.55;
+}
+
+.bootChoice::after {
+  content: "←";
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--boot-accent);
+}
+
+.bootGuide .bootChoiceAnimated {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 9px;
+  padding-inline-end: 32px;
+}
+
+.bootChoiceAnimated > svg {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
+}
+
+.bootChoiceAnimated > strong, .bootChoiceAnimated > span {
+  grid-column: 2;
+}
+
+.bootChoiceAnimated > strong {
+  grid-row: 1;
+  align-self: end;
+}
+
+.bootChoiceAnimated > span {
+  grid-row: 2;
+}
+
+.bootChoices > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.bootGuide .bootChoice:hover {
+  border-color: var(--boot-accent);
+  background: var(--boot-highlight);
+}
+
+.bootGuide a:focus-visible {
+  outline: 2px solid var(--boot-accent);
+  outline-offset: 3px;
+}
+
+.bootGuide p a {
+  color: var(--boot-accent);
+  text-underline-offset: 3px;
+}
+
+.bootStep > .bootRelated {
+  margin: 16px 0 0;
+}
+
+.bootNote {
+  border-inline-start: 3px solid var(--boot-accent);
+  border-radius: 8px;
+  background: var(--boot-raised);
+  padding: 10px 14px;
+}
+
+.bootFigure {
+  margin: 18px 0;
+}
+
+.bootFigure img {
+  display: block;
+  width: min(100%, 520px);
+  height: auto;
+  border: 1px solid var(--boot-line);
+  border-radius: 14px;
+}
+
+.bootFigure figcaption {
+  color: var(--boot-muted);
+  font-size: .9rem;
+  margin-block-start: 8px;
+}
+
+.bootRoomDetails {
+  background: var(--boot-raised);
+  border: 1px solid var(--boot-line);
+  border-radius: 13px;
+  padding: 14px 16px;
+  margin-block: 18px;
+}
+
+.bootRoomDetails h3, .bootRoomDetails p {
+  margin: 0;
+}
+
+.bootGuide .bootRoomLink {
+  border-color: var(--boot-accent);
+  background: var(--boot-highlight);
+}
+
+.bootRoomLink > strong {
+  color: var(--boot-accent);
+}
+
+.bootDemo {
+  display: block;
+  flex: none;
+  height: auto;
+}
+
+.bootDemoHeading {
+  width: 78px;
+}
+
+.bootDemoThumb {
+  width: 50px;
+}
+
+.bootDemoTrace {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bootDemoTrace {
+    animation: boot-trace 1.4s ease-out both;
+  }
+
+  .bootDemoScene {
+    animation: boot-settle 1.4s ease-out both;
+  }
+
+  .bootDemo[data-scene="intermittent"] .bootDemoScene {
+    animation-name: boot-intermittent;
+  }
+}
+
+@keyframes boot-trace {
+  0% { opacity: 0; transform: translateY(4px); }
+  16%, 36% { opacity: .9; transform: translateY(0); }
+  57%, 100% { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes boot-settle {
+  0%, 36% { opacity: 0; transform: translateY(3px); }
+  68%, 100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes boot-intermittent {
+  0%, 36% { opacity: 0; }
+  57% { opacity: 1; }
+  75% { opacity: .3; }
+  94%, 100% { opacity: 1; }
+}
+
+@media (max-width: 720px) {
+  .bootPage > header {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    padding: 8px 5%;
+  }
+
+  .bootPage > header nav {
+    order: 1;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    gap: 0 9px;
+  }
+
+  .bootPage > header nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 3px 2px;
+    font-size: .85rem;
+  }
+
+  .bootPage > header .pcbrThemeToggle {
+    margin-inline-start: auto;
+  }
+
+  .bootPage .bootGuide {
+    padding-block: 14px 25px;
+  }
+
+  .bootGuide .crumb {
+    margin-block: 0 10px;
+  }
+
+  .bootHero {
+    margin-block-end: 12px;
+  }
+
+  .bootFlow, .bootStep {
+    scroll-margin-block-start: 12px;
+  }
+}
+
+@media (max-width: 630px) {
+  .bootChoices {
+    grid-template-columns: 1fr;
+  }
+
+  .bootGuide .bootChoice {
+    min-height: 68px;
+  }
+
+  .bootDemoHeading {
+    width: 64px;
+  }
+
+  .bootDemoThumb {
+    width: 42px;
+  }
+}
