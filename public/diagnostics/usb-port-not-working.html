@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>منفذ USB لا يقرأ أو يقطع الاتصال | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفحص USB عندما يشحن دون نقل البيانات، أو يقطع الاتصال، أو يظهر كجهاز غير معروف في ويندوز.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/usb-port-not-working">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "منفذ USB لا يقرأ أو يقطع الاتصال",
+    "inLanguage": "ar",
+    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/usb-port-not-working",
+    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
+  }
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← منفذ USB</div>
+  <section class="bootHero" aria-labelledby="usb-title">
+    <div class="bootMeta"><span>المسار 05</span><span dir="ltr">USB-A / USB-C</span><span>لابتوب وكمبيوتر مكتبي</span></div>
+    <h1 id="usb-title">منفذ USB لا يقرأ أو يقطع الاتصال</h1>
+    <p>اختر ما يحدث عند توصيل الجهاز. سنقارن المنفذ والكابل والملحق، ثم نقرأ ما يراه ويندوز إذا احتجنا إلى فحص التعريف أو التخزين.</p>
+    <ol class="bootStages" aria-label="مراحل تشخيص منفذ USB">
+      <li><b>١</b><span>طاقة أم اتصال بيانات؟</span></li>
+      <li><b>٢</b><span>مقارنة المنفذ والكابل</span></li>
+      <li><b>٣</b><span>قراءة نتيجة ويندوز</span></li>
+    </ol>
+  </section>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال بينها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="usb" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ماذا يحدث عند توصيل جهاز USB؟</h2>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#surge"><strong>تحذير طاقة أو سخونة أو منفذ تالف</strong><span>أوقف تجربة التوصيل وراجع خطوة الأمان أولًا.</span></a>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#no-detect"><strong>الجهاز لا يظهر ولا يستجيب</strong><span>لا يظهر في ويندوز، وقد يكون ضوء الملحق مطفأ.</span></a>
+        <a class="bootChoice" href="#power-only"><strong>يشحن أو يضيء والبيانات غائبة</strong><span>الهاتف يشحن أو لمبة الملحق تعمل ولا يظهر جهاز قابل للاستخدام.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>يتصل ثم يفصل أو يقطع أثناء العمل</strong><span>يتكرر الانقطاع عند النسخ أو تحريك الكابل أو بعد السكون.</span></a>
+        <a class="bootChoice" href="#one-port"><strong>منفذ واحد أو منافذ الواجهة الأمامية فقط</strong><span>نفس الجهاز يعمل على منافذ أخرى.</span></a>
+        <a class="bootChoice" href="#device-manager"><strong>يظهر خطأ أو جهاز غير معروف</strong><span>أرى رسالة USB في ويندوز أو علامة تحذير في إدارة الأجهزة.</span></a>
+        <a class="bootChoice" href="#observe"><strong>لم أسجّل ما يحدث بعد</strong><span>ابدأ بملاحظة واحدة من دون فتح الجهاز.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="observe" data-boot-step="قراءة أول نتيجة" data-boot-demo="inspect" aria-labelledby="observe-title">
+      <h2 id="observe-title" tabindex="-1">دوّن ما يظهر عند توصيل واحد</h2>
+      <p>إذا كان المنفذ والملحق سليمين ظاهريًا، وصّل الملحق مباشرة بالكمبيوتر. سجّل هل أضاء أو شحن، وهل سمعت صوت الاتصال أو ظهرت رسالة. ابحث عن اسمه في المكان المتوقع له، مثل مستكشف الملفات لوحدة التخزين أو إدارة الأجهزة للملحقات.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#no-detect"><strong>لا تظهر أي استجابة</strong><span>ابدأ بمقارنة جهاز ومنفذ معروفين.</span></a>
+        <a class="bootChoice" href="#power-only"><strong>ظهر الشحن أو ضوء التشغيل فقط</strong><span>اختبر اتصال البيانات على حدة.</span></a>
+        <a class="bootChoice" href="#device-manager"><strong>ويندوز يعرض اسمًا أو رمز خطأ</strong><span>اقرأ حالة الجهاز ونص الرسالة.</span></a>
+        <a class="bootChoice" href="#storage"><strong>الفلاشة أو القرص يظهر ولا يفتح</strong><span>تحقّق من ظهوره في إدارة الأقراص واحمِ البيانات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="no-detect" data-boot-step="جهاز USB غائب" data-boot-demo="usb-unplug" aria-labelledby="no-detect-title">
+      <h2 id="no-detect-title" tabindex="-1">ابدأ بجهاز بسيط معروف السلامة</h2>
+      <p>اختر ماوسًا أو لوحة مفاتيح سلكية تعرف أنها تعمل، ووصّلها مباشرة في المنفذ. إذا كان للملحق كابل قابل للفصل، تأكد من تثبيته واستعمل كابلًا معروفًا بنقل البيانات. أوقف المحاولة إذا ظهرت سخونة أو رسالة زيادة حمل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#compare"><strong>أستطيع المقارنة بمنفذ وجهاز سليمين</strong><span>غيّر عنصرًا واحدًا في كل محاولة.</span></a>
+        <a class="bootChoice" href="#many-ports"><strong>أكثر من منفذ لا يعمل مع الجهاز السليم</strong><span>تحقّق هل يتكرر خارج ويندوز.</span></a>
+        <a class="bootChoice" href="#device-manager"><strong>ظهر جهاز غير معروف بعد التوصيل</strong><span>اقرأ رمز الخطأ.</span></a>
+        <a class="bootChoice" href="#surge"><strong>ظهرت رسالة زيادة الحمل أو سخونة</strong><span>أوقف الاختبار على هذا المنفذ.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="power-only" data-boot-step="طاقة موجودة والبيانات غائبة" data-boot-demo="usb-data" aria-labelledby="power-only-title">
+      <h2 id="power-only-title" tabindex="-1">تحقّق من مسار البيانات</h2>
+      <p>شحن الهاتف أو إضاءة الملحق من المنفذ يدلان على وصول طاقة. لفحص اتصال البيانات، جرّب توصيلًا مباشرًا بكابل سبق أن نقل ملفات أو بكابل مناسب لمواصفات الملحق، ثم راقب هل يتعرّف إليه النظام.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/usb-power-data.webp" width="840" height="420" loading="lazy" alt="رسم يفصل بين ظهور علامة التغذية وظهور اسم الجهاز بعد اتصال البيانات">
+        <figcaption>لاحظ الشحن والتعرّف إلى الجهاز كقراءتين منفصلتين.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#phone-transfer"><strong>هاتف يشحن والملفات لا تظهر</strong><span>تحقّق من إذن الهاتف ووضع نقل الملفات.</span></a>
+        <a class="bootChoice" href="#usb-c"><strong>الملحق متصل عبر USB-C</strong><span>طابق وظيفة المنفذ والكابل مع الملحق.</span></a>
+        <a class="bootChoice" href="#compare"><strong>كابل البيانات معروف والجهاز غائب</strong><span>قارن المنفذ والملحق كلًا على حدة.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>ظهر الجهاز بعد تغيير الكابل</strong><span>سجّل نتيجة التوصيل المباشر والكابل الذي نجح.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="phone-transfer" data-boot-step="الهاتف يشحن فقط" data-boot-demo="usb-data" aria-labelledby="phone-transfer-title">
+      <h2 id="phone-transfer-title" tabindex="-1">افتح الهاتف واختر نقل الملفات إن توفر</h2>
+      <ol>
+        <li>افتح قفل الهاتف ووصل كابل بيانات سليمًا مباشرة بالكمبيوتر.</li>
+        <li>في أندرويد، افتح إشعار USB واختر <bdi>File transfer</bdi> إذا ظهر. إذا طلب الهاتف السماح بالوصول أو الوثوق بالكمبيوتر، وافق فقط على جهاز تعرفه وتملك صلاحية استخدامه.</li>
+        <li>راقب هل ظهر الهاتف في مستكشف الملفات أو في برنامج إدارة الهاتف المناسب لنظامه.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>ظهرت الملفات بعد اختيار الوضع</strong><span>سجّل الوضع الذي أعاد الاتصال.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لا يظهر خيار نقل البيانات</strong><span>قارن بكابل بيانات ومنفذ معروفين.</span></a>
+        <a class="bootChoice" href="#device-manager"><strong>ويندوز يرى الهاتف والملفات لا تظهر</strong><span>اقرأ حالة الجهاز أو رمز الخطأ.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="usb-c" data-boot-step="وظائف منفذ USB-C" data-boot-demo="usb" aria-labelledby="usb-c-title">
+      <h2 id="usb-c-title" tabindex="-1">طابق وظيفة المنفذ والكابل</h2>
+      <p>راجع مواصفات منفذ USB-C في موديل الكمبيوتر والملحق. قد تختلف وظائف البيانات والشحن والفيديو بين المنافذ المتشابهة في الشكل. لفحص البيانات، استخدم منفذًا وكابلًا يدعمانها، ووصل الملحق مباشرة في أول تجربة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>اشتغل الملحق على المنفذ أو الكابل المناسب</strong><span>سجّل وظيفة المنفذ والكابل المستخدم.</span></a>
+        <a class="bootChoice" href="#hub-dock"><strong>المشكلة تظهر مع موزع أو قاعدة توصيل</strong><span>قارن التوصيل المباشر بنتيجة القاعدة.</span></a>
+        <a class="bootChoice" href="#compare"><strong>المنفذ والكابل يدعمان البيانات والخلل مستمر</strong><span>جرّب مقارنة بجهاز USB آخر.</span></a>
+        <a class="bootChoice" href="#report"><strong>مواصفات المنفذ غير واضحة</strong><span>أرسل موديل الكمبيوتر والملحق ونوع الوصلة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="compare" data-boot-step="مقارنة المنفذ والملحق" data-boot-demo="inspect" aria-labelledby="compare-title">
+      <h2 id="compare-title" tabindex="-1">غيّر عنصرًا واحدًا في كل تجربة</h2>
+      <ol>
+        <li>جرّب الملحق نفسه مع كابله في منفذ آخر معروف أنه يعمل ويدعم الوظيفة المطلوبة.</li>
+        <li>جرّب ماوسًا أو ملحقًا بسيطًا سليمًا في المنفذ المشتبه به. إذا كان كابل الملحق قابلًا للفصل، قارن بكابل بيانات سليم ومطابق.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/usb-cross-test.webp" width="840" height="420" loading="lazy" alt="رسم يوضح تجربتين، الملحق نفسه في منفذ آخر وملحق سليم في المنفذ المشتبه به">
+        <figcaption>سجّل نتيجة كل محاولة مع اسم المنفذ والكابل حتى تعرف ما الذي غيّر النتيجة.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#device-only"><strong>العطل يتبع الملحق أو كابله</strong><span>جهاز USB سليم يعمل في المنفذ نفسه.</span></a>
+        <a class="bootChoice" href="#one-port"><strong>العطل يتبع منفذًا واحدًا</strong><span>الملحق يعمل على منفذ آخر وملحق سليم يفشل في هذا المنفذ.</span></a>
+        <a class="bootChoice" href="#many-ports"><strong>أجهزة سليمة تفشل على أكثر من منفذ</strong><span>سجّل المنافذ المتأثرة وقارن ويندوز بالإقلاع.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد جهازًا آخر أو النتيجة غير واضحة</strong><span>اكتب ما جرّبته بالفعل ونص أي رسالة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="device-only" data-boot-step="الخلل يتبع الملحق" data-boot-demo="usb-unplug" aria-labelledby="device-only-title">
+      <h2 id="device-only-title" tabindex="-1">افحص الملحق وكابله ومتطلبات تشغيله</h2>
+      <p>إذا عمل ملحق سليم في المنفذ نفسه، راجع كابل الجهاز المشتبه به ووضع تشغيله وتغذيته إن كان له محوّل مخصص. يمكنك المقارنة على كمبيوتر آخر تعرفه إذا كان الملحق سليمًا ظاهريًا، ومن دون تكرار اختبارات على وحدة تخزين غير مستقرة وفيها ملفات مهمة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#phone-transfer"><strong>المشكلة في هاتف فقط</strong><span>تحقّق من وضع نقل الملفات وإذن الوصول.</span></a>
+        <a class="bootChoice" href="#storage"><strong>المشكلة في فلاشة أو قرص خارجي</strong><span>راجع اكتشاف القرص وحماية البيانات.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>عمل بعد تغيير الكابل أو التغذية</strong><span>سجّل العنصر الذي غيّر النتيجة.</span></a>
+        <a class="bootChoice" href="#report"><strong>يفشل الملحق على أكثر من كمبيوتر</strong><span>أرسل موديله ونتيجة الكابل البديل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="one-port" data-boot-step="الخلل في منفذ محدد" data-boot-demo="usb" aria-labelledby="one-port-title">
+      <h2 id="one-port-title" tabindex="-1">حدّد موقع المنفذ وحالته</h2>
+      <p>سجّل إن كان أماميًا أو خلفيًا في المكتبي، أو على جهة معيّنة من اللابتوب. افصل الملحق وانظر إلى المنفذ من الخارج. إذا وجدت لسانًا مكسورًا أو حركة واضحة أو أثر احتراق، توقف عن استخدامه.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#front-panel"><strong>الأمامية تفشل والخلفية تعمل</strong><span>قارن منافذ الكيس بمنافذ اللوحة الأم.</span></a>
+        <a class="bootChoice" href="#movement"><strong>المنفذ يقطع عند تحريك القابس</strong><span>سجّل الحركة التي تسبق الانقطاع.</span></a>
+        <a class="bootChoice" href="#physical-damage"><strong>تلف أو ارتخاء واضح</strong><span>أوقف استخدام المنفذ واطلب فحصًا.</span></a>
+        <a class="bootChoice" href="#technician"><strong>شكله سليم وأجهزة متعددة تفشل فيه</strong><span>تابع إلى فحص مسار المنفذ عند الفني.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="front-panel" data-boot-step="المنافذ الأمامية والخلفية" data-boot-demo="usb" aria-labelledby="front-panel-title">
+      <h2 id="front-panel-title" tabindex="-1">قارن التوصيل الأمامي بالتوصيل الخلفي</h2>
+      <p>في الكمبيوتر المكتبي، جرّب نفس الملحق السليم مباشرة في منفذ خلفي تابع للوحة الأم، ثم في المنفذ الأمامي إذا كان سليمًا ظاهريًا. إذا تكرر الخلل في الأمامية وحدها، سجّل ذلك لفحص مجموعة المنافذ الأمامية وكابلها وموصلها على اللوحة.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/usb-front-rear.webp" width="840" height="420" loading="lazy" alt="رسم يبيّن منفذ USB أماميًا على صندوق الحاسوب ومجموعة منافذ USB خلفية متصلة باللوحة الأم">
+        <figcaption>المواضع في الرسم توضيحية. استخدم نفس الملحق للمقارنة.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#technician"><strong>الخلفية تعمل والأمامية تفشل</strong><span>شارك النتيجة لفحص موصل وكابل الواجهة الأمامية.</span></a>
+        <a class="bootChoice" href="#many-ports"><strong>يفشل على الأمامية والخلفية</strong><span>افحص هل يظهر الخلل عبر منافذ مختلفة ومع جهاز سليم آخر.</span></a>
+        <a class="bootChoice" href="#report"><strong>النتيجة متقطعة أو تختلف من منفذ إلى آخر</strong><span>اكتب المنافذ التي جرّبتها ونتيجة كل واحد.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="many-ports" data-boot-step="أكثر من منفذ متأثر" data-boot-demo="usb-unplug" aria-labelledby="many-ports-title">
+      <h2 id="many-ports-title" tabindex="-1">قارن السلوك قبل ويندوز وبعده</h2>
+      <p>أعد تشغيل الكمبيوتر بعد فصل الملحقات غير الضرورية وإخراج وحدات التخزين بأمان. إذا أمكن، اختبر لوحة مفاتيح سلكية سليمة على منفذ مباشر داخل BIOS دون تغيير الإعدادات. سجّل المنفذ ونتيجة كل مرحلة، فقد تختلف المنافذ المتاحة أثناء بدء التشغيل حسب الموديل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#device-manager"><strong>يعمل في BIOS ويفشل في ويندوز</strong><span>اقرأ حالة الجهاز أو متحكم USB.</span></a>
+        <a class="bootChoice" href="#technician"><strong>أكثر من منفذ مباشر يفشل قبل ويندوز أيضًا</strong><span>شارك نتيجة لوحة المفاتيح السليمة مع الفني.</span></a>
+        <a class="bootChoice" href="#after-sleep"><strong>يعمل بعد التشغيل ويختفي بعد السكون</strong><span>قارن النتيجة قبل السكون وبعد الاستيقاظ.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أتمكّن من اختبار BIOS</strong><span>اذكر المنافذ والأجهزة التي جرّبتها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="device-manager" data-boot-step="إدارة الأجهزة في ويندوز" data-boot-demo="windows" aria-labelledby="device-manager-title">
+      <h2 id="device-manager-title" tabindex="-1">اقرأ اسم الجهاز ورمز الخطأ</h2>
+      <ol>
+        <li>انقر بزر الفأرة الأيمن على «ابدأ» وافتح «إدارة الأجهزة» <bdi>Device Manager</bdi>.</li>
+        <li>راجع فئة الجهاز أو <bdi>Universal Serial Bus controllers</bdi>. افتح خصائص العنصر الذي ظهر عند التوصيل، ثم انسخ نص «حالة الجهاز» والرمز إن وجد.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/usb-device-manager.webp" width="840" height="420" loading="lazy" alt="مثال لإدارة الأجهزة يعرض جهاز USB غير معروف وخطأ قراءة واصف الجهاز مع Code 43">
+        <figcaption>هذا مثال على رسالة يمكن تسجيلها. استخدم النص الفعلي الذي يظهر في جهازك.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#descriptor-error"><strong>Unknown USB Device أو Code 43</strong><span>قارن الجهاز والكابل والمنفذ قبل الحكم على السبب.</span></a>
+        <a class="bootChoice" href="#storage"><strong>ويندوز يرى وحدة التخزين ولا تظهر في المستكشف</strong><span>افتح إدارة الأقراص لقراءة حالتها.</span></a>
+        <a class="bootChoice" href="#after-sleep"><strong>يختفي الإدخال بعد السكون</strong><span>قارن إدارة الأجهزة قبل الاستيقاظ وبعده.</span></a>
+        <a class="bootChoice" href="#windows-driver"><strong>بدأ بعد تحديث تعريف أو تحديث ويندوز</strong><span>راجع تعريف الجهاز المتأثر.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لا يظهر أي تغيير عند التوصيل</strong><span>اختبر المنفذ بجهاز بسيط سليم.</span></a>
+        <a class="bootChoice" href="#report"><strong>ظهر رمز مختلف</strong><span>أرسل النص والرمز كما يظهران.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="descriptor-error" data-boot-step="فشل التعرّف إلى جهاز USB" data-boot-demo="usb-unplug" aria-labelledby="descriptor-error-title">
+      <h2 id="descriptor-error-title" tabindex="-1">حدّد على أي توصيل يتكرر الخطأ</h2>
+      <p>عند ظهور <bdi>Device Descriptor Request Failed</bdi>، سجّل الرسالة. جرّب توصيلًا مباشرًا وكابل بيانات مناسبًا إن كان قابلًا للتبديل، وقارن بجهاز USB سليم. إذا بدأ الخلل بعد تحديث في ويندوز، دوّن إصدار النظام وما الذي تغيّر.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#device-only"><strong>يظهر الخطأ مع هذا الملحق وحده</strong><span>ركّز على الملحق وكابله ومتطلباته.</span></a>
+        <a class="bootChoice" href="#many-ports"><strong>يتكرر مع أجهزة سليمة ومنافذ مختلفة</strong><span>قارن السلوك قبل ويندوز وبعده.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لم أجرّب كابلًا أو منفذًا آخر</strong><span>غيّر عنصرًا واحدًا ودوّن النتيجة.</span></a>
+        <a class="bootChoice" href="#windows-driver"><strong>ظهر بعد تحديث معروف</strong><span>دوّن إصدار التعريف وحدّد ما تغيّر.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مشاركة رمز الخطأ</strong><span>اذكر معه الأجهزة والمنافذ المتأثرة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="windows-driver" data-boot-step="مراجعة تعريف USB" data-boot-demo="windows" aria-labelledby="windows-driver-title">
+      <h2 id="windows-driver-title" tabindex="-1">راجع تعريف الجهاز الذي ظهرت معه المشكلة</h2>
+      <p>احفظ عملك وأعد تشغيل ويندوز. إذا تكرر الخطأ، افتح خصائص الجهاز المتأثر في «إدارة الأجهزة» وسجّل إصدار التعريف وتاريخه من تبويب «برنامج التشغيل».</p>
+      <p>إذا بدأ العطل بعد تحديث تعريف ذلك الجهاز، راجع خيار «الرجوع إلى برنامج التشغيل السابق» إن كان متاحًا. إذا احتجت إلى تعريف، تحقق من تحديثات ويندوز أو التعريف المتوافق مع موديل الجهاز وإصدار النظام، ثم قارن النتيجة على التوصيل نفسه.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>عاد الاتصال بعد مراجعة التعريف</strong><span>دوّن إصدار التعريف والإجراء الذي غيّر النتيجة.</span></a>
+        <a class="bootChoice" href="#compare"><strong>الخطأ مستمر بعد إعادة التشغيل</strong><span>قارن بجهاز آخر أو منفذ سليم لتضييق السبب.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج مراجعة التعريف أو رمز الخطأ</strong><span>أرسل اسم الجهاز والرمز وإصدار النظام.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="after-sleep" data-boot-step="الخلل بعد السكون" data-boot-demo="intermittent" aria-labelledby="after-sleep-title">
+      <h2 id="after-sleep-title" tabindex="-1">قارن قبل السكون وبعد الاستيقاظ</h2>
+      <p>احفظ عملك واستخدم ملحقًا بسيطًا مثل ماوس سلكي. سجّل حالته بعد إعادة تشغيل عادية، ثم بعد دورة سكون واحدة. إذا كان متصلًا بقاعدة، أعد المقارنة بتوصيل مباشر. دوّن إصدار ويندوز وتعريف الملحق أو متحكم USB إذا بدأت المشكلة بعد تحديث.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#hub-dock"><strong>يختفي بعد السكون على القاعدة فقط</strong><span>قارن القاعدة بمنافذ الكمبيوتر المباشرة.</span></a>
+        <a class="bootChoice" href="#device-manager"><strong>يظهر رمز خطأ عند الاستيقاظ</strong><span>سجّل النص من إدارة الأجهزة.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>استقر بعد إعادة التشغيل أو تغيير التوصيل</strong><span>سجّل ما تغير ونتيجة الاستيقاظ.</span></a>
+        <a class="bootChoice" href="#report"><strong>يتكرر مع التوصيل المباشر</strong><span>اكتب هل يعود وحده أو بعد فصل الملحق أو إعادة التشغيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="intermittent" data-boot-step="اتصال يتكرر انقطاعه" data-boot-demo="intermittent" aria-labelledby="intermittent-title">
+      <h2 id="intermittent-title" tabindex="-1">حدّد اللحظة التي ينقطع فيها الاتصال</h2>
+      <p>راقب آخر مرة فصل فيها الملحق. إذا كانت وحدة التخزين تحتوي ملفات مهمة، أوقف النسخ المتكرر قبل تجربة أخرى. اكتب إن سبق الانقطاع تحريك القابس أو نقل ملفات أو استيقاظ من السكون.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#movement"><strong>يفصل عند حركة القابس أو الكابل</strong><span>راجع حالة الطرف والمنفذ من دون تكرار الحركة.</span></a>
+        <a class="bootChoice" href="#transfer-drop"><strong>يفصل أثناء النسخ أو مع الحمل</strong><span>احمِ البيانات وراجع الطاقة والتوصيل المباشر.</span></a>
+        <a class="bootChoice" href="#after-sleep"><strong>يفصل بعد السكون أو الاستيقاظ</strong><span>قارن قبل السكون وبعده.</span></a>
+        <a class="bootChoice" href="#hub-dock"><strong>يحدث مع موزع أو قاعدة توصيل</strong><span>اختبر فرق التوصيل المباشر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="movement" data-boot-step="انقطاع مع حركة الوصلة" data-boot-demo="usb-unplug" aria-labelledby="movement-title">
+      <h2 id="movement-title" tabindex="-1">افصل الملحق وافحص الوصلة من الخارج</h2>
+      <p>أوقف تحريك القابس أثناء التشغيل. أوقف استخدام الملحق وأخرج وحدة التخزين بأمان إن أمكن. بعد فصله، ابحث عن ارتخاء أو انثناء أو غلاف كابل ممزق. إذا كان شكل الوصلة سليمًا، سجّل أين حدث الانقطاع في المحاولات السابقة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#physical-damage"><strong>المنفذ أو القابس مكسور أو مرتخٍ</strong><span>أوقف استعمال الجزء المتضرر.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لا أرى تلفًا وأملك كابلًا مناسبًا</strong><span>قارن مرة واحدة بتوصيل مباشر.</span></a>
+        <a class="bootChoice" href="#report"><strong>الانقطاع متقطّع ولا أستطيع تحديد مكانه</strong><span>اكتب ما لاحظته قبل فصل الملحق.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="transfer-drop" data-boot-step="انقطاع أثناء النسخ أو الحمل" data-boot-demo="usb-data" aria-labelledby="transfer-drop-title">
+      <h2 id="transfer-drop-title" tabindex="-1">احمِ الملفات ثم راجع مسار التوصيل</h2>
+      <p>إذا كانت الوحدة تفصل أثناء النسخ وفيها ملفات مهمة، توقف عن إعادة التجربة. إذا كان لديك جهاز اختبار سليم، وصّله مباشرة بكابل بيانات متوافق. دوّن إن كان الانقطاع يحدث عند استخدام سرعة أعلى، أو عند توصيل أجهزة أخرى بالقاعدة، أو مع غياب محوّل الطاقة المخصّص للملحق.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#storage"><strong>الوحدة تحتوي ملفات مهمة</strong><span>راجع خطوات الحفاظ على البيانات قبل تغيير أي إعداد.</span></a>
+        <a class="bootChoice" href="#hub-dock"><strong>الانقطاع يظهر مع موزع أو كابل تمديد</strong><span>قارن بتوصيل مباشر.</span></a>
+        <a class="bootChoice" href="#compare"><strong>يتكرر في توصيل مباشر ومع ملحق اختبار</strong><span>قارن منفذًا آخر وكابلًا مطابقًا.</span></a>
+        <a class="bootChoice" href="#report"><strong>النتيجة مرتبطة بنوع استخدام معين</strong><span>صف العملية التي يبدأ عندها الانقطاع.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="hub-dock" data-boot-step="الموزع أو قاعدة التوصيل" data-boot-demo="usb-hub" aria-labelledby="hub-dock-title">
+      <h2 id="hub-dock-title" tabindex="-1">قارن توصيلًا مباشرًا بتوصيل القاعدة</h2>
+      <p>افصل الملحقات غير الضرورية بعد إيقاف استخدامها. جرّب الملحق المطلوب وحده في منفذ الكمبيوتر المناسب. إذا كان للقاعدة أو الملحق محوّل طاقة مخصّص، تحقّق من توصيله ومن توافق كابل القاعدة مع الوظيفة المطلوبة.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/usb-hub.webp" width="840" height="420" loading="lazy" alt="رسم يقارن اتصال جهاز USB بالكمبيوتر مباشرة واتصاله عبر موزع أو قاعدة">
+        <figcaption>عندما ينجح التوصيل المباشر، سجّل الفرق لتضييق الفحص إلى القاعدة وكابلها وتغذيتها.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>يعمل مباشرة وبثبات</strong><span>سجّل نتيجة القاعدة والمحوّل والكابل.</span></a>
+        <a class="bootChoice" href="#usb-c"><strong>القاعدة على USB-C وتظهر رسالة وظيفة محدودة</strong><span>تحقّق من دعم المنفذ والكابل للوظيفة.</span></a>
+        <a class="bootChoice" href="#compare"><strong>يفصل مباشرة أيضًا</strong><span>قارن المنفذ والملحق بشكل منفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>يتعذّر التوصيل المباشر</strong><span>اذكر موديل القاعدة وما الموصلات المستخدمة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="storage" data-boot-step="اكتشاف القرص وحماية الملفات" data-boot-demo="locked" aria-labelledby="storage-title">
+      <h2 id="storage-title" tabindex="-1">راجع حالة الوحدة قبل أي تهيئة</h2>
+      <p>إذا كانت الفلاشة أو وحدة التخزين مستقرة، افتح «إدارة الأقراص» واقرأ هل تظهر بالسعة المتوقعة وهل لها حرف. إذا طلب ويندوز التهيئة أو ظهرت الحالة <bdi>RAW</bdi> وفيها ملفات مهمة، أغلق الطلب. مع الانقطاع أو تكرار أخطاء القراءة، قدّم حماية الملفات على اختبار المنفذ.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#disk-management" data-boot-demo="drive"><strong>تظهر في إدارة الأقراص ولا تظهر في المستكشف</strong><span>افتح فرع إدارة الأقراص من مسار التخزين.</span></a>
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#protect-data" data-boot-demo="locked"><strong>فيها ملفات مهمة أو يطلب ويندوز تهيئتها</strong><span>افتح خطوة حماية البيانات قبل متابعة التشخيص.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مشاركة حالة الوحدة</strong><span>اكتب السعة وحالة إدارة الأقراص وما إذا كان الاتصال متقطعًا.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="surge" data-boot-step="تحذير زيادة حمل USB" data-boot-demo="usb-alert" aria-labelledby="surge-title">
+      <h2 id="surge-title" tabindex="-1">أوقف التجربة عند ظهور تحذير طاقة أو تلف</h2>
+      <ul>
+        <li>إذا لاحظت سخونة غير معتادة أو رائحة احتراق أو سائلًا، أوقف تشغيل الكمبيوتر وافصل تغذيته من جهة آمنة إن أمكن. اترك المنفذ للفحص قبل إعادة استخدامه.</li>
+        <li>إذا ظهرت رسالة <bdi>Power surge on the USB port</bdi> وحدها، افصل الملحق إذا أمكن بأمان. سجّل هل تختفي الرسالة بعد فصله وإعادة التشغيل، واترك الملحق مفصولًا.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#physical-damage"><strong>توجد سخونة أو آثار تلف</strong><span>اترك المنفذ خارج الاستخدام وحدّد موضعه للفني.</span></a>
+        <a class="bootChoice" href="#technician"><strong>التحذير يستمر بعد فصل الملحقات</strong><span>شارك الرسالة لفحص تغذية المنفذ والحماية.</span></a>
+        <a class="bootChoice" href="#report"><strong>اختفى التحذير بعد فصل الملحق</strong><span>دوّن الجهاز الذي سبقه والمنفذ المستخدم.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="physical-damage" data-boot-step="تلف ظاهر في الوصلة" data-boot-demo="usb-alert" aria-labelledby="physical-damage-title">
+      <h2 id="physical-damage-title" tabindex="-1">اترك المنفذ المتضرر دون استخدام</h2>
+      <p>سجّل هل لسان المنفذ مكسور أو القابس معوج أو يوجد أثر سائل. تجنّب إدخال أدوات في المنفذ أو الضغط على القابس. إذا احتاج الجهاز إلى فتح، يفحصه الفني بعد فصل التغذية والبطارية وفق دليل الموديل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#technician"><strong>أريد تحديد الجزء الذي يفحصه الفني</strong><span>سجّل هل المنفذ على البورد أو على لوحة منفصلة.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مشاركة وصف التلف</strong><span>اذكر موقع المنفذ وما حدث قبل توقفه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="technician" data-boot-step="فحص مسار المنفذ لدى الفني" data-boot-demo="repair" aria-labelledby="technician-title">
+      <h2 id="technician-title" tabindex="-1">حدّد مسار المنفذ في مخطط الموديل</h2>
+      <p>ابدأ برقم البورد وابحث في <a href="/boardview/">BoardView</a> عن موصل المنفذ أو لوحة الواجهة. قبل فتح الجهاز، أطفئه بالكامل وافصل الشاحن والبطارية أو تغذية المكتبي وفق تعليمات الموديل.</p>
+      <ul>
+        <li>مع عطل أمامي فقط، حدّد موصل الواجهة وكابلها قبل فحص المسار على اللوحة الأم.</li>
+        <li>مع ضوء تشغيل وغياب البيانات، افحص الموصل ومسار الإشارة وحماية خطوط البيانات حسب المخطط.</li>
+        <li>مع تحذير زيادة الحمل أو غياب التغذية، حدّد خط <bdi>VBUS</bdi> ومكوّنات الحماية وفق مخطط المنفذ. سجّل نتيجة الفحص من دون تجاوز عناصر الحماية.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك رقم البورد ونتيجة الفحص</strong><span>اذكر المنفذ ومتى تظهر الطاقة أو الرسالة.</span></a>
+        <a class="bootChoice" href="#compare"><strong>أحتاج مقارنة إضافية والمنفذ سليم ظاهريًا</strong><span>قارن بملحق ومنفذ معروفين في غياب السخونة والتحذير.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="اتصال USB مستقر" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">دوّن التغيير الذي أعاد الاتصال</h2>
+      <p>سجّل ما غيّر النتيجة: الكابل، المنفذ، وضع الهاتف، أو طريقة التوصيل. إذا عاد الانقطاع، اكتب هل حدث أثناء النسخ أو بعد السكون، وهل ظهر رمز جديد في ويندوز.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك ما حلّ المشكلة</strong><span>أضف النتيجة ليستفيد منها من يواجه الحالة نفسها.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>عاد الانقطاع مرة أخرى</strong><span>ابدأ من اللحظة التي يظهر فيها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>ابدأ بما شاهدته. هل يشحن الجهاز فقط، أو يقطع أثناء النسخ، أو تظهر رسالة زيادة حمل؟ نتيجة واحدة، مثل نجاح نفس الملحق على منفذ خلفي، قد تكفي لتحديد الفحص التالي.</p>
+      <p><strong>سنقرأ حالتك بعناية ونردّ عليك في غرفة الصيانة.</strong> سنراجع ما جرّبته ونوضح الخطوة التالية. إذا ظهرت نتيجة جديدة، أضفها إلى المناقشة نفسها حتى نتابع معك من مكان التوقف.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل الكمبيوتر أو رقم البورد وموديل الملحق.</li>
+          <li>نوع المنفذ وموقعه، ونوع الكابل أو القاعدة إن استعملتها.</li>
+          <li>نتيجة المقارنة بمنفذ أو ملحق آخر، ومتى يحدث الانقطاع.</li>
+          <li>نص التحذير أو رمز إدارة الأجهزة، وحالة القرص إن كان ملحق تخزين.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. اذكر النتائج واترك الأرقام التسلسلية وكلمات المرور خاصة بك.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>

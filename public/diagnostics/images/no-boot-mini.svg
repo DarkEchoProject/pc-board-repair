@@ -171,4 +171,27 @@
     <rect x="30" y="21" width="60" height="33" rx="4" fill="#482e3d" stroke="#ffa99e" stroke-width="2.5"/>
     <path d="m60 23-6 9 9 7-7 14m7-14 10-6m-19-1-10 8" fill="none" stroke="#ffd0a4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
+
+  <symbol id="usb-data" viewBox="0 0 120 84">
+    <rect x="31" y="25" width="26" height="22" rx="4" fill="#194957" stroke="#92e5ed" stroke-width="2.5"/>
+    <path d="M57 31h10v10H57M71 30h17m-17 13h17m-5-17 5 4-5 4m-7 5-5 4 5 4" fill="none" stroke="#adf0d7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="usb-unplug" viewBox="0 0 120 84">
+    <path d="M32 35h10m31 0h15" fill="none" stroke="#8ccade" stroke-width="3" stroke-linecap="round"/>
+    <rect x="41" y="27" width="15" height="16" rx="3" fill="#245871" stroke="#8ccade" stroke-width="2.5"/>
+    <path d="M55 31h5v8h-5m13-9h8v10h-8m-5 6 4 4m0-30-4 5" fill="none" stroke="#ffd087" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="usb-hub" viewBox="0 0 120 84">
+    <path d="M33 35h13m28 0h13m-13 5 12 9m-12-19 12-9" fill="none" stroke="#8edcec" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="44" y="25" width="31" height="21" rx="5" fill="#255568" stroke="#a3e6f1" stroke-width="2.5"/>
+    <path d="M52 35h15" stroke="#b9f4e1" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="usb-alert" viewBox="0 0 120 84">
+    <path d="M59 22 77 50H42Z" fill="#663a38" stroke="#ffbb91" stroke-width="2.8" stroke-linejoin="round"/>
+    <path d="M59 32v7" stroke="#ffe0ae" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="59" cy="44.5" r="1.8" fill="#ffe0ae"/>
+  </symbol>
 </svg>
