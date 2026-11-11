@@ -140,4 +140,35 @@
     <path d="M58 29v10" stroke="#ffdbb3" stroke-width="4" stroke-linecap="round"/>
     <circle cx="58" cy="45" r="2" fill="#ffdbb3"/>
   </symbol>
+
+  <symbol id="screen-pair" viewBox="0 0 120 84">
+    <rect x="29" y="22" width="33" height="25" rx="3" fill="#15364d" stroke="#78c6dd" stroke-width="3"/>
+    <rect x="65" y="27" width="27" height="22" rx="3" fill="#22595f" stroke="#92e9d0" stroke-width="3"/>
+    <path d="M35 51h21m15 3h15M74 38l4 4 7-8" fill="none" stroke="#bcf3e4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="screen-dim" viewBox="0 0 120 84">
+    <rect x="32" y="22" width="56" height="31" rx="4" fill="#172f42" stroke="#76acbf" stroke-width="2.5"/>
+    <path d="M35 50l25-22 23 20Z" fill="#377d8b" opacity=".68"/>
+    <circle cx="72" cy="30" r="4" fill="#d5bf83"/>
+    <path d="M46 45l8-8 6 6 6-5 9 7" fill="none" stroke="#afdbd9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="screen-lines" viewBox="0 0 120 84">
+    <rect x="30" y="21" width="60" height="33" rx="4" fill="#213950" stroke="#8cd7ea" stroke-width="2.5"/>
+    <path d="M45 24v27m8-27v27m10-27v27m14-27v27" stroke="#eca1bf" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M33 41h54" stroke="#90e7dc" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="screen-hinge" viewBox="0 0 120 84">
+    <path d="m38 44 7-22h31l9 22" fill="#22526a" stroke="#8fdcef" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M31 45h58l-6 8H37Z" fill="#26455e" stroke="#8fdcef" stroke-width="3" stroke-linejoin="round"/>
+    <circle cx="42" cy="44" r="5" fill="#f4c783"/>
+    <path d="M43 42q9-12 20-12" fill="none" stroke="#f4c783" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="screen-alert" viewBox="0 0 120 84">
+    <rect x="30" y="21" width="60" height="33" rx="4" fill="#482e3d" stroke="#ffa99e" stroke-width="2.5"/>
+    <path d="m60 23-6 9 9 7-7 14m7-14 10-6m-19-1-10 8" fill="none" stroke="#ffd0a4" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
 </svg>

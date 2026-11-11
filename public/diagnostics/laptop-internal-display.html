@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الشاشة الخارجية تعمل والداخلية سوداء أو فيها خطوط | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفحص شاشة اللابتوب الداخلية عند ظهور صورة خافتة أو خطوط أو شاشة سوداء، مع مقارنة BIOS وويندوز والكابل واللوحة.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-internal-display">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "الشاشة الخارجية تعمل والداخلية سوداء أو فيها خطوط",
+    "inLanguage": "ar",
+    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-internal-display",
+    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
+  }
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← شاشة اللابتوب الداخلية</div>
+  <section class="bootHero" aria-labelledby="internal-display-title">
+    <div class="bootMeta"><span>المسار 04</span><span dir="ltr">Laptop Display</span><span>الشاشة الداخلية</span></div>
+    <h1 id="internal-display-title">الشاشة الخارجية تعمل والداخلية سوداء أو فيها خطوط</h1>
+    <p>ابدأ بما يظهر على شاشة اللابتوب. معرفة توقيت العطل وشكله تساعد على اختيار الفحص، من وضع العرض في ويندوز إلى إضاءة الشاشة ومسار الكابل.</p>
+    <ol class="bootStages" aria-label="مراحل تشخيص الشاشة">
+      <li><b>١</b><span>شكل العَرَض</span></li>
+      <li><b>٢</b><span>قبل ويندوز وبعده</span></li>
+      <li><b>٣</b><span>فحص مسار الشاشة</span></li>
+    </ol>
+  </section>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال بينها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="screen-pair" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ماذا ترى على شاشة اللابتوب الداخلية؟</h2>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#damage"><strong>كسر أو سائل أو مفصلة عالقة</strong><span>أوقف تحريك الغطاء وراجع الخطوة المناسبة قبل أي تجربة أخرى.</span></a>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#black"><strong>الشاشة سوداء بالكامل</strong><span>الخارجية تعرض صورة سليمة والداخلية تبدو مطفأة.</span></a>
+        <a class="bootChoice" href="#dim"><strong>توجد صورة خافتة جدًا</strong><span>أرى الشعار أو سطح المكتب عند تسليط ضوء.</span></a>
+        <a class="bootChoice" href="#lines"><strong>تظهر خطوط أو وميض أو ألوان مشوّهة</strong><span>قد يكون الأثر ثابتًا أو يظهر لثوانٍ ثم يختفي.</span></a>
+        <a class="bootChoice" href="#after-windows"><strong>تعمل عند الشعار ثم تتوقف في ويندوز</strong><span>أرى صورة واضحة قبل ظهور شاشة تسجيل الدخول.</span></a>
+        <a class="bootChoice" href="#hinge"><strong>تتغير الصورة مع زاوية الغطاء</strong><span>تختفي أو تظهر خطوط عند تحريك الشاشة.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لم أحدد متى يبدأ العطل</strong><span>قارن ما تعرضه الشاشتان عند التشغيل وبعده.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="compare" data-boot-step="مقارنة الشاشتين" data-boot-demo="screen-pair" aria-labelledby="compare-title">
+      <h2 id="compare-title" tabindex="-1">سجّل أول لحظة يختلف فيها العرض</h2>
+      <ol>
+        <li>احفظ عملك وأعد التشغيل والغطاء مفتوح بزاوية مريحة. سجّل أين يظهر الشعار أولًا، وهل تعرض الداخلية أي صورة قبل دخول ويندوز.</li>
+        <li>بعد دخول النظام، قارن نفس النافذة على الشاشتين إن أمكن. سجّل هل الخارجية سليمة طوال الوقت أم يظهر فيها الأثر أيضًا.</li>
+        <li>قد تبدأ الخارجية بعرض الصورة بعد تحميل النظام حسب الجهاز والوصلة. إذا لم ترَ عليها الشعار، سجّل المرحلة التي بدأت تعرض فيها الصورة.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/display-compare.webp" width="840" height="420" loading="lazy" alt="رسم يقارن شاشة لابتوب عليها خطوط بشاشة خارجية تعرض صورة سليمة">
+        <figcaption>سجّل نتيجة كل شاشة في نفس المرحلة. هذا يساعد على تضييق مكان الفحص.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#before-os"><strong>الداخلية معطلة حتى قبل ويندوز</strong><span>راجع الشعار وواجهة BIOS واختبار الشاشة إن توفر.</span></a>
+        <a class="bootChoice" href="#after-windows"><strong>الداخلية سليمة قبل ويندوز</strong><span>تابع من إعدادات العرض وتعريف الرسوميات.</span></a>
+        <a class="bootChoice" href="#both-affected"><strong>الأثر يظهر على الشاشتين</strong><span>حدّد هل بدأ في نفس اللحظة وعلى نفس الصورة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع تحديد المرحلة</strong><span>اكتب ما تمكنت من رؤيته ومتى ظهرت الخارجية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="black" data-boot-step="شاشة داخلية سوداء" data-boot-demo="blank" aria-labelledby="black-title">
+      <h2 id="black-title" tabindex="-1">تحقّق من السطوع وابحث عن صورة خافتة</h2>
+      <p>افتح الغطاء بزاوية مريحة وارفع السطوع بمفاتيح اللابتوب. إذا كنت تعرف أن الشاشة <bdi>LCD</bdi>، اعرض صورة فاتحة على الخارجية واختر تكرار العرض إن أمكن. وجّه ضوء هاتف إلى سطح الداخلية من زاوية من دون لمسها، وابحث عن تفاصيل الصورة.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/display-faint.webp" width="840" height="420" loading="lazy" alt="رسم لهاتف يسلط ضوءًا مائلًا على شاشة LCD فتظهر نافذة خافتة">
+        <figcaption>رؤية تفاصيل خافتة في شاشة LCD توجّه الفحص إلى الإضاءة الخلفية. إذا كانت الشاشة OLED أو كان نوعها غير معروف، انتقل إلى مقارنة العرض قبل ويندوز وبعده.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#dim"><strong>وجدت صورة خافتة</strong><span>حدّد هل تظهر منذ الشعار أم داخل النظام فقط.</span></a>
+        <a class="bootChoice" href="#before-os"><strong>سوداء من لحظة التشغيل</strong><span>تحقّق من الشعار وBIOS قبل تغيير الإعدادات.</span></a>
+        <a class="bootChoice" href="#project"><strong>تسود فقط بعد دخول ويندوز</strong><span>راجع هل ويندوز يرسل الصورة للخارجية وحدها.</span></a>
+        <a class="bootChoice" href="#compare"><strong>لم أتأكد من توقيت العطل</strong><span>سجّل ما تراه على الشاشتين خلال إعادة تشغيل عادية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="dim" data-boot-step="صورة خافتة أو إضاءة ضعيفة" data-boot-demo="screen-dim" aria-labelledby="dim-title">
+      <h2 id="dim-title" tabindex="-1">ميّز بين ضعف السطوع وفقد الإضاءة</h2>
+      <p>في شاشة LCD، إذا رأيت نصًا أو شعارًا واضح المعالم تحت ضوء مائل وبقيت الشاشة معتمة عند رفع السطوع، سجّل ذلك. قد يحتاج الفني إلى فحص الشاشة أو الكابل أو تغذية الإضاءة والتحكم بها على اللوحة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#technician"><strong>الصورة خافتة منذ الشعار أو داخل BIOS</strong><span>اطلب فحص الإضاءة الخلفية ومسار الشاشة على اللوحة.</span></a>
+        <a class="bootChoice" href="#display-settings"><strong>تخفّ فقط عند دخول ويندوز</strong><span>تحقق من سطوع الشاشة الداخلية وإعدادات العرض.</span></a>
+        <a class="bootChoice" href="#before-os"><strong>لم أتحقق منها قبل ويندوز</strong><span>قارن الشعار أو صفحة BIOS بالحالة داخل النظام.</span></a>
+        <a class="bootChoice" href="#report"><strong>نوع الشاشة أو النتيجة غير واضحين</strong><span>اكتب موديل الجهاز وما ظهر عند رفع السطوع.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="lines" data-boot-step="خطوط أو تشوّه في الصورة" data-boot-demo="screen-lines" aria-labelledby="lines-title">
+      <h2 id="lines-title" tabindex="-1">هل تظهر الخطوط قبل تحميل ويندوز؟</h2>
+      <p>حدّد شكل الأثر ومكانه. سجّل هل هو خط ثابت على نفس الجزء من الشاشة، أم وميض يتبدل، أم بقعة بدأت بعد ضربة. راقب هل يبقى الأثر في صفحة BIOS أو يظهر داخل برنامج معيّن.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#before-os"><strong>أراه على الشعار أو BIOS</strong><span>جرّب اختبار الشاشة المدمج إذا كان متاحًا.</span></a>
+        <a class="bootChoice" href="#capture"><strong>أراه داخل ويندوز فقط</strong><span>قارن لقطة ويندوز مع ما يظهر فعليًا على الشاشة.</span></a>
+        <a class="bootChoice" href="#hinge"><strong>يتغير مع زاوية فتح الغطاء</strong><span>سجّل هل تتغير الخطوط أم تنطفئ الشاشة كاملة.</span></a>
+        <a class="bootChoice" href="#damage"><strong>ظهر بعد ضربة أو مع كسر ظاهر</strong><span>أوقف تحريك الغطاء أو الضغط على الشاشة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="before-os" data-boot-step="مقارنة الشعار وBIOS" data-boot-demo="inspect" aria-labelledby="before-os-title">
+      <h2 id="before-os-title" tabindex="-1">لاحظ الداخلية قبل تحميل النظام</h2>
+      <ol>
+        <li>أعد التشغيل، واستخدم مفتاح <bdi>Setup</bdi> الخاص بالموديل إذا أمكن. إذا ظهرت صفحة BIOS على الخارجية فقط، سجّل هل كانت الداخلية تعرض الشعار قبلها.</li>
+        <li>راقب السطوع والخطوط في صفحة ثابتة إن ظهرت. اخرج من BIOS دون حفظ تغييرات. سجّل النتيجة قبل الانتقال إلى فحص ويندوز أو اختبار الشاشة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#panel-test"><strong>سوداء أو فيها خطوط قبل ويندوز</strong><span>ابحث عن اختبار الشاشة المدمج لموديلك.</span></a>
+        <a class="bootChoice" href="#dim"><strong>أرى صورة خافتة قبل ويندوز</strong><span>راجع فرع إضاءة شاشة LCD.</span></a>
+        <a class="bootChoice" href="#after-windows"><strong>الشعار وBIOS واضحان على الداخلية</strong><span>انتقل إلى خطوات عرض ويندوز.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع تحديد ما يحدث قبل ويندوز</strong><span>دوّن أين تظهر الصورة والمرحلة التي يبدأ فيها العطل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="panel-test" data-boot-step="اختبار الشاشة المدمج" data-boot-demo="screen-lines" aria-labelledby="panel-test-title">
+      <h2 id="panel-test-title" tabindex="-1">اختبر ألوانًا ثابتة إذا كان الموديل يدعم ذلك</h2>
+      <p>توفّر بعض الأجهزة اختبارًا للشاشة المدمجة <bdi>LCD BIST</bdi> يبدأ من قائمة التشخيص أو بطريقة مخصّصة للموديل. إذا توفر، اتبع طريقة تشغيله وراقب الألوان الكاملة. سجّل هل يظهر الخط في نفس الموضع على أكثر من لون أو تتوقف الشاشة أثناء الاختبار.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#technician"><strong>ظهر العطل أثناء اختبار الشاشة</strong><span>شارك النتيجة لفحص مسار العرض الداخلي.</span></a>
+        <a class="bootChoice" href="#after-windows"><strong>ألوان الاختبار سليمة والعطل داخل ويندوز</strong><span>تحقق من إعدادات العرض والتعريف.</span></a>
+        <a class="bootChoice" href="#technician"><strong>الاختبار سليم لكن العطل يظهر قبل ويندوز</strong><span>سجّل الفرق بين الاختبار والإقلاع العادي.</span></a>
+        <a class="bootChoice" href="#report"><strong>الاختبار غير متاح أو لم أتمكن من تشغيله</strong><span>شارك نتيجة الشعار وBIOS التي لديك.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="capture" data-boot-step="اللقطة الرقمية مقابل الشاشة" data-boot-demo="screen-pair" aria-labelledby="capture-title">
+      <h2 id="capture-title" tabindex="-1">قارن لقطة ويندوز مع ما تراه على الشاشة</h2>
+      <ol>
+        <li>عند ظهور الخطوط داخل ويندوز، التقط لقطة من النظام ثم افتحها على الخارجية أو على جهاز آخر. قارنها بنفس النافذة التي ظهر فيها الأثر.</li>
+        <li>إذا ظهر التشوّه داخل ملف اللقطة، دوّن التطبيق والمرحلة التي ظهر فيها. إذا كانت اللقطة سليمة والأثر على الداخلية وحدها، افحص مرحلة العرض الداخلي واختبار الشاشة.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/display-capture.webp" width="840" height="420" loading="lazy" alt="رسم يقارن خطوطًا مرئية على شاشة اللابتوب بلقطة رقمية سليمة لنفس النافذة">
+        <figcaption>صورة الكاميرا تعرض الأثر المرئي على الشاشة. افتح لقطة ويندوز على الخارجية لتقارن النتيجتين.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#driver"><strong>التشوّه موجود داخل ملف اللقطة</strong><span>راجع تعريف الرسوميات أو التطبيق الذي يظهر معه.</span></a>
+        <a class="bootChoice" href="#panel-test"><strong>اللقطة سليمة والخطوط على الداخلية فقط</strong><span>افحص هل يتكرر الأثر خارج ويندوز.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد نتيجة واضحة</strong><span>صف هل الأثر ثابت أم متقطع وأين يظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="after-windows" data-boot-step="العطل بعد دخول ويندوز" data-boot-demo="windows" aria-labelledby="after-windows-title">
+      <h2 id="after-windows-title" tabindex="-1">ابدأ بوضع العرض ثم تحقق من التعريف</h2>
+      <p>إذا كانت الداخلية تعرض الشعار أو BIOS بوضوح، أبقِ الخارجية موصولة حتى ترى الإعدادات. سجّل هل بدأ العطل عند الدخول، بعد تحديث، أو عند تغيير وضع العرض أو توصيل قاعدة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#project"><strong>الداخلية تطفأ فور دخول ويندوز</strong><span>تحقق من وضع تكرار العرض.</span></a>
+        <a class="bootChoice" href="#display-settings"><strong>تظهر الصورة بدقة خاطئة أو تومض</strong><span>اقرأ دقة ومعدل تحديث الشاشة الداخلية.</span></a>
+        <a class="bootChoice" href="#driver"><strong>بدأ بعد تحديث التعريف أو مع برنامج محدد</strong><span>راقب هل الخلل في ويندوز كله أم في التطبيق.</span></a>
+        <a class="bootChoice" href="#internal-missing"><strong>ويندوز لا يعرض الشاشة الداخلية</strong><span>قارن اكتشافها مع النتيجة قبل ويندوز.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="project" data-boot-step="اختيار وضع العرض" data-boot-demo="screen-pair" aria-labelledby="project-title">
+      <h2 id="project-title" tabindex="-1">جرّب تكرار الصورة على الشاشتين</h2>
+      <ol>
+        <li>من الشاشة الخارجية، اضغط <kbd dir="ltr">Win + P</kbd> واقرأ الخيارات الظاهرة. إذا كان <bdi>Second screen only</bdi> محددًا، اختر <bdi>Duplicate</bdi> لعرض نفس الصورة على الشاشتين.</li>
+        <li>إذا عادت الداخلية، افتح نافذة ثابتة وقارن الصورتين. إذا لم تظهر، انتقل إلى إعدادات العرض لمعرفة هل تم اكتشافها.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/display-project.webp" width="840" height="420" loading="lazy" alt="رسم لقائمة Win وP يبرز خيار Duplicate بين خيارات عرض ويندوز">
+        <figcaption>اختر «تكرار» وأنت ترى القائمة على الشاشة الخارجية.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الصورة عادت على الشاشتين</strong><span>سجّل وضع العرض الذي أعاد الصورة.</span></a>
+        <a class="bootChoice" href="#display-settings"><strong>الصورة موجودة لكن مشوّهة</strong><span>راجع الدقة ومعدل التحديث.</span></a>
+        <a class="bootChoice" href="#internal-missing"><strong>الداخلية بقيت سوداء</strong><span>تحقق هل تظهر في قائمة الشاشات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="display-settings" data-boot-step="إعدادات الشاشة الداخلية" data-boot-demo="windows" aria-labelledby="display-settings-title">
+      <h2 id="display-settings-title" tabindex="-1">اقرأ دقة الشاشة ومعدل تحديثها</h2>
+      <ol>
+        <li>افتح «الإعدادات ← النظام ← العرض». حدّد الشاشة الداخلية إن ظهرت، وتحقق من مستوى السطوع. في وضع التوسيع تستطيع مراجعة إعداد كل شاشة على حدة.</li>
+        <li>اختر الدقة الموصى بها للشاشة. في «عرض متقدم»، سجّل معدل التحديث الحالي واختر معدلًا تدعمه الشاشة إذا كان مختلفًا عما عمل سابقًا. أبقِ الخارجية متاحة لتتأكد من النتيجة قبل اعتمادها.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>اختفى العطل بعد تصحيح إعداد العرض</strong><span>سجّل الإعداد الذي تغيّر.</span></a>
+        <a class="bootChoice" href="#driver"><strong>الإعدادات صحيحة والوميض مستمر</strong><span>تابع فحص التعريف أو التطبيق.</span></a>
+        <a class="bootChoice" href="#internal-missing"><strong>الشاشة الداخلية غير مدرجة</strong><span>تحقق من اكتشافها بعد فصل قاعدة التوصيل إن أمكن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="driver" data-boot-step="الرسوميات أو التطبيق في ويندوز" data-boot-demo="repair" aria-labelledby="driver-title">
+      <h2 id="driver-title" tabindex="-1">حدّد هل الوميض في تطبيق واحد أم في النظام</h2>
+      <ol>
+        <li>احفظ عملك. افتح «إدارة المهام» بجانب نافذة يظهر فيها العطل. دوّن هل تومض إدارة المهام مع بقية الشاشة أم يظهر العطل في برنامج واحد.</li>
+        <li>يمكنك تجربة <kbd dir="ltr">Win + Ctrl + Shift + B</kbd> مرة واحدة لإعادة تهيئة تعريف الرسوميات. قد تومض الشاشة للحظات. إذا عاد العطل بعد تحديث معروف، افحص خيار الرجوع إلى التعريف السابق في خصائص بطاقة العرض إذا كان متاحًا.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الصورة استقرت داخل ويندوز</strong><span>سجّل ما غيّر النتيجة وهل تتكرر بعد التشغيل.</span></a>
+        <a class="bootChoice" href="#before-os"><strong>رأيت الأثر أيضًا قبل ويندوز</strong><span>أعد المقارنة في BIOS أو اختبار الشاشة.</span></a>
+        <a class="bootChoice" href="#report"><strong>الخلل مستمر في تطبيق أو أكثر</strong><span>شارك اسم التطبيق، إصدار النظام، ونتيجة لقطة الشاشة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="internal-missing" data-boot-step="الداخلية غير مكتشفة" data-boot-demo="screen-pair" aria-labelledby="internal-missing-title">
+      <h2 id="internal-missing-title" tabindex="-1">هل تظهر الداخلية خارج ويندوز؟</h2>
+      <p>راجع «النظام ← العرض ← شاشات متعددة» واستخدم «اكتشاف» إن ظهر. إذا كانت الخارجية تعمل عبر قاعدة توصيل، يمكنك المقارنة بتوصيلها بمنفذ عرض مباشر يدعمه اللابتوب. سجّل هل الداخلية ظهرت في الشعار أو BIOS.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#driver"><strong>الداخلية تعمل قبل دخول ويندوز</strong><span>راجع ما حدث بعد تحميل تعريف العرض.</span></a>
+        <a class="bootChoice" href="#technician"><strong>سوداء من التشغيل وغير مكتشفة</strong><span>شارك حالة الاختبار لفحص الكابل والشاشة ومسارها.</span></a>
+        <a class="bootChoice" href="#recent-repair"><strong>بدأ بعد تبديل الشاشة أو الكابل</strong><span>تحقق من توافق القطعة مع الموديل.</span></a>
+        <a class="bootChoice" href="#report"><strong>تعذّر التأكد من اكتشافها</strong><span>اكتب نوع الوصلة التي تعمل بها الخارجية وما تعرضه الداخلية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="hinge" data-boot-step="العطل يتغيّر مع زاوية الغطاء" data-boot-demo="screen-hinge" aria-labelledby="hinge-title">
+      <h2 id="hinge-title" tabindex="-1">سجّل شكل التغيّر عند المفصلة</h2>
+      <p>استند إلى ما حدث أثناء فتح الغطاء بشكل عادي. إذا ظهرت خطوط أو وميض عند زاوية معيّنة والخارجية مستقرة، سجّل ذلك لفحص مسار الكابل. إذا انطفأت الشاشة دفعة واحدة أو دخل الجهاز في وضع السكون، سجّل هذه الملاحظة لفحص حساس الغطاء.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/display-hinge.webp" width="840" height="420" loading="lazy" alt="رسم يوضح مرور الكابل من اللوحة الأم إلى الشاشة الداخلية عبر منطقة المفصلة">
+        <figcaption>هذا رسم مبسّط لمسار الكابل. موضع مروره والمفصلة التي يمر منها يختلفان حسب الموديل.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#technician"><strong>الخطوط أو الوميض تتغير مع الزاوية</strong><span>أوقف تكرار الحركة وشارك النتيجة لفحص الكابل والموصلات.</span></a>
+        <a class="bootChoice" href="#lid-sensor"><strong>الداخلية تنطفئ دفعة واحدة</strong><span>راجع علامات السكون وحساس الغطاء.</span></a>
+        <a class="bootChoice" href="#damage"><strong>المفصلة عالقة أو الغطاء مفكوك</strong><span>اترك الغطاء في وضعه وأوقف تحريكه.</span></a>
+        <a class="bootChoice" href="#report"><strong>التغير متقطّع ولم أحدد النمط</strong><span>صف آخر مرة حدث فيها وهل تغيّرت الخارجية أيضًا.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="lid-sensor" data-boot-step="حساس الغطاء" data-boot-demo="screen-hinge" aria-labelledby="lid-sensor-title">
+      <h2 id="lid-sensor-title" tabindex="-1">تحقّق من علامات إغلاق الغطاء</h2>
+      <p>سجّل هل ينطفئ ضوء لوحة المفاتيح أو يدخل الجهاز في السكون مع انطفاء الداخلية. أبعد الملحقات والأغطية المغناطيسية القريبة من الجهاز ثم لاحظ السلوك وهو مفتوح على وضعه الطبيعي. إذا استمر العطل، اكتب وضع الغطاء وأي علامة سكون ظهرت.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>استقرت الصورة بعد إبعاد الملحق</strong><span>سجّل ما الذي كان قرب اللابتوب وأين كان موضوعًا.</span></a>
+        <a class="bootChoice" href="#technician"><strong>يتكرر الانطفاء أو السكون</strong><span>شارك النتيجة لفحص الحساس ومسار العرض.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع معرفة هل دخل في السكون</strong><span>صف سلوك الإضاءة والصورة الخارجية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="damage" data-boot-step="توقف عند تلف ظاهر" data-boot-demo="screen-alert" aria-labelledby="damage-title">
+      <h2 id="damage-title" tabindex="-1">أوقف تحريك الغطاء عند وجود تلف ظاهر</h2>
+      <ul>
+        <li>إذا كانت المفصلة عالقة أو انفصل إطار الشاشة، اترك الغطاء في وضعه وأوقف استعماله. قد تزداد إصابة الكابل أو الشاشة مع استمرار الحركة.</li>
+        <li>عند انسكاب سائل، أوقف التشغيل وافصل الشاحن إذا أمكن بأمان. اعرض الجهاز للفحص قبل إعادة تشغيله.</li>
+        <li>عند وجود كسر أو بقعة داكنة بعد ضربة، سجّل مكانها وحالة الخارجية، وتجنّب الضغط على الشاشة.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أريد وصف التلف للفني</strong><span>اذكر ما حدث وحالة الغطاء والصورة قبل إيقاف الجهاز.</span></a>
+        <a class="bootChoice" href="#start"><strong>لا يوجد كسر أو سائل أو مقاومة في المفصلة</strong><span>ارجع إلى خيارات العَرَض.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="both-affected" data-boot-step="الأثر على الشاشتين" data-boot-demo="screen-pair" aria-labelledby="both-affected-title">
+      <h2 id="both-affected-title" tabindex="-1">قارن العطل على مخرجَي العرض</h2>
+      <p>إذا ظهر الأثر نفسه في نفس الوقت على الشاشتين، سجّل هل يظهر قبل ويندوز أيضًا. عند الإمكان، تحقق من الخارجية بكابل مناسب وجهاز آخر معروف أنه يعرض صورة سليمة. ثم حدّد أين ومتى ظهر العطل على اللابتوب.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#after-windows"><strong>يظهر على الشاشتين داخل ويندوز فقط</strong><span>راجع وضع العرض والتعريف أو التطبيق.</span></a>
+        <a class="bootChoice" href="#report"><strong>يظهر على الشاشتين من بداية التشغيل</strong><span>أرسل وصف الأثر وأول لحظة ظهر فيها.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display" data-boot-demo="blank"><strong>أصبح الجهاز يعمل من دون صورة على أي شاشة</strong><span>افتح مسار No Display لفحص غياب الصورة بالكامل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="recent-repair" data-boot-step="العطل بعد تبديل قطعة" data-boot-demo="connect-drive" aria-labelledby="recent-repair-title">
+      <h2 id="recent-repair-title" tabindex="-1">طابق الشاشة والكابل مع مواصفات الموديل</h2>
+      <p>اطلب رقم قطعة الشاشة والكابل قبل وبعد التبديل. راجع توافق الواجهة <bdi>eDP</bdi> أو <bdi>LVDS</bdi> وتوصيل الأطراف والدقة ودعم اللمس بحسب الجهاز. استخدم رقم القطعة والمخطط لتأكيد التوافق قبل توصيل بديل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#matched-test"><strong>تتوفر قطع متوافقة للفحص لدى الفني</strong><span>ابدأ بمقارنة قطعة واحدة في كل تجربة.</span></a>
+        <a class="bootChoice" href="#technician"><strong>الخلل بدأ بعد فتح الغطاء أو إعادة التجميع</strong><span>أخبر الفني بالجزء الذي تم فكه ونتيجة التشغيل قبله.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك أرقام القطع</strong><span>اكتب موديل اللابتوب وما الذي تم تبديله.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="technician" data-boot-step="فحص الشاشة والكابل لدى الفني" data-boot-demo="connect-drive" aria-labelledby="technician-title">
+      <h2 id="technician-title" tabindex="-1">ابدأ من الموصل ومسار الكابل</h2>
+      <p>للفني، أطفئ الجهاز بالكامل وافصل الشاحن ثم البطارية الداخلية وفق تعليمات صيانة الموديل قبل فك أو إعادة تركيب كابل الشاشة. افحص التثبيت، آثار السوائل، ومسار الكابل قرب المفصلة. دوّن هل الأثر ثابت منذ BIOS أو يتغير مع وضع الغطاء.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#recent-repair"><strong>تغيّرت الشاشة أو تغيّر الكابل مؤخرًا</strong><span>تحقق من التوافق قبل تجربة قطعة أخرى.</span></a>
+        <a class="bootChoice" href="#matched-test"><strong>أستطيع المقارنة بقطعة سليمة ومتوافقة</strong><span>قارن الكابل أو لوحة الشاشة بقطعة واحدة في كل مرة.</span></a>
+        <a class="bootChoice" href="#board"><strong>تأكدنا من الشاشة والكابل والعطل مستمر</strong><span>انتقل إلى قراءة مسار الشاشة على البورد.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد تسليم نتيجة الفحص</strong><span>اكتب رقم الجهاز وموضع التغير ونتيجة المقارنة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="matched-test" data-boot-step="مقارنة قطعة واحدة" data-boot-demo="connect-drive" aria-labelledby="matched-test-title">
+      <h2 id="matched-test-title" tabindex="-1">قارن بالكابل أو الشاشة المطابقين</h2>
+      <p>يختار الفني قطعة معروفة السلامة وتطابق مواصفات الموديل. بين كل تجربة، أوقف التشغيل وافصل التغذية والبطارية وفق دليل الجهاز. سجّل نتيجة التشغيل مع كل قطعة عند الشعار وداخل النظام حتى تعرف أي تغيير أثّر في الصورة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الصورة عادت بعد تبديل قطعة واحدة</strong><span>دوّن أي قطعة غيّرت النتيجة وفي أي مرحلة.</span></a>
+        <a class="bootChoice" href="#board"><strong>العطل استمر مع شاشة وكابل متوافقين</strong><span>راجع مسار تغذية اللوحة الداخلية والإشارة.</span></a>
+        <a class="bootChoice" href="#report"><strong>تمت تجربة قطعة واحدة فقط أو النتيجة متقطّعة</strong><span>اذكر القطعة التي جُرّبت ومتى تغير العطل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="board" data-boot-step="مسار الشاشة على البورد" data-boot-demo="repair" aria-labelledby="board-title">
+      <h2 id="board-title" tabindex="-1">اربط نتيجة الشاشة بمسارها على اللوحة</h2>
+      <p>استخدم رقم البورد في <a href="/boardview/">BoardView</a> لتحديد موصل الشاشة. من المخطط، حدّد تغذية الشاشة ومسار الإشارة. في شاشة LCD، حدّد أيضًا طريقة تغذية الإضاءة الخلفية والتحكم بها في هذا الموديل.</p>
+      <ul>
+        <li>مع صورة خافتة قابلة للتمييز، سجّل نتيجة فحص الإضاءة والتحكم بها حسب المخطط.</li>
+        <li>مع غياب الصورة منذ التشغيل بعد استبعاد الشاشة والكابل، راجع تغذية لوحة الشاشة ومسار الإشارة من الموصل ومكوّنات الحماية المرتبطة به.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك رقم البورد وموضع الفحص</strong><span>اذكر نتائج الإضاءة والإشارة والمقارنة بقطع سليمة.</span></a>
+        <a class="bootChoice" href="#before-os"><strong>أريد مراجعة سلوك الشاشة قبل ويندوز</strong><span>ارجع إلى الشعار أو صفحة BIOS.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="الصورة استقرت" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">دوّن التغيير الذي أعاد الصورة</h2>
+      <p>قارن الشاشتين عند تشغيل عادي وبعد الدخول إلى ويندوز. سجّل الإعداد أو القطعة التي أعادت العرض. إذا عاد العطل، سجّل المرحلة التي يظهر فيها وحالة الخارجية في اللحظة نفسها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك نتيجة الفحص</strong><span>أضف التغيير الذي أعاد الصورة ليستفيد الفنيون منه.</span></a>
+        <a class="bootChoice" href="#start"><strong>ظهر العطل مرة أخرى</strong><span>ابدأ من شكل العطل الحالي.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>صف الفرق بين الشاشتين ووقت ظهوره. خط ثابت في BIOS، صورة خافتة، أو انقطاع عند تحريك الغطاء هي ملاحظات تقود إلى فحوص مختلفة. اكتب ما استطعت اختباره حتى لو بقيت بعض النتائج مجهولة.</p>
+      <p><strong>سنقرأ حالتك بعناية ونردّ عليك في غرفة الصيانة.</strong> سنراجع ملاحظاتك ونحدّد الخطوة التالية. عندما تحصل على نتيجة جديدة، أضفها إلى نفس المناقشة لنواصل من حيث توقفت.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل اللابتوب أو رقم البورد، وطريقة توصيل الشاشة الخارجية.</li>
+          <li>متى يظهر العطل؟ عند الشعار، في BIOS، أم بعد دخول ويندوز؟</li>
+          <li>هل ترى صورة خافتة؟ هل يظهر الأثر في لقطة ويندوز أو يتغيّر مع زاوية الغطاء؟</li>
+          <li>نتيجة الاختبار المدمج أو رقم الشاشة والكابل إذا سبق تغييرهما.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. اذكر العَرَض ونتائج الفحص، واحتفظ بالأرقام التسلسلية وكلمات المرور لنفسك.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>
