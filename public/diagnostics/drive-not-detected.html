@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الـSSD أو الهارد غير ظاهر أو يختفي | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفحص قرص SSD أو HDD لا يظهر في BIOS أو ويندوز أو شاشة التثبيت، مع خطوات لفحص التوصيل وحماية الملفات.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/drive-not-detected">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "الـSSD أو الهارد غير ظاهر أو يختفي",
+    "inLanguage": "ar",
+    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/drive-not-detected",
+    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
+  }
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← القرص غير ظاهر</div>
+  <section class="bootHero" aria-labelledby="drive-title">
+    <div class="bootMeta"><span>المسار 02</span><span dir="ltr">SSD / HDD</span><span>قرص داخلي أو خارجي</span></div>
+    <h1 id="drive-title">الـSSD أو الهارد غير ظاهر أو يختفي</h1>
+    <p>أين آخر مكان ظهر فيه القرص؟ اختر ما تراه الآن، وسننتقل معك إلى الفحص الذي يساعد على تحديد السبب.</p>
+    <ol class="bootStages" aria-label="مراحل تشخيص القرص">
+      <li><b>١</b><span>أين يختفي القرص؟</span></li>
+      <li><b>٢</b><span>فحص التوصيل أو إعداد التخزين</span></li>
+      <li><b>٣</b><span>قراءة النتيجة</span></li>
+    </ol>
+  </section>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال بينها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="inspect" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">أين لا يظهر القرص؟</h2>
+      <p>اختر أقرب وصف لجهازك. إذا سمعت نقرًا متكررًا غير معتاد من الهارد أو كان القرص يفصل أثناء نسخ ملفات مهمة، <a href="#protect-data">ابدأ بحماية الملفات</a>.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#missing-bios"><strong>غير ظاهر في BIOS</strong><span>فتحت صفحة معلومات التخزين ولم أجد موديل القرص.</span></a>
+        <a class="bootChoice" href="#disk-management"><strong>ظاهر في BIOS ويغيب من «هذا الكمبيوتر»</strong><span>ويندوز يعمل ولا يظهر القرص بين الأقراص في مستكشف الملفات.</span></a>
+        <a class="bootChoice" href="#installer"><strong>ظاهر في BIOS ويغيب أثناء تثبيت ويندوز</strong><span>قائمة اختيار قرص التثبيت فارغة أو يظهر فيها قرص آخر فقط.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>يظهر ثم يختفي أو يفصل</strong><span>يختفي بعد بدء التشغيل أو أثناء القراءة والنسخ.</span></a>
+        <a class="bootChoice" href="#external-usb"><strong>القرص خارجي موصول عبر USB</strong><span>هارد خارجي أو SSD مركّب في علبة تحويل.</span></a>
+        <a class="bootChoice" href="#check-bios"><strong>لم أفحص BIOS بعد</strong><span>أرني أين أبحث وما الذي أكتبه من الشاشة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="check-bios" data-boot-step="قراءة معلومات التخزين" data-boot-demo="inspect" aria-labelledby="check-bios-title">
+      <h2 id="check-bios-title" tabindex="-1">ابحث عن موديل القرص في BIOS</h2>
+      <ol>
+        <li>أعد تشغيل الجهاز واضغط مفتاح الدخول إلى <bdi>Setup</bdi> عند ظهور الشعار. كثير من الأجهزة تستخدم <bdi>F2</bdi> أو <bdi>Del</bdi>. راقب المفتاح الذي يذكره جهازك.</li>
+        <li>ابحث في <bdi>Storage</bdi> أو <bdi>System Information</bdi> أو <bdi>NVMe Configuration</bdi>. على بعض الأجهزة تظهر الأقراص ضمن معلومات متحكم <bdi>RST / VMD</bdi>.</li>
+        <li>سجّل اسم القرص وسعته كما يظهران. إذا رأيت <bdi>Windows Boot Manager</bdi> فقط، انتقل إلى صفحة معلومات التخزين للتأكد من ظهور القرص نفسه. اخرج دون حفظ تغييرات.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/drive-bios.webp" width="840" height="420" loading="lazy" alt="رسم لصفحة Storage تعرض قرص NVMe بسعة 512 GB ومنفذ SATA فارغًا">
+        <figcaption>مثال توضيحي لصفحة التخزين. طابق اسم القرص المطلوب وسعته قبل اختيار النتيجة.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#seen-bios"><strong>وجدت اسم القرص وسعته</strong><span>حدّد أين يغيب بعد مرحلة BIOS.</span></a>
+        <a class="bootChoice" href="#missing-bios"><strong>القرص غير مدرج</strong><span>مدخل التخزين فارغ أو يظهر <bdi>Not Detected</bdi>.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>يظهر في بعض المحاولات فقط</strong><span>سجّل متى يختفي وابدأ بحماية الملفات.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد صفحة معلومات التخزين</strong><span>اكتب موديل الجهاز وأسماء القوائم التي ظهرت لك.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="missing-bios" data-boot-step="القرص غير ظاهر في BIOS" data-boot-demo="missing-drive" aria-labelledby="missing-bios-title">
+      <h2 id="missing-bios-title" tabindex="-1">ما نوع توصيل القرص الداخلي؟</h2>
+      <p>اختر التوصيل بحسب ملصق القرص أو دليل موديل الجهاز. إذا اختفى بعد تركيب قرص جديد أو نقل الجهاز أو صيانة سابقة، سجّل هذا التغيير لتقارن النتيجة بعد الفحص.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#sata"><strong dir="ltr">SATA — SSD أو HDD</strong><span>قرص مستطيل له موصلات SATA، وقد يركب في اللابتوب داخل حامل أو على شريط.</span></a>
+        <a class="bootChoice" href="#m2"><strong dir="ltr">M.2 — NVMe أو SATA</strong><span>بطاقة صغيرة تركب مباشرة في فتحة التخزين على اللوحة.</span></a>
+        <a class="bootChoice" href="#identify-drive"><strong>لا أعرف نوع القرص</strong><span>قارن شكل التوصيل ثم اقرأ الموديل المكتوب على القرص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="identify-drive" data-boot-step="التعرّف إلى القرص" data-boot-demo="inspect" aria-labelledby="identify-drive-title">
+      <h2 id="identify-drive-title" tabindex="-1">اقرأ الملصق قبل اختيار الفحص</h2>
+      <p>قد تجد نوع الواجهة في مواصفات موديل القرص. إذا كان الجهاز مغلقًا ولا تعرف كيف تصل إلى القرص، يكفي أن تبدأ بموديل الجهاز.</p>
+      <div class="bootChoices">
+        <figure class="bootFigure">
+          <img src="/diagnostics/images/drive-sata.webp" width="840" height="420" loading="lazy" alt="رسم لقرص SATA يوضح موصل البيانات الضيق وموصل التغذية العريض">
+          <figcaption><bdi>SATA</bdi> في المكتبي له توصيل للبيانات وتوصيل للتغذية.</figcaption>
+        </figure>
+        <figure class="bootFigure">
+          <img src="/diagnostics/images/drive-m2.webp" width="840" height="420" loading="lazy" alt="رسم لبطاقة SSD من نوع M.2 مع ملصق الموديل وموضع التثبيت">
+          <figcaption>شكل <bdi>M.2</bdi> يوضح طريقة التركيب. حدّد واجهة <bdi>NVMe</bdi> أو <bdi>SATA</bdi> من مواصفات الموديل.</figcaption>
+        </figure>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#sata"><strong>تأكدت أنه SATA</strong><span>افحص كابل البيانات والتغذية أو موصل اللابتوب.</span></a>
+        <a class="bootChoice" href="#m2"><strong>تأكدت أنه M.2</strong><span>طابق نوع القرص مع الفتحة ثم تحقق من التثبيت.</span></a>
+        <a class="bootChoice" href="#report"><strong>النوع ما زال غير واضح</strong><span>أرسل موديل الجهاز وما يظهر على الملصق إن كان متاحًا.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="sata" data-boot-step="فحص توصيل SATA" data-boot-demo="connect-drive" aria-labelledby="sata-title">
+      <h2 id="sata-title" tabindex="-1">افحص توصيلَي البيانات والتغذية</h2>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/drive-sata.webp" width="840" height="420" loading="lazy" alt="موصلا قرص SATA، البيانات أضيق من التغذية">
+        <figcaption>كابل البيانات يصل القرص باللوحة. موصل التغذية يأتي من مزود الطاقة في الكمبيوتر المكتبي.</figcaption>
+      </figure>
+      <ol>
+        <li>أطفئ الجهاز بالكامل وافصل مصدر الكهرباء قبل لمس الكابلات. إذا احتجت إلى فتح لابتوب ببطارية داخلية، افصل البطارية بالطريقة المناسبة للموديل إن كنت متمرسًا.</li>
+        <li>في المكتبي، تأكد من تثبيت كابل البيانات على القرص واللوحة ومن تثبيت موصل التغذية. جرّب كابل بيانات سليمًا أو منفذ SATA معروفًا، وغيّر عنصرًا واحدًا في كل مرة. استخدم كابل تغذية متوافقًا مع مزود الطاقة نفسه.</li>
+        <li>في اللابتوب، افحص استقامة الحامل أو شريط SATA ومقبسه. بعد إعادة التجميع والتشغيل، ارجع إلى قائمة التخزين وقارن النتيجة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#seen-bios"><strong>ظهر القرص في BIOS</strong><span>تابع بحسب مكان ظهوره أو اختفائه في ويندوز.</span></a>
+        <a class="bootChoice" href="#isolate"><strong>ما زال غير ظاهر</strong><span>اعزل القرص عن الكابل والمنفذ بمقارنة واضحة.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>ظهر ثم اختفى</strong><span>سجّل التوقيت وتحقق من أهمية البيانات قبل متابعة الاختبارات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="m2" data-boot-step="توافق وتثبيت M.2" data-boot-demo="connect-drive" aria-labelledby="m2-title">
+      <h2 id="m2-title" tabindex="-1">طابق نوع M.2 مع فتحة التخزين</h2>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/drive-m2.webp" width="840" height="420" loading="lazy" alt="بطاقة M.2 مرسومة مع موضع الملصق والتثبيت">
+        <figcaption>سجّل موديل البطاقة ثم تحقّق من واجهتها وطولها ومن دعم الفتحة لهما.</figcaption>
+      </figure>
+      <ol>
+        <li>حدّد هل القرص <bdi>PCIe / NVMe</bdi> أو <bdi>M.2 SATA</bdi> من مواصفات الموديل. راجع مواصفات فتحة التخزين في جهازك، بما فيها نوع الواجهة والطول المدعوم.</li>
+        <li>إذا ظهرت المشكلة بعد إضافة قرص أو تبديل الفتحة، تحقّق مما إذا كانت اللوحة تشارك منافذ بين فتحة <bdi>M.2</bdi> و<span dir="ltr">SATA</span>. تختلف خريطة المشاركة حسب اللوحة.</li>
+        <li>بعد إطفاء الجهاز وفصل مصدر الكهرباء والبطارية إن أمكن بأمان، أعد تثبيت البطاقة برفق وثبّتها في موضعها. توقف إذا قاومت الدخول. شغّل الجهاز وافتح قائمة التخزين مرة أخرى.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#seen-bios"><strong>ظهر بعد تثبيته في فتحة متوافقة</strong><span>تحقق من ظهوره في ويندوز أو في شاشة التثبيت.</span></a>
+        <a class="bootChoice" href="#isolate"><strong>الفتحة متوافقة والقرص غائب</strong><span>اختبره على فتحة أو علبة معروفة التوافق.</span></a>
+        <a class="bootChoice" href="#report"><strong>لست متأكدًا من دعم الفتحة</strong><span>أرسل موديل القرص واللوحة واسم الفتحة المكتوب عليها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="isolate" data-boot-step="عزل القرص عن المنفذ" data-boot-demo="inspect" aria-labelledby="isolate-title">
+      <h2 id="isolate-title" tabindex="-1">قارن نتيجة القرص ونتيجة المنفذ</h2>
+      <p>إذا كان القرص يفصل وفيه ملفات مهمة، <a href="#protect-data">قدّم حماية الملفات على اختبار المقارنة</a>. نفّذ المقارنة على قطع متوافقة بعد فصل الكهرباء بين كل تبديل.</p>
+      <ol>
+        <li>جرّب القرص المشتبه به على جهاز أو علبة معروفة السلامة وتدعم واجهته. سجّل هل ظهر باسمه وسعته الصحيحة.</li>
+        <li>جرّب قرصًا متوافقًا معروفًا في التوصيل الأصلي. استخدم الفحص نفسه لتعرف هل التوصيل يقرأ قرصًا آخر.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#suspect-drive"><strong>القرص المشتبه به لا يُقرأ في المكانين</strong><span>والقرص السليم يُقرأ على التوصيل الأصلي.</span></a>
+        <a class="bootChoice" href="#suspect-slot"><strong>القرص يظهر في مكان آخر فقط</strong><span>والقرص السليم لا يُقرأ على التوصيل الأصلي.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>ظهر واستقر بعد تبديل جزء من التوصيل</strong><span>سجّل القطعة التي بدّلتها واحفظ نسخة من ملفاتك.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك قطعًا للمقارنة أو النتيجة غير واضحة</strong><span>أرسل التجارب المتاحة ونتيجة كل تجربة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="suspect-drive" data-boot-step="الاشتباه في القرص" data-boot-demo="missing-drive" aria-labelledby="suspect-drive-title">
+      <h2 id="suspect-drive-title" tabindex="-1">نتيجة المقارنة توجّه الفحص إلى القرص</h2>
+      <p>سجّل نوع القرص وسعته وأين جرّبته. إذا غاب على توصيلين سليمين ومتوافقين، يحتاج إلى فحص متخصص، خصوصًا إذا كانت البيانات أهم من إعادة استخدام القرص.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#protect-data"><strong>فيه ملفات مهمة أو لم آخذ نسخة</strong><span>اختر الخطوة بحسب ثبات القراءة والأصوات التي تسمعها.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مراجعة نتيجة المقارنة</strong><span>شارك موديل القرص ونتيجة اختبار كل توصيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="suspect-slot" data-boot-step="الاشتباه في التوصيل" data-boot-demo="connect-drive" aria-labelledby="suspect-slot-title">
+      <h2 id="suspect-slot-title" tabindex="-1">ركّز على المسار الأصلي للقرص</h2>
+      <p>ابدأ بالكابل أو الشريط أو الحامل حسب الجهاز، ثم راجع تفعيل المنفذ ودعمه لنوع القرص. نتيجة المقارنة تختصر دائرة البحث إلى التوصيل وإعداداته واللوحة.</p>
+      <p>للفني، افصل التغذية وافحص تثبيت الموصل وآثار السوائل أو التلف المرئي. استخدم رقم البورد للبحث في <a href="/boardview/">BoardView</a> عن الموصل، وراجع مخطط اللوحة لتحديد خطوط التغذية قبل القياس.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>عاد التعرّف إلى القرص</strong><span>اكتب التغيير الذي أعاد القراءة وتحقق من ثباتها.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج مراجعة فحص المنفذ</strong><span>أرسل رقم البورد واسم المنفذ ونتائج المقارنة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="seen-bios" data-boot-step="القرص ظاهر في BIOS" data-boot-demo="drive" aria-labelledby="seen-bios-title">
+      <h2 id="seen-bios-title" tabindex="-1">ظهر القرص في BIOS. ماذا يحدث بعد ذلك؟</h2>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disk-management"><strong>ويندوز يعمل والقرص غائب من المستكشف</strong><span>افتح إدارة الأقراص واقرأ حالة القرص والقسم.</span></a>
+        <a class="bootChoice" href="#installer"><strong>مثبّت ويندوز لا يعرض القرص</strong><span>راجع وضع متحكم التخزين وتعريفه.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-boot#storage-check" data-boot-demo="boot-menu"><strong>الجهاز لا يقلع والقرص موجود</strong><span>افتح مسار تعذّر الإقلاع لمراجعة خيار بدء تشغيل ويندوز.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>القرص يظهر ويعمل الآن</strong><span>وثّق ما تغيّر وتأكد أن القراءة مستقرة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="disk-management" data-boot-step="إدارة الأقراص في ويندوز" data-boot-demo="windows" aria-labelledby="disk-management-title">
+      <h2 id="disk-management-title" tabindex="-1">اقرأ حالة القرص في إدارة الأقراص</h2>
+      <ol>
+        <li>في ويندوز اضغط <kbd>Win + R</kbd>، واكتب <code>diskmgmt.msc</code> ثم اضغط <kbd>Enter</kbd>.</li>
+        <li>في الجزء السفلي، ابحث عن القرص وطابق سعته. إذا وجدت أقراصًا متشابهة، افتح خصائص القرص وطابق الموديل قبل اختيار أي إجراء.</li>
+        <li>سجّل ما يظهر بجانب القرص وداخل القسم. إذا طلب ويندوز تهيئة قرص فيه بيانات أو حالته غير معروفة، أغلق طلب التهيئة.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/drive-windows.webp" width="840" height="420" loading="lazy" alt="رسم لإدارة الأقراص يعرض قسم ملفات بحرف C وقسمًا سليمًا بحجم 465 GB بدون حرف">
+        <figcaption>في هذا المثال القرص الثاني موجود، ويظهر قسمه بدون حرف. اقرأ الحالة الفعلية على جهازك.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#healthy-volume"><strong>قسم ملفات سليم بدون حرف</strong><span>مثل قسم NTFS أو exFAT تظهر سعته ولا ترى له حرفًا.</span></a>
+        <a class="bootChoice" href="#unknown-layout"><strong>RAW أو غير مخصّص أو غير مهيّأ</strong><span>تحقّق أولًا هل القرص جديد أم يحمل ملفات من قبل.</span></a>
+        <a class="bootChoice" href="#offline"><strong>القرص يظهر Offline</strong><span>تحقّق من سبب كونه غير متصل قبل تغيير الحالة.</span></a>
+        <a class="bootChoice" href="#missing-windows"><strong>القرص غير موجود في القائمة</strong><span>تحقّق من إدارة الأجهزة ومتحكم التخزين.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>القرص والقسم والحرف ظاهرون الآن</strong><span>افتح القسم الصحيح وتحقق من ثبات القراءة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="healthy-volume" data-boot-step="قسم موجود بدون حرف" data-boot-demo="windows" aria-labelledby="healthy-volume-title">
+      <h2 id="healthy-volume-title" tabindex="-1">تأكد أن القسم قسم ملفات عادي</h2>
+      <p>إذا عرفت القسم وظهر كنظام ملفات يدعمه ويندوز، مثل <bdi>NTFS</bdi> أو <bdi>exFAT</bdi>، انقر على القسم واختر <bdi>Change Drive Letter and Paths</bdi> ثم <bdi>Add</bdi> واختر حرفًا متاحًا. افعل ذلك لقسم بيانات عادي بعد مطابقته بالسعة.</p>
+      <p>اترك أقسام <bdi>EFI</bdi> و<bdi>Recovery</bdi> كما هي. إذا كان الخيار معطّلًا أو كان القرص من ماك أو من نظام آخر، سجّل نوع القسم. إذا طلب مفتاح <bdi>BitLocker</bdi>، استخدم مفتاحك واحتفظ به خارج المشاركات.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>ظهر القسم في مستكشف الملفات</strong><span>تحقق من فتح الملفات واحفظ نسخة إذا كنت تحتاجها.</span></a>
+        <a class="bootChoice" href="#unknown-layout"><strong>نوع القسم غير معروف أو الحرف غير متاح</strong><span>تابع بخطوات القراءة الآمنة للقرص.</span></a>
+        <a class="bootChoice" href="#report"><strong>له حرف لكن ويندوز لا يفتحه</strong><span>اكتب نص الرسالة وحالة القسم في إدارة الأقراص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="unknown-layout" data-boot-step="حالة القسم غير واضحة" data-boot-demo="locked" aria-labelledby="unknown-layout-title">
+      <h2 id="unknown-layout-title" tabindex="-1">هل القرص جديد أم عليه بيانات؟</h2>
+      <p>سجّل الحالة كما تظهر <bdi>RAW</bdi> أو <bdi>Unallocated</bdi> أو <bdi>Not Initialized</bdi>. هذه الأوصاف تستدعي التحقق من تاريخ القرص. إذا كان قرص ماك أو لينكس، افحصه في نظامه الأصلي إذا كان متاحًا لك.</p>
+      <p class="bootNote">إذا كان عليه ملفات أو لم تتأكد من محتواه، تجنّب التهيئة والفورمات وحذف الأقسام. ظهور <bdi>0 B</bdi> أو سعة غير معتادة سبب إضافي لإيقاف هذه الإجراءات.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#protect-data"><strong>عليه بيانات أو لست متأكدًا</strong><span>احمِ الملفات قبل أي تغيير في الأقسام.</span></a>
+        <a class="bootChoice" href="#blank-confirmed"><strong>قرص جديد وأعرف أنه فارغ</strong><span>تحقق من الموديل والسعة ثم جهّزه كقرص بيانات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="blank-confirmed" data-boot-step="قرص جديد فارغ" data-boot-demo="drive" aria-labelledby="blank-confirmed-title">
+      <h2 id="blank-confirmed-title" tabindex="-1">جهّز القرص الجديد بعد التأكد من هويته</h2>
+      <p>إذا كان قرصًا جديدًا فارغًا مخصصًا للملفات، طابقه في إدارة الأقراص بالموديل والسعة. إذا ظهر <bdi>Not Initialized</bdi>، هيّئه بصيغة <bdi>GPT</bdi> في الأجهزة الحديثة. بعد ذلك أنشئ <bdi>New Simple Volume</bdi> في المساحة غير المخصصة واختر حرفًا للقسم.</p>
+      <p>إذا ظهر طلب تهيئة على قرص قديم أو كنت تتعامل مع قرص نظام أو مع مصفوفة أقراص، ارجع لتحديد الحالة قبل تغيير أي شيء.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>صار القرص الجديد ظاهرًا ويعمل</strong><span>افتح القسم وتأكد من قراءة ملف تجريبي.</span></a>
+        <a class="bootChoice" href="#report"><strong>تظهر رسالة خطأ عند التجهيز</strong><span>أرسل نصها والموديل والسعة التي يعرضها ويندوز.</span></a>
+        <a class="bootChoice" href="#protect-data"><strong>اتضح أن القرص قد يحمل ملفات</strong><span>توقف عن التجهيز وراجع حالة البيانات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="offline" data-boot-step="قرص غير متصل في ويندوز" data-boot-demo="windows" aria-labelledby="offline-title">
+      <h2 id="offline-title" tabindex="-1">اقرأ سبب حالة Offline</h2>
+      <p>في إدارة الأقراص اقرأ الرسالة بجانب اسم القرص. إذا كان قرصًا مستنسخًا أو جزءًا من <bdi>RAID</bdi>، دوّن التفاصيل واعرضها على فني قبل تغيير حالته. قد يظهر تعارض إذا كانت النسخة والأصل موصولين معًا.</p>
+      <p>لقرص بيانات مستقل تعرفه ويعرض موديله وسعته الصحيحة، يمكنك اختيار <bdi>Online</bdi> بعد التأكد من القرص. اقرأ حالة القسم عند ظهوره.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disk-management"><strong>أصبح Online</strong><span>ارجع لقراءة حالة القسم والحرف.</span></a>
+        <a class="bootChoice" href="#report"><strong>تظهر رسالة تعارض أو خطأ</strong><span>أرسل الرسالة واذكر إذا كان القرص نسخة أو عضوًا في RAID.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="missing-windows" data-boot-step="القرص غائب من إدارة الأقراص" data-boot-demo="inspect" aria-labelledby="missing-windows-title">
+      <h2 id="missing-windows-title" tabindex="-1">هل يرى ويندوز القرص أو متحكم التخزين؟</h2>
+      <ol>
+        <li>افتح <bdi>Device Manager</bdi> وابحث في <bdi>Disk drives</bdi> عن موديل القرص. سجّل أي علامة تحذير ضمن <bdi>Storage controllers</bdi> واسم المتحكم.</li>
+        <li>في إدارة الأقراص اختر <bdi>Action → Rescan Disks</bdi> مرة واحدة إذا كان القرص متصلًا بثبات. في أجهزة <bdi>Storage Spaces</bdi> تحقّق من كون القرص عضوًا في مجموعة تخزين قبل تغييره.</li>
+        <li>إذا غاب من BIOS بعد إعادة التشغيل أيضًا، ارجع لفحص التوصيل. إذا ظل ظاهرًا هناك، شارك موديل الجهاز واسم المتحكم ورسالة الخطأ إن وجدت.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disk-management"><strong>ظهر في إدارة الأقراص بعد إعادة الفحص</strong><span>اقرأ حالة القرص والقسم قبل تغييره.</span></a>
+        <a class="bootChoice" href="#check-bios"><strong>أريد إعادة التحقق من BIOS</strong><span>قارن نتيجة الفحص مع اسم القرص وسعته.</span></a>
+        <a class="bootChoice" href="#report"><strong>ما زال يظهر في BIOS فقط</strong><span>اكتب نتيجة إدارة الأجهزة واسم المتحكم.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="installer" data-boot-step="مثبّت ويندوز لا يرى القرص" data-boot-demo="repair" aria-labelledby="installer-title">
+      <h2 id="installer-title" tabindex="-1">تحقّق من تعريف متحكم التخزين</h2>
+      <p>إذا كان BIOS يعرض القرص بصورة ثابتة، راجع وضع التخزين الحالي. عند استخدام <bdi>VMD</bdi> أو <bdi>RAID</bdi> قد يحتاج مثبّت ويندوز إلى تعريف المتحكم. اترك وضع التخزين الحالي كما هو خصوصًا إذا كان على الجهاز نظام يعمل أو مصفوفة أقراص.</p>
+      <ol>
+        <li>دوّن موديل الجهاز وإصدار ويندوز واسم المتحكم. جهّز تعريف التخزين المطابق للموديل وإصدار النظام، وفك ملفاته على فلاشة.</li>
+        <li>من شاشة اختيار القرص اضغط <bdi>Load driver</bdi> وحدّد مجلد التعريف المستخرج الذي يحتوي ملفات <bdi>INF</bdi>. افحص قائمة الأقراص بعد تحميله.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/drive-setup.webp" width="840" height="420" loading="lazy" alt="رسم لشاشة اختيار القرص في Windows Setup مع إبراز زر Load driver">
+        <figcaption>موضع زر تحميل التعريف في شاشة اختيار القرص. قد تختلف صياغة الزر حسب لغة المثبّت.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#installer-detected"><strong>ظهر القرص بعد تحميل التعريف</strong><span>راجع سعته وبياناته قبل اختيار قسم للتثبيت.</span></a>
+        <a class="bootChoice" href="#check-bios"><strong>لست متأكدًا من ظهوره في BIOS</strong><span>سجّل موديل القرص في صفحة التخزين أولًا.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد تعريفًا مطابقًا أو لم يظهر بعده</strong><span>أرسل موديل الجهاز ووضع التخزين ونص رسالة المثبّت.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="installer-detected" data-boot-step="القرص ظاهر للمثبّت" data-boot-demo="success" aria-labelledby="installer-detected-title">
+      <h2 id="installer-detected-title" tabindex="-1">ظهر القرص. طابقه قبل متابعة التثبيت</h2>
+      <p>راجع السعة والأقسام الموجودة. إذا كان القرص يحتوي على ملفات تحتاجها، جهّز نسخة منها قبل اختيار قسم أو حذف أي قسم. إذا كان القرص فارغًا ومحددًا للتثبيت، تابع بعد التأكد من أنك اخترت القرص المقصود.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#protect-data"><strong>أحتاج الملفات الموجودة على القرص</strong><span>توقف عند شاشة اختيار القرص وراجع خيارات الحفظ.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد التأكد من القرص أو القسم الذي ظهر</strong><span>اكتب سعة القرص والأقسام التي ظهرت في القائمة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="intermittent" data-boot-step="اختفاء متقطّع" data-boot-demo="intermittent" aria-labelledby="intermittent-title">
+      <h2 id="intermittent-title" tabindex="-1">سجّل متى يختفي القرص</h2>
+      <p>لاحظ هل يختفي في BIOS بعد إعادة التشغيل، أم يظهر فيه ويختفي داخل ويندوز، أم يفصل عند تحريك كابل USB. دوّن رسالة الخطأ أو أي تحذير <bdi>S.M.A.R.T.</bdi>. أوقف الاختبار عند نقر ميكانيكي متكرر أو تكرار الانقطاع أثناء قراءة ملفات مهمة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#protect-data"><strong>هناك ملفات مهمة أو تحذير على القرص</strong><span>اتخذ خطوة تحفظ البيانات قبل تكرار التجربة.</span></a>
+        <a class="bootChoice" href="#missing-bios"><strong>يختفي حتى من BIOS والملفات محفوظة</strong><span>افحص توصيل القرص الداخلي وتوافق الفتحة.</span></a>
+        <a class="bootChoice" href="#external-usb"><strong>ينقطع على USB والملفات محفوظة</strong><span>افحص الكابل والمنفذ وعلبة التحويل.</span></a>
+        <a class="bootChoice" href="#disk-management"><strong>يبقى في BIOS ويختفي من ويندوز</strong><span>اقرأ حالته في إدارة الأقراص عندما يظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="external-usb" data-boot-step="قرص خارجي أو علبة USB" data-boot-demo="usb" aria-labelledby="external-usb-title">
+      <h2 id="external-usb-title" tabindex="-1">اختبر توصيل USB وملاءمة العلبة</h2>
+      <ol>
+        <li>استخدم منفذ USB مباشرًا وكابل بيانات معروف السلامة. إذا كانت العلبة تحتاج إلى محوّل تغذية، استخدم المحوّل المخصّص لها.</li>
+        <li>إذا ركّبت القرص بنفسك، راجع واجهته والواجهة التي تدعمها العلبة. قد تكون علبة <bdi>M.2</bdi> مخصصة لـ<bdi>NVMe</bdi> أو <bdi>SATA</bdi> فقط.</li>
+        <li>افتح إدارة الأقراص في ويندوز حتى لو لم يظهر حرف في «هذا الكمبيوتر». سجّل الموديل أو السعة وأي رسالة تهيئة. إذا كانت البيانات مهمة والقرص يفصل، توقف قبل تبديلات إضافية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disk-management"><strong>ظهر في إدارة الأقراص</strong><span>افحص حالة القسم أو الحرف.</span></a>
+        <a class="bootChoice" href="#protect-data"><strong>يفصل أو يطلب تهيئة وفيه ملفات</strong><span>أغلق طلب التهيئة وراجع حماية البيانات.</span></a>
+        <a class="bootChoice" href="#report"><strong>غائب رغم تجربة توصيل متوافق</strong><span>سجّل موديل القرص والعلبة والمنافذ التي جرّبتها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="protect-data" data-boot-step="حماية الملفات" data-boot-demo="locked" aria-labelledby="protect-data-title">
+      <h2 id="protect-data-title" tabindex="-1">احمِ الملفات قبل متابعة الفحص</h2>
+      <ul>
+        <li>إذا كان القرص يظهر ويقرأ بثبات، ابدأ بنسخ الملفات التي يصعب تعويضها إلى قرص سليم آخر.</li>
+        <li>إذا سمعت نقرًا ميكانيكيًا غير معتاد ومتكررًا، أو انقطع القرص أثناء قراءة البيانات المهمة، أوقف تشغيله وفكّر في فحص متخصص لاستعادة البيانات.</li>
+        <li>تجنّب تهيئة القرص وحذف أقسامه وأوامر الإصلاح التي تكتب عليه ما دامت الملفات مهمة وحالتها غير مؤكدة.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أريد معرفة الخطوة الآمنة التالية</strong><span>اذكر أن الأولوية للبيانات وصف آخر قراءة ناجحة.</span></a>
+        <a class="bootChoice" href="#start"><strong>الملفات محفوظة وأريد تشخيص التوصيل</strong><span>ارجع لاختيار المكان الذي يختفي منه القرص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="القرص ظاهر الآن" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">تحقّق من ثبات ظهور القرص</h2>
+      <p>تأكد من قراءة القسم بالاسم والسعة المتوقَّعين. سجّل ما غيّرته وأعد التحقق بعد إعادة تشغيل عادية إذا كان القرص مستقرًا والملفات محفوظة. إذا تكرر الاختفاء، سجّل الوقت ورسالة الخطأ قبل أي تجربة أخرى.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك ما أعاد ظهور القرص</strong><span>اكتب التغيير والنتيجة ليستفيد من يواجه الحالة نفسها.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>عاد الاختفاء</strong><span>حدّد هل يغيب من BIOS أم من ويندوز فقط.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع معك من آخر خطوة</h2>
+      <p>قد تكفي ملاحظة واحدة لتحديد الفحص التالي. ظهور اسم القرص في BIOS، أو اختفاؤه وقت النسخ، أو بقاؤه بلا حرف في ويندوز يعطينا نقطة واضحة نبدأ منها. اكتب ما رأيته حتى لو بقيت خطوة لم تعرف كيف تنفّذها.</p>
+      <p><strong>سنقرأ تفاصيل حالتك بعناية ونردّ عليك في غرفة الصيانة.</strong> سنراجع النتائج التي حصلت عليها، ونوضح الخطوة التالية وما الذي تبحث عنه فيها. إذا جرّبتها، أضف النتيجة إلى نفس المناقشة حتى نستطيع متابعتها معك. إذا كانت الملفات هي الأولوية، اذكر ذلك في بداية الرسالة.</p>
+      <div class="bootRoomDetails">
+        <h3>ما الذي يساعدنا على متابعة الحالة؟</h3>
+        <ul>
+          <li>موديل الجهاز أو رقم البورد، وموديل القرص وسعته ونوع توصيله إن عرفته.</li>
+          <li>هل يظهر في BIOS؟ ما حالته في إدارة الأقراص أو ما رسالة مثبّت ويندوز؟</li>
+          <li>متى بدأ العطل؟ هل يختفي بعد التشغيل أو أثناء النسخ أو عند تحريك الكابل؟</li>
+          <li>ما التوصيل أو التعريف الذي جرّبته، وما النتيجة بعد كل تغيير؟</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. انقل نص الخطأ كما يظهر على الشاشة، واحتفظ بالأرقام التسلسلية وكلمات المرور ومفاتيح الاسترداد لنفسك.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>انتقل إلى حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أراجع نتيجة مختلفة</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>
