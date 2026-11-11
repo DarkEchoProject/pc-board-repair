@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>اللابتوب موصول بالشاحن لكنه لا يشحن | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لتشخيص بطارية لابتوب لا تشحن، وفحص حد الشحن وتعرّف BIOS على المحوّل وكابل USB-C وحالة البطارية.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "اللابتوب موصول بالشاحن لكنه لا يشحن",
+    "inLanguage": "ar",
+    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging",
+    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
+  }
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← اللابتوب لا يشحن</div>
+  <section class="bootHero" aria-labelledby="charge-title">
+    <div class="bootMeta"><span>المسار 03</span><span dir="ltr">Laptop Charging</span><span>USB-C ومنفذ الشحن الدائري</span></div>
+    <h1 id="charge-title">اللابتوب موصول بالشاحن لكنه لا يشحن</h1>
+    <p>راقب نسبة البطارية ورسالة الشحن. اختر ما تراه، وسننتقل إلى الفحص الذي يوضّح هل وصل الشاحن، وهل تعرّف إليه الجهاز، ولماذا بقيت النسبة ثابتة.</p>
+    <ol class="bootStages" aria-label="مراحل تشخيص الشحن">
+      <li><b>١</b><span>علامة الشحن والنسبة</span></li>
+      <li><b>٢</b><span>تعرّف الجهاز إلى الشاحن</span></li>
+      <li><b>٣</b><span>حالة البطارية</span></li>
+    </ol>
+  </section>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال بينها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="inspect" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ماذا يحدث عند توصيل الشاحن؟</h2>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#stop-safely"><strong>أوقف تجربة الشحن</strong><span>إذا ارتفعت لوحة اللمس، أو انتفخ الغطاء، أو ظهرت حرارة شديدة أو رائحة غير معتادة.</span></a>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#charge-limit"><strong>يتوقف عند نسبة ثابتة</strong><span>مثل 60% أو 80%، ويعمل اللابتوب على البطارية عند فصل الشاحن.</span></a>
+        <a class="bootChoice" href="#no-rise"><strong>تظهر علامة الشاحن والنسبة لا ترتفع</strong><span>قد تبقى عند نسبة منخفضة أو تظهر رسالة «موصول، لا يشحن».</span></a>
+        <a class="bootChoice" href="#low-wattage"><strong>رسالة شاحن بطيء أو شحن أثناء الإطفاء فقط</strong><span>تقل النسبة تحت الضغط، أو تظهر رسالة عن قدرة الشاحن.</span></a>
+        <a class="bootChoice" href="#no-input"><strong>الجهاز لا يتعرّف إلى الشاحن</strong><span>لا تظهر علامة التوصيل، أو يكتب الجهاز <bdi>Unknown</bdi>.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>الشحن يظهر ويختفي</strong><span>ينقطع مع حركة الكابل أو بعد دقائق من التشغيل.</span></a>
+        <a class="bootChoice" href="#first-check"><strong>لم أسجّل النتيجة بعد</strong><span>أرني ما الذي أراقبه قبل اختيار المسار.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="first-check" data-boot-step="قراءة أول نتيجة" data-boot-demo="inspect" aria-labelledby="first-check-title">
+      <h2 id="first-check-title" tabindex="-1">سجّل النسبة ورسالة الشحن</h2>
+      <ol>
+        <li>انظر إلى رمز البطارية وسجّل النسبة والنص الذي يظهر عند توصيل الشاحن. دوّن هل الشاحن أصلي أو متوافق، وما القدرة المكتوبة عليه.</li>
+        <li>إذا كان التوصيل ثابتًا وحرارة الجهاز طبيعية، اتركه تحت حمل خفيف قرابة عشر دقائق وقارن النسبة. اقرأ إعداد حد الشحن إذا بقي عند نسبة ثابتة.</li>
+        <li>إذا لم يشتغل اللابتوب، سجّل حالة ضوء الشحن عند توصيل المحوّل إن كان جهازك يحتوي على ضوء.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#charge-limit"><strong>يتوقف عند نسبة ثابتة</strong><span>راجع إعداد الشحن الذكي أو حد النسبة.</span></a>
+        <a class="bootChoice" href="#no-rise"><strong>تظهر العلامة والنسبة منخفضة وثابتة</strong><span>تحقّق من تعرّف الجهاز إلى الشاحن والبطارية.</span></a>
+        <a class="bootChoice" href="#no-input"><strong>لا توجد علامة توصيل</strong><span>ابدأ بفحص المحوّل والمنفذ.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>النسبة بدأت ترتفع</strong><span>سجّل ظروف الشحن وتأكد من ثباتها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stop-safely" data-boot-step="إيقاف الشحن" data-boot-demo="battery-alert" aria-labelledby="stop-safely-title">
+      <h2 id="stop-safely-title" tabindex="-1">أوقف استخدام الجهاز عند ظهور علامة خطر</h2>
+      <ul>
+        <li>ارتفاع لوحة اللمس أو انتفاخ الغطاء قد يشير إلى انتفاخ البطارية. أوقف تشغيل الجهاز وافصل الشاحن إذا أمكن بأمان. اترك البطارية مكانها ليفحصها فني، وتجنّب الضغط على الغطاء أو ثقب البطارية.</li>
+        <li>إذا ظهر دخان أو اشتعل الجهاز، ابتعد وأبعد من حولك واتصل بالطوارئ المحلية من مكان آمن.</li>
+        <li>إذا انسكب سائل في منفذ الشحن، أوقف التشغيل وافصل التغذية إذا أمكن بأمان. اعرض الجهاز للفحص قبل إعادة توصيله.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>الجهاز متوقف وأريد وصف ما حدث</strong><span>اكتب العلامة التي رأيتها واذكر أنك أوقفت الشحن.</span></a>
+        <a class="bootChoice" href="#start"><strong>هذه العلامات غير موجودة</strong><span>ارجع إلى حالة رمز البطارية أو الشاحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="charge-limit" data-boot-step="حد الشحن" data-boot-demo="charge-limit" aria-labelledby="charge-limit-title">
+      <h2 id="charge-limit-title" tabindex="-1">تحقّق من حد الشحن المفعّل</h2>
+      <p>افتح إعداد البطارية في برنامج الجهاز أو في BIOS وابحث عن <bdi>Charge Limit</bdi> أو <bdi>Conservation Mode</bdi> أو <bdi>Smart Charging</bdi>. في ويندوز قد يظهر رمز قلب على أيقونة البطارية عند تفعيل الشحن الذكي في جهاز يدعمه.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/charge-limit.webp" width="840" height="420" loading="lazy" alt="مثال توضيحي لبطارية عند 80% مع حد شحن مفعّل عند النسبة نفسها">
+        <figcaption>في المثال حد الشحن مضبوط على 80%. ابحث عن الحد الفعلي الذي يعرضه جهازك.</figcaption>
+      </figure>
+      <p>في بعض الأجهزة يوجد حدان لبداية الشحن وإيقافه. سجّل الإعداد والنسبة الحالية قبل أي تغيير، خصوصًا إذا كانت البطارية تحت النسبة التي يبدأ عندها الشحن.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#limit-confirmed"><strong>النسبة تطابق الحد المفعّل</strong><span>اللابتوب يعمل على البطارية بصورة طبيعية.</span></a>
+        <a class="bootChoice" href="#no-rise"><strong>لا يوجد حد أو النسبة أقل من حد بدء الشحن</strong><span>تحقّق من المحوّل وحالة البطارية.</span></a>
+        <a class="bootChoice" href="#adapter-info"><strong>لم أجد إعداد البطارية</strong><span>سجّل ما يعرضه BIOS عن الشاحن والبطارية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="limit-confirmed" data-boot-step="توقف الشحن عند الحد" data-boot-demo="charge-limit" aria-labelledby="limit-confirmed-title">
+      <h2 id="limit-confirmed-title" tabindex="-1">طابق سلوك البطارية مع الإعداد</h2>
+      <p>إذا ثبتت النسبة قرب الحد المفعّل واستمر الجهاز بالعمل على البطارية، فالسلوك يتوافق مع الإعداد. قد يبدأ الشحن من جديد بعد نزول النسبة إلى حد البدء. اترك البطارية تعمل بصورة اعتيادية.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>السلوك يطابق حد الشحن</strong><span>سجّل النسبة والإعداد الذي وجدته.</span></a>
+        <a class="bootChoice" href="#battery-report"><strong>البطارية تنخفض بسرعة بعد فصل الشاحن</strong><span>اقرأ تقرير السعة مع سلوك الجهاز.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="no-rise" data-boot-step="موصول والنسبة ثابتة" data-boot-demo="charging-battery" aria-labelledby="no-rise-title">
+      <h2 id="no-rise-title" tabindex="-1">هل يبقى الشحن متوقفًا مع حمل خفيف؟</h2>
+      <p>احفظ عملك، وأغلق البرامج الثقيلة. إذا بقيت النسبة ثابتة والجهاز بارد والتوصيل مستقر، سجّل ما يعرضه BIOS. إذا ارتفعت فقط عند إطفاء الجهاز، سجّل هذه النتيجة لفحص القدرة المتاحة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#adapter-info"><strong>لا تشحن حتى تحت حمل خفيف</strong><span>اقرأ نوع المحوّل وقدرته وحالة البطارية في BIOS.</span></a>
+        <a class="bootChoice" href="#low-wattage"><strong>تشحن وهو مطفأ أو عند إغلاق البرامج الثقيلة</strong><span>تحقّق من قدرة المحوّل والكابل أثناء الاستخدام.</span></a>
+        <a class="bootChoice" href="#temperature"><strong>يتوقف الشحن عندما يسخن الجهاز</strong><span>راقب النتيجة بعد أن يبرد بصورة طبيعية.</span></a>
+        <a class="bootChoice" href="#battery-missing"><strong>النظام يعرض أن البطارية غير موجودة</strong><span>قارن ظهور البطارية في النظام وفي BIOS.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="adapter-info" data-boot-step="قراءة معلومات BIOS" data-boot-demo="inspect" aria-labelledby="adapter-info-title">
+      <h2 id="adapter-info-title" tabindex="-1">هل يعرض BIOS قدرة الشاحن؟</h2>
+      <ol>
+        <li>أعد تشغيل الجهاز واضغط مفتاح <bdi>Setup</bdi> حسب الموديل. ابحث في معلومات البطارية أو الطاقة عن <bdi>AC Adapter</bdi> و<bdi>Battery Health</bdi> إذا كانا متاحين.</li>
+        <li>سجّل القدرة التي يعرضها الجهاز وهل البطارية <bdi>Present</bdi>. إذا ظهر <bdi>Unknown</bdi> أو قدرة أقل من المطلوب، اكتبها كما هي. اخرج دون حفظ تغييرات.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/charge-bios.webp" width="840" height="420" loading="lazy" alt="رسم لصفحة معلومات الطاقة يبيّن قراءة AC Adapter كـ65 W أو Unknown">
+        <figcaption>هذه أمثلة على قراءة خانة المحوّل. قد تختلف أسماء القوائم وقدرة الشاحن بحسب الموديل.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#adapter-ok"><strong>الشاحن معروف وبالقدرة المناسبة</strong><span>اقرأ الآن حالة البطارية وحد الشحن.</span></a>
+        <a class="bootChoice" href="#charger-type"><strong>الشاحن Unknown أو غير مكتشف</strong><span>اختر نوع الوصلة لفحص المحوّل والكابل.</span></a>
+        <a class="bootChoice" href="#low-wattage"><strong>تظهر قدرة أقل من المطلوب</strong><span>تحقّق من مواصفات المحوّل والكابل والمنفذ.</span></a>
+        <a class="bootChoice" href="#compare-charger"><strong>BIOS لا يعرض هذه المعلومات</strong><span>قارن مع شاحن متوافق وسجّل مؤشر الشحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="charger-type" data-boot-step="نوع وصلة الشحن" data-boot-demo="charger-plug" aria-labelledby="charger-type-title">
+      <h2 id="charger-type-title" tabindex="-1">كيف يتصل المحوّل باللابتوب؟</h2>
+      <p>طابق اسم موديل اللابتوب مع الشاحن المخصّص له. إذا كان الموديل يدعم أكثر من طريقة للشحن، سجّل المنفذ الذي تستخدمه الآن.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#usb-c"><strong dir="ltr">USB-C</strong><span>موصل صغير بيضاوي وقد يكون في اللابتوب أكثر من منفذ مشابه.</span></a>
+        <a class="bootChoice" href="#barrel"><strong>موصل دائري</strong><span>موصل شحن دائري يثبت في منفذ مخصّص.</span></a>
+        <a class="bootChoice" href="#compare-charger"><strong>موصل خاص أو لست متأكدًا</strong><span>تحقّق من الموديل وجرّب محوّلًا معروف التوافق إن توفر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="usb-c" data-boot-step="فحص شحن USB-C" data-boot-demo="usb" aria-labelledby="usb-c-title">
+      <h2 id="usb-c-title" tabindex="-1">تحقّق من المنفذ والمحوّل والكابل</h2>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/charge-usbc.webp" width="840" height="420" loading="lazy" alt="رسم لسلسلة شحن USB-C من محوّل PD إلى كابل مناسب ثم منفذ يدعم الشحن">
+        <figcaption>نجاح الشحن يعتمد على توافق المحوّل والكابل ومنفذ استقبال الطاقة في اللابتوب.</figcaption>
+      </figure>
+      <ol>
+        <li>تحقّق من أن المنفذ الذي تستخدمه يدعم إدخال الطاقة. صِل الشاحن مباشرة باللابتوب لتستبعد قاعدة التوصيل أو الموزّع.</li>
+        <li>طابق قدرة وملفات خرج محوّل <bdi>USB Power Delivery</bdi> مع متطلبات الجهاز. استخدم كابلًا مصنّفًا للقدرة المطلوبة. عند تجربة محوّل متعدد المخارج، اترك اللابتوب وحده موصولًا بالمحوّل.</li>
+        <li>جرّب مجموعة شاحن وكابل معروفة التوافق. إذا كان الجهاز يحتوي على منفذ شحن ثانٍ، سجّل نتيجة كل منفذ على حدة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الشحن عاد بعد تغيير الكابل أو المحوّل</strong><span>سجّل العنصر الذي غيّر النتيجة.</span></a>
+        <a class="bootChoice" href="#input-suspect"><strong>يعمل من منفذ شحن واحد فقط</strong><span>سجّل اسم المنفذ الذي يعمل والذي يفشل.</span></a>
+        <a class="bootChoice" href="#compare-charger"><strong>لا يشحن على المنافذ المتوافقة</strong><span>راجع نتيجة المقارنة بالمحوّل المعروف.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="barrel" data-boot-step="فحص الموصل الدائري" data-boot-demo="charger-plug" aria-labelledby="barrel-title">
+      <h2 id="barrel-title" tabindex="-1">اقرأ ملصق الشاحن وافحص الموصل</h2>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/charge-barrel.webp" width="840" height="420" loading="lazy" alt="رسم لملصق خرج شاحن دائري يعرض مثالًا على الجهد والتيار مع موصل الشحن">
+        <figcaption>القيم في الرسم مثال فقط. طابق الجهد والقطبية ونوع الموصل والقدرة مع مواصفات جهازك.</figcaption>
+      </figure>
+      <ol>
+        <li>اقرأ سطر <bdi>Output</bdi>. استعمل شاحنًا متوافقًا مع الموديل بجهد وقطبية وموصل مطابقين وقدرة مناسبة. بعض الموديلات تستخدم طرفًا للتعريف بالمحوّل.</li>
+        <li>بعد فصل الشاحن افحص الغلاف والطرف بصريًا. إذا وجدت كابلًا مكشوفًا أو طرفًا مكسورًا، أوقف استخدامه.</li>
+        <li>إذا كان اللابتوب يعمل على الكهرباء لكن BIOS يعرض <bdi>Unknown</bdi>، سجّل ذلك وجرّب محوّلًا معروف التوافق لتفصل بين مشكلة التعريف ومشكلة المنفذ.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#compare-charger"><strong>يمكنني تجربة محوّل متوافق</strong><span>قارن رسالة الشاحن قبل وبعد التبديل.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>الموصل مرتخٍ أو ينقطع عند الحركة</strong><span>أوقف تحريك الوصلة أثناء التشغيل وسجّل العَرَض.</span></a>
+        <a class="bootChoice" href="#report"><strong>المواصفات أو التعريف غير واضحين</strong><span>اكتب موديل الجهاز والقيم المكتوبة على الشاحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="compare-charger" data-boot-step="المقارنة بشاحن متوافق" data-boot-demo="charger-plug" aria-labelledby="compare-charger-title">
+      <h2 id="compare-charger-title" tabindex="-1">قارن النتيجة بمحوّل معروف السلامة</h2>
+      <p>استخدم محوّلًا متوافقًا مع الموديل وتعرف أنه يعمل، مع الكابل المناسب إن كان قابلًا للفصل. دوّن ما إذا ظهر رمز الشاحن أو تغيرت قراءة المحوّل في BIOS. جرّب منفذًا آخر فقط إذا كان يدعم شحن الجهاز.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الشاحن البديل يشحن بثبات</strong><span>وثّق ما تغير بين المحوّلين أو الكابلين.</span></a>
+        <a class="bootChoice" href="#input-suspect"><strong>الشاحنان لا يتعرّف إليهما الجهاز</strong><span>راجع مسار منفذ الشحن ومدخل الطاقة.</span></a>
+        <a class="bootChoice" href="#adapter-ok"><strong>الشاحن معروف والبطارية لا تشحن</strong><span>تحقّق من ظهور البطارية وحالتها.</span></a>
+        <a class="bootChoice" href="#report"><strong>ليس لدي محوّل مطابق للمقارنة</strong><span>أرسل موديل الجهاز وحالة المؤشر وقراءة BIOS.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="low-wattage" data-boot-step="شحن بطيء أو قدرة منخفضة" data-boot-demo="charger-plug" aria-labelledby="low-wattage-title">
+      <h2 id="low-wattage-title" tabindex="-1">قارن قدرة الشاحن مع متطلبات الجهاز</h2>
+      <p>إذا ظهر تحذير عن الشحن البطيء أو تنخفض النسبة وقت الضغط، افحص القدرة التي تصل فعليًا. قد يتقاسم محوّل USB-C قدرته مع منافذ أخرى، وقد تحدّ قاعدة توصيل أو كابل من القدرة التي تصل إلى اللابتوب.</p>
+      <p>أغلق البرامج الثقيلة، وصِل محوّلًا مطابقًا مباشرة بالمنفذ المخصّص. سجّل هل ترتفع النسبة والجهاز تحت حمل خفيف أو وهو مطفأ. شارك القدرة المكتوبة على المحوّل والقدرة التي يقرأها BIOS إن ظهرت.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#charger-type"><strong>أريد فحص توافق الشاحن والكابل</strong><span>اختر USB-C أو الموصل الدائري.</span></a>
+        <a class="bootChoice" href="#adapter-ok"><strong>المحوّل معروف وبالقدرة المطلوبة</strong><span>راجع البطارية وحد الشحن.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>عاد الشحن بعد تغيير التوصيل أو المحوّل</strong><span>تحقق من ثباته وسجّل ما تغير.</span></a>
+        <a class="bootChoice" href="#report"><strong>يستمر التحذير مع شاحن مطابق</strong><span>اذكر الرسالة والحمل الذي تظهر معه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="no-input" data-boot-step="علامة الشاحن غائبة" data-boot-demo="power" aria-labelledby="no-input-title">
+      <h2 id="no-input-title" tabindex="-1">حدّد هل الجهاز يستقبل الكهرباء</h2>
+      <p>إذا كان الجهاز يعمل من البطارية، افتح معلومات الطاقة وسجّل هل ظهر الشاحن. إذا كان اللابتوب مطفأ ولا يستجيب، تحقق من المقبس بوسيلة سليمة ومن توصيل كابل الشاحن. جرّب محوّلًا معروف التوافق إذا لم تجد تلفًا أو سخونة غير معتادة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#adapter-info"><strong>الجهاز يعمل ويمكنني قراءة BIOS</strong><span>راجع نوع المحوّل وقدرته.</span></a>
+        <a class="bootChoice" href="#charger-type"><strong>لا تظهر علامة الشحن</strong><span>راجع نوع المنفذ وما يتطلبه من المحوّل.</span></a>
+        <a class="bootChoice" href="#input-suspect"><strong>لا يستجيب مع شاحن متوافق وسليم</strong><span>انتقل لفحص المدخل والمنفذ.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>ضوء الشاحن ينطفئ فور توصيله</strong><span>أوقف المحاولات وسجّل متى يحدث ذلك.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="intermittent" data-boot-step="شحن متقطّع" data-boot-demo="intermittent" aria-labelledby="intermittent-title">
+      <h2 id="intermittent-title" tabindex="-1">سجّل متى ينقطع التوصيل</h2>
+      <p>إذا كان الشحن ينقطع عند حركة الوصلة، أطفئ الجهاز وافصل الشاحن وافحص التثبيت والكابل بصريًا. إذا كان ضوء المحوّل مضاءً ويطفأ فور توصيله في كل محاولة، أو ظهرت حرارة شديدة أو رائحة، أوقف المحاولات.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#input-suspect"><strong>المنفذ مرتخٍ أو ضوء المحوّل ينطفئ فور التوصيل</strong><span>وثّق العَرَض لفحص المدخل من دون تكرار التجربة.</span></a>
+        <a class="bootChoice" href="#low-wattage"><strong>ينقطع عند فتح برامج ثقيلة</strong><span>قارن قدرة الشاحن وحالة النسبة تحت حمل خفيف.</span></a>
+        <a class="bootChoice" href="#temperature"><strong>ينقطع بعد ارتفاع الحرارة</strong><span>قارن النتيجة بعد تبريد الجهاز بصورة طبيعية.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>هناك سخونة شديدة أو رائحة</strong><span>أوقف الشحن وراجع خطوة الأمان.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="input-suspect" data-boot-step="فحص مدخل الطاقة" data-boot-demo="charger-plug" aria-labelledby="input-suspect-title">
+      <h2 id="input-suspect-title" tabindex="-1">ركّز على مدخل الطاقة والمنفذ</h2>
+      <p>إذا عمل الشاحن نفسه في منفذ شحن آخر يدعمه جهازك، فهذه نتيجة توجّه الفحص إلى المسار الأول. إذا فشل محوّلان متوافقان أو انطفأ مؤشر المحوّل فور التوصيل، سجّل المقارنة ليفحص الفني المدخل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#board-check"><strong>أريد تحديد المسار على البورد</strong><span>ابدأ من رقم اللوحة ووظيفة الموصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد متابعة فحص المدخل مع فني</strong><span>اذكر ما إذا تغيّر المؤشر عند التوصيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="adapter-ok" data-boot-step="الشاحن معروف" data-boot-demo="charging-battery" aria-labelledby="adapter-ok-title">
+      <h2 id="adapter-ok-title" tabindex="-1">هل البطارية موجودة في معلومات الجهاز؟</h2>
+      <p>دوّن نسبة البطارية وحالتها إن ظهرت، مثل <bdi>Present</bdi> أو <bdi>Good</bdi> أو <bdi>Poor</bdi>. إذا لم تجد قراءة للصحة في BIOS وكان ويندوز يعمل، يمكن قراءة تقرير البطارية.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#battery-missing"><strong>Battery Not Detected أو لا تظهر البطارية</strong><span>تحقّق هل تختفي من BIOS أم من النظام فقط.</span></a>
+        <a class="bootChoice" href="#battery-report"><strong>البطارية موجودة وأريد قراءة صحتها</strong><span>افتح التقرير وقارن السعة مع سلوك الجهاز.</span></a>
+        <a class="bootChoice" href="#charge-limit"><strong>البطارية موجودة وتتوقف عند حد ثابت</strong><span>تحقق من إعداد بداية الشحن ونهايته.</span></a>
+        <a class="bootChoice" href="#board-check"><strong>محوّل وبطارية معروفان والشحن متوقف</strong><span>وثّق نتيجة الفحص لتتبع دائرة الشحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="battery-missing" data-boot-step="البطارية غير مكتشفة" data-boot-demo="battery-alert" aria-labelledby="battery-missing-title">
+      <h2 id="battery-missing-title" tabindex="-1">قارن ظهور البطارية في BIOS وويندوز</h2>
+      <p>إذا اختفت البطارية بعد صيانة أو تبديلها، سجّل متى بدأ العطل. عندما لا يراها BIOS أيضًا، يحتاج الفني إلى مطابقة البطارية والموصل وفحص اتصالها باللوحة. إذا ظهرت في BIOS، أعد التشغيل بصورة عادية وراجع هل يراها ويندوز.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#board-check"><strong>غائبة من BIOS أيضًا</strong><span>اتجه لفحص توافق البطارية ومسار التعرّف إليها.</span></a>
+        <a class="bootChoice" href="#battery-report"><strong>ظهرت في ويندوز بعد إعادة التشغيل</strong><span>اقرأ الحالة وقارن النسبة بعد التوصيل.</span></a>
+        <a class="bootChoice" href="#report"><strong>موجودة في BIOS وغائبة في ويندوز</strong><span>اكتب اسم النظام والرسالة التي تظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="battery-report" data-boot-step="تقرير صحة البطارية" data-boot-demo="inspect" aria-labelledby="battery-report-title">
+      <h2 id="battery-report-title" tabindex="-1">اقرأ السعة التي تسجّلها البطارية</h2>
+      <ol>
+        <li>في ويندوز، افتح «موجه الأوامر» كمسؤول ونفّذ <code dir="ltr">powercfg /batteryreport</code>. افتح ملف التقرير من المسار الذي يطبعه الأمر.</li>
+        <li>ابحث عن <bdi>Installed batteries</bdi> ثم دوّن <bdi>Design Capacity</bdi> و<bdi>Full Charge Capacity</bdi> إن ظهرتا. قارن مع مدة العمل الفعلية وهبوط النسبة بعد فصل الشاحن.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/charge-battery-report.webp" width="840" height="420" loading="lazy" alt="رسم لتقرير بطارية يظهر سعة تصميم 50 ألف وسعة شحن كاملة 35 ألف ملي واط ساعة">
+        <figcaption>مثال على قراءة خانتي السعة. اجمع القراءة مع سلوك البطارية قبل الحكم عليها.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#battery-worn"><strong>السعة أقل بوضوح ووقت العمل قصير</strong><span>راجع حالة البطارية ونمط هبوط النسبة.</span></a>
+        <a class="bootChoice" href="#battery-missing"><strong>التقرير لا يعرض بطارية مركّبة</strong><span>قارن النتيجة بقراءة BIOS.</span></a>
+        <a class="bootChoice" href="#report"><strong>السعة تبدو قريبة من سعة التصميم والشحن متوقف</strong><span>اكتب القراءتين مع حالة الشاحن وحد الشحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="battery-worn" data-boot-step="هبوط السعة أو النسبة" data-boot-demo="battery-alert" aria-labelledby="battery-worn-title">
+      <h2 id="battery-worn-title" tabindex="-1">هل يطابق هبوط السعة سلوك البطارية؟</h2>
+      <p>إذا صارت مدة العمل قصيرة جدًا أو انطفأ الجهاز فجأة بعد فصل الشاحن، سجّل النسبة عند حدوث ذلك مع قراءتي السعة. شغّل فحص البطارية المدمج في الجهاز إن توفر وسجّل النتيجة. اجتماع العلامات يساعد الفني على تقييم البطارية ومدى توافق بديلها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أريد مراجعة نتيجة البطارية</strong><span>أرسل القراءتين ومدة العمل وأي رمز فحص ظهر.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>هناك انتفاخ أو سخونة شديدة</strong><span>أوقف الاستخدام واتبع خطوة الأمان.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="temperature" data-boot-step="الشحن والحرارة" data-boot-demo="battery-alert" aria-labelledby="temperature-title">
+      <h2 id="temperature-title" tabindex="-1">قارن الشحن بعد أن يبرد الجهاز</h2>
+      <p>إذا كانت السخونة شديدة أو رافقها انتفاخ أو رائحة، انتقل إلى خطوة الأمان. إذا ارتفعت الحرارة أثناء العمل فقط، أطفئ اللابتوب وافصل الشاحن واتركه يبرد بصورة طبيعية على سطح مناسب مع فتحات تهوية مكشوفة. جرّب التوصيل مرة واحدة عندما تصبح الحرارة طبيعية.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>عاد الشحن بعد أن برد الجهاز</strong><span>سجّل الحمل والوقت الذي توقف عنده الشحن.</span></a>
+        <a class="bootChoice" href="#report"><strong>يعود الانقطاع كلما سخن</strong><span>اكتب متى يحدث وتحت أي حمل.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>الحرارة شديدة أو تظهر علامة خطر</strong><span>أوقف التجربة ولا تكرر الشحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="board-check" data-boot-step="تتبّع مسار الشحن على اللوحة" data-boot-demo="connect-drive" aria-labelledby="board-check-title">
+      <h2 id="board-check-title" tabindex="-1">للفني، ابدأ من المرحلة التي توقفت</h2>
+      <p>سجّل رقم البورد واستخدم <a href="/boardview/">BoardView</a> لتحديد موصل الشاحن والبطارية. افصل المحوّل والبطارية بحسب إجراءات الموديل قبل الفحص البصري للموصلات والكابلات وآثار السوائل.</p>
+      <ul>
+        <li>إذا لم يتعرّف الجهاز إلى المحوّل، راجع على المخطط مدخل الطاقة ومسار التعريف أو تفاوض <bdi>USB-C PD</bdi> حسب الموديل.</li>
+        <li>إذا كان المحوّل معروفًا والبطارية غائبة، راجع توافق البطارية وتوصيلها وخطوط التعرّف إليها.</li>
+        <li>إذا ظهر الاثنان، اربط حالة الشحن بحدود الجهاز وقراءة البطارية قبل متابعة دائرة الشحن. استخدم مخطط البورد لتحديد وظيفة كل نقطة.</li>
+      </ul>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك مرحلة التوقف ورقم البورد</strong><span>اذكر الموصل والقراءات المتوفرة ونتيجة المحوّل البديل.</span></a>
+        <a class="bootChoice" href="#adapter-info"><strong>أراجع قراءة الشاحن والبطارية أولًا</strong><span>ارجع إلى معلومات الطاقة في BIOS.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="النتيجة مستقرة" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">ثبّت النتيجة التي حصلت عليها</h2>
+      <p>سجّل ما غيّرته وما إذا ارتفعت النسبة أو بقيت عند الحد المفعّل. إذا تكرر العطل، اذكر وقت الانقطاع وما كان الجهاز يشغّله وماذا عرضت أيقونة البطارية.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك ما حلّ المشكلة</strong><span>اكتب النتيجة ليستفيد الفنيون من تجربتك.</span></a>
+        <a class="bootChoice" href="#intermittent"><strong>عاد الانقطاع</strong><span>حدد متى يفصل الشحن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>ابدأ بما رأيته على الجهاز. ثبات النسبة عند 80%، ظهور <bdi>Unknown</bdi> في BIOS، أو انطفاء الضوء عند التوصيل، كل نتيجة تساعدنا على تحديد الفحص التالي. إذا لم تتمكّن من إجراء مقارنة، اكتب ما استطعت فحصه.</p>
+      <p><strong>سنقرأ حالتك بعناية ونردّ عليك في غرفة الصيانة.</strong> سنراجع التفاصيل ونوضح ما تحتاج إلى ملاحظته في الخطوة التالية. عندما تحصل على نتيجة جديدة، أضفها إلى المناقشة نفسها لنواصل من حيث توقفت.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل اللابتوب أو رقم البورد، ونوع الشاحن وقدرته المكتوبة.</li>
+          <li>نسبة البطارية ورسالة الشحن وقراءة المحوّل في BIOS إن ظهرت.</li>
+          <li>هل البطارية مكتشفة؟ هل يوجد حد شحن؟ ومتى ينقطع أو يتوقف الشحن؟</li>
+          <li>نتيجة تجربة محوّل أو كابل متوافق، أو نتيجة فحص البطارية.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. اكتب نص الرسالة والقيم المهمة، واحتفظ بالأرقام التسلسلية وكلمات المرور لنفسك.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>

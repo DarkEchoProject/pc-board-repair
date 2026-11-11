@@ -115,4 +115,29 @@
   <symbol id="power" viewBox="0 0 120 84">
     <path d="M60 19v14m-9-9a15 15 0 1 0 18 0" fill="none" stroke="#8ba6ba" stroke-width="4" stroke-linecap="round"/>
   </symbol>
+
+  <symbol id="charging-battery" viewBox="0 0 120 84">
+    <rect x="31" y="22" width="54" height="29" rx="5" fill="#194e50" stroke="#88efd1" stroke-width="3"/>
+    <path d="M88 31h5v11h-5" fill="#88efd1"/>
+    <path d="m61 26-10 12h8l-2 9 12-13h-9l1-8Z" fill="#b8f6dd"/>
+  </symbol>
+
+  <symbol id="charge-limit" viewBox="0 0 120 84">
+    <rect x="31" y="22" width="54" height="29" rx="5" fill="#1e3547" stroke="#99def0" stroke-width="3"/>
+    <path d="M88 31h5v11h-5" fill="#99def0"/>
+    <rect x="37" y="28" width="34" height="17" rx="2" fill="#80dfbf"/>
+    <path d="M74 18v36" stroke="#ffd179" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="charger-plug" viewBox="0 0 120 84">
+    <path d="M47 30v-9m15 9v-9m-8 23v7c0 5 6 8 12 6l15-6" fill="none" stroke="#9ae6fa" stroke-width="4" stroke-linecap="round"/>
+    <path d="M39 30h30v6a9 9 0 0 1-9 9H48a9 9 0 0 1-9-9v-6Z" fill="#276786" stroke="#9ae6fa" stroke-width="3"/>
+  </symbol>
+
+  <symbol id="battery-alert" viewBox="0 0 120 84">
+    <rect x="31" y="22" width="54" height="29" rx="5" fill="#542d36" stroke="#ffb099" stroke-width="3"/>
+    <path d="M88 31h5v11h-5" fill="#ffb099"/>
+    <path d="M58 29v10" stroke="#ffdbb3" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="58" cy="45" r="2" fill="#ffdbb3"/>
+  </symbol>
 </svg>
