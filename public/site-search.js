@@ -60,73 +60,73 @@
 
   const staticEntries=[
     {
-      type:'boardview',url:'/boardview/hp-compaq-dc5800-c453-vrm-repair.html',
+      type:'boardview',url:'/boardview/hp-compaq-dc5800-c453-vrm-repair',
       titleAr:'HP Compaq dc5800 — C453 CPU VRM Repair Map',titleEn:'HP Compaq dc5800 — C453 CPU VRM Repair Map',
       subtitleAr:'Cheetah Rev A • AS# 450667-001 • SP# 461536-001 • FlexBV FZ',subtitleEn:'Cheetah Rev A • AS# 450667-001 • SP# 461536-001 • FlexBV FZ',
       keywords:'HP Compaq dc5800 HP_Compaq_dc5800 Cheetah Rev A 450667-001 461536-001 C453 R526 U46 NCP5385 NCP3488 VCORE VRM CPU boardview flexbv fz repair map مخطط خريطة اصلاح تغذية المعالج'
     },
     {
-      type:'diagnostics',url:'/diagnostics/index.html',
+      type:'diagnostics',url:'/diagnostics/',
       titleAr:'تشخيص أعطال الكمبيوتر واللوحات الأم',titleEn:'PC & Motherboard Diagnostics',
       subtitleAr:'ابدأ من العطل الظاهر واتبع خطوات القياس بالترتيب.',subtitleEn:'Start from the visible fault and follow measurements in order.',
       keywords:'تشخيص اعطال صيانة motherboard repair diagnostics no power no display no post short circuit restart beep vrm cpu ram bios'
     },
     {
-      type:'diagnostics',url:'/diagnostics/no-power.html',
+      type:'diagnostics',url:'/diagnostics/no-power',
       titleAr:'الجهاز لا يعمل نهائيًا — No Power',titleEn:'PC completely dead — No Power',
       subtitleAr:'5VSB، زر التشغيل، PS_ON، مخارج الباور وخطوط الاستعداد.',subtitleEn:'5VSB, power button, PS_ON, PSU outputs and standby rails.',
       keywords:'لا يعمل لا يشتغل ميت باور no power dead 5vsb ps_on pwr_sw atx standby power button مزود طاقة'
     },
     {
-      type:'diagnostics',url:'/diagnostics/no-display.html',
+      type:'diagnostics',url:'/diagnostics/no-display',
       titleAr:'يعمل ولا توجد صورة — No Display / No POST',titleEn:'Powers on with no image — No Display / No POST',
       subtitleAr:'RAM، VDIMM، CPU، Vcore، BIOS، Reset، Clock وكرت الشاشة.',subtitleEn:'RAM, VDIMM, CPU, Vcore, BIOS, Reset, Clock and graphics.',
       keywords:'لا توجد صورة شاشة سوداء no display no post ram vdimm cpu vcore bios reset clock gpu vga'
     },
     {
-      type:'diagnostics',url:'/diagnostics/restarts-shuts-down.html',
+      type:'diagnostics',url:'/diagnostics/restarts-shuts-down',
       titleAr:'يعمل ثم يفصل أو يعيد التشغيل',titleEn:'Starts then shuts down or restarts',
       subtitleAr:'PSU، الحرارة، VRM، Vcore، RAM وتسلسل Power Good.',subtitleEn:'PSU, thermals, VRM, Vcore, RAM and Power Good.',
       keywords:'يفصل يعيد التشغيل ريستارت restart shutdown shuts down reboot loop psu temperature heat vrm power good'
     },
     {
-      type:'diagnostics',url:'/diagnostics/short-circuit.html',
+      type:'diagnostics',url:'/diagnostics/short-circuit',
       titleAr:'تشخيص الشورت على اللوحة الأم',titleEn:'Motherboard Short-Circuit Diagnosis',
       subtitleAr:'تحديد الخط المقصور وعزل المراحل وفحص MOSFET والمكثفات.',subtitleEn:'Identify the shorted rail, isolate stages, and test MOSFETs and capacitors.',
       keywords:'شورت قصر short short circuit resistance ground gnd حقن فولت injection mosfet capacitor مكثف 12v vcore'
     },
     {
-      type:'diagnostics',url:'/diagnostics/post-beep-codes.html',
+      type:'diagnostics',url:'/diagnostics/post-beep-codes',
       titleAr:'POST متوقف أو صفارات Beep Codes',titleEn:'POST freeze or Beep Codes',
       subtitleAr:'RAM، CPU، BIOS، VGA، POST Card، Reset وClock.',subtitleEn:'RAM, CPU, BIOS, VGA, POST Card, Reset and Clock.',
       keywords:'صفارات صافرات beep beeps beep codes post freeze تجمد post card debug led ram cpu bios vga'
     },
     {
-      type:'diagnostics',url:'/diagnostics/vrm-cpu-ram.html',
+      type:'diagnostics',url:'/diagnostics/vrm-cpu-ram',
       titleAr:'VRM وخطوط المعالج والرام',titleEn:'VRM, CPU & RAM Power Rails',
       subtitleAr:'12V CPU، PWM، MOSFET، الملفات، Vcore وVDIMM.',subtitleEn:'12V CPU, PWM, MOSFETs, inductors, Vcore and VDIMM.',
       keywords:'vrm cpu ram 12v eps pwm mosfet power stage drmos coil inductor vcore vdimm enable power good تغذية معالج رام ملفات'
     },
     {
-      type:'components',url:'/component-testing/index.html',
+      type:'components',url:'/component-testing/',
       titleAr:'فحص القطع الإلكترونية بالأفوميتر',titleEn:'Electronic Component Testing with a Multimeter',
       subtitleAr:'ديود، مقاومة، BJT، MOSFET، مكثف، ملف، فيوز وجسر توحيد.',subtitleEn:'Diode, resistor, BJT, MOSFET, capacitor, inductor, fuse and bridge rectifier.',
       keywords:'فحص قطع افوميتر ملتيميتر multimeter diode ديود resistor مقاومة transistor ترانزستور bjt mosfet مكثف capacitor coil inductor ملف fuse فيوز bridge rectifier جسر توحيد'
     },
     {
-      type:'bios',url:'/bios/index.html',
+      type:'bios',url:'/bios/',
       titleAr:'ملفات BIOS للوحات الأم',titleEn:'Motherboard BIOS Files',
       subtitleAr:'ملفات BIOS مرتبة حسب الشركة والموديل.',subtitleEn:'BIOS files organized by brand and model.',
       keywords:'bios بيوس flash spi programmer برمجة firmware ملف بيوس'
     },
     {
-      type:'bios',url:'/bios/intel.html',
+      type:'bios',url:'/bios/intel',
       titleAr:'Intel DH55PJ — BIOS TC0048P',titleEn:'Intel DH55PJ — BIOS TC0048P',
       subtitleAr:'ملف BIOS للوحة Intel DH55PJ — TC0048P.zip / TC0048P.BIO.',subtitleEn:'BIOS file for Intel DH55PJ — TC0048P.zip / TC0048P.BIO.',
       keywords:'intel dh55pj tc0048p tc0048p.zip tc0048p.bio bios بيوس intel desktop board'
     },
     {
-      type:'community',url:'/community.html',
+      type:'community',url:'/community',
       titleAr:'غرفة الصيانة والطلبات',titleEn:'Repair Room & Requests',
       subtitleAr:'طلبات مخططات وBoardView وBIOS ومناقشة أعطال اللوحات.',subtitleEn:'Schematic, BoardView and BIOS requests plus repair discussions.',
       keywords:'غرفة الصيانة طلب مخطط schematic boardview bios مناقشة عطل repair room requests community فنيين'
@@ -265,7 +265,7 @@
         const brand = String(item.brand || 'Other');
         return {
           type: 'bios',
-          url: `/bios/index.html?q=${encodeURIComponent(name)}`,
+          url: `/bios/?q=${encodeURIComponent(name)}`,
           titleAr: `BIOS — ${name}`,
           titleEn: `BIOS — ${name}`,
           subtitleAr: `ملف BIOS • ${brand}`,

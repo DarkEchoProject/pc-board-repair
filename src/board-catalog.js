@@ -39,3 +39,15 @@ export const boardPath = (board) => {
   const readable = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"));
   return `/boardview/item/${fileKey(board.file)}/${readable}`;
 };
+
+export function boardCard(board) {
+  return {
+    key: fileKey(board.file),
+    path: boardPath(board),
+    brand: String(board.brand ?? "").trim(),
+    model: String(board.model ?? "").trim(),
+    board: String(board.board ?? "").trim(),
+    revision: String(board.revision ?? "").trim(),
+    type: String(board.type ?? "").trim(),
+  };
+}

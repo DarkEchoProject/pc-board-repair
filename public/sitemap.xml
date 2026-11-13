@@ -25,14 +25,14 @@
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/clock-reset-diagnosis</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-boot</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/drive-not-detected</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-internal-display</loc></url>
-  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/usb-port-not-working</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-boot</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/power-sequence-diagnosis</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/ram-vdimm-spd-diagnosis</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground</loc></url>
+  <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/usb-port-not-working</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-pwm-mosfet-diagnosis</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bjt-testing</loc></url>
   <url><loc>https://pc-board-repair.alinasser00001.workers.dev/component-testing/bridge-rectifier-testing</loc></url>

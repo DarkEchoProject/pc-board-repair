@@ -96,14 +96,14 @@
     if(section)section.setAttribute('aria-label',copy.inputLabel);
     input.placeholder=copy.placeholder;
     input.setAttribute('aria-label',copy.inputLabel);
-    if(allLink){allLink.textContent=copy.all;allLink.href='/search.html';}
+    if(allLink){allLink.textContent=copy.all;allLink.href='/search';}
 
     let timer=null;
 
     function updateAllLink(){
       if(!allLink)return;
       const query=input.value.trim();
-      allLink.href=query?`/search.html?q=${encodeURIComponent(query)}`:'/search.html';
+      allLink.href=query?`/search?q=${encodeURIComponent(query)}`:'/search';
     }
 
     function resultCard(item){
@@ -175,7 +175,7 @@
       if(event.key!=='Enter')return;
       event.preventDefault();
       const query=input.value.trim();
-      location.href=query?`/search.html?q=${encodeURIComponent(query)}`:'/search.html';
+      location.href=query?`/search?q=${encodeURIComponent(query)}`:'/search';
     });
 
     info.textContent=copy.ready;

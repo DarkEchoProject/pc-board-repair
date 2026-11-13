@@ -1,15 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { normalizeBiosCatalog } from '../public/bios/catalog-data.js';
+import { writeHomeSummary } from './home-summary.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const publicDir = path.join(repoRoot, 'public');
 const boardsJson = path.join(publicDir, 'data', 'boards.json');
 const boardsLargeJson = path.join(publicDir, 'data', 'boards-large.json');
+const biosJson = path.join(publicDir, 'data', 'bios.json');
 const sitemapOutput = path.join(publicDir, 'sitemap.xml');
 const directoryOutput = path.join(publicDir, 'boardview', 'directory.html');
-const homeDataOutput = path.join(publicDir, 'data', 'home-data.json');
 const site = 'https://pc-board-repair.alinasser00001.workers.dev';
 
 function readJsonArray(filePath) {
@@ -108,10 +110,7 @@ const all = [...readJsonArray(boardsJson), ...readJsonArray(boardsLargeJson)];
 const seenFiles = new Set();
 const boardPaths = [];
 const directoryItems = [];
-const homeRecords = [];
-const homeBrands = new Set();
-const homeTypes = new Set();
-let homeImageCount = 0;
+const homeBoards = [];
 
 for (const board of all) {
   const brand = String(board?.brand ?? '').trim();
@@ -141,44 +140,10 @@ for (const board of all) {
     path: itemPath,
   });
 
-  homeRecords.push({
-    key,
-    brand,
-    model,
-    board: boardNo,
-    revision,
-    type,
-    added: String(board?.added_at ?? board?.addedAt ?? '').trim(),
-  });
-
-  homeBrands.add(brand);
-  if (type) homeTypes.add(type);
-  if (board?.image) homeImageCount += 1;
+  homeBoards.push(board);
 }
 
-const toHomeCard = ({ added, ...card }) => card;
-const datedHomeRecords = homeRecords.filter(item => item.added);
-const latestHomeRecords = (
-  datedHomeRecords.length >= 6
-    ? [...datedHomeRecords]
-        .sort((a, b) => new Date(b.added) - new Date(a.added))
-        .slice(0, 6)
-    : homeRecords.slice(-6).reverse()
-);
-
-const homeData = {
-  stats: {
-    boardCount: homeRecords.length,
-    brandCount: homeBrands.size,
-    imageCount: homeImageCount,
-    typeCount: homeTypes.size,
-  },
-  latest: latestHomeRecords.map(toHomeCard),
-  cards: homeRecords.map(toHomeCard),
-};
-
-fs.mkdirSync(path.dirname(homeDataOutput), { recursive: true });
-fs.writeFileSync(homeDataOutput, JSON.stringify(homeData), 'utf8');
+writeHomeSummary(homeBoards, normalizeBiosCatalog(readJsonArray(biosJson)).length);
 
 function toPublicUrlPath(p) {
   if (p.endsWith('/index.html')) return p.slice(0, -'index.html'.length);
@@ -218,9 +183,9 @@ directory.push(`<link rel="canonical" href="${site}/boardview/directory">`);
 directory.push('<link rel="stylesheet" href="../style.css"><link rel="stylesheet" href="../boardview-extra.css">');
 directory.push('</head>');
 directory.push('<body>');
-directory.push('<header><a class="logo" href="../index.html">PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="index.html">BoardView</a><a href="featured.html">ملفات مختارة</a><a href="../diagnostics/index.html">التشخيص</a></nav></header>');
+directory.push('<header><a class="logo" href="/">PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/boardview/featured">ملفات مختارة</a><a href="/diagnostics/">التشخيص</a></nav></header>');
 directory.push('<main class="wrap">');
-directory.push('<div class="crumb"><a href="../index.html">الرئيسية</a> ← <a href="index.html">BoardView</a> ← الفهرس الكامل</div>');
+directory.push('<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/boardview/">BoardView</a> ← الفهرس الكامل</div>');
 directory.push('<h1>فهرس جميع ملفات BoardView</h1>');
 directory.push(`<p class="muted">يتضمن هذا الفهرس ${directoryItems.length} رابطًا مباشرًا وثابتًا إلى صفحات ملفات BoardView. استخدم بحث المتصفح للوصول بسرعة إلى الشركة أو الموديل أو رقم البورد أو Revision.</p>`);
 
@@ -239,7 +204,7 @@ for (const [brand, items] of grouped) {
 }
 
 directory.push('</main>');
-directory.push('<footer><div class="footerLinks"><a href="index.html">BoardView</a><a href="featured.html">ملفات مختارة</a><a href="../diagnostics/index.html">التشخيص</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>');
+directory.push('<footer><div class="footerLinks"><a href="/boardview/">BoardView</a><a href="/boardview/featured">ملفات مختارة</a><a href="/diagnostics/">التشخيص</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>');
 directory.push('</body></html>');
 directory.push('');
 fs.mkdirSync(path.dirname(directoryOutput), { recursive: true });
@@ -247,6 +212,6 @@ fs.writeFileSync(directoryOutput, directory.join('\n'), 'utf8');
 
 console.log(`Static sitemap built: ${urls.length} URL(s)`);
 console.log(`Static BoardView directory built: ${directoryItems.length} file link(s)`);
-console.log(`Homepage data built: ${homeRecords.length} lightweight card(s)`);
+console.log(`Homepage summary built for ${homeBoards.length} BoardView record(s)`);
 console.log(sitemapOutput);
 console.log(directoryOutput);

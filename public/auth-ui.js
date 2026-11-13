@@ -28,7 +28,7 @@
   }
 
   const nextPath=()=>location.pathname+location.search+location.hash;
-  const loginHref=(next=nextPath())=>`/login.html?next=${encodeURIComponent(next)}`;
+  const loginHref=(next=nextPath())=>`/login?next=${encodeURIComponent(next)}`;
 
   function currentLang(){
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
@@ -438,17 +438,17 @@
 
     const items=[
       {
-        href:'/diagnostics/index.html',
+        href:'/diagnostics/',
         ar:'🔧 التشخيص',
         en:'🔧 Diagnostics'
       },
       {
-        href:'/component-testing/index.html',
+        href:'/component-testing/',
         ar:'🔬 فحص القطع',
         en:'🔬 Component Testing'
       },
       {
-        href:'/contact.html',
+        href:'/contact',
         ar:'✉ اتصل بنا',
         en:'✉ Contact'
       }
@@ -523,10 +523,10 @@
 
     const lang=currentLang();
     const items=[
-      {href:'/boardview/index.html',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
-      {href:'/bios/index.html',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
+      {href:'/boardview/',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
+      {href:'/bios/',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
       {href:'#',ar:'المزيد ▾',en:'More ▾',active:()=>false,moreMenu:true},
-      {href:'/community.html',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community.html'},
+      {href:'/community',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community'||path==='/community.html'},
       {href:'#',ar:'↗ مشاركة',en:'↗ Share',active:()=>false,shareMenu:true},
       {href:'https://t.me/rdRepairLB',ar:'✈ انضم لتلغرام',en:'✈ Join Telegram',active:()=>false,external:true,telegram:true},
       {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}

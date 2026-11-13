@@ -1,4 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
+import { boardCard } from "./board-catalog.js";
 
 const GA_ID = "G-G13T8YNG71";
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
@@ -65,6 +66,28 @@ async function getBoards(env) {
   const text = (await response.text()).replace(/^\uFEFF/, "");
   boardsCache = normalizeBoards(JSON.parse(text));
   return boardsCache;
+}
+
+async function includeTopBoards(response, env) {
+  try {
+    const data = await response.clone().json();
+    const keys = new Set(data.items.map(item => item.key.toLowerCase()));
+    if (!keys.size) return response;
+
+    const cards = new Map();
+    for (const board of await getBoards(env)) {
+      const key = fileKey(board.file);
+      if (keys.delete(key)) cards.set(key, boardCard(board));
+      if (!keys.size) break;
+    }
+
+    return json({
+      ...data,
+      items: data.items.map(item => ({ ...item, board: cards.get(item.key.toLowerCase()) })),
+    });
+  } catch {
+    return response;
+  }
 }
 
 const allowedCategories = new Set([
@@ -143,7 +166,7 @@ function boardPage(board, related) {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "الرئيسية", item: `${SITE}/` },
-        { "@type": "ListItem", position: 2, name: "BoardView", item: `${SITE}/boardview/index.html` },
+        { "@type": "ListItem", position: 2, name: "BoardView", item: `${SITE}/boardview/` },
         { "@type": "ListItem", position: 3, name: `${board.brand} ${board.model || ""}`, item: canonical },
       ],
     },
@@ -165,9 +188,9 @@ function boardPage(board, related) {
 <script type="application/ld+json">${structured}</script>
 </head>
 <body>
-<header><a class="logo" href="/index.html">⚙️ PC Board Repair</a><nav><a href="/index.html">الرئيسية</a><a href="/boardview/index.html">BoardView</a><a href="/bios/index.html">BIOS</a><a href="/community.html">غرفة الصيانة</a><a href="/contact.html">اتصل بنا</a></nav></header>
+<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/community">غرفة الصيانة</a><a href="/contact">اتصل بنا</a></nav></header>
 <main class="wrap">
-<div class="crumb"><a href="/index.html">الرئيسية</a> ← <a href="/boardview/index.html">BoardView</a> ← <a href="/boardview/company?brand=${encodeURIComponent(board.brand)}">${brand}</a> ← ${model}</div>
+<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/boardview/">BoardView</a> ← <a href="/boardview/company?brand=${encodeURIComponent(board.brand)}">${brand}</a> ← ${model}</div>
 <article class="boardDetail">
   <div>${imageBlock}</div>
   <div class="boardInfo">
@@ -182,7 +205,7 @@ function boardPage(board, related) {
 <div class="warn"><b>تنبيه:</b> تأكد من تطابق الشركة والموديل ورقم اللوحة وRevision قبل استخدام الملف. احتفظ بنسخة احتياطية قبل أي تعديل أو برمجة.</div>
 ${relatedHtml}
 </main>
-<footer><div class="footerLinks"><a href="/community.html">غرفة الصيانة</a><a href="/about.html">من نحن</a><a href="/contact.html">اتصل بنا</a><a href="/privacy.html">سياسة الخصوصية</a><a href="/terms.html">شروط الاستخدام</a><a href="/disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>document.addEventListener('click',e=>{const a=e.target.closest('.downloadTrack');if(a&&typeof gtag==='function')gtag('event','boardview_download',{board_brand:a.dataset.brand||'',board_model:a.dataset.model||'',file_name:a.getAttribute('href')||''});});</script>
 </body></html>`;
 }
@@ -336,7 +359,12 @@ export default {
 
     if (url.pathname.startsWith("/api/stats/")) {
       const stats = env.CHAT_ROOM.getByName("site-stats");
-      return stats.fetch(request);
+      const response = await stats.fetch(request);
+      if (request.method === "GET" && response.ok && url.pathname === "/api/stats/top" &&
+          url.searchParams.get("include") === "boards") {
+        return includeTopBoards(response, env);
+      }
+      return response;
     }
 
     const downloadMatch = url.pathname.match(/^\/download\/([a-z0-9]+)\/?$/i);
@@ -376,7 +404,7 @@ export default {
           return new Response("Not Found", { status: 404 });
         }
         const canonicalPath = boardPath(board);
-        if (url.pathname.replace(/\/$/, "") !== canonicalPath) {
+        if (url.pathname !== canonicalPath) {
           return Response.redirect(`${SITE}${canonicalPath}`, 301);
         }
         const related = boards.filter(item => item.file !== board.file && item.brand.toLowerCase() === board.brand.toLowerCase()).slice(0, 6);

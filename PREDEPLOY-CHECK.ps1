@@ -70,6 +70,9 @@ function Ensure-GeneratedSeoArtifacts {
             foreach ($source in @(
                 (Join-Path $root 'public\data\boards.json'),
                 (Join-Path $root 'public\data\boards-large.json'),
+                (Join-Path $root 'public\data\bios.json'),
+                (Join-Path $root 'scripts\home-summary.mjs'),
+                (Join-Path $root 'src\board-catalog.js'),
                 (Join-Path $root 'scripts\build-sitemap.mjs')
             )) {
                 if (
@@ -141,7 +144,7 @@ Write-Host ""
 Write-Host "Checking sitemap and crawl-directory output..."
 Check-File 'public\sitemap.xml' 100
 Check-File 'public\boardview\directory.html' 10000
-Check-File 'public\data\home-data.json' 1000
+Check-File 'public\data\home-data.json' 50
 
 if (Test-Path -LiteralPath 'public\sitemap.xml' -PathType Leaf) {
     try {

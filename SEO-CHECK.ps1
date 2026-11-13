@@ -208,6 +208,41 @@ else {
     Fail 'robots.txt does not advertise the canonical sitemap URL'
 }
 
+$articleSchemaCount = 0
+$articleSchemaErrors = 0
+foreach ($page in Get-ChildItem -LiteralPath 'public' -Recurse -File -Filter '*.html') {
+    $html = Get-Content -LiteralPath $page.FullName -Raw -Encoding UTF8
+    $canonical = [regex]::Match($html, '(?i)<link\s+rel="canonical"\s+href="([^"]+)"')
+    if (-not $canonical.Success) { continue }
+
+    foreach ($block in [regex]::Matches($html, '(?is)<script\s+type="application/ld\+json"[^>]*>(.*?)</script>')) {
+        try {
+            $schema = ConvertFrom-Json -InputObject $block.Groups[1].Value
+            $property = $schema.PSObject.Properties['mainEntityOfPage']
+            if ($null -eq $property -or $null -eq $property.Value) { continue }
+            $entity = $property.Value
+            if ($entity -isnot [string]) {
+                $id = $entity.PSObject.Properties['@id']
+                if ($null -eq $id) { continue }
+                $entity = $id.Value
+            }
+            if ([string]::IsNullOrWhiteSpace($entity)) { continue }
+            $articleSchemaCount++
+            if ($entity -cne $canonical.Groups[1].Value) {
+                $articleSchemaErrors++
+                Fail "Structured data points to a different URL than the canonical: $($page.FullName)"
+            }
+        }
+        catch {
+            $articleSchemaErrors++
+            Fail "Invalid structured data: $($page.FullName) - $($_.Exception.Message)"
+        }
+    }
+}
+if ($articleSchemaErrors -eq 0) {
+    Pass "Structured data matches the canonical in $articleSchemaCount page(s)"
+}
+
 Write-Host ''
 if ($script:failed) {
     Write-Host 'SEO / SITEMAP CHECK FAILED. Deployment has been stopped.' -ForegroundColor Red

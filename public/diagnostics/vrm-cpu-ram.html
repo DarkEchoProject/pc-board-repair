@@ -11,14 +11,14 @@
 <style>
 .guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.rail div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.rail b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص VRM وخطوط المعالج والرام","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram.html","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص VRM وخطوط المعالج والرام","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
 <body>
-<header><a class="logo" href="../index.html">⚙️ PC Board Repair</a><nav><a href="../index.html">الرئيسية</a><a href="../boardview/index.html">BoardView</a><a href="../bios/index.html">BIOS</a><a href="index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a></nav></header>
+<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
 <main class="wrap">
-<div class="crumb"><a href="../index.html">الرئيسية</a> ← <a href="index.html">التشخيص</a> ← VRM وخطوط المعالج والرام</div>
+<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← VRM وخطوط المعالج والرام</div>
 <section class="guideHero"><span class="brandTag">Power Rails</span><h1>🔋 VRM وخطوط المعالج والرام</h1><p class="muted">دليل عملي لفهم مسار تغذية CPU وRAM وتحديد أين تتوقف الدائرة: دخل 12V، مراحل MOSFET/Power Stage، PWM، الملفات، Vcore وVDIMM.</p></section>
 
 <div class="danger"><b>قاعدة مهمة:</b> لا تعتبر صفارة الاستمرارية على Vcore شورتًا تلقائيًا. خطوط المعالج قد تكون مقاومتها منخفضة جدًا طبيعيًا، وخصوصًا مع CPU مركب. استخدم المقاومة، المقارنة، المخطط وسلوك الخط مع التغذية قبل الحكم.</div>
@@ -45,12 +45,12 @@
 
 <section id="s10" class="step"><h2><span class="stepNum">10</span>ترتيب فحص سريع</h2><ol class="checklist"><li>فحص بصري.</li><li>مقاومة 12V وVcore وVDIMM إلى GND واللوحة مفصولة.</li><li>12V CPU عند التشغيل.</li><li>Vcore وVDIMM على جهة خرج الملفات.</li><li>VCC وEnable لمتحكم PWM.</li><li>مقارنة المراحل وحرارتها.</li><li>Oscilloscope للـPWM/SW عند الحاجة.</li><li>بعد ثبات التغذيات: BIOS وReset وClock وPOST.</li></ol><div class="decision"><b>أفضل أداة هنا:</b> المخطط أو BoardView لأن أسماء الإشارات والقيم الدقيقة تختلف من لوحة لأخرى.</div></section>
 
-<section class="step"><h2>روابط مرتبطة</h2><div class="related"><a class="imageBtn" href="short-circuit.html">🔌 تشخيص الشورت</a><a class="imageBtn" href="no-display.html">🖥️ No Display / No POST</a><a class="imageBtn" href="restarts-shuts-down.html">🔁 يعمل ويفصل</a><a class="imageBtn" href="../boardview/index.html">🗺️ البحث في BoardView</a></div></section>
+<section class="step"><h2>روابط مرتبطة</h2><div class="related"><a class="imageBtn" href="/diagnostics/short-circuit">🔌 تشخيص الشورت</a><a class="imageBtn" href="/diagnostics/no-display">🖥️ No Display / No POST</a><a class="imageBtn" href="/diagnostics/restarts-shuts-down">🔁 يعمل ويفصل</a><a class="imageBtn" href="/boardview/">🗺️ البحث في BoardView</a></div></section>
 </article>
 
 <aside class="toc"><b>محتويات الصفحة</b><a href="#s1">1. مسار VRM</a><a href="#s2">2. قياسات بدون تغذية</a><a href="#s3">3. دخل 12V</a><a href="#s4">4. Vcore</a><a href="#s5">5. PWM وEnable</a><a href="#s6">6. MOSFET/Power Stage</a><a href="#s7">7. طرفا الملف</a><a href="#s8">8. VDIMM</a><a href="#s9">9. VRM أم CPU؟</a><a href="#s10">10. ترتيب سريع</a></aside>
 </div>
 </main>
-<footer><div class="footerLinks"><a href="index.html">التشخيص</a><a href="../community.html">غرفة الصيانة</a><a href="../about.html">من نحن</a><a href="../contact.html">اتصل بنا</a><a href="../privacy.html">سياسة الخصوصية</a><a href="../terms.html">شروط الاستخدام</a><a href="../disclaimer.html">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body>
 </html>

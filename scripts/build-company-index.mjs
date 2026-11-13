@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { normalizeBiosCatalog } from "../public/bios/catalog-data.js";
 import { boardPath, mergeBoards, normalizeBoards } from "../src/board-catalog.js";
+import { writeHomeSummary } from "./home-summary.mjs";
 
 const SAMPLE_LIMIT = 8;
 const dataDir = new URL("../public/data/", import.meta.url);
@@ -35,7 +36,8 @@ const boardview = summarizeCompanies(boards, board => ({
   label: [board.model || board.file, board.board, board.revision].filter(Boolean).join(" • "),
   href: boardPath(board),
 }));
-const bios = summarizeCompanies(normalizeBiosCatalog(readCatalog("bios.json")), item => ({
+const biosRecords = normalizeBiosCatalog(readCatalog("bios.json"));
+const bios = summarizeCompanies(biosRecords, item => ({
   label: String(item.file),
   href: item.download_url,
 }));
@@ -52,4 +54,5 @@ try {
 } finally {
   fs.rmSync(temporary, { force: true });
 }
+writeHomeSummary(boards, biosRecords.length);
 console.log(`Company index built: ${boardview.size} BoardView and ${bios.size} BIOS companies`);

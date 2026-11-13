@@ -36,7 +36,7 @@ async function isAuthenticated(request, env, ctx) {
 
 function loginRedirect(url) {
   const next = `${url.pathname}${url.search}`;
-  return Response.redirect(`${url.origin}/login.html?next=${encodeURIComponent(next)}`, 302);
+  return Response.redirect(`${url.origin}/login?next=${encodeURIComponent(next)}`, 302);
 }
 
 export default {

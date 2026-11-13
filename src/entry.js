@@ -4,6 +4,7 @@ import { companies } from "../.wrangler/pcbr-company-index.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 const RELEASE_PREFIX = "/DarkEchoProject/pc-board-repair/releases/download/";
+const LEGACY_BOARDVIEW_COMPANIES = { asrock: "ASRock", dell: "Dell", hp: "HP", msi: "MSI" };
 let mergedBoardsCache = null;
 let largeBoardsCache = null;
 
@@ -198,7 +199,7 @@ function boardSeoBlock(board, similar) {
     ? `<div><h3>ملفات BoardView مرتبطة ومقترحة</h3><div class="grid">${similar.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision, item.type].filter(Boolean).join(" • ") || item.file)}</p></a>`).join("")}</div></div>`
     : "";
 
-  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو <a href="/boardview/directory.html">فهرس جميع موديلات BoardView</a> أو <a href="/boardview/featured.html">الملفات المختارة</a> أو العودة إلى <a href="/boardview/index.html">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
+  return `<section class="sectionBlock pcbrBoardSeo"><h2>معلومات فنية عن ${brand} ${model}</h2><p>${facts}</p><p class="muted">استخدم بيانات الموديل ورقم البورد وRevision لمقارنة الملف مع اللوحة قبل التحميل. يمكنك أيضًا استعراض <a href="${companyUrl}">ملفات ${brand}</a> أو <a href="/boardview/directory">فهرس جميع موديلات BoardView</a> أو <a href="/boardview/featured">الملفات المختارة</a> أو العودة إلى <a href="/boardview/">دليل BoardView الكامل</a>.</p>${similarHtml}</section>`;
 }
 
 class BoardSeoAfter {
@@ -306,10 +307,17 @@ function renderCompanyPage(response, company, isBios, canonical) {
 }
 
 async function companyPageResponse(request, env, ctx) {
+  if (request.method !== "GET" && request.method !== "HEAD") return null;
   const url = new URL(request.url);
+  const legacy = url.pathname.match(/^\/boardview\/(asrock|dell|hp|msi)(?:\.html)?\/?$/i);
+  if (legacy) {
+    url.pathname = "/boardview/company";
+    url.searchParams.set("brand", LEGACY_BOARDVIEW_COMPANIES[legacy[1].toLowerCase()]);
+    return Response.redirect(url, 301);
+  }
+
   const match = url.pathname.match(/^\/(boardview|bios)\/company(?:\.html)?\/?$/);
   if (!match) return null;
-  if (request.method !== "GET" && request.method !== "HEAD") return null;
 
   const requestedBrand = url.searchParams.get("brand");
   const section = match[1];
