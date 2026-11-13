@@ -1,5 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import { boardCard } from "./board-catalog.js";
+import { priorityBoardPages } from "./seo-priority.js";
 
 const GA_ID = "G-G13T8YNG71";
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
@@ -121,17 +122,18 @@ function withAnalytics(response) {
 }
 
 function boardPage(board, related) {
+  const priority = priorityBoardPages.get(board.file);
   const modelLabel = String(board.model || "BoardView");
   const revisionLabel = String(board.revision || "").trim();
   const revisionInModel = revisionLabel && `-${textSlug(modelLabel)}-`.includes(`-${textSlug(revisionLabel)}-`);
-  const heading = `${board.brand} ${modelLabel}${revisionLabel && !revisionInModel ? ` ${revisionLabel}` : ""}`;
+  const heading = priority?.title ?? `${board.brand} ${modelLabel}${revisionLabel && !revisionInModel ? ` ${revisionLabel}` : ""}`;
   const boardNumber = String(board.board || "").trim();
   const numberSuffix = boardNumber && boardNumber.toLowerCase() !== modelLabel.trim().toLowerCase()
     ? ` ${boardNumber}`
     : "";
   const typeSuffix = board.model ? " BoardView" : "";
-  const pageTitle = `${heading}${numberSuffix}${typeSuffix}`;
-  const pageName = `${heading}${typeSuffix}`;
+  const pageTitle = priority?.title ?? `${heading}${numberSuffix}${typeSuffix}`;
+  const pageName = priority?.title ?? `${heading}${typeSuffix}`;
   const brand = escapeHtml(board.brand);
   const model = escapeHtml(modelLabel);
   const boardNo = escapeHtml(board.board || "");
@@ -144,7 +146,7 @@ function boardPage(board, related) {
   const imageBlock = board.image
     ? `<a class="boardImageLink" href="/images/${encodeURIComponent(board.image)}" target="_blank" rel="noopener"><img class="boardImage" src="/images/${encodeURIComponent(board.image)}" alt="لوحة ${brand} ${model}"></a>`
     : `<div class="boardPlaceholder">🧩<span>لا توجد صورة متاحة حاليًا</span></div>`;
-  const description = `تحميل ${board.type || "BoardView"} للوحة ${board.brand} ${board.model || ""}${board.board ? ` رقم ${board.board}` : ""}${board.revision ? ` ${board.revision}` : ""} من PC Board Repair.`;
+  const description = priority?.description ?? `تحميل ${board.type || "BoardView"} للوحة ${board.brand} ${board.model || ""}${board.board ? ` رقم ${board.board}` : ""}${board.revision ? ` ${board.revision}` : ""} من PC Board Repair.`;
   const details = [
     ["الشركة", brand],
     ["الموديل", model],
@@ -154,7 +156,7 @@ function boardPage(board, related) {
     ["نوع الملف", type],
     ["اسم الملف", escapeHtml(board.file)],
   ].filter(([, value]) => value).map(([label, value]) => `<div class="detailRow"><span>${label}</span><strong>${value}</strong></div>`).join("");
-  const relatedHtml = related.length ? `<section class="sectionBlock"><h2>ملفات أخرى من ${brand}</h2><div class="grid">${related.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision].filter(Boolean).join(" • ") || item.type || "BoardView")}</p></a>`).join("")}</div></section>` : "";
+  const relatedHtml = !priority && related.length ? `<section class="sectionBlock"><h2>ملفات أخرى من ${brand}</h2><div class="grid">${related.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision].filter(Boolean).join(" • ") || item.type || "BoardView")}</p></a>`).join("")}</div></section>` : "";
   const structured = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -167,7 +169,7 @@ function boardPage(board, related) {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "الرئيسية", item: `${SITE}/` },
         { "@type": "ListItem", position: 2, name: "BoardView", item: `${SITE}/boardview/` },
-        { "@type": "ListItem", position: 3, name: `${board.brand} ${board.model || ""}`, item: canonical },
+        { "@type": "ListItem", position: 3, name: priority?.title ?? `${board.brand} ${board.model || ""}`, item: canonical },
       ],
     },
   }).replace(/</g, "\\u003c");
@@ -196,7 +198,7 @@ function boardPage(board, related) {
   <div class="boardInfo">
     <span class="brandTag">${brand}</span>
     <h1>${escapeHtml(heading)}</h1>
-    <p class="muted">صفحة مستقلة لملف الصيانة. تحقق من رقم البورد وRevision قبل التحميل والاستخدام.</p>
+    <p class="muted">${escapeHtml(priority?.description ?? "صفحة مستقلة لملف الصيانة. تحقق من رقم البورد وRevision قبل التحميل والاستخدام.")}</p>
     <div class="detailList">${details}</div>
     ${note ? `<p class="fileMeta">${note}</p>` : ""}
     <div class="boardActions"><a class="btn downloadTrack" data-brand="${brand}" data-model="${model}" href="${downloadUrl}" download>⬇️ تحميل الملف</a>${board.image ? `<a class="imageBtn" href="/images/${encodeURIComponent(board.image)}" target="_blank" rel="noopener">🖼️ فتح صورة اللوحة</a>` : ""}</div>

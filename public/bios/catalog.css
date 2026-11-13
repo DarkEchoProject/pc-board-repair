@@ -14,6 +14,9 @@
 .biosFileTop{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .biosFileType{font-size:12px;color:#91acc9;direction:ltr}
 .biosFile h3{font-size:18px;line-height:1.55;font-weight:700;margin:0;overflow-wrap:anywhere;unicode-bidi:plaintext}
+.biosArchiveName{margin:0;overflow-wrap:anywhere}
+.biosFileHash summary{cursor:pointer}
+.biosFileHash code{display:block;margin-top:6px;text-align:left;overflow-wrap:anywhere}
 .biosDownload{align-self:flex-start;display:inline-block;text-decoration:none;background:#20bdf2;color:#03101b;font-weight:900;padding:10px 18px;border-radius:11px;margin-top:auto}
 .biosDownload:hover{background:#7de5ff}
 .biosEmpty{grid-column:1/-1;background:#0a1626;border:1px dashed #365573;border-radius:14px;padding:25px;color:#a9c1dc}

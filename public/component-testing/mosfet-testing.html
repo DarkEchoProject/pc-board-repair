@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⚡ فحص MOSFET بالأفوميتر خطوة بخطوة | PC Board Repair</title>
-<meta name="description" content="شرح عملي لفحص MOSFET N-Channel وP-Channel بالأفوميتر: Gate وDrain وSource وBody Diode والشورت وتأثير شحن البوابة والقياس داخل البورد.">
+<title>فحص MOSFET بالأفوميتر | Gate وDrain وSource | PC Board Repair</title>
+<meta name="description" content="اتبع خطوات فحص MOSFET بالأفوميتر، وسجّل اتجاه القياس بين الأرجل وموضع القطعة لتفسير نتيجة الفحص داخل VRM.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing">
 <link rel="stylesheet" href="../style.css">
@@ -27,7 +27,7 @@
 @media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
 </style>
 
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "⚡ فحص MOSFET بالأفوميتر خطوة بخطوة", "inLanguage": "ar", "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing", "isPartOf": {"@type": "WebSite", "name": "PC Board Repair", "url": "https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"فحص MOSFET بالأفوميتر | Gate وDrain وSource","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/component-testing/mosfet-testing","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"},"description":"اتبع خطوات فحص MOSFET بالأفوميتر، وسجّل اتجاه القياس بين الأرجل وموضع القطعة لتفسير نتيجة الفحص داخل VRM."}</script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
 <body>
@@ -54,6 +54,16 @@
 </article>
 <aside class="articleToc"><b>المحتويات</b><a href="#s1">تحديد الأرجل</a><a href="#s2">فحص Gate</a><a href="#s3">Drain Source</a><a href="#s4">تفريغ Gate</a><a href="#s5">داخل البورد</a><a href="#s6">قرار سريع</a></aside>
 </div>
+<section class="sectionBlock" aria-labelledby="mosfet-reading-notes">
+  <h2 id="mosfet-reading-notes">دوّن قراءة الموسفت بحيث يمكن إعادة الاختبار</h2>
+  <ol>
+    <li><a href="#s1">تحديد الأرجل</a> · سجّل رقم القطعة ووسمها على اللوحة قبل تحديد Gate وDrain وSource.</li>
+    <li><a href="#s3">مقارنة الاتجاهين</a> · اكتب وضع الأفوميتر ومكان كل مجس عند تسجيل القراءة.</li>
+    <li><a href="#s5">القياس داخل VRM</a> · سجّل إن كانت القطعة على اللوحة وما الذي قارنته في المرحلة المجاورة.</li>
+  </ol>
+  <p>استخدم <a href="/diagnostics/vrm-pwm-mosfet-diagnosis">مسار تشخيص VRM</a> إذا أردت ربط نتيجة القطعة بسلوك مرحلة التغذية كاملة.</p>
+</section>
+
 </main>
 <footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a><a href="/community">غرفة الصيانة</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body></html>

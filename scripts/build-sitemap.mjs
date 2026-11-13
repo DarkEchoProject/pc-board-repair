@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeBiosCatalog } from '../public/bios/catalog-data.js';
+import { priorityCompanyPages } from '../src/seo-priority.js';
 import { writeHomeSummary } from './home-summary.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -143,14 +144,24 @@ for (const board of all) {
   homeBoards.push(board);
 }
 
-writeHomeSummary(homeBoards, normalizeBiosCatalog(readJsonArray(biosJson)).length);
+const biosRecords = normalizeBiosCatalog(readJsonArray(biosJson));
+writeHomeSummary(homeBoards, biosRecords.length);
+
+const companyBrands = {
+  '/boardview/company': new Set(homeBoards.map(board => String(board.brand).trim())),
+  '/bios/company': new Set(biosRecords.map(record => record.brand)),
+};
+const companyPaths = [...priorityCompanyPages.keys()].filter(route => {
+  const url = new URL(route, site);
+  return companyBrands[url.pathname].has(url.searchParams.get('brand'));
+});
 
 function toPublicUrlPath(p) {
   if (p.endsWith('/index.html')) return p.slice(0, -'index.html'.length);
   if (p.endsWith('.html')) return p.slice(0, -'.html'.length);
   return p;
 }
-const urls = [...new Set([...staticPaths.map(toPublicUrlPath), ...boardPaths])];
+const urls = [...new Set([...staticPaths.map(toPublicUrlPath), ...companyPaths, ...boardPaths])];
 const sitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

@@ -3,24 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>اللابتوب موصول بالشاحن لكنه لا يشحن | PC Board Repair</title>
-  <meta name="description" content="مسار تفاعلي لتشخيص بطارية لابتوب لا تشحن، وفحص حد الشحن وتعرّف BIOS على المحوّل وكابل USB-C وحالة البطارية.">
+  <title>اللابتوب موصول بالشاحن ولا يشحن | تشخيص المحوّل والبطارية | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفحص اللابتوب الذي يستقبل الشاحن وتبقى نسبة البطارية ثابتة. حدّد تعرّف المحوّل وظهور البطارية وحدّ الشحن.">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging">
   <link rel="icon" href="/favicon.ico?v=4" sizes="any">
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/diagnostics/no-boot.css">
   <script type="module" src="/diagnostics/no-boot.js"></script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "اللابتوب موصول بالشاحن لكنه لا يشحن",
-    "inLanguage": "ar",
-    "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging",
-    "publisher": {"@type": "Organization", "name": "PC Board Repair"}
-  }
-  </script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"اللابتوب موصول بالشاحن ولا يشحن | تشخيص المحوّل والبطارية","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/laptop-not-charging","publisher":{"@type":"Organization","name":"PC Board Repair"},"description":"مسار تفاعلي لفحص اللابتوب الذي يستقبل الشاحن وتبقى نسبة البطارية ثابتة. حدّد تعرّف المحوّل وظهور البطارية وحدّ الشحن."}</script>
 </head>
 <body class="bootPage">
 <header>
@@ -352,6 +343,16 @@
       </div>
     </section>
   </div>
+<section class="sectionBlock" aria-labelledby="charging-observations">
+  <h2 id="charging-observations">ثلاث معلومات تختصر تشخيص الشحن</h2>
+  <ol>
+    <li><a href="#charge-limit">النسبة التي يتوقف عندها الشحن</a> · سجّل النسبة والحد المفعّل في إعدادات الجهاز إن ظهر.</li>
+    <li><a href="#adapter-info">اسم الشاحن وقدرته كما يراهما الجهاز</a> · دوّن ما يعرضه BIOS أو صفحة معلومات الطاقة.</li>
+    <li><a href="#battery-missing">ظهور البطارية</a> · سجّل إن ظهرت في BIOS وفي نظام التشغيل لتحدد من أين تبدأ الفحص.</li>
+  </ol>
+  <p>إذا كان الجهاز Dell Latitude E5450، راجع <a href="/boardview/item/4gcxsj/dell-dell-latitude-e5450-zam70-la-a901p">خريطة ZAM70 LA-A901P</a> عند مطابقة الرقم المطبوع على اللوحة.</p>
+</section>
+
 </main>
 <footer>
   <div class="footerLinks">

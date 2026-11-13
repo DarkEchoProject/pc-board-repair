@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص عطل No Power في اللوحة الأم | PC Board Repair</title>
-<meta name="description" content="دليل عملي خطوة بخطوة لتشخيص الكمبيوتر الذي لا يعمل نهائيًا: 5VSB، زر التشغيل، PS_ON، خطوط 12V و5V و3.3V، الشورت ودوائر الاستعداد.">
+<title>الجهاز لا يعمل نهائيًا | فحص 5VSB وزر التشغيل | PC Board Repair</title>
+<meta name="description" content="ابدأ تشخيص الكمبيوتر المكتبي الذي لا يستجيب. حدّد حالة جهد 5VSB، ثم افحص زر التشغيل وإشارة PS_ON# حسب النتيجة.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power">
 <link rel="stylesheet" href="../style.css">
@@ -21,6 +21,16 @@
 <section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>⚡ الجهاز لا يعمل نهائيًا — No Power</h1><p class="muted">المقصود هنا: عند الضغط على زر التشغيل لا تدور المروحة ولا يبدأ الجهاز. اتبع التسلسل التالي بدل تغيير القطع عشوائيًا.</p></section>
 
 <div class="danger"><b>سلامة:</b> القياسات التالية على جهة الجهد المنخفض للوحة الأم وموصل ATX. لا تفتح مزود الطاقة ولا تقس على جانبه الابتدائي المتصل بالتيار إلا إذا كنت مؤهلًا لذلك.</div>
+
+<section class="sectionBlock" aria-labelledby="no-power-first-check">
+  <h2 id="no-power-first-check">لم تقس جهد الاستعداد بعد؟</h2>
+  <p>أبقِ غطاء مزوّد الطاقة مغلقًا. دوّن هل يظهر أي ضوء على اللوحة أو تتحرك المروحة لحظة الضغط. هذه الملاحظة تساعدك على اختيار الاختبار الأول.</p>
+  <ul>
+    <li><a href="#s2">لا استجابة بعد الضغط ولم أقس 5VSB</a> · افتح خطوة قياس الاستعداد. راجع مخطط موصل اللوحة وحدّد طرف GND والطرف المسمّى 5VSB قبل وضع المجسّين.</li>
+    <li><a href="#s3">قست 5VSB والقراءة موجودة</a> · تابع إلى زر التشغيل. سجّل القراءة والموصل في وضعه وقت القياس.</li>
+    <li><a href="/diagnostics/restarts-shuts-down">الجهاز يبدأ ثم يفصل</a> · راجع تسلسل الفصل ودوّن كم يبقى الجهاز قيد التشغيل.</li>
+  </ul>
+</section>
 
 <div class="guideLayout">
 <article class="guideMain">

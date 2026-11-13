@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>💾 تشخيص شريحة BIOS وSPI على اللوحة الأم | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص BIOS SPI: VCC وGND وCS وCLK وMOSI وMISO وWP وHOLD، متى تشك بالسوفتوير ومتى يكون العطل تغذية أو إشارات.">
+<title>تشخيص شريحة BIOS وSPI | متى تختار ملف البرمجة؟ | PC Board Repair</title>
+<meta name="description" content="افحص تعريف شريحة SPI وتغذيتها وإشاراتها. سجّل رقم اللوحة والشريحة قبل اختيار أرشيف BIOS أو التفكير في إعادة البرمجة.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis">
 <link rel="stylesheet" href="../style.css">
@@ -27,7 +27,7 @@
 @media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
 </style>
 
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "💾 تشخيص شريحة BIOS وSPI على اللوحة الأم", "inLanguage": "ar", "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis", "isPartOf": {"@type": "WebSite", "name": "PC Board Repair", "url": "https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص شريحة BIOS وSPI | متى تختار ملف البرمجة؟","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/bios-chip-diagnosis","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"},"description":"افحص تعريف شريحة SPI وتغذيتها وإشاراتها. سجّل رقم اللوحة والشريحة قبل اختيار أرشيف BIOS أو التفكير في إعادة البرمجة."}</script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
 <body>
@@ -54,6 +54,16 @@
 </article>
 <aside class="articleToc"><b>المحتويات</b><a href="#s1">تحديد الشريحة</a><a href="#s2">التغذية</a><a href="#s3">الإشارات</a><a href="#s4">WP HOLD</a><a href="#s5">البرمجة</a><a href="#s6">قرار</a></aside>
 </div>
+<section class="sectionBlock" aria-labelledby="bios-chip-identifiers">
+  <h2 id="bios-chip-identifiers">ما الذي تدوّنه قبل تنزيل BIOS؟</h2>
+  <p>اجمع موديل الجهاز، ورقم اللوحة وRevision، والرمز المطبوع على الشريحة. صوّر مكانها كي تربط نتائج القياس بالقطعة نفسها عند الرجوع إلى المخطط.</p>
+  <ul>
+    <li><a href="#s1">تحديد شريحة SPI</a> · سجّل رمز الشريحة ومكانها.</li>
+    <li><a href="#s3">مراجعة الإشارات عند الإقلاع</a> · دوّن ما ظهر عند محاولة التشغيل قبل اختيار خطوة الإصلاح.</li>
+    <li><a href="/bios/models/dell-latitude-e5450">مثال Dell Latitude E5450</a> · اقرأ الفرق بين أسماء أرشيفات LA-A901P وLA-A961P قبل اختيار ما ستفحصه.</li>
+  </ul>
+</section>
+
 </main>
 <footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a><a href="/community">غرفة الصيانة</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body></html>

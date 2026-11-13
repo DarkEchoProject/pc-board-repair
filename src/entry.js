@@ -1,5 +1,6 @@
 import appWorker, { ChatRoom } from "./app.js";
 import { boardPath, fileKey, mergeBoards, normalizeBoards } from "./board-catalog.js";
+import { priorityBoardPages, priorityCompanyPages } from "./seo-priority.js";
 import { companies } from "../.wrangler/pcbr-company-index.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
@@ -177,7 +178,18 @@ function similarBoards(board, boards) {
   return selected.slice(0, 6);
 }
 
-function boardSeoBlock(board, similar) {
+function renderPriorityNotes({ sectionTitle, checks, links }) {
+  const steps = checks.map(check => `<li>${escapeHtml(check)}</li>`).join("");
+  const related = links.map(([href, label]) =>
+    `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`,
+  ).join("");
+  return `<section class="sectionBlock priorityNotes"><h2>${escapeHtml(sectionTitle)}</h2><ol>${steps}</ol><ul>${related}</ul></section>`;
+}
+
+function boardSeoBlock(board, boards) {
+  const priority = priorityBoardPages.get(board.file);
+  if (priority) return renderPriorityNotes(priority);
+  const similar = similarBoards(board, boards);
   const brand = escapeHtml(board.brand);
   const model = escapeHtml(board.model || "BoardView");
   const boardNo = escapeHtml(board.board || "");
@@ -236,7 +248,7 @@ async function withBoardSeo(request, response, env) {
     const boards = await getMergedBoards(env);
     const board = boards.find(item => fileKey(item.file) === match[1].toLowerCase());
     if (!board) return response;
-    const html = boardSeoBlock(board, similarBoards(board, boards));
+    const html = boardSeoBlock(board, boards);
     return new HTMLRewriter()
       .on("head", new BoardDataHead(board))
       .on("article.boardDetail", new BoardSeoAfter(html))
@@ -272,11 +284,13 @@ async function withCustom404(request, response, env) {
 }
 
 function renderCompanyPage(response, company, isBios, canonical) {
-  const title = `${company.brand} ${isBios ? "BIOS" : "BoardView"} | PC Board Repair`;
-  const heading = isBios ? `ملفات BIOS — ${company.brand}` : `${company.brand} BoardView`;
-  const description = isBios
+  const priority = priorityCompanyPages.get(canonical.slice(SITE.length));
+  const name = priority?.title ?? `${company.brand} ${isBios ? "BIOS" : "BoardView"}`;
+  const title = `${name} | PC Board Repair`;
+  const heading = priority?.title ?? (isBios ? `ملفات BIOS — ${company.brand}` : `${company.brand} BoardView`);
+  const description = priority?.description ?? (isBios
     ? `تصفح ملفات BIOS الخاصة بشركة ${company.brand} وابحث بالموديل أو رقم اللوحة.`
-    : `تصفح خرائط BoardView الخاصة بشركة ${company.brand} حسب الموديل ورقم اللوحة والإصدار.`;
+    : `تصفح خرائط BoardView الخاصة بشركة ${company.brand} حسب الموديل ورقم اللوحة والإصدار.`);
   const count = company.count.toLocaleString("ar-LB");
   const links = company.examples.map(({ label, href }) =>
     `<li><a href="${escapeHtml(href)}">${escapeHtml(label)}</a></li>`,
@@ -293,8 +307,18 @@ function renderCompanyPage(response, company, isBios, canonical) {
         element.append(`<link rel="canonical" href="${escapeHtml(canonical)}">`, { html: true });
       },
     })
+    .on("body", {
+      element(element) {
+        if (priority) element.setAttribute("data-company-editorial", "");
+      },
+    })
     .on(isBios ? "#biosCompanyHeading" : "#title", text(heading))
-    .on(isBios ? "#biosCompanyDescription" : "#intro", text(description))
+    .on(isBios ? "#biosCompanyDescription" : "#intro", {
+      element(element) {
+        element.setInnerContent(description);
+        if (priority) element.after(renderPriorityNotes(priority), { html: true });
+      },
+    })
     .on(isBios ? "#biosCrumbBrand" : "#crumbBrand", text(company.brand))
     .on(isBios ? "#biosCompanyTotal" : "#totalStat", text(count))
     .on(isBios ? "#biosResultCount" : "#resultCount", text(`عدد ملفات الشركة ${count}`))

@@ -47,6 +47,19 @@ if (location.hostname === '127.0.0.1' || location.hostname === 'localhost') {
     <div class="filterActions"><span id="biosResultCount" class="resultCount" aria-live="polite">جاري تحميل الفهرس...</span><button id="biosReset" class="resetBtn" type="button">مسح الفلاتر</button></div>
   </section>
 
+  <section class="sectionBlock" aria-labelledby="bios-model-list">
+    <h2 id="bios-model-list">ملفات BIOS حسب الموديل ورقم اللوحة</h2>
+    <div class="grid">
+      <a class="card" href="/bios/models/hp-prodesk-400-ms-7860"><h3><bdi>HP ProDesk 400 — MS-7860</bdi></h3><p class="muted">H81 / H87 · MS-7860</p></a>
+      <a class="card" href="/bios/models/hp-stream-11-da0y0hmb6f0"><h3><bdi>HP Stream 11 — DA0Y0HMB6F0 Rev F</bdi></h3><p class="muted">DA0Y0HMB6F0 · Rev F</p></a>
+      <a class="card" href="/bios/models/asrock-h81m-vg4"><h3><bdi>ASRock H81M-VG4 — Rev 2.02 و2.01</bdi></h3><p class="muted">H81M-VG4 · Rev 2.02 / 2.01</p></a>
+      <a class="card" href="/bios/models/dell-optiplex-780"><h3><bdi>Dell OptiPlex 780 — E93839 / GA0402</bdi></h3><p class="muted">OptiPlex 780 · E93839 · GA0402</p></a>
+      <a class="card" href="/bios/models/dell-latitude-e5450"><h3><bdi>Dell Latitude E5450 — LA-A901P وLA-A961P</bdi></h3><p class="muted">LA-A901P / LA-A961P · ZAM70</p></a>
+      <a class="card" href="/bios/models/dell-optiplex-7010"><h3><bdi>Dell OptiPlex 7010 — مقارنة أرشيفات BIOS</bdi></h3><p class="muted">OptiPlex 7010 · Lanikai MT/DT</p></a>
+    </div>
+    <p>أرشيف الشركات <a href="/bios/company?brand=Dell">Dell</a> · <a href="/bios/company?brand=HP">HP</a></p>
+  </section>
+
   <h2 id="biosCompaniesTitle">الشركات</h2>
   <div id="biosCompanies" class="grid companyGrid" aria-live="polite"></div>
   <h2 id="biosResultsTitle" class="resultsTitle" hidden>نتائج البحث</h2>

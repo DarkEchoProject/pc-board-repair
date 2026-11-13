@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>⚡ تشخيص 5VSB وPS_ON وPWR_OK في لوحات ATX | PC Board Repair</title>
-<meta name="description" content="شرح تسلسل تشغيل ATX من 5VSB إلى زر التشغيل وPS_ON ثم مخارج PSU وPWR_OK، مع نقاط قياس لتشخيص No Power.">
+<title>تشخيص ATX من 5VSB إلى PS_ON# وPWR_OK | PC Board Repair</title>
+<meta name="description" content="تتبّع بدء التشغيل في لوحات ATX. سجّل جهد 5VSB قبل الضغط، وتغيّر PS_ON#، وظهور المخارج وPWR_OK بعده.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok">
 <link rel="stylesheet" href="../style.css">
@@ -27,7 +27,7 @@
 @media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
 </style>
 
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "⚡ تشخيص 5VSB وPS_ON وPWR_OK في لوحات ATX", "inLanguage": "ar", "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok", "isPartOf": {"@type": "WebSite", "name": "PC Board Repair", "url": "https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص ATX من 5VSB إلى PS_ON# وPWR_OK","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/atx-standby-ps-on-pwr-ok","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"},"description":"تتبّع بدء التشغيل في لوحات ATX. سجّل جهد 5VSB قبل الضغط، وتغيّر PS_ON#، وظهور المخارج وPWR_OK بعده."}</script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
 <body>
@@ -54,6 +54,17 @@
 </article>
 <aside class="articleToc"><b>المحتويات</b><a href="#s1">5VSB</a><a href="#s2">زر التشغيل</a><a href="#s3">PS_ON</a><a href="#s4">المخارج</a><a href="#s5">PWR_OK</a><a href="#s6">قرار</a></aside>
 </div>
+<section class="sectionBlock" aria-labelledby="atx-measurement-log">
+  <h2 id="atx-measurement-log">سجّل القياسات بترتيب حدوثها</h2>
+  <p>احتفظ بثلاث ملاحظات من المحاولة نفسها حتى تعرف عند أي مرحلة توقّف التسلسل.</p>
+  <ol>
+    <li><a href="#s1">قبل الضغط</a> · دوّن قراءة 5VSB وحالة الموصل وقت القياس.</li>
+    <li><a href="#s3">عند الضغط</a> · سجّل هل تغيّر PS_ON# وكم استمر التغيّر.</li>
+    <li><a href="#s5">بعد بدء تشغيل المزوّد</a> · راجع PWR_OK مع المخارج التي ظهرت أو اختفت.</li>
+  </ol>
+  <p>إذا وصلت المخارج الرئيسية وتوقفت تغذية المعالج، افتح <a href="/diagnostics/vrm-pwm-mosfet-diagnosis">تتبّع مرحلة VRM</a> ثم راجع <a href="/component-testing/mosfet-testing#s5">فحص MOSFET داخل الدائرة</a> عند الحاجة.</p>
+</section>
+
 </main>
 <footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a><a href="/community">غرفة الصيانة</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer>
 </body></html>

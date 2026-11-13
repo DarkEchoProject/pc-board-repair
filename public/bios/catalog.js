@@ -143,11 +143,13 @@ import { normalizeBiosCatalog } from './catalog-data.js';
           countEl.textContent='لا توجد ملفات';return;
         }
         const total=records.filter(r=>r.brand.toLowerCase()===selectedCompany.toLowerCase()).length;
-        byId('biosCompanyHeading').textContent=`ملفات BIOS — ${selectedCompany}`;
+        if(!document.body.hasAttribute('data-company-editorial')){
+          byId('biosCompanyHeading').textContent=`ملفات BIOS — ${selectedCompany}`;
+          byId('biosCompanyDescription').textContent=`تصفح ملفات BIOS الخاصة بشركة ${selectedCompany} أو ابحث برقم البورد والموديل.`;
+          document.title=`${selectedCompany} BIOS | PC Board Repair`;
+        }
         byId('biosCrumbBrand').textContent=selectedCompany;
-        byId('biosCompanyDescription').textContent=`تصفح ملفات BIOS الخاصة بشركة ${selectedCompany} أو ابحث برقم البورد والموديل.`;
         byId('biosCompanyTotal').textContent=nfmt.format(total);
-        document.title=`${selectedCompany} BIOS | PC Board Repair`;
         render();
       }else{
         byId('biosTotal').textContent=nfmt.format(records.length);
