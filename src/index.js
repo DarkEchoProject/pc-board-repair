@@ -121,7 +121,7 @@ function withAnalytics(response) {
   return new HTMLRewriter().on("head", new AnalyticsHead()).transform(response);
 }
 
-function boardPage(board, related) {
+function boardPage(board) {
   const priority = priorityBoardPages.get(board.file);
   const modelLabel = String(board.model || "BoardView");
   const revisionLabel = String(board.revision || "").trim();
@@ -156,7 +156,6 @@ function boardPage(board, related) {
     ["نوع الملف", type],
     ["اسم الملف", escapeHtml(board.file)],
   ].filter(([, value]) => value).map(([label, value]) => `<div class="detailRow"><span>${label}</span><strong>${value}</strong></div>`).join("");
-  const relatedHtml = !priority && related.length ? `<section class="sectionBlock"><h2>ملفات أخرى من ${brand}</h2><div class="grid">${related.map(item => `<a class="card" href="${boardPath(item)}"><span class="brandTag">${escapeHtml(item.brand)}</span><h3>${escapeHtml(item.model || item.board || "BoardView")}</h3><p class="muted">${escapeHtml([item.board, item.revision].filter(Boolean).join(" • ") || item.type || "BoardView")}</p></a>`).join("")}</div></section>` : "";
   const structured = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -205,7 +204,6 @@ function boardPage(board, related) {
   </div>
 </article>
 <div class="warn"><b>تنبيه:</b> تأكد من تطابق الشركة والموديل ورقم اللوحة وRevision قبل استخدام الملف. احتفظ بنسخة احتياطية قبل أي تعديل أو برمجة.</div>
-${relatedHtml}
 </main>
 <footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
 <script>document.addEventListener('click',e=>{const a=e.target.closest('.downloadTrack');if(a&&typeof gtag==='function')gtag('event','boardview_download',{board_brand:a.dataset.brand||'',board_model:a.dataset.model||'',file_name:a.getAttribute('href')||''});});</script>
@@ -409,8 +407,7 @@ export default {
         if (url.pathname !== canonicalPath) {
           return Response.redirect(`${SITE}${canonicalPath}`, 301);
         }
-        const related = boards.filter(item => item.file !== board.file && item.brand.toLowerCase() === board.brand.toLowerCase()).slice(0, 6);
-        return withAnalytics(new Response(boardPage(board, related), {
+        return withAnalytics(new Response(boardPage(board), {
           headers: {
             "content-type": "text/html; charset=utf-8",
             "cache-control": "public, max-age=300",

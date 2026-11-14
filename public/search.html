@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/search">
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/site-search.css">
-<script src="/site-search.js?v=20261104172350" defer></script>
+<script src="/site-search.js?v=20261114-1" defer></script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
@@ -47,7 +47,7 @@
     </div>
   </section>
 
-  <div id="siteSearchMeta" class="siteSearchMeta">جاري تجهيز البحث...</div>
+  <div id="siteSearchMeta" class="siteSearchMeta" role="status">ابدأ بكتابة موديل، رقم بورد، BIOS أو اسم عطل.</div>
   <section id="siteSearchResults" class="siteSearchResults" aria-live="polite"></section>
 </main>
 
@@ -67,6 +67,7 @@
       loading:'جاري تجهيز البحث...',
       ready:'ابدأ بكتابة موديل، رقم بورد، BIOS أو اسم عطل.',
       noResults:'لا توجد نتائج مطابقة. جرّب موديلًا أو رقم بورد أو كلمة فنية مختلفة.',
+      searchError:'تعذّر إكمال البحث. جرّب مرة أخرى.',
       results:n=>`تم العثور على ${n} نتيجة`,
       examples:'أمثلة: H81M-VG4، DH55PJ، No Power، MOSFET',
       open:'فتح',
@@ -81,6 +82,7 @@
       loading:'Preparing search...',
       ready:'Enter a model, board number, BIOS name or fault.',
       noResults:'No matching results. Try a different model, board number or technical term.',
+      searchError:'Search could not finish. Try again.',
       results:n=>`Found ${n} results`,
       examples:'Examples: H81M-VG4, DH55PJ, No Power, MOSFET',
       open:'Open',
@@ -91,6 +93,7 @@
 
   let activeType='all';
   let timer=null;
+  let searchId=0;
   const form=document.getElementById('siteSearchForm');
   const input=document.getElementById('siteSearchInput');
   const meta=document.getElementById('siteSearchMeta');
@@ -155,12 +158,14 @@
   }
 
   async function runSearch(pushUrl=true){
-    if(!window.PCBRSiteSearch)return;
+    clearTimeout(timer);
+    const id=++searchId;
     const query=input.value.trim();
+    const type=activeType;
     if(pushUrl){
       const url=new URL(location.href);
       if(query)url.searchParams.set('q',query);else url.searchParams.delete('q');
-      if(activeType!=='all')url.searchParams.set('type',activeType);else url.searchParams.delete('type');
+      if(type!=='all')url.searchParams.set('type',type);else url.searchParams.delete('type');
       history.replaceState(null,'',url.pathname+url.search);
     }
     if(!query){
@@ -169,8 +174,16 @@
       return;
     }
     meta.textContent=copy.loading;
-    const matches=await window.PCBRSiteSearch.search(query,{limit:100,type:activeType});
     results.innerHTML='';
+    let matches;
+    try{
+      matches=await window.PCBRSiteSearch.search(query,{limit:100,type});
+    }catch{
+      if(id!==searchId)return;
+      meta.textContent=copy.searchError;
+      return;
+    }
+    if(id!==searchId)return;
     meta.textContent=copy.results(matches.length);
     if(!matches.length){clearResults(copy.noResults);return;}
     for(const item of matches)results.append(makeResult(item));
@@ -179,13 +192,16 @@
   function selectFilter(type,run=true){
     activeType=type||'all';
     for(const button of filters.querySelectorAll('.searchFilter')){
-      button.classList.toggle('active',button.dataset.type===activeType);
+      const active=button.dataset.type===activeType;
+      button.classList.toggle('active',active);
+      button.setAttribute('aria-pressed',String(active));
     }
     if(run)runSearch();
   }
 
   form.addEventListener('submit',event=>{event.preventDefault();runSearch();});
   input.addEventListener('input',()=>{
+    searchId++;
     clearTimeout(timer);
     timer=setTimeout(()=>runSearch(),130);
   });
@@ -194,21 +210,14 @@
     if(button)selectFilter(button.dataset.type);
   });
 
-  document.addEventListener('DOMContentLoaded',async()=>{
+  document.addEventListener('DOMContentLoaded',()=>{
     localizePage();
     const params=new URLSearchParams(location.search);
     const requestedType=params.get('type');
     if(['all','boardview','bios','diagnostics','components','community'].includes(requestedType))activeType=requestedType;
     selectFilter(activeType,false);
     input.value=params.get('q')||'';
-    try{
-      await window.PCBRSiteSearch.getIndex();
-      localizePage();
-      await runSearch(false);
-    }catch{
-      meta.textContent=copy.noResults;
-      clearResults(copy.noResults);
-    }
+    runSearch(false);
   },{once:true});
 })();
 </script>

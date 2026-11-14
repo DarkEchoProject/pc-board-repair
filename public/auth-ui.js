@@ -22,7 +22,7 @@
 
   if(isHomepage&&!document.querySelector('script[data-pcbr-site-search-boot]')){
     const searchBoot=document.createElement('script');
-    searchBoot.src='/site-search-boot.js?v=20261013-1';
+    searchBoot.src='/site-search-boot.js?v=20261114-1';
     searchBoot.dataset.pcbrSiteSearchBoot='1';
     document.head.append(searchBoot);
   }
