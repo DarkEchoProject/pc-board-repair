@@ -1,16 +1,348 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>قياس المقاومة إلى الأرضي وتشخيص الشورت | PC Board Repair</title><meta name="description" content="شرح عملي لقياس مقاومة خطوط التغذية إلى GND والتمييز بين المقاومة المنخفضة الطبيعية والشورت الحقيقي."><meta name="robots" content="index,follow"><link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground"><link rel="stylesheet" href="../style.css">
-<style>
-.articleHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:22px}.articleHero h1{margin:8px 0}.articleTag{display:inline-block;background:#112b47;border:1px solid #244d75;color:#8edfff;padding:4px 9px;border-radius:999px;font-size:12px}.articleGrid{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px}.articleMain{min-width:0}.articleToc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.articleToc a{display:block;padding:7px 0;color:#bcd0e7;text-decoration:none}.articleToc a:hover{color:#56d6ff}.articleSection{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.articleSection h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.warnLocal{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:14px;padding:14px;margin:16px 0}.noteBox{background:#102238;border:1px solid #2a4e72;border-radius:14px;padding:14px;margin:14px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.articleFigure{margin:18px 0;background:#08131f;border:1px solid #203a5b;border-radius:16px;padding:12px;overflow:hidden}.articleFigure svg{display:block;width:100%;height:auto;max-height:390px}.articleFigure figcaption{color:#9fb6d1;font-size:13px;margin-top:9px;text-align:center}.quickFlow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.quickFlow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.quickFlow b{display:block;color:#8edfff;margin-bottom:5px}.relatedLinks{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:850px){.articleGrid{grid-template-columns:1fr}.articleToc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"قياس المقاومة إلى الأرضي وتشخيص الشورت","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground"}</script><link rel="icon" href="/favicon.ico?v=4" sizes="any"><link rel="icon" type="image/png" href="/site-logo.png?v=4"></head><body><header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a></nav></header><main class="wrap"><div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← المقاومة إلى الأرضي</div><section class="articleHero"><span class="articleTag">Motherboard Diagnosis</span><h1>📏 قياس المقاومة إلى الأرضي: متى تكون شورتًا؟</h1><p class="muted">لا تعتمد على الصفارة وحدها؛ اعرف الخط واقرأ الأوم وسلوك القياس.</p></section><div class="articleGrid"><article class="articleMain">
-<div class="warnLocal"><b>القياس بدون كهرباء:</b> افصل PSU والبطارية قبل استخدام Ω أو الاستمرارية.</div>
-<section id="g1" class="articleSection"><h2><span class="stepNum">1</span>ثبت نقطة GND</h2><p>ضع مجسًا على أرضي موثوق والآخر على خط التغذية أو طرف الملف.</p>
-<figure class="articleFigure"><svg viewBox="0 0 900 360" role="img" aria-label="قياس مقاومة خط تغذية إلى الأرضي" xmlns="http://www.w3.org/2000/svg"><rect x="35" y="70" width="525" height="230" rx="22" fill="#0d1a2d" stroke="#203a5b" stroke-width="4"/><rect x="90" y="110" width="115" height="78" rx="14" fill="#18334f" stroke="#3a6a94" stroke-width="3"/><text x="148" y="156" text-anchor="middle" fill="#eef5ff" font-size="25" font-family="Arial">VRM</text><rect x="270" y="120" width="120" height="55" rx="12" fill="#284761" stroke="#8aa7c4" stroke-width="3"/><text x="330" y="154" text-anchor="middle" fill="#eef5ff" font-size="24" font-family="Arial">L / Coil</text><line x1="205" y1="149" x2="270" y2="149" stroke="#20bdf2" stroke-width="7"/><line x1="390" y1="149" x2="500" y2="149" stroke="#20bdf2" stroke-width="7"/><line x1="90" y1="247" x2="500" y2="247" stroke="#7b8fa5" stroke-width="6"/><text x="295" y="279" text-anchor="middle" fill="#9fb6d1" font-size="22" font-family="Arial">GND</text><rect x="615" y="45" width="225" height="270" rx="22" fill="#102238" stroke="#2a4e72" stroke-width="4"/><rect x="655" y="78" width="145" height="65" rx="10" fill="#06111d" stroke="#20bdf2" stroke-width="3"/><text x="727" y="119" text-anchor="middle" fill="#8edfff" font-size="32" font-family="Arial">2.4 Ω</text><circle cx="727" cy="206" r="48" fill="#0a1626" stroke="#7396b8" stroke-width="4"/><text x="727" y="216" text-anchor="middle" fill="#eef5ff" font-size="28" font-family="Arial">Ω</text><text x="330" y="52" text-anchor="middle" fill="#ffd98b" font-size="25" font-family="Arial">اللوحة مفصولة تمامًا عن الكهرباء</text></svg><figcaption>ثبّت مجسًا على GND وقس الطرف الآخر على خط التغذية أو الملف. لا تعتمد على الصفارة وحدها.</figcaption></figure>
-</section>
-<section id="g2" class="articleSection"><h2><span class="stepNum">2</span>الصفارة ليست حكمًا</h2><table class="measureTable"><tr><th>القراءة</th><th>التفسير</th></tr><tr><td>صفارة + عدة أوم</td><td>قد تكون طبيعية على بعض الخطوط.</td></tr><tr><td class="bad">0.0Ω ثابت تقريبًا</td><td>اشتباه شورت قوي.</td></tr><tr><td>منخفضة ثم ترتفع</td><td>شحن مكثفات غالبًا.</td></tr></table></section>
-<section id="g3" class="articleSection"><h2><span class="stepNum">3</span>اعرف طبيعة الخط</h2><table class="measureTable"><tr><th>الخط</th><th>الملاحظة</th></tr><tr><td>12V</td><td>قيمة شبه صفر ثابتة غير طبيعية غالبًا.</td></tr><tr><td>5V / 3.3V</td><td>قارن بمرجع سليم إن أمكن.</td></tr><tr><td>Vcore</td><td>قد تكون منخفضة جدًا طبيعيًا.</td></tr><tr><td>GPU Core</td><td>قد تكون منخفضة جدًا أيضًا.</td></tr><tr><td>VDIMM</td><td>تعتمد على التصميم والحمل.</td></tr></table></section>
-<section id="g4" class="articleSection"><h2><span class="stepNum">4</span>CPU والمكثفات</h2><ul class="checklist"><li>إزالة CPU قد ترفع المقاومة دون أن يعني أن CPU تالف.</li><li>المكثفات تغيّر القراءة أثناء الشحن.</li><li>كل مكثفات الخط قد تقرأ نفس الشورت لأنها على التوازي.</li></ul></section>
-<section id="g5" class="articleSection"><h2><span class="stepNum">5</span>إذا كان الشورت حقيقيًا</h2><div class="quickFlow"><div><b>حدد الخط</b>12V أم Vcore أم غيره.</div><div><b>اعزل المصدر عن الحمل</b>ملف أو 0Ω.</div><div><b>قس الجهتين</b>اعرف أين بقيت المقاومة المنخفضة.</div><div><b>افحص المنطقة</b>MOSFET وMLCC وIC.</div></div></section>
-<section id="g6" class="articleSection"><h2>خلاصة</h2><p>لا توجد قيمة أوم واحدة تصلح لكل اللوحات. نوع الخط والمكونات المتصلة والـCPU/GPU كلها تغيّر القراءة.</p></section>
-<section class="articleSection"><div class="relatedLinks"><a class="btn" href="/diagnostics/short-circuit">تشخيص الشورت</a><a class="imageBtn" href="/component-testing/resistor-testing">فحص المقاومة</a><a class="imageBtn" href="/component-testing/capacitor-testing">فحص المكثف</a></div></section>
-</article><aside class="articleToc"><b>المحتويات</b><a href="#g1">GND</a><a href="#g2">الصفارة</a><a href="#g3">طبيعة الخط</a><a href="#g4">CPU والمكثفات</a><a href="#g5">تضييق الشورت</a><a href="#g6">الخلاصة</a></aside></div></main><footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a></div><div>© 2026 PC Board Repair</div></footer></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>قياس المقاومة إلى الأرضي | فهم الصفارة والقراءة | PC Board Repair</title>
+  <meta name="description" content="شرح تفاعلي لقياس المقاومة إلى الأرضي على اللوحة المفصولة. قارن قيمة المجسّين، وميّز أثر المكثفات وطبيعة خطوط Vcore وVDIMM.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground">
+  <meta property="og:title" content="قياس المقاومة إلى الأرضي | فهم الصفارة والقراءة | PC Board Repair">
+  <meta property="og:description" content="شرح تفاعلي لقياس المقاومة إلى الأرضي على اللوحة المفصولة. قارن قيمة المجسّين، وميّز أثر المكثفات وطبيعة خطوط Vcore وVDIMM.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "قياس المقاومة إلى الأرضي",
+  "description": "شرح تفاعلي لقياس المقاومة إلى الأرضي على اللوحة المفصولة. قارن قيمة المجسّين، وميّز أثر المكثفات وطبيعة خطوط Vcore وVDIMM.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/resistance-to-ground",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
+</head>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← قياس المقاومة إلى الأرضي</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 12</span><span dir="ltr">Resistance to GND</span><span>قياس الملتيميتر</span></div>
+    <h1 id="guide-title">قياس المقاومة إلى الأرضي</h1>
+    <p>ابدأ من الرقم الذي ظهر على الملتيميتر. تابع حسب وضع القياس واتجاه المجسّين، ثم قارن الخط ودوّن النتيجة قبل عزل أي قطعة.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>تحديد الأرضي والخط</span></li>
+      <li><b>٢</b><span>قراءة الرقم والوحدة</span></li>
+      <li><b>٣</b><span>المقارنة والعزل</span></li>
+    </ol>
+  </section>
+
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#g1">مرجع القياس</a></li>
+      <li><a href="#meter-mode">اختيار وضع الملتيميتر</a></li>
+      <li><a href="#g2">الصفارة والرقم</a></li>
+      <li><a href="#diode-directions">الدايود واتجاه المجسّات</a></li>
+      <li><a href="#open-reading">قراءة OL وتغير المدى</a></li>
+      <li><a href="#g3">طبيعة الخط</a></li>
+      <li><a href="#compare-reference">مقارنة خط على لوحة مرجعية</a></li>
+      <li><a href="#core-reading">خرج المعالج أو البطاقة الرسومية</a></li>
+      <li><a href="#g4">أثر المكثفات والحمل</a></li>
+      <li><a href="#repeat-reading">مقارنة قراءة البداية والقراءة المستقرة</a></li>
+      <li><a href="#g5">تحديد موضع الاشتباه</a></li>
+      <li><a href="#write-readings">تسجيل القراءات قبل العزل وبعده</a></li>
+      <li><a href="#g6">خلاصة قياس المقاومة</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
+
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#g6">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
+
+    <section class="bootStep" id="start" data-boot-step="اختيار طريقة القياس" data-boot-demo="meter" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ما القراءة التي تريد تفسيرها؟</h2>
+      <p>تأكد أن اللوحة مفصولة عن كل مصادر الطاقة وأن الجهد على النقطة زال قبل استعمال وضع المقاومة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g1"><strong>لم أقس بعد</strong><span>حدد نقطة الأرضي وابدأ بقيمة المجسّين.</span></a>
+        <a class="bootChoice" href="#g2"><strong>أسمع صفارة أو تظهر 000</strong><span>اقرأ الوحدة وقارن النتيجة.</span></a>
+        <a class="bootChoice" href="#g4"><strong>الرقم منخفض ثم يرتفع</strong><span>لاحظ أثر المكثفات وما يتصل بالخط.</span></a>
+        <a class="bootChoice" href="#g3"><strong>أقيس Vcore أو دخل المعالج أو خط الرام</strong><span>فسّر الرقم بحسب وظيفة الخط.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g1" data-boot-step="مرجع القياس" data-boot-demo="meter" aria-labelledby="g1-title">
+      <h2 id="g1-title" tabindex="-1">حدّد GND وقيمة تلامس المجسّين</h2>
+      <p>ابدأ بمخطط اللوحة لتحديد الأرضي ونقطة الخط. بعد فصل الطاقة والتحقّق من زوال الجهد، اختر وضع Ω وسجّل قيمة تلامس المجسّين.</p>
+      <ol>
+        <li>ضع الأسود في COM والأحمر في مدخل Ω. دوّن القراءة والوحدة عند تلامس المجسّين.</li>
+        <li>بعد فصل المجسّين، قس من نقطة الخط إلى GND في الوضع نفسه وسجّل القراءة بعد أن تستقر.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-resistance-reading.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يقارن قراءة تلامس المجسّين بقياس خط إلى أرضي على لوحة مفصولة">
+        <figcaption>استعمل الوضع نفسه وسجّل الوحدة عند مقارنة القراءتين.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#meter-mode"><strong>ثبّتُ GND وأريد فهم وضع القياس</strong><span>حدد ما تعرضه شاشة المقياس.</span></a>
+        <a class="bootChoice" href="#g2"><strong>القراءة ثابتة ومنخفضة أو يوجد صفير</strong><span>قارن القيمة بقراءة المجسّين.</span></a>
+        <a class="bootChoice" href="#g4"><strong>القراءة تتغيّر مع الوقت</strong><span>سجّل البداية والقيمة المستقرة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف مرجع الأرضي أو اسم الخط</strong><span>أرسل صورة نقطة القياس ورقم اللوحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="meter-mode" data-boot-step="اختيار وضع الملتيميتر" data-boot-demo="meter" aria-labelledby="meter-mode-title">
+      <h2 id="meter-mode-title" tabindex="-1">هل الرقم مقاومة أم هبوط في وضع الدايود؟</h2>
+      <p>مع فصل التغذية وزوال الجهد، حدّد الرمز على شاشة المقياس قبل كتابة النتيجة. غيّر الوضع من صفارة إلى Ω إذا أردت قيمة المقاومة، وأعد تلامس المجسّين للتحقق من قراءة المقياس.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-meter-modes.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يوضح رموز ووحدات المقاومة والاستمرارية ووضع الدايود">
+        <figcaption>اكتب وضع المقياس والوحدة واتجاه المجسّين مع القراءة.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>وضع Ω</dt>
+          <dd>دوّن هل الوحدة Ω أو kΩ أو MΩ، ومقدار القراءة عندما تتلامس المجسّات.</dd>
+        </div>
+        <div>
+          <dt>وضع الاستمرارية</dt>
+          <dd>سجّل وجود صفارة، ثم اقرأ الرقم في وضع المقاومة لمعرفة مدى انخفاضه.</dd>
+        </div>
+        <div>
+          <dt>وضع الدايود</dt>
+          <dd>دوّن الاتجاه والقيمة المعروضة. غالبًا تعبّر القراءة عن هبوط جهد بحسب المقياس.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g2"><strong>أستخدم المقاومة وتظهر قيمة قريبة من المجسّين</strong><span>قارن الرقم بطبيعة الخط.</span></a>
+        <a class="bootChoice" href="#diode-directions"><strong>أستخدم وضع الدايود</strong><span>قارن القراءتين في اتجاهين وبالوضع نفسه.</span></a>
+        <a class="bootChoice" href="#open-reading"><strong>تظهر OL أو تتبدل الوحدة</strong><span>تحقق من التلامس والمدى ونقطة القياس.</span></a>
+        <a class="bootChoice" href="#g4"><strong>القراءة تبدأ منخفضة ثم ترتفع</strong><span>سجّل تغيرها مع الوقت.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g2" data-boot-step="الصفارة والرقم" data-boot-demo="meter" aria-labelledby="g2-title">
+      <h2 id="g2-title" tabindex="-1">اقرأ قيمة المقاومة بجانب الصفارة</h2>
+      <p>تتفعّل الصفارة تحت حد يحدده المقياس. اكتب الرقم والوحدة مثل Ω أو kΩ، وقارن القيمة بقراءة تلامس المجسّين.</p>
+      <ol>
+        <li>إذا بقي الرقم قريبًا من قراءة المجسّين، سجّل اسم الخط قبل الحكم. بعض خطوط خرج المعالج منخفضة طبيعيًا.</li>
+        <li>في وضع الدايود سجّل اتجاه المجسّين ووحدة أو طبيعة الرقم المعروض. قارن القياسات المأخوذة في الوضع نفسه.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g3"><strong>تبقى القراءة منخفضة وثابتة</strong><span>حدد نوع الخط الذي تقيسه.</span></a>
+        <a class="bootChoice" href="#diode-directions"><strong>تختلف القراءة عند عكس المجسّين</strong><span>قارن في وضع الدايود وبالاتجاهين.</span></a>
+        <a class="bootChoice" href="#open-reading"><strong>تظهر OL أو تختفي القراءة</strong><span>راجع التلامس والمدى.</span></a>
+        <a class="bootChoice" href="#g4"><strong>تبدأ منخفضة ثم ترتفع</strong><span>سجّل ما تستقر عليه القراءة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="diode-directions" data-boot-step="الدايود واتجاه المجسّات" data-boot-demo="signal" aria-labelledby="diode-directions-title">
+      <h2 id="diode-directions-title" tabindex="-1">ماذا تعني قراءتان مختلفتان عند عكس المجسّين؟</h2>
+      <p>في وضع الدايود، اكتب أين كان المجس الأسود وأين كان الأحمر عند كل قراءة. يمكن أن تغيّر اتجاهات أشباه الموصلات والمسارات الموازية النتيجة داخل الدائرة.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>قيمة في اتجاه وOL في الآخر</dt>
+          <dd>هذا نمط اتجاهي يحتاج مقارنة بالدائرة والمكوّن، وقد يظهر بسبب مسار دايود طبيعي.</dd>
+        </div>
+        <div>
+          <dt>قيمة قريبة من الصفر في الاتجاهين</dt>
+          <dd>تحقق أولًا من المقياس والخط. إذا كانت خارج السلوك المتوقع لخط معروف، قارِن بعد عزل الجهتين.</dd>
+        </div>
+        <div>
+          <dt>قراءات مختلفة عن لوحة مرجعية</dt>
+          <dd>أعد المقارنة بنفس التركيب والمقياس والاتجاه ونقطة GND.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#open-reading"><strong>تظهر OL وأريد التأكد من سببها</strong><span>افحص التلامس والمدى أولًا.</span></a>
+        <a class="bootChoice" href="#g3"><strong>أعرف الخط وأريد تفسير القيمتين</strong><span>حدد هل الخط دخل أم خرج.</span></a>
+        <a class="bootChoice" href="#g5"><strong>الرقم منخفض في الاتجاهين خلاف المرجع</strong><span>حدد جهة الانخفاض بالعزل الموثّق.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مشاركة القيم في الاتجاهين</strong><span>اكتب موضع كل مجس ووضع المقياس.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="open-reading" data-boot-step="قراءة OL وتغير المدى" data-boot-demo="meter" aria-labelledby="open-reading-title">
+      <h2 id="open-reading-title" tabindex="-1">هل OL بسبب التلامس أم مدى المقياس؟</h2>
+      <p>اختبر تلامس المجسّين ثم أعد وضعهما على نقطتين معدنيتين نظيفتين وموثقتين. في وضع المقاومة قد تعني OL أن المسار أعلى من المدى أو مفتوح. وفي وضع الدايود قد تظهر في اتجاه واحد بحسب المسار.</p>
+      <ol>
+        <li>تأكد من وضع المفاتيح والوحدة المعروضة. إذا كان المدى يدويًا فاختر المدى المناسب وكرر القياس.</li>
+        <li>أبقِ مصدر الطاقة مفصولًا. افحص موصلًا أو عنصرًا محددًا بين طرفيه فقط عندما تستطيع تحديده من المخطط.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g1"><strong>تأكدت من التلامس وأريد إعادة القياس</strong><span>أعد تثبيت GND وسجّل قيمة المجسّين.</span></a>
+        <a class="bootChoice" href="#g3"><strong>النتيجة ثابتة على نقطة معروفة</strong><span>قارنها بطبيعة الخط أو مرجع مماثل.</span></a>
+        <a class="bootChoice" href="#report"><strong>تستمر OL في نقطة يتوقع أن تكون متصلة</strong><span>أرسل المقياس والوضع ونقطتي القياس.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g3" data-boot-step="طبيعة الخط" data-boot-demo="rail" aria-labelledby="g3-title">
+      <h2 id="g3-title" tabindex="-1">ميّز دخل التغذية من خط الخرج</h2>
+      <p>تختلف قراءة مدخل CPU/EPS عن خرج Vcore. اعرف إن كان طرف الملف يخص خرجًا منخفض المقاومة أو عقدة تبديل أو خط ذاكرة.</p>
+      <ol>
+        <li>قارن بلوحة مطابقة إن توفرت مع وضع قياس وتركيب متشابهين. وجود المعالج أو الذاكرة قد يغيّر المقارنة.</li>
+        <li>سجّل اسم الخط ورقم الملف أو الموصل. على دخل التغذية المعروف يستحق الرقم القريب من قراءة المجسّين فحصًا إضافيًا.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g5"><strong>دخل معروف والقراءة تبقى قرب المجسّين</strong><span>ضيّق موضع الانخفاض.</span></a>
+        <a class="bootChoice" href="#compare-reference"><strong>أقيس Vcore أو VDIMM وأحتاج مرجعًا</strong><span>قارن خطًا وتركيبًا متماثلين.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s7" data-boot-demo="rail"><strong>لست متأكدًا أي طرف من الملف هو الخرج</strong><span>افتح فحص طرفَي الملف.</span></a>
+        <a class="bootChoice" href="#report"><strong>الخط أو المرجع غير معروف</strong><span>شارك موضع القياس والتركيب.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="compare-reference" data-boot-step="مقارنة خط على لوحة مرجعية" data-boot-demo="rail" aria-labelledby="compare-reference-title">
+      <h2 id="compare-reference-title" tabindex="-1">هل تقارن خطًا مطابقًا وفي التركيب نفسه؟</h2>
+      <p>للمقارنة المفيدة، طابق اسم الخط وRevision وحالة المعالج والذاكرة واتجاه المجسّين. على خطوط Vcore وVDIMM قد تختلف القراءات مع طبيعة الحمل حتى عندما تكون التغذية مفصولة.</p>
+      <ol>
+        <li>سجّل مقدار تلامس المجسّين، وما إذا استعملت REL أو Zero، والقراءة المستقرة. اكتب الوحدة بدل وصفها بأنها صفر فقط.</li>
+        <li>أعد القياس على قناة أو مرحلة مماثلة عند توفرها. عزل فرع موثّق يساعد حين تختلف النتيجة عن مرجع يمكن الوثوق به.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s7" data-boot-demo="rail"><strong>أقيس خرج Vcore وأحتاج تحديد طرف الملف</strong><span>راجع جهة الخرج مقابل SW.</span></a>
+        <a class="bootChoice" href="#core-reading"><strong>أقيس خرج المعالج أو معالج الرسوم</strong><span>افصل تفسير مقاومة الخرج عن خط الدخل.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#memory-reference" data-boot-demo="memory"><strong>أقيس تغذية الذاكرة</strong><span>حدد جيل الذاكرة ونقطة القياس المناسبة.</span></a>
+        <a class="bootChoice" href="#g5"><strong>القراءة تختلف بوضوح عن خط مماثل</strong><span>راجع جهة المصدر وجهة الحمل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك لوحة مرجعية</strong><span>شارك الرقم والتركيب قبل الحكم.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="core-reading" data-boot-step="خرج المعالج أو البطاقة الرسومية" data-boot-demo="rail" aria-labelledby="core-reading-title">
+      <h2 id="core-reading-title" tabindex="-1">هل النقطة على خرج Vcore أو GPU Core؟</h2>
+      <p>قد تكون مقاومة خرج المعالج أو معالج الرسوم منخفضة بطبيعتها. احرص على مقارنة نفس الخط وفي نفس حالة تركيب المعالج أو البطاقة. خطوط الدخل مثل 12V و5V و3.3V تحتاج مقارنة بحسب وظيفة كل خط.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s7" data-boot-demo="rail"><strong>لم أحدد هل النقطة قبل الملف أم بعده</strong><span>راجع الخرج وعقدة SW.</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#rail-parallel" data-boot-demo="isolate"><strong>عدة نقاط في نفس الخرج تعطي القراءة نفسها</strong><span>تحقق من اشتراكها في الحمل.</span></a>
+        <a class="bootChoice" href="#write-readings"><strong>أريد مشاركة القراءة والمرجع</strong><span>دوّن النقطة والوحدة وحالة التركيب.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g4" data-boot-step="أثر المكثفات والحمل" data-boot-demo="inspect" aria-labelledby="g4-title">
+      <h2 id="g4-title" tabindex="-1">راقب القراءة حتى تستقر</h2>
+      <p>قد يغيّر شحن المكثفات من تيار المقياس القراءة مع الوقت. قد تعطي مكثفات متصلة على الخط نفسه قراءة متشابهة، لذلك لا يكفي قياس أحدها داخل الدائرة لتحديد القطعة.</p>
+      <ol>
+        <li>اكتب قراءة البداية وما استقرت عليه. عند المقارنة حافظ على نفس المقياس والوضع واتجاه المجسّين.</li>
+        <li>لاحظ إن كان المعالج مركّبًا. تغيّر مقاومة Vcore عند تغيير التركيب وحده يحتاج مقارنة مع مرجع مناسب.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#repeat-reading"><strong>أريد تكرار القراءة بطريقة قابلة للمقارنة</strong><span>أعد القياس بنفس الوضع والاتجاه.</span></a>
+        <a class="bootChoice" href="#g3"><strong>عرفت القراءة المستقرة واسم الخط</strong><span>فسّرها بحسب طبيعة الخط.</span></a>
+        <a class="bootChoice" href="#g5"><strong>القراءة ثابتة قرب المجسّين على خط معروف</strong><span>حدّد جهة الاشتباه.</span></a>
+        <a class="bootChoice" href="#report"><strong>تختلف القراءة بين محاولات متشابهة</strong><span>شارك القيم والوحدات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="repeat-reading" data-boot-step="مقارنة قراءة البداية والقراءة المستقرة" data-boot-demo="meter" aria-labelledby="repeat-reading-title">
+      <h2 id="repeat-reading-title" tabindex="-1">هل تتكرر القراءة بالطريقة نفسها؟</h2>
+      <p>دوّن القيمة الأولى وبعد الاستقرار في محاولتين متشابهتين. قد يتغير الرقم بسبب شحن المكثفات من المقياس أو تغير المدى التلقائي. تأكد من زوال أي جهد متبقٍ قبل تكرار القياس، وفق طريقة تفريغ آمنة للوحة.</p>
+      <ol>
+        <li>حافظ على نفس الأرضي والوضع واتجاه المجسّين. إذا كان المقياس يعرض بادئة مختلفة أثناء القياس، اكتب كل رقم مع وحدته.</li>
+        <li>لا تربط الخط بالأرضي مباشرة لتفريغه. اتركه يفرغ بالطريقة التي يحددها تصميمه أو دليل الصيانة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#compare-reference"><strong>تستقر القراءة وتتكرر</strong><span>قارن بخط مماثل في نفس التركيب.</span></a>
+        <a class="bootChoice" href="#g5"><strong>تبقى قريبة من قيمة المجسّين على دخل معروف</strong><span>حدّد جهة الانخفاض بعد العزل.</span></a>
+        <a class="bootChoice" href="#report"><strong>تتغير بين محاولات متشابهة أو يظهر جهد متبقٍّ</strong><span>توقف عن قياس المقاومة وشارك ما لاحظته.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g5" data-boot-step="تحديد موضع الاشتباه" data-boot-demo="isolate" aria-labelledby="g5-title">
+      <h2 id="g5-title" tabindex="-1">قارِن جهة المصدر وجهة الحمل</h2>
+      <p>يبدأ الفني بعزل موصل أو عنصر فصل موثّق بعد التأكد من غياب الطاقة. يُعاد قياس كل جهة إلى GND لمعرفة أين بقيت القراءة المنخفضة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/short-circuit#isolation-reading" data-boot-demo="isolate"><strong>قست جهة المصدر وجهة الحمل بعد العزل</strong><span>تابع فحص الجهة التي بقيت منخفضة.</span></a>
+        <a class="bootChoice" href="#write-readings"><strong>أريد توثيق النتائج قبل أي فك</strong><span>اكتب النقطة والوحدة والقراءة في كل حالة.</span></a>
+        <a class="bootChoice" href="/component-testing/capacitor-testing" data-boot-demo="chip"><strong>المكوّن المشتبه به مكثّف</strong><span>افتح خطوات فحص المكثف.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أجد عنصر فصل موثّقًا</strong><span>أرسل اللوحة والمخطط إن توفر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="write-readings" data-boot-step="تسجيل القراءات قبل العزل وبعده" data-boot-demo="inspect" aria-labelledby="write-readings-title">
+      <h2 id="write-readings-title" tabindex="-1">أي تفاصيل تجعل قياسك قابلًا للمقارنة؟</h2>
+      <p>اكتب القراءة في سطر واضح. استخدم صيغة مثل «موصل CPU/EPS إلى GND، وضع Ω، المجسّان 0.2Ω، النقطة 0.3Ω ثابتة، الطاقة مفصولة». هذه الأرقام توضح طريقة التوثيق، والحكم يتوقف على الخط والمرجع.</p>
+      <ol>
+        <li>أضف القراءة قبل فصل الحمل وبعده على كل جهة، وصورة نقطة القياس إن توفرت.</li>
+        <li>إذا قارنت وضع الدايود، اكتب الاتجاهين بدل دمج الرقمين مع قراءة Ω. اذكر Revision وحالة وجود المعالج والرام.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>سجّلت النقطة والوضع والقراءات</strong><span>أضف التفاصيل في غرفة الصيانة.</span></a>
+        <a class="bootChoice" href="#meter-mode"><strong>اختلط علي الرقم ووحدة المقياس</strong><span>راجع الفرق بين المقاومة والدايود والصفارة.</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#isolation-reading" data-boot-demo="isolate"><strong>حددت جهة منخفضة بعد العزل</strong><span>تابع إلى فحص عناصر تلك الجهة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="g6" data-boot-step="خلاصة قياس المقاومة" data-boot-demo="inspect" aria-labelledby="g6-title">
+      <h2 id="g6-title" tabindex="-1">اربط الرقم بنوع الخط وطريقة القياس</h2>
+      <p>سجّل قيمة المجسّين، وقيمة الخط ووحدتها، ووقت استقرارها، وما إذا كان الحمل متصلًا. هذا يجعل القياس قابلًا للمقارنة عند طلب المساعدة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#g1"><strong>لم أقس بعد</strong><span>ابدأ بتحديد GND وضبط الملتيميتر.</span></a>
+        <a class="bootChoice" href="#compare-reference"><strong>أريد مقارنة خط منخفض معروف</strong><span>تحقق من نوع الخط والتركيب.</span></a>
+        <a class="bootChoice" href="#write-readings"><strong>لدي نتائج أريد مشاركتها</strong><span>رتّب القياسات قبل إرسالها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>أرسل الرقم والوحدة واسم الخط معًا. إذا تبدلت القراءة عند عكس المجسّين أو بعد انتظارها، اكتب ما حدث في كل حالة.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل اللوحة وRevision وصورة نقطة الفحص.</li>
+          <li>وضع الملتيميتر وقيمة تلامس المجسّين.</li>
+          <li>قراءة الخط أولًا وبعد أن تستقر، والوحدة المعروضة.</li>
+          <li>حالة تركيب المعالج أو الذاكرة، وأي جهة عزلتها.</li>
+          <li>قراءة كل جهة بعد فصل حمل معروف، أو القيمتان في وضع الدايود مع موضع المجسّين.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/short-circuit">تشخيص الشورت على اللوحة</a></li>
+      <li><a href="/component-testing/resistor-testing">فحص المقاومة</a></li>
+      <li><a href="/component-testing/capacitor-testing">فحص المكثف</a></li>
+    </ul>
+  </section>
+</main>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
+</body>
+</html>

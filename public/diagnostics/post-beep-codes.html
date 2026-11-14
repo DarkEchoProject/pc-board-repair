@@ -1,54 +1,474 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص POST المتوقف وصفارات Beep Codes | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص توقف POST وصفارات اللوحة الأم: تفسير السلوك، RAM، CPU، BIOS، VGA، POST Card، Reset وClock بدون الاعتماد على أكواد صفارات عامة غير دقيقة.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.flow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.flow b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص POST المتوقف وصفارات Beep Codes","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>توقف POST وصفارات اللوحة | قراءة لمبات وأكواد التشخيص | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لقراءة صفارات POST ولمبات CPU وDRAM وVGA وBOOT. اربط المؤشر بموديل اللوحة وقارن نتائج الفحص قبل استبدال القطع.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes">
+  <meta property="og:title" content="توقف POST وصفارات اللوحة | قراءة لمبات وأكواد التشخيص | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي لقراءة صفارات POST ولمبات CPU وDRAM وVGA وBOOT. اربط المؤشر بموديل اللوحة وقارن نتائج الفحص قبل استبدال القطع.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "توقّف POST أو ظهور صفارات",
+  "description": "مسار تفاعلي لقراءة صفارات POST ولمبات CPU وDRAM وVGA وBOOT. اربط المؤشر بموديل اللوحة وقارن نتائج الفحص قبل استبدال القطع.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/post-beep-codes",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← POST / Beep Codes</div>
-<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>🧠 POST متوقف أو صفارات Beep Codes</h1><p class="muted">الصفارة أو كود POST ليس تشخيصًا نهائيًا؛ هو دليل على المرحلة التي وصلت إليها اللوحة. الهدف هو معرفة أين توقف التسلسل ثم فحص الدائرة المرتبطة بها.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← توقّف POST أو ظهور صفارات</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 10</span><span dir="ltr">POST / Beep Codes</span><span>كمبيوتر مكتبي</span></div>
+    <h1 id="guide-title">توقّف POST أو ظهور صفارات</h1>
+    <p>ابدأ بالمؤشر الذي تراه أو تسمعه. سجّل النمط وموديل اللوحة ثم اختَر المرحلة التي توقف عندها الفحص الأولي.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>سجّل النمط</span></li>
+      <li><b>٢</b><span>حدّد المرحلة</span></li>
+      <li><b>٣</b><span>قارن القطعة والتغذية</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>مهم:</b> لا يوجد جدول صفارات واحد صالح لكل اللوحات. معنى 3 أو 4 صفارات يختلف حسب BIOS والشركة والموديل، لذلك استخدم دليل اللوحة عند توفره ولا تعتمد على عدد الصفارات وحده.</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">تسجيل النمط</a></li>
+      <li><a href="#diagnostic-order">ترتيب لمبات التشخيص</a></li>
+      <li><a href="#s2">مرحلة الذاكرة</a></li>
+      <li><a href="#dram-compare">نتيجة POST مع الذاكرة ودونها</a></li>
+      <li><a href="#s3">مرحلة المعالج</a></li>
+      <li><a href="#s4">قراءة BIOS وSPI</a></li>
+      <li><a href="#spi-identify">تحديد شريحة SPI وجهدها</a></li>
+      <li><a href="#spi-activity">نشاط CS وClock وData</a></li>
+      <li><a href="#spi-line-check">حالة أطراف SPI ووظيفة كل رجل</a></li>
+      <li><a href="#firmware-recovery">الاستعادة والنسخة الاحتياطية</a></li>
+      <li><a href="#s5">مرحلة العرض أو الإقلاع</a></li>
+      <li><a href="#s6">أكواد POST</a></li>
+      <li><a href="#postcode-setup">توافق بطاقة أكواد POST</a></li>
+      <li><a href="#s7">توقف عند نص POST</a></li>
+      <li><a href="#post-peripherals">عزل الملحقات عند تجمّد POST</a></li>
+      <li><a href="#s8">إشارات التسلسل</a></li>
+      <li><a href="#reset-check">تتبّع Reset مع Power Good</a></li>
+      <li><a href="#clock-check">قياس Clock وفحص المذبذب</a></li>
+      <li><a href="#s9">خلاصة القرار</a></li>
+      <li><a href="#silent">لا توجد علامة واضحة</a></li>
+      <li><a href="#resolved">النتيجة</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>سجل السلوك قبل أي فك</h2><p>شغّل اللوحة وسجل بالضبط:</p><div class="flow"><div><b>عدد الصفارات ونمطها</b>قصيرة/طويلة، متصلة أو على مجموعات.</div><div><b>هل تتكرر؟</b>مرة واحدة أم كل دورة Restart.</div><div><b>المراوح</b>تستمر، تتوقف، أم تعيد التشغيل.</div><div><b>الصورة</b>لا توجد إطلاقًا، شعار ثم توقف، أو نص يتجمد.</div><div><b>LED / POST Code</b>CPU أو DRAM أو VGA أو BOOT، أو كود Hex.</div><div><b>استجابة الكيبورد</b>هل NumLock يتغير أم يتجمد؟</div></div><div class="decision"><b>هذه التفاصيل أهم من عبارة "يعطي صفارات" فقط.</b> نفس عدد الصفارات قد يقود لاتجاه مختلف إذا اختلف سلوك RAM أو POST LEDs.</div></section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#s9">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>اختبار RAM هو أول اختبار عملي</h2><ul class="checklist"><li>افصل الكهرباء ثم أعد تركيب RAM.</li><li>جرب قطعة سليمة واحدة وفي Slot واحد، ثم بدّل Slots.</li><li>شغّل اللوحة بدون RAM وسجل هل تغيرت الصفارات أو الـLED أو زمن التشغيل.</li><li>إذا لم يتغير أي شيء مطلقًا عند إزالة RAM، فقد تكون اللوحة لم تصل إلى مرحلة فحص الذاكرة أصلًا.</li><li>قس VDIMM عند الشك في دائرة تغذية الرام.</li></ul><table class="measureTable"><thead><tr><th>النتيجة</th><th>الدلالة العملية</th></tr></thead><tbody><tr><td>تغير واضح بدون RAM</td><td>المعالج وBIOS ودوائر البدء تعمل جزئيًا على الأقل حتى مرحلة اكتشاف الذاكرة.</td></tr><tr><td>نفس الصفارات والسلوك تمامًا</td><td>لا تفترض أن RAM هي السبب؛ افحص CPU/Vcore/BIOS/Reset/Clock حسب المنصة.</td></tr><tr><td>يعمل بقطعة أو Slot فقط</td><td>افحص RAM نفسها، Slot، Socket CPU وخطوط قناة الذاكرة.</td></tr></tbody></table></section>
+    <section class="bootStep" id="start" data-boot-step="تحديد المؤشر" data-boot-demo="post" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ما علامة التوقف عند تشغيل الجهاز؟</h2>
+      <p>راقب محاولة تشغيل واحدة. صوّر المؤشر أو اكتب تسلسل الأضواء ونمط الصفارات، بما فيه الوقفات والتكرار. معنى العلامة يعتمد على موديل الجهاز.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>أسمع صفارات أو أرى ضوءًا يومض</strong><span>سجّل النمط قبل تفسيره.</span></a>
+        <a class="bootChoice" href="#s2"><strong>يثبت ضوء DRAM أو يشير الرمز إلى الذاكرة</strong><span>قارن وحدات الرام والشقوق.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يثبت ضوء CPU</strong><span>ابدأ بتغذية المعالج والتوافق.</span></a>
+        <a class="bootChoice" href="#s5"><strong>يثبت ضوء VGA أو BOOT</strong><span>حدّد هل توقفت الصورة أم مرحلة الإقلاع.</span></a>
+        <a class="bootChoice" href="#s6"><strong>أرى كودًا على شاشة اللوحة أو POST Card</strong><span>اقرأ الكود في سياق المنصة.</span></a>
+        <a class="bootChoice" href="#s7"><strong>يظهر نص على الشاشة ثم يتوقف</strong><span>سجّل السطر الأخير وحدّد الملحقات المتصلة.</span></a>
+        <a class="bootChoice" href="#silent"><strong>لا توجد صفارات ولا مؤشرات واضحة</strong><span>راجع وسائل التشخيص المتوفرة للوحة.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>CPU وVcore وSocket</h2><p>إذا لم تتقدم اللوحة إلى فحص RAM أو بقيت على CPU LED/كود مبكر:</p><ul class="checklist"><li>تأكد من وصول 12V CPU إلى VRM.</li><li>قس Vcore على ملفات المعالج أثناء التشغيل.</li><li>افحص Socket تحت مكبر بحثًا عن أرجل مثنية أو تلوث.</li><li>تأكد أن CPU مدعوم من Revision ونسخة BIOS.</li><li>إذا توفر CPU متوافق معروف بالسليم، استخدمه فقط بعد استبعاد مشكلة VRM.</li></ul><div class="decision"><b>Vcore موجود لا يعني أن CPU بدأ التنفيذ حتمًا.</b> ما زالت BIOS وClock وReset وإشارات Power Good مهمة.</div></section>
+    <section class="bootStep" id="s1" data-boot-step="تسجيل النمط" data-boot-demo="post" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">سجّل طول الصفارات والوقفات قبل تفسيرها</h2>
+      <p>اكتب موديل الجهاز ورقم اللوحة وRevision إن أمكن. صوّر محاولة التشغيل من البداية لتلاحظ هل تمر اللمبات سريعًا أو تثبت على مرحلة واحدة.</p>
+      <ol>
+        <li>اكتب عدد الصفارات الطويلة والقصيرة والوقفة التي تفصل بينها، أو لون الضوء ونمط الوميض. كرّر قراءة التسجيل قبل إعادة تشغيل الجهاز.</li>
+        <li>طابق النمط مع دليل جهازك أو اللوحة. سجّل اسم المرحلة كما يظهر في الدليل، واذكر آخر قطعة غيّرتها.</li>
+        <li>إن وُجد مؤشر لوحة مفاتيح، لاحظ هل يتغيّر مع الضغط بعد اكتمال محاولة التشغيل. استخدمه قرينة إضافية مع الصورة والمؤشرات.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-post-indicators.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم لمؤشرات CPU وDRAM وVGA وBOOT مع مثال لثبات DRAM">
+        <figcaption>مرور اللمبات بالتتابع جزء من الفحص في بعض اللوحات. سجّل المؤشر الذي يستمر وراجع تفسيره في دليل الموديل.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#diagnostic-order"><strong>لدي لمبة أو نمط يتكرر</strong><span>سجّل ترتيب اللمبات واختر التي تستمر.</span></a>
+        <a class="bootChoice" href="#s2"><strong>المؤشر أو دليل اللوحة يوجّه إلى DRAM</strong><span>ابدأ بوحدة متوافقة واحدة.</span></a>
+        <a class="bootChoice" href="#s3"><strong>المؤشر أو الدليل يوجّه إلى CPU</strong><span>تحقق من تغذية المعالج وتوافقه.</span></a>
+        <a class="bootChoice" href="#s5"><strong>يبدو أن التوقف عند VGA أو BOOT</strong><span>فرّق بين العرض ووسيط الإقلاع.</span></a>
+        <a class="bootChoice" href="#report"><strong>سجّلت الصوت ولم أجد تفسيرًا موثّقًا</strong><span>شارك التسجيل ورقم الموديل.</span></a>
+      </div>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>BIOS / SPI إذا توقف POST مبكرًا</h2><ul class="checklist"><li>قس VCC لشريحة SPI حسب رقمها؛ كثير من الشرائح الشائعة 3.3V لكن ليس كلها.</li><li>افحص اللحام والمقاومات الصغيرة على خطوط CLK وCS وData.</li><li>باستخدام Oscilloscope/Logic Analyzer، وجود نشاط SPI عند التشغيل دليل أن النظام يحاول قراءة BIOS.</li><li>إذا التغذية صحيحة والأعراض منطقية لفساد BIOS، خذ Backup ثم جرّب ملفًا مطابقًا تمامًا للوحة وRevision.</li></ul><div class="decision"><b>لا تعيد البرمجة عشوائيًا:</b> غياب النشاط على SPI قد يكون لأن اللوحة لم تخرج من Reset أو لأن Clock/EC/SIO لم يبدأ التسلسل.</div></section>
+    <section class="bootStep" id="diagnostic-order" data-boot-step="ترتيب لمبات التشخيص" data-boot-demo="post" aria-labelledby="diagnostic-order-title">
+      <h2 id="diagnostic-order-title" tabindex="-1">أي لمبة بقيت مضيئة بعد انتهاء المحاولة؟</h2>
+      <p>سجّل ترتيب اللمبات عند بدء التشغيل ثم اسم اللمبة التي تبقى أو تتكرر قبل الفصل. الموديلات تختلف في التسميات ومعنى الوميض. افصل النتيجة عن وميض عابر أثناء فحص طبيعي.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>يبقى DRAM أو يتكرر تدريبه</strong><span>افحص وحدة واحدة متوافقة وسجّل حالة التدريب.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يبقى CPU</strong><span>راجع تغذية المعالج والسوكيت والتوافق.</span></a>
+        <a class="bootChoice" href="#s5"><strong>يبقى VGA أو BOOT</strong><span>ميّز مرحلة العرض من مرحلة البحث عن وسيط الإقلاع.</span></a>
+        <a class="bootChoice" href="#silent"><strong>لا توجد لمبات أو صفارات مفهومة</strong><span>راجع وسيلة التشخيص المدعومة للوحة.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>VGA / No Display بعد تقدم POST</h2><p>إذا LED أو POST Code يشير إلى VGA، أو اللوحة تبدو أنها تتجاوز RAM وCPU:</p><ul class="checklist"><li>جرّب كرت شاشة معروف بالسليم.</li><li>جرب منفذًا آخر وكابلًا وشاشة سليمة.</li><li>إذا تستخدم الرسوميات المدمجة، تأكد أن CPU يدعمها.</li><li>افحص تغذية PCIe وكرت الشاشة إن كان يحتاج 6/8-pin.</li><li>افحص Slot PCIe بصريًا وأزل الأكسدة أو الأجسام الغريبة.</li></ul></section>
+    <section class="bootStep" id="s2" data-boot-step="مرحلة الذاكرة" data-boot-demo="memory" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">هل يتغيّر نمط DRAM مع وحدة متوافقة؟</h2>
+      <p>افصل الكهرباء. جرّب وحدة معروفة السلامة في الشق الموصى به لقطعة واحدة. افحص نقاط تلامس الوحدة وأسنان الشق بصريًا قبل تركيبها.</p>
+      <ol>
+        <li>إذا رأيت سنًا تالفًا أو يلامس سنًا مجاورًا، اترك الشق دون تشغيل. مع سلامة الشق قارن وحدتين في الشق نفسه أولًا.</li>
+        <li>بعد تغيير الذاكرة أو إعداداتها امنح اللوحة وقت التدريب المذكور لدليلها. سجّل أي وحدة أو شق غيّر اللمبة أو الكود.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>تجاوز POST مرحلة الذاكرة</strong><span>سجّل القطعة والشق اللذين نجحا.</span></a>
+        <a class="bootChoice" href="#dram-compare"><strong>أريد مقارنة المؤشر مع RAM ودونها</strong><span>استخدم الاختبار إذا سمح الموديل به.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#s3" data-boot-demo="memory"><strong>التغيّر يقتصر على شق واحد</strong><span>قارن الشقوق ووحدة واحدة دون تغيير عاملين معًا.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s8" data-boot-demo="meter"><strong>تتوقف كل الوحدات المتوافقة عند DRAM</strong><span>للفني، راجع تغذية الذاكرة ونقاط القياس.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت تلفًا في الشق أو القراءات غير واضحة</strong><span>شارك صورة الشق والقطع المستخدمة.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="/diagnostics/vrm-cpu-ram#memory-spd">فحص تغذية SPD وتعرّف اللوحة إلى الرام</a></p>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>استخدام POST Card بصورة صحيحة</h2><p>POST Card مفيدة عندما تتكرر اللوحات بدون شاشة، لكن الكود ليس عالميًا أيضًا.</p><ul class="checklist"><li>سجل آخر كود ثابت بدل آخر رقم مرّ سريعًا.</li><li>راقب هل الأكواد تتحرك أصلًا؛ عدم وجود أي نشاط معلومة مهمة.</li><li>قارن الكود مع BIOS/vendor الصحيح إن أمكن.</li><li>إذا يتوقف دائمًا عند نفس المرحلة بعد تبديل RAM/CPU، افحص الدائرة المرتبطة بالمرحلة بدل تبديل أجزاء عشوائيًا.</li></ul><div class="decision"><b>كود ثابت ≠ قطعة تالفة بالضرورة.</b> قد تكون القطعة سليمة لكن تغذيتها أو Clock/Reset أو الاتصال بها غير صحيح.</div></section>
+    <section class="bootStep" id="dram-compare" data-boot-step="نتيجة POST مع الذاكرة ودونها" data-boot-demo="memory" aria-labelledby="dram-compare-title">
+      <h2 id="dram-compare-title" tabindex="-1">هل تغيّر سلوك POST عندما أزلت الذاكرة؟</h2>
+      <p>إذا وثّق الموديل هذه التجربة، افصل الكهرباء قبل إزالة الوحدات. سجّل هل ظهر نمط DRAM جديد أو تغير زمن المحاولة. أعد تركيب وحدة متوافقة قبل متابعة تشغيل الجهاز.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>تغيّر المؤشر أو الصفارة</dt>
+          <dd>التسلسل يتفاعل مع وجود الذاكرة. قارن وحدة سليمة في شق مدعوم.</dd>
+        </div>
+        <div>
+          <dt>يبقى مؤشر CPU أو الكود المبكر نفسه</dt>
+          <dd>راجع دخل المعالج وVcore والسوكيت قبل الانتقال إلى BIOS.</dd>
+        </div>
+        <div>
+          <dt>لا سماعة ولا مؤشر مدعوم</dt>
+          <dd>استخدم وسيلة التشخيص التي يدعمها الموديل.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-display#slot-matrix" data-boot-demo="memory"><strong>المؤشر يتغير بتركيب الذاكرة</strong><span>قارن الوحدات والشقوق.</span></a>
+        <a class="bootChoice" href="#s3"><strong>لا يتغيّر مؤشر CPU أو الكود المبكر</strong><span>راجع تغذيات المعالج والتوافق.</span></a>
+        <a class="bootChoice" href="#silent"><strong>لا توجد قراءة أو صفارة مفهومة</strong><span>حدد أداة التشخيص المناسبة للموديل.</span></a>
+        <a class="bootChoice" href="#report"><strong>النتيجة تختلف بين المحاولات</strong><span>أرسل توقيت المحاولة والمؤشرات.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>إذا يتجمد النص على الشاشة</h2><p>الوصول إلى نص POST ثم التجمّد يعني أن النظام تقدم أكثر من حالة No POST كاملة.</p><ul class="checklist"><li>افصل SATA/NVMe وUSB الخارجي والداخلي غير الضروري.</li><li>افصل كروت PCIe الإضافية.</li><li>نفذ Clear CMOS.</li><li>جرّب Keyboard مختلف إذا التوقف يحدث عند فحص USB/Keyboard.</li><li>راقب الرسالة الأخيرة على الشاشة؛ قد تحدد الجهاز أو المرحلة التي يتوقف عندها الفحص.</li></ul><div class="decision"><b>إذا يتجمد دائمًا على نفس السطر:</b> صوّر الشاشة وسجل النص كاملًا؛ هذا مفيد أكثر بكثير من وصف "واقف على البوست".</div></section>
+    <section class="bootStep" id="s3" data-boot-step="مرحلة المعالج" data-boot-demo="chip" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">راجع دخل CPU/EPS وتوافق المعالج</h2>
+      <p>افصل الكهرباء وتأكد من موصل CPU/EPS الصحيح. سجّل موديل المعالج وإصدار BIOS إن كنت تعرفه، خصوصًا بعد تغيير المعالج.</p>
+      <ol>
+        <li>راجع دعم المعالج مع الإصدار المثبّت وطريقة تركيب المشتت. إذا احتاجت اللوحة فحص السوكت، يُجرى وهي مفصولة عند فني قادر على التعامل مع أسنانه.</li>
+        <li>إذا عُرفت نقاط القياس، قارن دخل VRM وظهور Vcore أثناء التشغيل. ثبات مؤشر CPU يوجّه الفحص إلى المرحلة التي يعتمد عليها المعالج.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s3" data-boot-demo="rail"><strong>الدخل أو Vcore مفقود</strong><span>تتبّع تغذية المعالج بالترتيب.</span></a>
+        <a class="bootChoice" href="#s4"><strong>التغذية تصل واللوحة تتوقف مبكرًا</strong><span>افحص تغذية شريحة BIOS وقراءة SPI.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف دعم BIOS أو أرى تلفًا في السوكت</strong><span>أرسل موديل اللوحة والمعالج وصورة الموصلات.</span></a>
+      </div>
+    </section>
 
-<section id="s8" class="step"><h2><span class="stepNum">8</span>Reset وClock وPower Good</h2><p>إذا التغذيات موجودة ولا يوجد تقدم واضح:</p><ul class="checklist"><li>افحص Reset المرتبط بالمنصة حسب المخطط.</li><li>Clock يحتاج Oscilloscope؛ الملتيميتر لا يثبت وجود تردد صحيح.</li><li>راجع إشارات Power Good وتسلسل تشغيل VRM والشرائح الرئيسية.</li><li>استخدم BoardView لتحديد المقاومات والـtest points المتصلة بالإشارة المفقودة.</li></ul></section>
+    <section class="bootStep" id="s4" data-boot-step="قراءة BIOS وSPI" data-boot-demo="chip" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">هل بدأت اللوحة قراءة شريحة BIOS؟</h2>
+      <p>هذه خطوة لفني اللوحات. اقرأ رقم الشريحة لتحديد جهدها وموضع VCC وGND. راقب نشاط CS وCLK بأداة مناسبة عند محاولة بدء التشغيل.</p>
+      <ol>
+        <li>دوّن حالة التغذية ونشاط الإشارات قبل الحكم. غياب نشاط القراءة قد يتبع توقفًا في Power Good أو Reset أو Clock.</li>
+        <li>إذا لزم فحص الملف، احتفظ بالقراءة الأصلية من الشريحة وتحقق من رقم اللوحة ومراجعتها.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#spi-identify"><strong>لم أحدد رقم الشريحة وجهدها</strong><span>اعرف نوع SPI ونقطة VCC قبل القياس.</span></a>
+        <a class="bootChoice" href="#spi-activity"><strong>تغذية الشريحة مؤكدة</strong><span>تحقق من اختيار الشريحة ونشاط الخطوط.</span></a>
+        <a class="bootChoice" href="#firmware-recovery"><strong>العطل بدأ بعد تحديث BIOS</strong><span>افحص النسخة وطريقة الاستعادة المخصصة.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج تحديد الشريحة من الصور</strong><span>شارك رقم اللوحة وعلامات الشرائح.</span></a>
+      </div>
+    </section>
 
-<section id="s9" class="step"><h2><span class="stepNum">9</span>مسار قرار سريع</h2><table class="measureTable"><thead><tr><th>العرض</th><th>ابدأ من</th></tr></thead><tbody><tr><td>صفارات تتغير عند نزع RAM</td><td>RAM / Slots / VDIMM / قنوات الذاكرة</td></tr><tr><td>لا يتغير شيء بدون RAM</td><td>CPU 12V → Vcore → Socket → BIOS → Reset/Clock</td></tr><tr><td>CPU LED أو كود CPU ثابت</td><td>EPS 12V، VRM، Vcore، Socket، CPU، BIOS support</td></tr><tr><td>DRAM LED أو كود RAM</td><td>RAM، VDIMM، Slots، Socket CPU، Memory Channel</td></tr><tr><td>VGA LED / VGA code</td><td>GPU، PCIe، تغذية GPU، iGPU support</td></tr><tr><td>POST يصل لنص ثم يتجمد</td><td>افصل الأجهزة الثانوية وركز على آخر رسالة ظاهرة</td></tr><tr><td>لا POST ولا Beep ولا Codes</td><td>ارجع إلى No Display/No POST وافحص تسلسل الطاقة والبدء</td></tr></tbody></table></section>
+    <section class="bootStep" id="spi-identify" data-boot-step="تحديد شريحة SPI وجهدها" data-boot-demo="chip" aria-labelledby="spi-identify-title">
+      <h2 id="spi-identify-title" tabindex="-1">ما رقم شريحة BIOS وما تغذيتها؟</h2>
+      <p>حدّد الشريحة من الرقم المطبوع والمخطط، وميّز شريحة النظام من Firmware لمتحكم آخر. راجع ترتيب الأطراف واتجاه الرجل الأولى والجهد الموصى به في بيانات القطعة قبل القياس.</p>
+      <ol>
+        <li>بعض شرائح SPI تستخدم عائلة 1.8V وأخرى عائلة 3.3V. خذ الجهد من رقم القطعة كاملًا، بما فيه اللاحقة، بدل الاعتماد على شكل الشريحة.</li>
+        <li>افحص VCC إلى GND عند نقطة موثّقة في مرحلة التشغيل المناسبة. إذا غابت التغذية، افصل الطاقة وافحص المسار والمقاومة قبل التفكير في استعادة BIOS.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#spi-activity"><strong>حددت الشريحة وVCC ضمن المتوقع</strong><span>افحص اختيار الشريحة ونشاط الناقل.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-power#local-power-sequence" data-boot-demo="rail"><strong>تغذية الشريحة غائبة</strong><span>تتبّع الشرط الذي يسمح بظهور التغذية.</span></a>
+        <a class="bootChoice" href="#report"><strong>الرقم غير واضح أو لدي أكثر من شريحة</strong><span>أرسل صور الشريحة واللوحة قبل توصيل مبرمجة.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>قاعدة مهمة للصفارات</h2><p>عند تسجيل Beep Code، اكتب دائمًا <b>الشركة + موديل اللوحة + BIOS vendor إن كان معروفًا + النمط الدقيق للصفارات</b>. هذا يمنع استخدام جدول خاطئ ويجعل التشخيص أدق.</p><div class="related"><a class="imageBtn" href="/diagnostics/no-display">🖥️ No Display / No POST</a><a class="imageBtn" href="/diagnostics/no-power">⚡ No Power</a><a class="imageBtn" href="/diagnostics/restarts-shuts-down">🔁 Restart / Shutdown</a><a class="imageBtn" href="/boardview/">🗺️ البحث في BoardView</a></div></section>
-</article>
+    <section class="bootStep" id="spi-activity" data-boot-step="نشاط CS وClock وData" data-boot-demo="signal" aria-labelledby="spi-activity-title">
+      <h2 id="spi-activity-title" tabindex="-1">هل يحاول المتحكم قراءة شريحة SPI؟</h2>
+      <p>عند محاولة التشغيل راقب CS# وSCLK وخطوط البيانات في نقاط موثّقة وبمسبار مناسب. في وضع SPI المعتاد يظهر اختيار الشريحة ثم نبضات الساعة والبيانات. القراءة الساكنة بملتيميتر لا تحسم نشاطًا سريعًا.</p>
+      <ol>
+        <li>إذا لا توجد محاولة على CS# أو الساعة، افحص شرط تغذية المتحكم وReset قبل الحكم على الشريحة.</li>
+        <li>إذا ظهرت محاولة وتوقّف النقل أو بقي خط في مستوى واحد، افحص مساره ومقاومته والملحقات على الناقل وفق المخطط.</li>
+        <li>راجع وظيفة WP# وHOLD# حسب رقم الشريحة ووضع الناقل. في بعض أوضاع النقل تتحول الأرجل إلى خطوط بيانات. تجنّب تغيير مستواها دون توثيق.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#reset-check"><strong>تغذية الشريحة موجودة ولا يظهر طلب قراءة</strong><span>راجع جاهزية المتحكم وReset.</span></a>
+        <a class="bootChoice" href="#spi-line-check"><strong>أحد خطوط SPI ثابت مع وجود محاولة</strong><span>راجع وظيفة الطرف وحالته بالمخطط.</span></a>
+        <a class="bootChoice" href="#firmware-recovery"><strong>النشاط موجود والعطل بدأ بعد تحديث BIOS</strong><span>تحقق من توافق النسخة وطريقة الاستعادة.</span></a>
+        <a class="bootChoice" href="#s8"><strong>النشاط ظاهر ولا توجد قرينة خلل في الشريحة</strong><span>تابع Reset وClock وباقي مراحل POST.</span></a>
+      </div>
+    </section>
 
-<aside class="toc"><b>المحتويات</b><a href="#s1">1. سجل السلوك</a><a href="#s2">2. RAM</a><a href="#s3">3. CPU / Vcore</a><a href="#s4">4. BIOS / SPI</a><a href="#s5">5. VGA</a><a href="#s6">6. POST Card</a><a href="#s7">7. تجمد POST</a><a href="#s8">8. Reset / Clock</a><a href="#s9">9. مسار القرار</a></aside>
-</div>
+    <section class="bootStep" id="spi-line-check" data-boot-step="حالة أطراف SPI ووظيفة كل رجل" data-boot-demo="chip" aria-labelledby="spi-line-check-title">
+      <h2 id="spi-line-check-title" tabindex="-1">هل الطرف المشتبه به إشارة تحكم أم بيانات؟</h2>
+      <p>استخرج تعريف الطرف من رقم الشريحة الكامل وراجع تصميم اللوحة. قارن مستواه وقت التوقف، وافصل الطاقة قبل قياس المقاومة أو استمرارية مساره.</p>
+      <ol>
+        <li>حدّد إن كانت الإشارة تثبت بمقاومة سحب أو تتبدل خلال الاتصال. ابحث عن تلف في اللحام أو عنصر وسيط، وقارن بنقطة مماثلة إذا كانت موثّقة.</li>
+        <li>لا تختبر بإجبار طرف WP# أو HOLD# على مستوى معين أو بتغذية الشريحة من المبرمجة وهي على لوحة مزوّدة بالطاقة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#spi-activity"><strong>تأكدت من وظيفة الطرف وسلامة المسار</strong><span>قارن ترتيب اختيار الشريحة والساعة.</span></a>
+        <a class="bootChoice" href="#firmware-recovery"><strong>المسار سليم وهناك تحديث فاشل مؤكد</strong><span>راجع خطوات الاستعادة المخصصة للموديل.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت خطًا ثابتًا خلاف المخطط</strong><span>شارك رقم الرجل وحالة اللوحة وقت القياس.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="firmware-recovery" data-boot-step="الاستعادة والنسخة الاحتياطية" data-boot-demo="chip" aria-labelledby="firmware-recovery-title">
+      <h2 id="firmware-recovery-title" tabindex="-1">متى تفيد استعادة BIOS؟</h2>
+      <p>ابدأ بمطابقة الموديل وRevision وإصدار Firmware ودعم المعالج. العطل بعد تحديث منقطع أو ملف غير مناسب يعطي سببًا محددًا لمراجعة الاستعادة. بعض اللوحات توفر طريقة استعادة مخصصة يمكن تنفيذها بحسب الدليل.</p>
+      <ol>
+        <li>قبل أي كتابة مباشرة، احفظ قراءة أصلية يمكن التحقق منها. قارن قراءتين مستقلتين، وحدّد جهد الشريحة وطريقة عزلها حسب اللوحة.</li>
+        <li>راجع إن كانت النسخة تحتوي بيانات خاصة باللوحة، مثل إعدادات المصنع أو المعرّفات. استخدم ملفًا مطابقًا وطريقة حفظها الموثّقة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>تمت الاستعادة الموثّقة وتقدّم POST</strong><span>أعد اختبار تشغيل بارد وسجّل النسخة.</span></a>
+        <a class="bootChoice" href="#spi-identify"><strong>لا أعرف الشريحة أو نسخة الملف المطابقة</strong><span>تحقق من الرقم والجهد قبل أي كتابة.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مراجعة الملف أو سبب توقف الاستعادة</strong><span>شارك رقم اللوحة والشريحة والنسخ المستخدمة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s5" data-boot-step="مرحلة العرض أو الإقلاع" data-boot-demo="screen-pair" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">هل يثبت المؤشر على VGA أم BOOT؟</h2>
+      <p>VGA يوجّهك إلى بطاقة العرض ومخارجها. BOOT على بعض اللوحات يشير إلى مرحلة اختيار وسيط الإقلاع بعد تقدم مراحل الفحص. تحقق من معنى اسم المؤشر للموديل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-display#s8" data-boot-demo="blank"><strong>VGA ثابت والصورة غائبة</strong><span>افحص الشاشة ومخرج البطاقة وتغذيتها.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-boot#storage-check" data-boot-demo="drive"><strong>BOOT ثابت وأستطيع الدخول إلى BIOS</strong><span>تحقق من ظهور قرص النظام.</span></a>
+        <a class="bootChoice" href="#s7"><strong>تظهر رسالة تتعلق بقرص أو ملحق</strong><span>صوّر السطر الأخير قبل أي تغيير.</span></a>
+        <a class="bootChoice" href="#report"><strong>هناك أكثر من ضوء أو لا أعرف معنى العلامة</strong><span>اذكر ترتيب الأضواء وما يظهر على الشاشة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s6" data-boot-step="أكواد POST" data-boot-demo="inspect" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">اقرأ سلسلة الأكواد قبل الكود الأخير</h2>
+      <p>تأكد أن شاشة اللوحة أو بطاقة POST مدعومة على الواجهة المستخدمة. سجّل تسلسل الأكواد، وهل يصل إلى الرمز نفسه في كل محاولة.</p>
+      <ol>
+        <li>استخدم جدول الموديل أو المنصة عند تفسير الرمز. قد يمثل الكود آخر مرحلة وصلت إليها اللوحة أو الحالة التي توقف عندها العرض.</li>
+        <li>غيّر قطعة واحدة في كل محاولة وقارن النتيجة بالمحاولة السابقة. إذا لم تسجّل الأداة أي تقدم، تحقق من طريقة توصيلها ودعم الواجهة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#postcode-setup"><strong>بطاقة POST لا تعرض سلسلة أكواد</strong><span>راجع توافق الواجهة قبل تفسير الكود.</span></a>
+        <a class="bootChoice" href="#s2"><strong>دليل الموديل يربطه بالذاكرة</strong><span>ابدأ بقطعة واحدة في الشق المناسب.</span></a>
+        <a class="bootChoice" href="#s3"><strong>دليل الموديل يربطه بالمعالج</strong><span>ابدأ بالتغذية والتوافق.</span></a>
+        <a class="bootChoice" href="#s8"><strong>الأداة مدعومة والكود ثابت مبكرًا</strong><span>راجع إشارات بدء التشغيل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي تسلسل أكواد أو لا أملك جدوله</strong><span>شارك الأكواد بالترتيب واسم الأداة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="postcode-setup" data-boot-step="توافق بطاقة أكواد POST" data-boot-demo="post" aria-labelledby="postcode-setup-title">
+      <h2 id="postcode-setup-title" tabindex="-1">هل تقرأ الأداة الواجهة التي تستخدمها اللوحة؟</h2>
+      <p>راجع دليل اللوحة ودعم واجهة أداة POST قبل تركيبها. بعض المنافذ تشبه منافذ أخرى في شكلها وتختلف في إشاراتها. افصل الكهرباء قبل التوصيل ولا تركّب أداة في موصل غير موثّق.</p>
+      <ol>
+        <li>إن كانت الأداة تعرض رقمًا ثابتًا منذ أول لحظة، تأكد من طريقة عملها وتغذيتها وإمكان عرض أكواد هذه المنصة.</li>
+        <li>دوّن آخر ثلاثة أكواد بالترتيب إن ظهرت. اقرأ معانيها في دليل نفس الموديل وإصدار BIOS المتاح.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s6"><strong>الواجهة مدعومة وتظهر سلسلة أكواد</strong><span>سجّل التسلسل ثم اختر المرحلة.</span></a>
+        <a class="bootChoice" href="#silent"><strong>لا تدعم اللوحة هذه الأداة</strong><span>ارجع إلى اللمبات أو الصفارات المدعومة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف الواجهة أو الكود ثابت منذ البداية</strong><span>شارك موديل اللوحة والأداة وطريقة وصلها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="توقف عند نص POST" data-boot-demo="logo" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">ما النص الأخير قبل التوقف؟</h2>
+      <p>صوّر الشاشة. إذا أشار النص إلى قرص أو USB أو لوحة مفاتيح، افصل الجهاز عن الكهرباء ثم افصل الملحقات غير الضرورية وجرب مرة.</p>
+      <ol>
+        <li>أعد العناصر التي تحتاجها واحدًا واحدًا بعد إطفاء الجهاز. سجّل أي عنصر غيّر الرسالة.</li>
+        <li>إذا ظهرت رسالة تتعلق بالتخزين، دوّنها وحافظ على الملفات قبل محاولة تهيئة القرص أو إصلاحه.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#post-peripherals"><strong>يتجمّد عند نص أو شعار محدد</strong><span>اعزل الأقراص وUSB غير اللازمة.</span></a>
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#protect-data" data-boot-demo="drive"><strong>النص يشير إلى قرص يختفي أو يتوقف</strong><span>احمِ البيانات أولًا.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>يتجاوز التوقف بعد فصل ملحق</strong><span>أكّد النتيجة وسجّل القطعة.</span></a>
+        <a class="bootChoice" href="#report"><strong>سجّلت آخر نص ولم أحدد السبب</strong><span>شارك صورة التوقف والملحقات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="post-peripherals" data-boot-step="عزل الملحقات عند تجمّد POST" data-boot-demo="isolate" aria-labelledby="post-peripherals-title">
+      <h2 id="post-peripherals-title" tabindex="-1">هل تتجاوز اللوحة النص بعد فصل ملحق معيّن؟</h2>
+      <p>صوّر آخر نص وموضع التوقف. أوقف الجهاز وافصل الطاقة، ثم اختبر من دون أقراص أو USB غير لازمة وفق اللوحة. أعد العناصر واحدًا واحدًا حتى يظهر العامل الذي يعيد التوقف.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#protect-data" data-boot-demo="drive"><strong>يتوقف عند إعادة قرص محدد</strong><span>احمِ الملفات وراجع فحص القرص.</span></a>
+        <a class="bootChoice" href="/diagnostics/usb-port-not-working" data-boot-demo="usb-alert"><strong>يتوقف مع جهاز USB أو منفذ بعينه</strong><span>قارن الملحق والمنفذ.</span></a>
+        <a class="bootChoice" href="#s6"><strong>يتجمد حتى في التركيب الأدنى</strong><span>دوّن آخر رمز أو مؤشر وقارنه بالتسلسل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي آخر نص أو صورة للتوقف</strong><span>شارك النص والتركيب الذي ظهر فيه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s8" data-boot-step="إشارات التسلسل" data-boot-demo="signal" aria-labelledby="s8-title">
+      <h2 id="s8-title" tabindex="-1">تحقّق من Reset وClock بعد ثبات التغذيات</h2>
+      <p>هذه مرحلة فني اللوحات بعد مقارنة القطع المعروفة. اتبع المخطط لتحديد الإشارة المنتظرة ووقت حدوثها.</p>
+      <ol>
+        <li>سجّل أي Power Good يظهر ثم يغيب، وأي Reset يبقى في حالته الأولى. تختلف الإشارات وقيمها بين المنصات.</li>
+        <li>لرصد Clock والتوقيت استخدم أداة مناسبة وفق المخطط. سجّل أول مرحلة تغذية أو تحكم لا تصل كما هو متوقع.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#reset-check"><strong>أريد معرفة هل يتحرر Reset</strong><span>قارن الإشارة بالجاهزية والتغذية.</span></a>
+        <a class="bootChoice" href="#clock-check"><strong>Reset يتحرر وClock غير مؤكد</strong><span>راجع خرج الساعة الموثّق وطريقة القياس.</span></a>
+        <a class="bootChoice" href="#spi-activity"><strong>تأكدت من الساعة وReset</strong><span>راجع نشاط SPI ثم آخر رمز POST.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد نقاط فحص مؤكدة</strong><span>أرسل رقم اللوحة وقراءات التغذية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="reset-check" data-boot-step="تتبّع Reset مع Power Good" data-boot-demo="signal" aria-labelledby="reset-check-title">
+      <h2 id="reset-check-title" tabindex="-1">هل يتحرر Reset بعد تحقق شروط التشغيل؟</h2>
+      <p>حدّد الإشارة التي تخص هذه المرحلة. قد تجد RESET# أو PLTRST# أو أسماء أخرى حسب المنصة. راجع المستوى المتوقع، ثم قارن وقت تغيرها مع إشارة Power Good والتغذية السابقة لها.</p>
+      <ol>
+        <li>إذا بقيت Reset في حالتها الفعالة، راجع الشرط السابق في المخطط وتغذية الدائرة التي تولّدها.</li>
+        <li>إذا تحررت ثم عادت، سجّل هل سبقتها إشارة جاهزية هابطة أو فصل في إحدى التغذيات.</li>
+        <li>استعمل نقطة قياس موثّقة. لا تجبر الإشارة على مستوى مختلف لإجبار اللوحة على الإقلاع.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-post-sequence.webp" width="840" height="420" loading="lazy" decoding="async" alt="مخطط يوضح جاهزية التغذية ثم رفع Reset وتقدم POST">
+        <figcaption>يختلف ترتيب الشروط والمسميات حسب المنصة. ابدأ بآخر إشارة تحققت في المخطط.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>Power Good لا يصل</dt>
+          <dd>ارجع إلى المنظم أو التغذية التي تولّد الجاهزية.</dd>
+        </div>
+        <div>
+          <dt>الجاهزية ثابتة وReset لا يتحرر</dt>
+          <dd>قارن تغذية منطق Reset ومسار الإشارة في اللوحة.</dd>
+        </div>
+        <div>
+          <dt>Reset يتحرر وPOST يتوقف</dt>
+          <dd>تتبّع Clock ونشاط SPI وآخر رمز مسجّل.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-power#local-power-sequence" data-boot-demo="rail"><strong>إحدى إشارات Power Good غائبة</strong><span>تتبّع التغذيات التي تسبقها.</span></a>
+        <a class="bootChoice" href="#clock-check"><strong>Reset يتحرر ولا يتقدّم POST</strong><span>تحقق من وجود الساعة في نقاطها الموثّقة.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#signal-order" data-boot-demo="intermittent"><strong>Reset يتحرر ثم يعود وقت الفصل</strong><span>قارن توقيت هبوط التغذيات والجاهزية.</span></a>
+        <a class="bootChoice" href="#report"><strong>الجاهزية ثابتة لكن Reset لا يتغيّر</strong><span>أرسل الإشارة والمستوى والشرط السابق لها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="clock-check" data-boot-step="قياس Clock وفحص المذبذب" data-boot-demo="signal" aria-labelledby="clock-check-title">
+      <h2 id="clock-check-title" tabindex="-1">هل تصل الساعة إلى المرحلة التي توقفت؟</h2>
+      <p>حدد مصدر الساعة وترددها المتوقع ونقطة الاختبار من المخطط. قارن خرجًا موثّقًا من المذبذب أو موزع الساعة بتغذيته وإشارة تمكينه، باستخدام مسبار يناسب التردد وتحميل الدائرة.</p>
+      <ol>
+        <li>يفضل القياس عند نقطة مخصصة أو خرج موزّع معروف. قد يؤثر المسبار العادي في تذبذب الكريستال إذا وُصل مباشرة بطرفه.</li>
+        <li>إذا غابت الساعة، افحص تغذية المصدر وتمكينه أولًا. إذا ظهرت في المصدر واختفت بعد نقطة توزيع موثّقة، قارن المسار والشرط الذي يشغّله.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#reset-check"><strong>الساعة موجودة وReset لم يتحقق</strong><span>راجع ترتيب Power Good وReset.</span></a>
+        <a class="bootChoice" href="#spi-activity"><strong>الساعة وReset مستقران ولا POST</strong><span>افحص محاولة قراءة BIOS.</span></a>
+        <a class="bootChoice" href="#s6"><strong>أستطيع قراءة أكواد قبل التوقف</strong><span>سجّل تسلسلها بدل الاعتماد على الرمز الأخير فقط.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك مسبارًا مناسبًا أو غابت الساعة في نقطة محددة</strong><span>شارك اسم النقطة والتغذيات الموثّقة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s9" data-boot-step="خلاصة القرار" data-boot-demo="inspect" aria-labelledby="s9-title">
+      <h2 id="s9-title" tabindex="-1">ابدأ من المؤشر الذي استمر</h2>
+      <p>طابق المؤشر مع جدول جهازك. عند DRAM قارن وحدات الذاكرة. عند CPU افحص التغذية والتوافق. عند VGA افحص مسار العرض، وعند BOOT سجّل حالة القرص.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>أريد مراجعة نمط الصفارات</strong><span>ابدأ بتسجيل الصوت والمؤشرات.</span></a>
+        <a class="bootChoice" href="#s5"><strong>أريد التمييز بين VGA وBOOT</strong><span>افتح فرع العرض أو التخزين.</span></a>
+        <a class="bootChoice" href="#report"><strong>أعرف آخر مؤشر وأريد المساعدة</strong><span>شارك النمط ونتيجة كل تجربة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="silent" data-boot-step="لا توجد علامة واضحة" data-boot-demo="blank" aria-labelledby="silent-title">
+      <h2 id="silent-title" tabindex="-1">تحقّق من وسيلة التشخيص التي تدعمها اللوحة</h2>
+      <p>تأكد هل يحتوي الموديل على سماعة أو مؤشر تشخيص. دوّن هل تدور المراوح وهل تعمل الشاشة على جهاز آخر. غياب الصفارة على لوحة بلا سماعة لا يثبت توقف مرحلة بعينها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-display#s2" data-boot-demo="blank"><strong>الجهاز يعمل بلا صورة</strong><span>اختبر POST بأقل تركيب.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-power" data-boot-demo="power"><strong>الجهاز لا يستجيب للزر</strong><span>ابدأ بمسار عدم التشغيل.</span></a>
+        <a class="bootChoice" href="#s6"><strong>اللوحة تدعم شاشة أكواد أو بطاقة POST</strong><span>سجّل التسلسل على الواجهة المدعومة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع تحديد وسيلة التشخيص</strong><span>أرسل موديل اللوحة وسلوك المراوح.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="النتيجة" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">دوّن ما غيّر آخر مؤشر</h2>
+      <p>اذكر الرمز السابق وما ظهر بعد تغيير قطعة أو موصل. إذا عاد POST، سجّل هل يصل إلى BIOS أو إلى النظام حتى نفرّق بين حل الفحص الأولي وعطل الإقلاع.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك نتيجة الفحص</strong><span>اذكر الرمز والقطعة التي غيّرته.</span></a>
+        <a class="bootChoice" href="#start"><strong>ظهرت علامة أخرى</strong><span>ابدأ من المؤشر الجديد.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>أرسل النمط كما ظهر على جهازك. نراجع معك مرحلة التوقف ونتائج المقارنات، ثم نحدد فحصًا واحدًا مناسبًا قبل تغيير القطع.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>رقم اللوحة وRevision وموديل الجهاز والمعالج.</li>
+          <li>نمط الصفارات مع الوقفات أو ترتيب أضواء التشخيص والأكواد.</li>
+          <li>نوع الذاكرة والقطعة والشق المستخدمان في كل محاولة.</li>
+          <li>آخر تغيير قبل ظهور العطل وآخر شاشة أو رسالة.</li>
+          <li>حالة Power Good وReset وClock، ونشاط SPI عند بدء التشغيل إن تمكنت من قياسه.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/no-display#s2">التركيب الأدنى عند غياب الصورة</a></li>
+      <li><a href="/diagnostics/no-power#local-power-sequence">تسلسل التغذيات قبل POST</a></li>
+      <li><a href="/diagnostics/vrm-cpu-ram#memory-spd">فحص SPD وتعرّف اللوحة إلى الرام</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a><a href="/contact">اتصل بنا</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>

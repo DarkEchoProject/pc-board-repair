@@ -1,56 +1,493 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص VRM وخطوط المعالج والرام | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص VRM وخطوط CPU وRAM في اللوحات الأم: 12V CPU، MOSFET وPower Stage، PWM، الملفات، Vcore، VDIMM، المقاومة إلى الأرضي ونقاط القياس الأساسية.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.rail div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.rail b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص VRM وخطوط المعالج والرام","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تشخيص VRM وخطوط المعالج والرام | دخل EPS وVcore وVDIMM | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفحص تغذيات المعالج والذاكرة. حدّد دخل CPU/EPS، وميّز عقدة SW من الخرج، وتتبع تمكين PWM وVDIMM حسب المنصة.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram">
+  <meta property="og:title" content="تشخيص VRM وخطوط المعالج والرام | دخل EPS وVcore وVDIMM | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي لفحص تغذيات المعالج والذاكرة. حدّد دخل CPU/EPS، وميّز عقدة SW من الخرج، وتتبع تمكين PWM وVDIMM حسب المنصة.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "VRM وخطوط المعالج والرام",
+  "description": "مسار تفاعلي لفحص تغذيات المعالج والذاكرة. حدّد دخل CPU/EPS، وميّز عقدة SW من الخرج، وتتبع تمكين PWM وVDIMM حسب المنصة.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/vrm-cpu-ram",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← VRM وخطوط المعالج والرام</div>
-<section class="guideHero"><span class="brandTag">Power Rails</span><h1>🔋 VRM وخطوط المعالج والرام</h1><p class="muted">دليل عملي لفهم مسار تغذية CPU وRAM وتحديد أين تتوقف الدائرة: دخل 12V، مراحل MOSFET/Power Stage، PWM، الملفات، Vcore وVDIMM.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← VRM وخطوط المعالج والرام</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 11</span><span dir="ltr">VRM / Vcore / VDIMM</span><span>فحص اللوحة الأم</span></div>
+    <h1 id="guide-title">VRM وخطوط المعالج والرام</h1>
+    <p>ابدأ من الخط الذي توقفت عنده. ستحدد هل المشكلة في وصول الدخل، أم تمكين مرحلة القدرة، أم خرج المعالج أو تغذية الذاكرة.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>الموصل والدخل</span></li>
+      <li><b>٢</b><span>مرحلة القدرة والخرج</span></li>
+      <li><b>٣</b><span>تغذية الذاكرة والإشارات</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>قاعدة مهمة:</b> لا تعتبر صفارة الاستمرارية على Vcore شورتًا تلقائيًا. خطوط المعالج قد تكون مقاومتها منخفضة جدًا طبيعيًا، وخصوصًا مع CPU مركب. استخدم المقاومة، المقارنة، المخطط وسلوك الخط مع التغذية قبل الحكم.</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">مكونات مرحلة VRM</a></li>
+      <li><a href="#s2">مقاومة دون تغذية</a></li>
+      <li><a href="#s3">دخل CPU/EPS</a></li>
+      <li><a href="#input-path">مسار دخل القدرة</a></li>
+      <li><a href="#s4">خرج المعالج</a></li>
+      <li><a href="#vcore-capture">توقيت ظهور Vcore</a></li>
+      <li><a href="#s5">تمكين PWM</a></li>
+      <li><a href="#enable-chain">مصدر Enable وإشارة الجاهزية</a></li>
+      <li><a href="#switching-check">PWM وقياس التبديل</a></li>
+      <li><a href="#s6">مرحلة القدرة</a></li>
+      <li><a href="#stage-comparison">مقارنة مراحل القدرة بعد فصل الطاقة</a></li>
+      <li><a href="#s7">طرفا الملف</a></li>
+      <li><a href="#s8">تغذية الذاكرة</a></li>
+      <li><a href="#memory-reference">تغذية الذاكرة ومرجع القياس</a></li>
+      <li><a href="#memory-voltages">قيم تغذية DDR3 وDDR4 وDDR5</a></li>
+      <li><a href="#memory-spd">تغذية SPD ونشاط البيانات</a></li>
+      <li><a href="#memory-regulator">منظّم الذاكرة</a></li>
+      <li><a href="#memory-load">تغذية الرام قبل تركيب الوحدة وبعدها</a></li>
+      <li><a href="#s9">اختفاء خرج VRM</a></li>
+      <li><a href="#vrm-evidence">قرائن عطل VRM مقابل المعالج</a></li>
+      <li><a href="#s10">ترتيب فحص سريع</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>افهم مسار VRM قبل القياس</h2><p>دائرة VRM تخفض جهد دخل مرتفع نسبيًا إلى جهد منخفض عالي التيار للمعالج أو الذاكرة. المسار التقليدي لكل Phase يكون تقريبًا:</p><div class="rail"><div><b>12V Input</b>يأتي عادة من موصل CPU/EPS إلى منطقة VRM.</div><div><b>High-side / Low-side</b>MOSFETs منفصلة أو Power Stage / DrMOS مدمج.</div><div><b>SW Node</b>نقطة التبديل النبضية قبل الملف.</div><div><b>Inductor</b>الملف يجمع خرج الـPhase ويوصله إلى خط Vcore أو خط آخر.</div><div><b>Output Capacitors</b>تثبت الجهد قرب CPU أو RAM.</div><div><b>PWM Controller</b>يتحكم بالمراحل وفق Enable وFeedback وإشارات الحماية.</div></div><p class="note">في اللوحات الحديثة قد تكون MOSFETs والدرايفر في IC واحد؛ لا تعتمد Pinout عام قبل قراءة رقم القطعة أو المخطط.</p></section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#s10">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>قياسات أولية واللوحة مفصولة</h2><ul class="checklist"><li>افصل PSU والبطارية إن أمكن وفرغ الشحنة.</li><li>قس مقاومة خط 12V CPU إلى GND.</li><li>قس مقاومة خرج كل ملف Vcore إلى GND وقارن الملفات ببعضها.</li><li>قس VDIMM إلى GND عند ملف أو مكثف خرج دائرة RAM.</li><li>افحص MOSFETات/Power Stages بصريًا للحرارة أو الحرق أو الكسر.</li></ul><div class="decision"><b>المقارنة أهم من رقم منفرد:</b> إذا كانت عدة ملفات Vcore متصلة بنفس الخرج فستعطي قراءات متقاربة. Phase واحدة مختلفة بوضوح قد تشير إلى مكون في تلك المرحلة، لكن يجب تأكيد ذلك بقياسات إضافية.</div></section>
+    <section class="bootStep" id="start" data-boot-step="اختيار نقطة الفحص" data-boot-demo="rail" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">أي جزء من مسار التغذية تريد فحصه؟</h2>
+      <p>حدّد هل الجهاز مكتبي بموصل CPU/EPS، أم لوحة لها تصميم خاص. استخدم أسماء خطوط اللوحة ومخططها عند مقارنة القراءات.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>لا أميّز الدخل وعقدة SW والخرج</strong><span>اقرأ ترتيب المرحلة أولًا.</span></a>
+        <a class="bootChoice" href="#s2"><strong>اللوحة مفصولة وأريد قياس المقاومة</strong><span>ابدأ من خط معروف وقيمة المجسّين.</span></a>
+        <a class="bootChoice" href="#s3"><strong>أريد التأكد من وصول تغذية المعالج</strong><span>قارن موصل EPS ومدخل المرحلة.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الدخل موجود وVcore غائب أو يظهر لحظة</strong><span>تتبّع خرج المعالج أثناء محاولة تشغيل.</span></a>
+        <a class="bootChoice" href="#s8"><strong>أريد فحص تغذية RAM أو ضوء DRAM ثابت</strong><span>حدّد جيل الذاكرة ونقطة القياس.</span></a>
+        <a class="bootChoice" href="#s6"><strong>مرحلة قدرة تبدو مختلفة أو تسخن سريعًا</strong><span>أوقف التشغيل وقارن المراحل وهي مفصولة.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>تأكد من دخل 12V CPU</h2><p>شغّل اللوحة واقس على مدخل VRM أو جهة الدخل للمراحل.</p><table class="measureTable"><thead><tr><th>النقطة</th><th>المتوقع عادة</th><th>إذا كانت مفقودة</th></tr></thead><tbody><tr><td>موصل CPU/EPS</td><td class="good">حوالي 12V</td><td>افحص PSU والموصل والكابل.</td></tr><tr><td>بعد الحماية/الفيوز أو MOSFET الدخل</td><td class="good">قريب من 12V</td><td>افحص عنصر الحماية ومساره وإشارة فتحه إن وجدت.</td></tr><tr><td>دخل Power Stage</td><td class="good">قريب من جهد الدخل</td><td>تتبع المسار من الموصل إلى المرحلة.</td></tr></tbody></table><div class="decision"><b>إذا لا يوجد 12V عند VRM:</b> لا تضيع الوقت على Vcore أو PWM قبل إصلاح مسار الدخل.</div></section>
+    <section class="bootStep" id="s1" data-boot-step="مكونات مرحلة VRM" data-boot-demo="rail" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">ميّز دخل المرحلة من نقطة التبديل والخرج</h2>
+      <p>في مرحلة خفض الجهد، ينتقل الدخل إلى MOSFETات أو Power Stage. تتصل عقدة SW بطرف الملف الأول ويخرج الجهد المنظّم من الطرف المتصل بمكثفات الخرج والحمل. يتحكم PWM بتوقيت المراحل.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-vrm-rail.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يوضح دخل VRM ومرحلة القدرة ونقطة SW والملف وجهة خرج Vcore">
+        <figcaption>استخدم الرسم لفهم تسلسل المرحلة، وخذ مواقع القطع وأسماء الخطوط من مخطط لوحتك.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>أريد قياس الدخل أولًا</strong><span>راجع موصل تغذية المعالج.</span></a>
+        <a class="bootChoice" href="#s7"><strong>أحتاج تمييز طرفَي الملف</strong><span>تتبّع الخرج والمكثفات.</span></a>
+        <a class="bootChoice" href="#s8"><strong>أعمل على تغذية الذاكرة</strong><span>حدّد نوع الذاكرة وخطها.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف اسم الخط أو رقم المتحكم</strong><span>شارك صورة المنطقة ورقم اللوحة.</span></a>
+      </div>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>قياس Vcore</h2><p>أفضل نقطة سهلة هي جهة خرج ملفات VRM المتجهة إلى CPU أو المكثفات الكبيرة حول المعالج.</p><ul class="checklist"><li>ضع الأسود على GND والأحمر على خرج الملف.</li><li>راقب الجهد منذ لحظة التشغيل، وليس بعد ثوانٍ فقط.</li><li>Vcore جهد منخفض ومتغير حسب المنصة والحالة؛ غالبًا يقع تقريبًا ضمن <span class="mono">0.6–1.5V</span> لكنه ليس قيمة ثابتة لكل CPU.</li><li>قد يظهر لحظة ثم يختفي إذا حدثت حماية أو توقف تسلسل التشغيل.</li></ul><div class="decision"><b>12V موجود وVcore = 0V:</b> انتقل إلى PWM Enable، تغذية PWM، Power Good والحماية، ثم افحص المراحل نفسها.</div></section>
+    <section class="bootStep" id="s2" data-boot-step="مقاومة دون تغذية" data-boot-demo="meter" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">قس المقاومة بعد فصل جميع مصادر الطاقة</h2>
+      <p>افصل الكهرباء وأي بطارية قابلة للفصل. تحقّق من زوال الجهد قبل استعمال Ω. سجّل قيمة تلامس المجسّين ثم قارنها بمقاومة دخل المرحلة وخرجها إلى GND.</p>
+      <ol>
+        <li>سجّل هل المعالج مركّب. قد تكون مقاومة Vcore منخفضة في وضع طبيعي، وقد تشترك عدة ملفات في خرج واحد.</li>
+        <li>قارن نقاطًا لها الوظيفة نفسها وفي الظروف نفسها. قراءة مختلفة على عقدة SW تحتاج تحديد المسار قبل تفسيرها.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/short-circuit#s6" data-boot-demo="meter"><strong>دخل CPU قريب من قراءة المجسّين</strong><span>اتبع مسار فحص قصر دخل CPU.</span></a>
+        <a class="bootChoice" href="#s7"><strong>المقاومة المنخفضة على طرف الملف</strong><span>ميّز جهة SW من جهة الخرج.</span></a>
+        <a class="bootChoice" href="#s3"><strong>لا تظهر علامة واضحة على الدخل</strong><span>انتقل إلى فحص وصول التغذية.</span></a>
+        <a class="bootChoice" href="#report"><strong>نوع الخط أو وحدات القياس غير واضحة</strong><span>أرسل صور النقاط والقراءات.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>PWM Controller وEnable</h2><p>قبل اتهام MOSFETات، تأكد أن المتحكم نفسه لديه ما يحتاجه للعمل.</p><ul class="checklist"><li>حدد رقم PWM Controller وابحث عن Datasheet أو المخطط.</li><li>قس VCC الخاص به حسب الداتا شيت.</li><li>قس Enable أو VR_ON/CPU_VR_ON إن كان متاحًا بالمخطط.</li><li>تحقق من إشارات Power Good/FAULT إن أمكن.</li><li>نبضات Gate أو PWM تحتاج Oscilloscope لقياسها بشكل صحيح؛ الملتيميتر قد يعطي متوسطًا غير مفيد.</li></ul><div class="decision"><b>VCC موجود وEnable صحيح ولا توجد نبضات:</b> الاشتباه ينتقل إلى PWM نفسه أو شرط حماية/Feedback يمنع التشغيل. <br><b>Enable غير موجود:</b> ارجع خطوة للخلف إلى SIO/EC/PCH وتسلسل Power Sequence حسب تصميم اللوحة.</div></section>
+    <section class="bootStep" id="s3" data-boot-step="دخل CPU/EPS" data-boot-demo="power" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">هل يصل دخل التغذية من الموصل إلى مرحلة القدرة؟</h2>
+      <p>في الكمبيوتر المكتبي المزود بموصل CPU/EPS تكون التغذية الاسمية عادة 12V. راجع المخطط وكابل المزوّد المطابق قبل القياس.</p>
+      <ol>
+        <li>والجهاز مفصول، تأكد من تركيب موصل CPU الصحيح. عند القياس حدّد GND ونقطة دخل موثقة قبل توصيل الكهرباء.</li>
+        <li>للفني، قارن الجهد عند الموصل وعند مدخل مرحلة القدرة في المحاولة نفسها. قد يكون بينهما عنصر حماية أو مسار يختلف باختلاف اللوحة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-power#s5" data-boot-demo="power"><strong>الدخل لا يصل عند الموصل</strong><span>ارجع لمخارج المزود والتوصيلات.</span></a>
+        <a class="bootChoice" href="#input-path"><strong>يصل عند الموصل ويغيب عند المرحلة</strong><span>راجع المسار بين الموصل ومدخل القدرة.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الدخل يصل إلى مرحلة القدرة</strong><span>تابع إلى خرج Vcore.</span></a>
+        <a class="bootChoice" href="#report"><strong>الموصل خاص ولم أتحقق من أطرافه</strong><span>أرسل موديل اللوحة والموصل.</span></a>
+      </div>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>فحص MOSFET أو Power Stage</h2><p>في MOSFET المنفصل، لا تعتمد ترتيب الأرجل من الشكل الخارجي فقط؛ Gate/Drain/Source تختلف حسب الحزمة ورقم القطعة.</p><ul class="checklist"><li>واللوحة مفصولة: افحص وجود قصر واضح بين مسار 12V ومسار SW أو GND.</li><li>قارن المراحل المتشابهة ببعضها.</li><li>إذا كانت Power Stage مدمجة، اقرأ رقم IC قبل أي استنتاج.</li><li>مرحلة تسخن فورًا بشكل غير طبيعي قد تكون معطوبة أو يكون الحمل بعدها مقصورًا.</li></ul><div class="decision"><b>مهم:</b> MOSFET منخفض الجانب يتصل بالأرضي ضمن الدائرة، لذلك صفارة على بعض الأرجل لا تعني وحدها أنه Short. افهم الـNet أولًا.</div></section>
+    <section class="bootStep" id="input-path" data-boot-step="مسار دخل القدرة" data-boot-demo="isolate" aria-labelledby="input-path-title">
+      <h2 id="input-path-title" tabindex="-1">حدّد النقطة التي يتوقف عندها جهد الدخل</h2>
+      <p>اقرأ اسم الخط عند الموصل وعند مدخل مرحلة القدرة. قارن نقطتين يفصل بينهما عنصر معروف في المخطط، ودوّن حالة كل نقطة أثناء المحاولة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-power#local-power-sequence" data-boot-demo="signal"><strong>أريد مراجعة التغذيات والتمكين</strong><span>تتبّع ترتيب التغذيات وتمكين المنظّم</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#s6" data-boot-demo="meter"><strong>أشتبه بقصر عند المدخل</strong><span>افصل الطاقة قبل قياس المقاومة.</span></a>
+        <a class="bootChoice" href="#report"><strong>حددت عنصرًا ينقطع الجهد عنده</strong><span>شارك اسم العنصر وقراءتي الجهتين.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>فهم طرفي الملف</h2><p>الملف نفسه مقاومته DC منخفضة جدًا، لذلك غالبًا يعطي استمرارية من طرف لطرف. الفرق الحقيقي هو وظيفة كل جهة:</p><table class="measureTable"><thead><tr><th>جهة الملف</th><th>وظيفتها</th><th>كيف تفيدك؟</th></tr></thead><tbody><tr><td>جهة SW</td><td>متصلة بعقدة التبديل للمراحل</td><td>تظهر عليها نبضات عالية التردد؛ القياس الصحيح بالـOscilloscope.</td></tr><tr><td>جهة Output</td><td>متصلة بخط Vcore/VDIMM</td><td>هذه نقطة قياس DC المناسبة للفولت والمقاومة إلى GND.</td></tr></tbody></table><p class="note">إذا لم تعرف أي جهة هي SW وأي جهة Output، استخدم BoardView/المخطط أو تتبع الاتصال إلى مكثفات الخرج قرب الحمل.</p></section>
+    <section class="bootStep" id="s4" data-boot-step="خرج المعالج" data-boot-demo="meter" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">هل يظهر Vcore على جهة خرج الملف؟</h2>
+      <p>حدّد طرف الخرج من المخطط أو ارتباطه بمكثفات خط Vcore. دوّن القراءة مع الدخل أثناء محاولة التشغيل. الجهد يتغير مع المعالج وحالة اللوحة.</p>
+      <ol>
+        <li>سجّل هل الخرج غائب دائمًا، يظهر لحظة ثم يختفي، أو يبقى. ثبات رقم على الملتيميتر وحده لا يبيّن ترتيب كل الإشارات السريعة.</li>
+        <li>إذا هبط الدخل والخرج معًا، راقب المصدر أولًا. إن بقي الدخل، راجع تمكين المتحكم والحماية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#vcore-capture"><strong>الخرج غائب أو يظهر لحظة</strong><span>قارن دخل المرحلة وتوقيت ظهور الخرج.</span></a>
+        <a class="bootChoice" href="#s5"><strong>الدخل حاضر وVcore غائب طوال المحاولة</strong><span>افحص تغذية المتحكم وتمكينه.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#reset-check" data-boot-demo="signal"><strong>Vcore حاضر وPOST لا يكتمل</strong><span>تتبّع شروط Reset وPower Good.</span></a>
+        <a class="bootChoice" href="#s7"><strong>لست متأكدًا من جهة خرج الملف</strong><span>راجع ما يميّزها عن SW.</span></a>
+      </div>
+    </section>
 
-<section id="s8" class="step"><h2><span class="stepNum">8</span>خطوط RAM وVDIMM</h2><p>ابدأ بخط VDIMM ثم انتقل إلى الخطوط المساعدة فقط عند الحاجة.</p><table class="measureTable"><thead><tr><th>الذاكرة</th><th>VDD/VDIMM الشائع</th><th>ملاحظات</th></tr></thead><tbody><tr><td>DDR3</td><td class="good">حوالي 1.5V</td><td>DDR3L شائع عند 1.35V.</td></tr><tr><td>DDR4</td><td class="good">حوالي 1.2V</td><td>يوجد VPP إضافي عادة قرابة 2.5V حسب التصميم.</td></tr><tr><td>DDR5</td><td class="good">حوالي 1.1V للـVDD/VDDQ الاسمي</td><td>جزء كبير من تنظيم الطاقة يكون عبر PMIC على وحدة الذاكرة، حسب المنصة.</td></tr></tbody></table><ul class="checklist"><li>قس VDIMM عند ملف دائرة الرام أو مكثفاتها.</li><li>إذا VDIMM مفقود، حدد PWM/Regulator الخاص بالرام وتحقق من دخل الجهد وEnable.</li><li>إذا VDIMM موجود ولا يوجد POST، انتقل إلى RAM نفسها، Slots، CPU memory controller، BIOS والتدريب.</li></ul></section>
+    <section class="bootStep" id="vcore-capture" data-boot-step="توقيت ظهور Vcore" data-boot-demo="meter" aria-labelledby="vcore-capture-title">
+      <h2 id="vcore-capture-title" tabindex="-1">هل يظهر Vcore لحظة أم يبقى غائبًا؟</h2>
+      <p>حدد جهة الخرج في الملف من المخطط ثم راقبها في المحاولة نفسها مع دخل المرحلة. جهد Vcore يعتمد على المنصة والمرحلة والحمل. قارن توقيته وقيمته بنقطة مرجعية موثّقة.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>لا يظهر Vcore والدخل حاضر</dt>
+          <dd>تتبّع تغذية المتحكم وEnable، ثم قرائن بدء التبديل.</dd>
+        </div>
+        <div>
+          <dt>يظهر Vcore ثم يهبط</dt>
+          <dd>قارن وقت هبوطه مع Enable والدخل وPG إن كانت الإشارة متاحة.</dd>
+        </div>
+        <div>
+          <dt>يظل Vcore حاضرًا وPOST يتوقف</dt>
+          <dd>اتبع فحص Reset وClock وقراءة المؤشر.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s5"><strong>خرج المعالج غائب والدخل مستقر</strong><span>افحص تغذية PWM والتمكين.</span></a>
+        <a class="bootChoice" href="#s9"><strong>يظهر الجهد ثم يختفي</strong><span>حدّد أول إشارة هبطت.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#reset-check" data-boot-demo="signal"><strong>الجهد حاضر والمؤشر يتوقف</strong><span>تتبّع شروط Reset وPower Good.</span></a>
+        <a class="bootChoice" href="#report"><strong>النبضة غير قابلة للقياس بالملتيميتر</strong><span>أرسل المدة والسلوك وحدود أدواتك.</span></a>
+      </div>
+    </section>
 
-<section id="s9" class="step"><h2><span class="stepNum">9</span>كيف تفرق بين عطل VRM وعطل CPU</h2><div class="rail"><div><b>12V مفقود</b>العطل قبل VRM.</div><div><b>12V موجود + Vcore مفقود</b>ركز على PWM/Enable/Power Stage/حماية.</div><div><b>Vcore يظهر ثم يختفي</b>راقب Power Good والحماية وباقي تسلسل التشغيل.</div><div><b>Vcore مستقر ولا POST</b>لا يعني VRM سليم 100%، لكن انتقل أيضًا إلى RAM/BIOS/Reset/Clock/CPU.</div><div><b>مقاومة Vcore منخفضة</b>قد تكون طبيعية؛ قارن بلوحة سليمة أو مخطط ولا تعتمد الاستمرارية.</div><div><b>مرحلة واحدة تسخن</b>قارنها ببقية المراحل وافحص الحمل قبل استبدالها.</div></div></section>
+    <section class="bootStep" id="s5" data-boot-step="تمكين PWM" data-boot-demo="signal" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">راجع تغذية المتحكم وإشارة Enable</h2>
+      <p>اقرأ رقم PWM Controller وحدّد VCC وEnable وإشارات الحالة من المخطط. قارن القراءات أثناء نفس محاولة التشغيل.</p>
+      <ol>
+        <li>إن غابت VCC فابدأ بمصدر تغذية المتحكم. إن غاب Enable فتتبّع المرحلة السابقة التي يفترض أن تطلب تشغيله.</li>
+        <li>إذا ظهرت التغذية والتمكين، راجع مؤشرات الحماية وFeedback والمراحل المتصلة. لفحص نبضات Gate أو PWM يلزم أوسيلوسكوب وطريقة توصيل ومرجع مناسبَان.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#enable-chain"><strong>أريد فحص مصدر Enable</strong><span>قارن تغذية المتحكم والشرط السابق له.</span></a>
+        <a class="bootChoice" href="#switching-check"><strong>التغذية والتمكين سليمان ولا خرج</strong><span>تحقّق من إشارة تحكم مرحلة القدرة.</span></a>
+        <a class="bootChoice" href="#s6"><strong>أشكّ في مرحلة القدرة نفسها</strong><span>افصل الطاقة وقارن المراحل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أحدد نوع المتحكم أو أطرافه</strong><span>أرسل رقم المتحكم والقراءات.</span></a>
+      </div>
+    </section>
 
-<section id="s10" class="step"><h2><span class="stepNum">10</span>ترتيب فحص سريع</h2><ol class="checklist"><li>فحص بصري.</li><li>مقاومة 12V وVcore وVDIMM إلى GND واللوحة مفصولة.</li><li>12V CPU عند التشغيل.</li><li>Vcore وVDIMM على جهة خرج الملفات.</li><li>VCC وEnable لمتحكم PWM.</li><li>مقارنة المراحل وحرارتها.</li><li>Oscilloscope للـPWM/SW عند الحاجة.</li><li>بعد ثبات التغذيات: BIOS وReset وClock وPOST.</li></ol><div class="decision"><b>أفضل أداة هنا:</b> المخطط أو BoardView لأن أسماء الإشارات والقيم الدقيقة تختلف من لوحة لأخرى.</div></section>
+    <section class="bootStep" id="enable-chain" data-boot-step="مصدر Enable وإشارة الجاهزية" data-boot-demo="signal" aria-labelledby="enable-chain-title">
+      <h2 id="enable-chain-title" tabindex="-1">هل يأمر المتحكم بتشغيل مرحلة القدرة؟</h2>
+      <p>راجع مخطط المتحكم وبياناته لتحديد تغذية المنطق وتمكين المرحلة وإشارة Power Good أو أي خط تحكم رقمي يدعمه التصميم. قِس على نقاط موثّقة بحسب توقيت التشغيل.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>تغذية المتحكم غائبة</dt>
+          <dd>تتبّع منظم تغذية التحكم قبل استبدال PWM.</dd>
+        </div>
+        <div>
+          <dt>التغذية حاضرة وEnable غائب</dt>
+          <dd>ارجع إلى الشرط أو إشارة الجاهزية التي تسبق Enable.</dd>
+        </div>
+        <div>
+          <dt>Enable حاضر والخرج غائب</dt>
+          <dd>افحص وجود إشارة تحكم ومرحلة القدرة والحمل باستخدام وسائل القياس الملائمة.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-power#local-power-sequence" data-boot-demo="rail"><strong>تغذية PWM أو التمكين غائبان</strong><span>اتبع تسلسل التغذيات إلى أول شرط مفقود.</span></a>
+        <a class="bootChoice" href="#switching-check"><strong>التغذية والتمكين موجودان</strong><span>حدّد ما إذا كانت المرحلة تحاول التبديل.</span></a>
+        <a class="bootChoice" href="#vcore-capture"><strong>التمكين يظهر لحظة مع Vcore</strong><span>قارن توقيت الهبوط بدل تغيير قطعة مباشرة.</span></a>
+        <a class="bootChoice" href="#report"><strong>التصميم رقمي أو الإشارة غير معروفة</strong><span>أرسل رقم المتحكم واسم اللوحة والقراءات.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>روابط مرتبطة</h2><div class="related"><a class="imageBtn" href="/diagnostics/short-circuit">🔌 تشخيص الشورت</a><a class="imageBtn" href="/diagnostics/no-display">🖥️ No Display / No POST</a><a class="imageBtn" href="/diagnostics/restarts-shuts-down">🔁 يعمل ويفصل</a><a class="imageBtn" href="/boardview/">🗺️ البحث في BoardView</a></div></section>
-</article>
+    <section class="bootStep" id="switching-check" data-boot-step="PWM وقياس التبديل" data-boot-demo="signal" aria-labelledby="switching-check-title">
+      <h2 id="switching-check-title" tabindex="-1">هل تظهر إشارة تحكم عند مرحلة القدرة؟</h2>
+      <p>في الدوائر المنفصلة ميّز خرج PWM ومدخل السائق وبوابة MOSFET. في Power Stage المتكامل راجع تعريف إشاراته ومسبار القياس الملائم. البوابة الداخلية قد لا تكون نقطة متاحة.</p>
+      <ol>
+        <li>للفني المجهّز فقط. إشارة البوابة العالية تُقاس بالنسبة إلى مصدرها المتبدّل بمسبار تفاضلي مناسب. لا توصل مشبك أرضي أوسيلوسكوب مؤرّض إلى عقدة SW.</li>
+        <li>إذا لم تتوفر أداة مناسبة، اقتصر على قراءة التغذيات الموثّقة وفحص المقاومة بلا تغذية ومقارنة المراحل. الملتيميتر لا يثبت وجود نبضات تبديل صحيحة.</li>
+        <li>اربط ظهور التحكم بخرج المرحلة. محاولات قصيرة قد تكون حماية أو فقدان شرط تمكين، وتحتاج مقارنة بالتوقيت.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#stage-comparison"><strong>تظهر محاولة تبديل والخرج لا يستقر</strong><span>افصل الطاقة وقارن مرحلة القدرة بمراحل مماثلة.</span></a>
+        <a class="bootChoice" href="#enable-chain"><strong>لا يظهر تحكم رغم سلامة الدخل</strong><span>قارن Enable وتغذية المنطق وشروط البدء.</span></a>
+        <a class="bootChoice" href="#s7"><strong>أريد تأكيد أي طرف هو الخرج</strong><span>ارجع إلى عقدة SW وطرف الملف الآخر.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك طريقة قياس آمنة</strong><span>شارك القراءات التي تمكنت من تأكيدها.</span></a>
+      </div>
+    </section>
 
-<aside class="toc"><b>محتويات الصفحة</b><a href="#s1">1. مسار VRM</a><a href="#s2">2. قياسات بدون تغذية</a><a href="#s3">3. دخل 12V</a><a href="#s4">4. Vcore</a><a href="#s5">5. PWM وEnable</a><a href="#s6">6. MOSFET/Power Stage</a><a href="#s7">7. طرفا الملف</a><a href="#s8">8. VDIMM</a><a href="#s9">9. VRM أم CPU؟</a><a href="#s10">10. ترتيب سريع</a></aside>
-</div>
+    <section class="bootStep" id="s6" data-boot-step="مرحلة القدرة" data-boot-demo="chip" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">افصل الطاقة قبل مقارنة MOSFET أو Power Stage</h2>
+      <p>عند سخونة شديدة أو علامة احتراق أوقف المحاولة. اقرأ رقم القطعة حتى تعرف إن كانت MOSFET منفصلة أو مرحلة قدرة مدمجة، وراجع تسمية أطرافها.</p>
+      <ol>
+        <li>بعد فصل التغذية والتحقق من غياب الجهد، قارن VIN وSW وGND على المراحل المتماثلة من المخطط. انخفاض قراءة داخل الدائرة قد يتأثر بالحمل أو مسارات أخرى.</li>
+        <li>إذا اختلفت مرحلة بوضوح، حدّد خط الحمل المشترك قبل استبدال المكوّن.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#stage-comparison"><strong>لدي مراحل متشابهة للمقارنة</strong><span>قسها بلا تغذية في الوضع نفسه.</span></a>
+        <a class="bootChoice" href="/component-testing/mosfet-testing" data-boot-demo="chip"><strong>أحتاج فهم قراءات MOSFET</strong><span>راجع اتجاه دايود الجسم وأثر الدائرة.</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#s3" data-boot-demo="isolate"><strong>الخط منخفض وأحتاج عزله</strong><span>حدّد جهة المصدر وجهة الحمل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد نقطة اختبار مؤكدة</strong><span>شارك رقم القطعة وصورة المنطقة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stage-comparison" data-boot-step="مقارنة مراحل القدرة بعد فصل الطاقة" data-boot-demo="chip" aria-labelledby="stage-comparison-title">
+      <h2 id="stage-comparison-title" tabindex="-1">هل تختلف قراءة مرحلة من بين مراحل VRM؟</h2>
+      <p>افصل مصادر الطاقة وتحقق من زوال الجهد، ثم حدد نوع كل مرحلة ومواقع VIN وGND وSW من المخطط أو بيانات القطعة. قارن فقط مراحل متكافئة وبالاتجاه ووضع المقياس نفسيهما.</p>
+      <ol>
+        <li>ارتفاع أو انخفاض مختلف بين مرحلة وأخرى يساعد على تضييق الموضع. مراعاة الملفات والأحمال المشتركة مهمة لأن أكثر من مرحلة قد تقيس الخط نفسه.</li>
+        <li>إذا ثبت اختلاف موضعي، اعزل جهة المصدر والحمل بحسب مخطط اللوحة قبل تحديد MOSFET أو Power Stage التالف.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/short-circuit#isolation-reading" data-boot-demo="isolate"><strong>هناك مرحلة مختلفة وأعرف نقطة فصلها</strong><span>قارن قياس الجهتين بعد العزل.</span></a>
+        <a class="bootChoice" href="#enable-chain"><strong>لا أرى فرقًا واضحًا والدخل حاضر</strong><span>تتبّع التمكين والجاهزية.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج مقارنة بالأطراف الصحيحة</strong><span>أرسل رقم المرحلة وقياس كل جهة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="طرفا الملف" data-boot-demo="rail" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">كيف تميّز عقدة SW من طرف الخرج؟</h2>
+      <p>في مرحلة الخفض الشائعة يصل أحد طرفي الملف بعقدة SW والطرف الآخر بمكثفات الخرج والحمل. الملف نفسه قليل المقاومة في التيار المستمر، لذلك قد تسمع استمرارية بين طرفيه.</p>
+      <ol>
+        <li>راجع مسار الطرف نحو مكثفات الخرج لتحديد نقطة قياس DC المناسبة، أو استخدم مخطط اللوحة.</li>
+        <li>عند الحاجة لقياس عقدة التبديل تُستخدم أداة ومجس مناسبَان للموجة ونقطة المرجع. ضع قياسك عند خرج DC إذا كان المطلوب معرفة جهد الخرج.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s4"><strong>عرفت خرج Vcore</strong><span>اقرأ جهد المعالج عند الطرف الصحيح.</span></a>
+        <a class="bootChoice" href="#s8"><strong>الملف على خط الذاكرة</strong><span>حدّد جيل الذاكرة وخط التغذية.</span></a>
+        <a class="bootChoice" href="#report"><strong>الطرفان متصلان ولا أعرف اسم الخط</strong><span>شارك رمز الملف وصورة المكونات حوله.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="/component-testing/inductor-testing">شرح قياس الملفات والاستمرارية</a></p>
+    </section>
+
+    <section class="bootStep" id="s8" data-boot-step="تغذية الذاكرة" data-boot-demo="memory" aria-labelledby="s8-title">
+      <h2 id="s8-title" tabindex="-1">حدّد جيل RAM وخط التغذية المتوقع</h2>
+      <p>راجع موديل اللوحة والذاكرة قبل استخدام اسم VDIMM أو مقارنة الفولت. موضع التنظيم ونقاط الاختبار تختلف حسب DDR وتصميم اللوحة.</p>
+      <ol>
+        <li>في التصاميم الشائعة يكون الجهد الاسمي DDR3 نحو 1.5V، وDDR3L نحو 1.35V، وDDR4 نحو 1.2V. راجع مواصفة الذاكرة قبل تفسير القياس.</li>
+        <li>في DDR5 قد يولّد PMIC على الوحدة خطوطها ومنها VDD وVDDQ الاسميان نحو 1.1V. جهد دخول الوحدة ومواضع القياس على اللوحة يختلفان حسب التصميم.</li>
+        <li>إذا كان خط التغذية المعروف مفقودًا، راجع دخل منظّم الذاكرة وتمكينه. إذا وصل، اختبر الوحدة والشق وقراءة SPD حسب العَرَض.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#memory-reference"><strong>أريد تحديد VDIMM أو مدخل PMIC</strong><span>اختر نقطة القياس المناسبة لجيل الرام.</span></a>
+        <a class="bootChoice" href="#memory-spd"><strong>تغذية الذاكرة سليمة والوحدة لا تُقرأ</strong><span>تتبّع تغذية SPD ونشاط الناقل.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#slot-matrix" data-boot-demo="memory"><strong>العطل يتغير بتبديل شق أو وحدة</strong><span>قارن الاختبارات واحدًا في كل مرة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أتعرف إلى الجيل أو نقاطه</strong><span>أرسل موديل اللوحة والذاكرة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-reference" data-boot-step="تغذية الذاكرة ومرجع القياس" data-boot-demo="memory" aria-labelledby="memory-reference-title">
+      <h2 id="memory-reference-title" tabindex="-1">أين تقيس تغذية الذاكرة على جيل جهازك؟</h2>
+      <p>حدّد DDR3 أو DDR4 أو DDR5 وطراز اللوحة والوحدة. اختر نقاط اختبار موثّقة حول المنظم أو الشق، وسجّل متى يظهر كل جهد مقارنة بمؤشر DRAM.</p>
+      <ol>
+        <li>في كثير من منصات DDR4 يأتي جهد DRAM من اللوحة، بينما وحدة DDR5 تستخدم PMIC محليًا. تحقق من تغذية مدخل الوحدة بحسب التصميم وراجع خرج المنظم المتاح للفحص.</li>
+        <li>تحقق من VTT وVREF فقط إذا نص المخطط على وجودهما وموقعهما والقراءة المتوقعة. لا تتوقع قيمة واحدة لكل إصدارات الذاكرة.</li>
+        <li>استخدم نقطة اختبار مناسبة بدل إدخال مجس في الشق المزوّد بالطاقة. إذا أمكن، قارن التركيب نفسه على قناة سليمة.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-memory-rails.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يميز تغذية الرام من اللوحة في DDR4 والتغذية عبر منظم على وحدة DDR5">
+        <figcaption>الرسم يوضح موقع تنظيم تغذية الذاكرة بشكل عام. ارجع إلى مخطط اللوحة والوحدة لأسماء الخطوط والجهود.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#memory-voltages"><strong>أريد القيم الاسمية بحسب جيل الذاكرة</strong><span>اقرأ القيم المرجعية لكل جيل.</span></a>
+        <a class="bootChoice" href="#memory-regulator"><strong>الجهد مفقود أو يهبط عند بدء DRAM</strong><span>اتبع دخل المنظم وتمكينه وخروجه.</span></a>
+        <a class="bootChoice" href="#memory-spd"><strong>جهد الرام حاضر والوحدة لا تُقرأ</strong><span>افحص تغذية SPD ونشاط الاتصال.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#slot-matrix" data-boot-demo="memory"><strong>القراءات تختلف بين شق وآخر</strong><span>قارن شقوقًا مدعومة بنفس الوحدة.</span></a>
+        <a class="bootChoice" href="#report"><strong>مخطط الجيل أو نقطة القياس غير متاحة</strong><span>شارك اللوحة ونوع الذاكرة والجهد المعروف.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-voltages" data-boot-step="قيم تغذية DDR3 وDDR4 وDDR5" data-boot-demo="memory" aria-labelledby="memory-voltages-title">
+      <h2 id="memory-voltages-title" tabindex="-1">ما القراءة الاسمية التي تتوقعها على خط DRAM؟</h2>
+      <p>حدّد جيل الوحدة والخط من المخطط. القيم التالية أمثلة اسمية للوحدات القياسية. قد تتغيّر بحسب وضع التشغيل والإعدادات، ولكل خط مساعد مواصفته.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>DDR3 وDDR3L</dt>
+          <dd>الجهد الاسمي الشائع لخط DRAM هو 1.5 فولت في DDR3 و1.35 فولت في DDR3L.</dd>
+        </div>
+        <div>
+          <dt>DDR4</dt>
+          <dd>خط DRAM الاسمي 1.2 فولت. في التصاميم التي توفر VPP وفق المواصفة قد يكون اسميًا 2.5 فولت.</dd>
+        </div>
+        <div>
+          <dt>DDR5</dt>
+          <dd>الجهد الاسمي لخطّي VDD وVDDQ هو 1.1 فولت. حدّد جهد مدخل PMIC من مواصفات الوحدة، لأنه خط مختلف.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#memory-regulator"><strong>قراءة الخط غائبة أو تنهار</strong><span>راجع دخل المنظم وتمكينه وخرجه.</span></a>
+        <a class="bootChoice" href="#memory-spd"><strong>التغذية الموثّقة سليمة والوحدة لا تُقرأ</strong><span>تحقق من تغذية SPD وناقل البيانات.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف هل أقيس خرج DRAM أم خطًا مساعدًا</strong><span>أرسل رقم اللوحة وجيل الذاكرة ونقطة الفحص.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-spd" data-boot-step="تغذية SPD ونشاط البيانات" data-boot-demo="chip" aria-labelledby="memory-spd-title">
+      <h2 id="memory-spd-title" tabindex="-1">هل تستطيع اللوحة قراءة معلومات وحدة الذاكرة؟</h2>
+      <p>SPD يعرّف النظام إلى خصائص الذاكرة. تختلف الدارة والناقل بين الأجيال. في DDR5 يوجد SPD Hub على الوحدة، لذلك حدّد تغذية الشريحة والإشارات المطلوبة من المخطط.</p>
+      <ol>
+        <li>جرّب وحدة متوافقة معروفة السلامة في شق موثّق. قارن سلوك DRAM مع وحدة ثانية والشق نفسه قبل قياس الناقل.</li>
+        <li>إذا غابت تغذية SPD، تتبّع مصدرها. إذا حضرت، يقارن الفني نشاط الخطوط أثناء المحاولة في نقاط موثّقة باستخدام أداة مناسبة.</li>
+        <li>إذا بقي خط ثابتًا على غير المتوقع، افصل الكهرباء وقارن مقاومته مع قناة أو وحدة سليمة في نفس الوضع. راجع المسار ومقاومات السحب حيث توجد.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#memory-reference"><strong>لا تصل تغذية SPD أو دخل الوحدة</strong><span>راجع تغذيات الجيل ونقاط القياس.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#slot-channel" data-boot-demo="memory"><strong>الاتصال يختفي في قناة واحدة</strong><span>افحص الشق والسوكيت وقارن القناة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#memory-training" data-boot-demo="memory"><strong>الاتصال موجود وتدريب الرام يتكرر</strong><span>راجع التوافق وإعدادات الذاكرة.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت خطًا ثابتًا أو لا أستطيع قراءة الناقل</strong><span>شارك اسم الخط والقراءات ووحدة الرام.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-regulator" data-boot-step="منظّم الذاكرة" data-boot-demo="chip" aria-labelledby="memory-regulator-title">
+      <h2 id="memory-regulator-title" tabindex="-1">ما أول قراءة مفقودة في منظّم الذاكرة؟</h2>
+      <p>حدّد رقم المنظّم ومسار التغذية من المخطط. سجّل الدخل ثم إشارة التمكين ثم الخرج المتوقع لنفس المحاولة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#memory-load"><strong>يتغيّر الخرج بتركيب الوحدة</strong><span>قارن التمكين والخرج حسب التركيب.</span></a>
+        <a class="bootChoice" href="#enable-chain"><strong>دخل المنظم سليم والتمكين غائب</strong><span>تتبّع سبب غياب الأمر.</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#s2" data-boot-demo="meter"><strong>خرج المنظم منخفض وتوجد قرينة حمل زائد</strong><span>افصل التغذية وحدّد الخط قبل قياسه.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي قراءات مختلفة ولا أعرف ترتيبها</strong><span>شارك دخل وخرج وتمكين المنظم وتوقيت كل قراءة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-load" data-boot-step="تغذية الرام قبل تركيب الوحدة وبعدها" data-boot-demo="meter" aria-labelledby="memory-load-title">
+      <h2 id="memory-load-title" tabindex="-1">هل يظهر الخلل فقط عند تركيب وحدة متوافقة؟</h2>
+      <p>دوّن تغذية الدخل والخرج والتمكين مع وحدة متوافقة. إن سمح التصميم بقراءة نفس الخط من دونها، كرر المقارنة بعد فصل الكهرباء قبل تغيير التركيب. بعض المنصات لا تفعّل المنظم دون اكتشاف الذاكرة. استعمل المرجع المتوقع لكل حالة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-display#slot-matrix" data-boot-demo="memory"><strong>النتيجة تتبع وحدة أو شقًا</strong><span>قارن القطع والشقوق بتغيير واحد.</span></a>
+        <a class="bootChoice" href="/diagnostics/resistance-to-ground#g3" data-boot-demo="meter"><strong>خرج الذاكرة منخفض وأريد قياس مقاومته</strong><span>افصل الطاقة وفسّر القراءة بحسب الخط.</span></a>
+        <a class="bootChoice" href="#enable-chain"><strong>الجهد لا يظهر لأن شرط التمكين مفقود</strong><span>حدّد الشرط الذي يسبق التمكين.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك مرجعًا لنفس التركيب</strong><span>شارك حالة كل خط مع تركيب الوحدة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s9" data-boot-step="اختفاء خرج VRM" data-boot-demo="intermittent" aria-labelledby="s9-title">
+      <h2 id="s9-title" tabindex="-1">قارن توقيت هبوط Vcore مع الدخل والتمكين</h2>
+      <p>ابدأ بالمحاولة التي لاحظت فيها الهبوط. حدّد هل ينقطع الدخل، يختفي Enable، أم ينهار الخرج والدخل والتمكين موجودان. استعمل الأداة الملائمة لزمن التغيّر.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#vrm-evidence"><strong>لدي قراءات الدخل والتمكين والخرج</strong><span>فسّر ترتيب الهبوط لتحديد اتجاه الفحص.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#s3" data-boot-demo="intermittent"><strong>المزوّد ومخارج أخرى تفصل معًا</strong><span>افحص ترتيب الفصل في مسار إعادة التشغيل.</span></a>
+        <a class="bootChoice" href="#s5"><strong>يختفي Enable بينما يبقى الدخل</strong><span>راجع مصدر التمكين وتسلسل اللوحة.</span></a>
+        <a class="bootChoice" href="#s6"><strong>يبقى الدخل والتمكين ويهبط الخرج</strong><span>قارن مرحلة القدرة والحمل بعد فصل الطاقة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع تحديد أيها يهبط أولًا</strong><span>اذكر مدة ظهور الجهد وما استطعت قياسه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="vrm-evidence" data-boot-step="قرائن عطل VRM مقابل المعالج" data-boot-demo="rail" aria-labelledby="vrm-evidence-title">
+      <h2 id="vrm-evidence-title" tabindex="-1">هل ينهار الخرج مع ثبات الدخل والتمكين؟</h2>
+      <p>سجّل دخل المرحلة وEnable والخرج وPower Good في محاولة واحدة. اختَر اتجاه الفحص من أول قيمة مفقودة أو هابطة. ثبات الخرج يسمح بتتبّع المراحل التالية في POST.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>الدخل يهبط أولًا</dt>
+          <dd>راجع المزوّد ومسار CPU/EPS والموصل.</dd>
+        </div>
+        <div>
+          <dt>الدخل والتمكين ثابتان والخرج ينهار</dt>
+          <dd>ضيّق العطل داخل مرحلة القدرة أو الحمل حسب المخطط.</dd>
+        </div>
+        <div>
+          <dt>الخرج ثابت ولا يتقدم POST</dt>
+          <dd>انتقل إلى السوكيت والتوافق وReset وClock بدل الحكم من قراءة الجهد وحدها.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#input-path"><strong>الدخل يهبط أولًا</strong><span>تتبّع موصل المعالج ومسار الدخل.</span></a>
+        <a class="bootChoice" href="#stage-comparison"><strong>الدخل والتمكين ثابتان والخرج يهبط</strong><span>قارن المراحل بعد فصل الطاقة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#socket-check" data-boot-demo="inspect"><strong>الخرج مستقر بعد التشغيل</strong><span>راجع السوكيت والتركيب والتوافق.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يمكن تحديد ترتيب الهبوط</strong><span>شارك القراءات ومدة بقاء الخرج.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s10" data-boot-step="ترتيب فحص سريع" data-boot-demo="inspect" aria-labelledby="s10-title">
+      <h2 id="s10-title" tabindex="-1">ابدأ بالدخل ثم التمكين والخرج</h2>
+      <p>افصل الطاقة لتحديد الخطوط وفحص المقاومة. عند القياس اعتمد نقاطًا موثقة. سجّل دخل المرحلة ثم التمكين والخرج، وبعدها راقب المرحلة التالية في التسلسل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>لم أقس المقاومة بعد</strong><span>ابدأ بفحص دون تغذية.</span></a>
+        <a class="bootChoice" href="#s3"><strong>أريد بدء قياس الدخل</strong><span>اتبع مسار EPS ومدخل القدرة.</span></a>
+        <a class="bootChoice" href="#s8"><strong>أعمل على خط الذاكرة</strong><span>حدّد نوع الذاكرة والجهد المتوقع.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي قراءات جاهزة</strong><span>أرسلها مرتبة في غرفة الصيانة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>اذكر اسم كل خط ونقطة قياسه، وهل قرأته قبل تشغيل اللوحة أم أثناء المحاولة. سنراجع أين يتوقف التسلسل معك.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>رقم اللوحة وRevision ونوع المعالج أو الذاكرة.</li>
+          <li>جهد موصل CPU/EPS ومدخل المرحلة وخرج Vcore أو خط RAM.</li>
+          <li>رقم المتحكم وحالة VCC وEnable وPower Good إن قستها.</li>
+          <li>اسم الملف أو نقطة الخرج، وأي مرحلة تسخن أو تعطي قراءة مختلفة.</li>
+          <li>إذا كان العطل في الرام، اذكر جيلها وحالة مدخل المنظم وتغذية SPD وأي فرق بين الشقوق.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/no-power#local-power-sequence">تتبّع تغذيات اللوحة قبل VRM</a></li>
+      <li><a href="/diagnostics/resistance-to-ground#g3">قارن المقاومة على الدخل والخرج</a></li>
+      <li><a href="/diagnostics/no-display#slot-matrix">عزل وحدة الرام من الشق</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>
