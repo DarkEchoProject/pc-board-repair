@@ -21,18 +21,54 @@
 <section class="diagHero"><span class="diagTag">دليل فني عملي</span><h1>🔧 تشخيص أعطال الكمبيوتر واللوحات الأم</h1><p class="muted">اختر العطل واتبع خطوات الفحص حسب النتيجة. ستجد قياسات ATX وBIOS وClock وReset وSPD وVRM داخل الخطوة التي تحتاجها.</p></section>
 
 <div class="diagGrid">
-  <a class="diagCard" href="/diagnostics/no-power"><div class="diagIcon">⚡</div><span class="diagTag">مسار تفاعلي</span><h2>الجهاز لا يعمل نهائيًا — No Power</h2><p class="muted">ابدأ بالكهرباء وزر التشغيل، ثم تابع إلى طريقة قياس 5VSB وقراءة PS_ON وPWR_OK بحسب النتيجة.</p></a>
-  <a class="diagCard" href="/diagnostics/no-display"><div class="diagIcon">🖥️</div><span class="diagTag">مسار تفاعلي</span><h2>يعمل ولا توجد صورة — No Display / No POST</h2><p class="muted">افصل بين عطل الشاشة والكابل وتوقّف POST، ثم افحص الرام وشقها ومخرج الصورة خطوة بخطوة.</p></a>
-  <a class="diagCard" href="/diagnostics/no-boot"><div class="diagIcon">💽</div><span class="diagTag">مسار تفاعلي</span><h2>يظهر شعار الشركة لكن ويندوز لا يقلع</h2><p class="muted">اختر ما يظهر على الشاشة وتابع إلى فحص القرص في BIOS أو خيار الإقلاع أو إصلاح بدء التشغيل.</p></a>
-  <a class="diagCard" href="/diagnostics/drive-not-detected"><div class="diagIcon">💾</div><span class="diagTag">مسار تفاعلي</span><h2>الـSSD أو الهارد غير ظاهر أو يختفي</h2><p class="muted">حدّد أين يختفي القرص وافحص التوصيل أو تعريف التخزين. ابدأ بحماية الملفات إذا كان يفصل أثناء الاستخدام.</p></a>
-  <a class="diagCard" href="/diagnostics/laptop-not-charging"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>اللابتوب موصول بالشاحن لكنه لا يشحن</h2><p class="muted">راجع حد الشحن وتعرّف BIOS إلى المحوّل، ثم افحص توصيل USB-C أو المنفذ الدائري وحالة البطارية.</p></a>
-  <a class="diagCard" href="/diagnostics/laptop-internal-display"><div class="diagIcon">🖥️</div><span class="diagTag">مسار تفاعلي</span><h2>الشاشة الخارجية تعمل والداخلية سوداء أو فيها خطوط</h2><p class="muted">قارن ظهور الصورة قبل ويندوز وبعده وافحص السطوع ووضع العرض واختبار الشاشة ومسار الكابل.</p></a>
-  <a class="diagCard" href="/diagnostics/usb-port-not-working"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>منفذ USB لا يقرأ أو يقطع الاتصال</h2><p class="muted">ميّز بين الشحن ونقل البيانات، وقارن الكابل والمنفذ واقرأ أخطاء ويندوز.</p></a>
-  <a class="diagCard" href="/diagnostics/restarts-shuts-down"><div class="diagIcon">🔁</div><span class="diagTag">مسار تفاعلي</span><h2>يعمل ويفصل أو يعيد التشغيل</h2><p class="muted">اختر وقت الفصل، قبل ظهور الصورة أو داخل BIOS أو تحت الحمل، لتحدد الفحص التالي.</p></a>
-  <a class="diagCard" href="/diagnostics/short-circuit"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>شورت على اللوحة</h2><p class="muted">حدّد الخط، قارن المقاومة إلى الأرضي، ثم اتبع طريقة عزل المرحلة المشتبه بها.</p></a>
-  <a class="diagCard" href="/diagnostics/post-beep-codes"><div class="diagIcon">🧠</div><span class="diagTag">مسار تفاعلي</span><h2>POST متوقف أو صفارات</h2><p class="muted">ابدأ بالصفارة أو لمبة التشخيص أو رمز POST، ثم تتبّع مرحلة التوقّف واختبرها.</p></a>
-  <a class="diagCard" href="/diagnostics/vrm-cpu-ram"><div class="diagIcon">🔋</div><span class="diagTag">مسار تفاعلي</span><h2>VRM وخطوط المعالج والرام</h2><p class="muted">اتبع مسار دخل VRM وإشارة التمكين والملف، أو انتقل إلى فحص تغذيات الرام.</p></a>
-  <a class="diagCard" href="/diagnostics/resistance-to-ground"><div class="diagIcon">📏</div><span class="diagTag">مسار تفاعلي</span><h2>قياس المقاومة إلى الأرضي وتفسير الشورت</h2><p class="muted">اختر وضع الملتيميتر، وفسّر الصفارة أو OL، ثم قارن خط التغذية وقراءة كل جهة بعد العزل.</p></a>
+  <a class="diagCard" href="/diagnostics/no-power"
+    data-search-title-en="PC completely dead — No Power"
+    data-search-summary-en="Check mains power and the power button, then measure 5VSB, PS_ON and PWR_OK."
+    data-search-keywords="لا يعمل لا يشتغل ميت باور no power dead 5vsb ps_on pwr_sw atx standby power button مزود طاقة"><div class="diagIcon">⚡</div><span class="diagTag">مسار تفاعلي</span><h2>الجهاز لا يعمل نهائيًا — No Power</h2><p class="muted">ابدأ بالكهرباء وزر التشغيل، ثم تابع إلى طريقة قياس 5VSB وقراءة PS_ON وPWR_OK بحسب النتيجة.</p></a>
+  <a class="diagCard" href="/diagnostics/no-display"
+    data-search-title-en="Powers on with no image — No Display / No POST"
+    data-search-summary-en="Check the screen and cable, then isolate POST, RAM and graphics output."
+    data-search-keywords="لا توجد صورة شاشة سوداء no display no post ram vdimm cpu vcore bios reset clock gpu vga"><div class="diagIcon">🖥️</div><span class="diagTag">مسار تفاعلي</span><h2>يعمل ولا توجد صورة — No Display / No POST</h2><p class="muted">افصل بين عطل الشاشة والكابل وتوقّف POST، ثم افحص الرام وشقها ومخرج الصورة خطوة بخطوة.</p></a>
+  <a class="diagCard" href="/diagnostics/no-boot"
+    data-search-title-en="Manufacturer logo appears but Windows does not boot"
+    data-search-summary-en="Check whether BIOS sees the drive, verify the boot option or start Windows recovery."
+    data-search-keywords="ويندوز لا يقلع لا يدخل ويندوز الويندوز لا يشتغل no boot boot failure boot device startup repair"><div class="diagIcon">💽</div><span class="diagTag">مسار تفاعلي</span><h2>يظهر شعار الشركة لكن ويندوز لا يقلع</h2><p class="muted">اختر ما يظهر على الشاشة وتابع إلى فحص القرص في BIOS أو خيار الإقلاع أو إصلاح بدء التشغيل.</p></a>
+  <a class="diagCard" href="/diagnostics/drive-not-detected"
+    data-search-title-en="SSD or hard drive is missing or disappears"
+    data-search-summary-en="Find where the disk disappears, then check its connection, storage driver and data backup."
+    data-search-keywords="القرص الصلب الهارد لا يظهر القرص لا يظهر ssd لا يظهر drive not detected hdd nvme sata storage disk"><div class="diagIcon">💾</div><span class="diagTag">مسار تفاعلي</span><h2>الـSSD أو الهارد غير ظاهر أو يختفي</h2><p class="muted">حدّد أين يختفي القرص وافحص التوصيل أو تعريف التخزين. ابدأ بحماية الملفات إذا كان يفصل أثناء الاستخدام.</p></a>
+  <a class="diagCard" href="/diagnostics/laptop-not-charging"
+    data-search-title-en="Laptop plugged in but not charging"
+    data-search-summary-en="Check the charge limit, adapter detection, USB-C or barrel jack, and battery status."
+    data-search-keywords="اللابتوب لا يشحن البطارية لا تشحن الشحن متوقف laptop not charging adapter charger usb c battery"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>اللابتوب موصول بالشاحن لكنه لا يشحن</h2><p class="muted">راجع حد الشحن وتعرّف BIOS إلى المحوّل، ثم افحص توصيل USB-C أو المنفذ الدائري وحالة البطارية.</p></a>
+  <a class="diagCard" href="/diagnostics/laptop-internal-display"
+    data-search-title-en="External screen works but the laptop display is black or has lines"
+    data-search-summary-en="Compare the display before and after Windows starts, then check brightness, display mode and cable."
+    data-search-keywords="شاشة اللابتوب لا تعمل الشاشة الداخلية شاشة سوداء internal display external works lcd display cable lines backlight"><div class="diagIcon">🖥️</div><span class="diagTag">مسار تفاعلي</span><h2>الشاشة الخارجية تعمل والداخلية سوداء أو فيها خطوط</h2><p class="muted">قارن ظهور الصورة قبل ويندوز وبعده وافحص السطوع ووضع العرض واختبار الشاشة ومسار الكابل.</p></a>
+  <a class="diagCard" href="/diagnostics/usb-port-not-working"
+    data-search-title-en="USB port does not detect devices or disconnects"
+    data-search-summary-en="Compare charging with data transfer, try a different cable and port, and check Windows errors."
+    data-search-keywords="منفذ USB لا يعمل فلاشة لا تقرأ usb port not working usb not recognized usb disconnects data transfer"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>منفذ USB لا يقرأ أو يقطع الاتصال</h2><p class="muted">ميّز بين الشحن ونقل البيانات، وقارن الكابل والمنفذ واقرأ أخطاء ويندوز.</p></a>
+  <a class="diagCard" href="/diagnostics/restarts-shuts-down"
+    data-search-title-en="Starts then shuts down or restarts"
+    data-search-summary-en="Identify when it shuts down, before display, in BIOS or under load."
+    data-search-keywords="يفصل يعيد التشغيل ريستارت restart shutdown shuts down reboot loop psu temperature heat vrm power good"><div class="diagIcon">🔁</div><span class="diagTag">مسار تفاعلي</span><h2>يعمل ويفصل أو يعيد التشغيل</h2><p class="muted">اختر وقت الفصل، قبل ظهور الصورة أو داخل BIOS أو تحت الحمل، لتحدد الفحص التالي.</p></a>
+  <a class="diagCard" href="/diagnostics/short-circuit"
+    data-search-title-en="Motherboard short-circuit diagnosis"
+    data-search-summary-en="Identify the rail, compare resistance to ground and isolate the suspected stage."
+    data-search-keywords="شورت قصر short short circuit resistance ground gnd حقن فولت injection mosfet capacitor مكثف 12v vcore"><div class="diagIcon">🔌</div><span class="diagTag">مسار تفاعلي</span><h2>شورت على اللوحة</h2><p class="muted">حدّد الخط، قارن المقاومة إلى الأرضي، ثم اتبع طريقة عزل المرحلة المشتبه بها.</p></a>
+  <a class="diagCard" href="/diagnostics/post-beep-codes"
+    data-search-title-en="POST stops or returns beep codes"
+    data-search-summary-en="Start with the beeps, diagnostic LED or POST code and identify where startup stops."
+    data-search-keywords="صفارات صافرات beep beeps beep codes post freeze تجمد post card debug led ram cpu bios vga"><div class="diagIcon">🧠</div><span class="diagTag">مسار تفاعلي</span><h2>POST متوقف أو صفارات</h2><p class="muted">ابدأ بالصفارة أو لمبة التشخيص أو رمز POST، ثم تتبّع مرحلة التوقّف واختبرها.</p></a>
+  <a class="diagCard" href="/diagnostics/vrm-cpu-ram"
+    data-search-title-en="VRM, CPU and RAM power rails"
+    data-search-summary-en="Trace the VRM input, enable signal and inductor, or check the RAM power rails."
+    data-search-keywords="vrm cpu ram 12v eps pwm mosfet power stage drmos coil inductor vcore vdimm enable power good تغذية معالج رام ملفات"><div class="diagIcon">🔋</div><span class="diagTag">مسار تفاعلي</span><h2>VRM وخطوط المعالج والرام</h2><p class="muted">اتبع مسار دخل VRM وإشارة التمكين والملف، أو انتقل إلى فحص تغذيات الرام.</p></a>
+  <a class="diagCard" href="/diagnostics/resistance-to-ground"
+    data-search-title-en="Measure resistance to ground and interpret a short"
+    data-search-summary-en="Choose the meter mode, interpret continuity or OL, then compare each side of the rail after isolation."
+    data-search-keywords="قياس المقاومة إلى الأرضي قراءة ol صفارة الملتيميتر resistance to ground continuity multimeter open loop"><div class="diagIcon">📏</div><span class="diagTag">مسار تفاعلي</span><h2>قياس المقاومة إلى الأرضي وتفسير الشورت</h2><p class="muted">اختر وضع الملتيميتر، وفسّر الصفارة أو OL، ثم قارن خط التغذية وقراءة كل جهة بعد العزل.</p></a>
 </div>
 
 <section class="startBox"><b>قبل الفحص</b><p class="muted">افصل التغذية قبل فك القطع أو قياس المقاومة. ابدأ بالفحص البصري. عند قياس الجهد على اللوحة استخدم النقاط الموثّقة والأداة المناسبة. أبقِ مزوّد الطاقة مغلقًا.</p></section>

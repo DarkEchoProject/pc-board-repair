@@ -137,45 +137,31 @@ function similarBoards(board, boards) {
   const brand = norm(board.brand);
   const model = norm(board.model);
   const boardNo = norm(board.board);
+  const revision = norm(board.revision);
   const platform = norm(board.platform);
   const type = norm(board.type);
-  const eligible = boards.filter(item => item && item.file && norm(item.file) !== identity);
-  const selected = [];
-  const used = new Set([identity]);
-  const add = item => {
-    if (!item || !item.file || used.has(norm(item.file))) return;
-    used.add(norm(item.file));
-    selected.push(item);
-  };
+  const hasManufacturer = Boolean(brand) && brand !== "other" && brand !== "unknown";
+  const ranked = [];
 
-  // Prefer genuine model/board matches, then other files from the same manufacturer.
-  const ranked = eligible.map(item => {
-    let score = 0;
-    if (brand && norm(item.brand) === brand) score += 3;
-    if (boardNo && norm(item.board) === boardNo) score += 20;
-    if (model && norm(item.model) === model) score += 16;
-    if (platform && norm(item.platform) === platform) score += 5;
-    if (type && norm(item.type) === type) score += 1;
-    return { item, score };
-  }).sort((a, b) => b.score - a.score ||
-    String(a.item.model || a.item.board || a.item.file).localeCompare(String(b.item.model || b.item.board || b.item.file), "en"));
-  for (const entry of ranked) {
-    if (entry.score < 3 || selected.length >= 4) break;
-    add(entry.item);
+  // The merged catalog contains each file once. Start with the closest hardware match.
+  for (const item of boards) {
+    if (norm(item.file) === identity) continue;
+    const sameBoard = Boolean(boardNo) && norm(item.board) === boardNo;
+    const sameModel = Boolean(model) && norm(item.model) === model;
+    const sameBrand = hasManufacturer && norm(item.brand) === brand;
+    const samePlatform = Boolean(platform) && norm(item.platform) === platform;
+    if (!sameBoard && !sameModel && !sameBrand && !samePlatform) continue;
+
+    const sameRevision = (sameBoard || sameModel) && Boolean(revision) && norm(item.revision) === revision;
+    const sameType = Boolean(type) && norm(item.type) === type;
+    const score = 80 * sameBoard + 40 * sameModel + 12 * sameRevision + 6 * sameBrand + 3 * samePlatform + Number(sameType);
+    ranked.push({ item, score });
   }
 
-  // Fallback for unique boards: link to neighbouring catalogue entries as well.
-  // This ensures each archive item has several real HTML links, even with no close match.
-  const sorted = [...boards].filter(item => item && item.file).sort((a, b) =>
-    String(a.brand || "").localeCompare(String(b.brand || ""), "en") ||
-    String(a.model || a.board || a.file).localeCompare(String(b.model || b.board || b.file), "en") ||
-    String(a.file).localeCompare(String(b.file), "en"));
-  const position = sorted.findIndex(item => norm(item.file) === identity);
-  for (let step = 1; position !== -1 && selected.length < 6 && step < sorted.length; step++) {
-    add(sorted[(position + step) % sorted.length]);
-    if (selected.length < 6) add(sorted[(position - step + sorted.length) % sorted.length]);
-  }
-  return selected.slice(0, 6);
+  ranked.sort((a, b) => b.score - a.score ||
+    String(a.item.model || a.item.board || a.item.file).localeCompare(String(b.item.model || b.item.board || b.item.file), "en") ||
+    a.item.file.localeCompare(b.item.file, "en"));
+  return ranked.slice(0, 6).map(({ item }) => item);
 }
 
 function renderPriorityNotes({ sectionTitle, checks, links }) {

@@ -20,7 +20,7 @@
       let script=document.querySelector('script[src^="/site-search.js"]');
       if(!script){
         script=document.createElement('script');
-        script.src='/site-search.js?v=20261104172350';
+        script.src='/site-search.js?v=20261114-1';
         script.dataset.pcbrSiteSearch='1';
         document.head.append(script);
       }
@@ -99,6 +99,7 @@
     if(allLink){allLink.textContent=copy.all;allLink.href='/search';}
 
     let timer=null;
+    let searchId=0;
 
     function updateAllLink(){
       if(!allLink)return;
@@ -140,6 +141,7 @@
     }
 
     async function render(){
+      const id=++searchId;
       const query=input.value.trim();
       updateAllLink();
       out.innerHTML='';
@@ -151,6 +153,7 @@
       info.textContent=copy.searching;
       try{
         const matches=await engine.search(query,{limit:8,type:'all'});
+        if(id!==searchId)return;
         info.textContent=matches.length?copy.found(matches.length):copy.none;
         out.hidden=false;
         if(!matches.length){
@@ -162,12 +165,14 @@
         }
         for(const item of matches)out.append(resultCard(item));
       }catch{
+        if(id!==searchId)return;
         info.textContent=copy.none;
         out.hidden=true;
       }
     }
 
     input.addEventListener('input',()=>{
+      searchId++;
       clearTimeout(timer);
       timer=setTimeout(render,120);
     });

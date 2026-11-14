@@ -2,7 +2,7 @@
   'use strict';
 
   const BOARD_DATA=['/data/boards.json','/data/boards-large.json'];
-  let indexPromise=null;
+  const sources=new Map();
 
   const currentLang=()=>{
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
@@ -12,10 +12,9 @@
     return String(value??'')
       .toLowerCase()
       .normalize('NFKD')
-      .replace(/[أإآ]/g,'ا')
+      .replace(/[\p{M}ـ]/gu,'')
       .replace(/ى/g,'ي')
       .replace(/ة/g,'ه')
-      .replace(/[ًٌٍَُِّْـ]/g,'')
       .replace(/[^\p{L}\p{N}]+/gu,' ')
       .replace(/\s+/g,' ')
       .trim();
@@ -26,12 +25,12 @@
   }
 
   function fileKey(path){
-    let h=2166136261>>>0;
-    for(const ch of String(path||'')){
-      h^=ch.charCodeAt(0);
-      h=Math.imul(h,16777619)>>>0;
+    let h=2166136261;
+    for(let i=0;i<path.length;i++){
+      h^=path.charCodeAt(i);
+      h=Math.imul(h,16777619);
     }
-    return h.toString(36);
+    return (h>>>0).toString(36);
   }
 
   function textSlug(value){
@@ -70,42 +69,6 @@
       titleAr:'تشخيص أعطال الكمبيوتر واللوحات الأم',titleEn:'PC & Motherboard Diagnostics',
       subtitleAr:'ابدأ من العطل الظاهر واتبع خطوات القياس بالترتيب.',subtitleEn:'Start from the visible fault and follow measurements in order.',
       keywords:'تشخيص اعطال صيانة motherboard repair diagnostics no power no display no post short circuit restart beep vrm cpu ram bios'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/no-power',
-      titleAr:'الجهاز لا يعمل نهائيًا — No Power',titleEn:'PC completely dead — No Power',
-      subtitleAr:'5VSB، زر التشغيل، PS_ON، مخارج الباور وخطوط الاستعداد.',subtitleEn:'5VSB, power button, PS_ON, PSU outputs and standby rails.',
-      keywords:'لا يعمل لا يشتغل ميت باور no power dead 5vsb ps_on pwr_sw atx standby power button مزود طاقة'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/no-display',
-      titleAr:'يعمل ولا توجد صورة — No Display / No POST',titleEn:'Powers on with no image — No Display / No POST',
-      subtitleAr:'RAM، VDIMM، CPU، Vcore، BIOS، Reset، Clock وكرت الشاشة.',subtitleEn:'RAM, VDIMM, CPU, Vcore, BIOS, Reset, Clock and graphics.',
-      keywords:'لا توجد صورة شاشة سوداء no display no post ram vdimm cpu vcore bios reset clock gpu vga'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/restarts-shuts-down',
-      titleAr:'يعمل ثم يفصل أو يعيد التشغيل',titleEn:'Starts then shuts down or restarts',
-      subtitleAr:'PSU، الحرارة، VRM، Vcore، RAM وتسلسل Power Good.',subtitleEn:'PSU, thermals, VRM, Vcore, RAM and Power Good.',
-      keywords:'يفصل يعيد التشغيل ريستارت restart shutdown shuts down reboot loop psu temperature heat vrm power good'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/short-circuit',
-      titleAr:'تشخيص الشورت على اللوحة الأم',titleEn:'Motherboard Short-Circuit Diagnosis',
-      subtitleAr:'تحديد الخط المقصور وعزل المراحل وفحص MOSFET والمكثفات.',subtitleEn:'Identify the shorted rail, isolate stages, and test MOSFETs and capacitors.',
-      keywords:'شورت قصر short short circuit resistance ground gnd حقن فولت injection mosfet capacitor مكثف 12v vcore'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/post-beep-codes',
-      titleAr:'POST متوقف أو صفارات Beep Codes',titleEn:'POST freeze or Beep Codes',
-      subtitleAr:'RAM، CPU، BIOS، VGA، POST Card، Reset وClock.',subtitleEn:'RAM, CPU, BIOS, VGA, POST Card, Reset and Clock.',
-      keywords:'صفارات صافرات beep beeps beep codes post freeze تجمد post card debug led ram cpu bios vga'
-    },
-    {
-      type:'diagnostics',url:'/diagnostics/vrm-cpu-ram',
-      titleAr:'VRM وخطوط المعالج والرام',titleEn:'VRM, CPU & RAM Power Rails',
-      subtitleAr:'12V CPU، PWM، MOSFET، الملفات، Vcore وVDIMM.',subtitleEn:'12V CPU, PWM, MOSFETs, inductors, Vcore and VDIMM.',
-      keywords:'vrm cpu ram 12v eps pwm mosfet power stage drmos coil inductor vcore vdimm enable power good تغذية معالج رام ملفات'
     },
     {
       type:'components',url:'/component-testing/',
@@ -160,29 +123,30 @@
       subtitleAr:details||fileName,
       subtitleEn:details||fileName,
       keywords,
-      brand,model,boardNo,revision,format,fileName
+      brand,model,boardNo,revision,format,fileName,file
     };
   }
 
-  function searchableText(entry){
-    return normalize([
+  function indexEntry(entry){
+    const title=normalize(`${entry.titleAr||''} ${entry.titleEn||''}`);
+    const model=normalize(entry.model);
+    const boardNo=normalize(entry.boardNo);
+    const fileName=normalize(entry.fileName);
+    const text=normalize([
       entry.titleAr,entry.titleEn,entry.subtitleAr,entry.subtitleEn,entry.keywords,
       entry.brand,entry.model,entry.boardNo,entry.revision,entry.format,entry.fileName
     ].filter(Boolean).join(' '));
+    const [titleCompact,modelCompact,boardNoCompact,fileNameCompact,textCompact]=
+      [title,model,boardNo,fileName,text].map(value=>value.replace(/\s+/g,''));
+    return {...entry,_search:{
+      title,model,boardNo,fileName,text,titleCompact,modelCompact,boardNoCompact,fileNameCompact,textCompact
+    }};
   }
 
-  function scoreEntry(entry,q,tokens){
-    const title=normalize(`${entry.titleAr||''} ${entry.titleEn||''}`);
-    const model=normalize(entry.model||'');
-    const boardNo=normalize(entry.boardNo||'');
-    const fileName=normalize(entry.fileName||'');
-    const text=entry._searchText;
-    const qCompact=compact(q);
-    const titleCompact=compact(title);
-    const modelCompact=compact(model);
-    const boardNoCompact=compact(boardNo);
-    const fileNameCompact=compact(fileName);
-    const textCompact=compact(text);
+  const staticIndex=staticEntries.map(indexEntry);
+
+  function scoreEntry(entry,q,qCompact,tokens){
+    const {title,model,boardNo,fileName,text,titleCompact,modelCompact,boardNoCompact,fileNameCompact,textCompact}=entry._search;
     let score=0;
 
     if(title===q)score+=120;
@@ -226,39 +190,46 @@
     return matched===tokens.length||text.includes(q)||(qCompact&&textCompact.includes(qCompact))?score:0;
   }
 
-  async function loadBoardData(path){
+  async function fetchEntries(path,read){
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),12000);
     try{
-      const response=await fetch(path,{cache:'no-store',signal:controller.signal});
+      const response=await fetch(path,{signal:controller.signal});
       if(!response.ok)throw new Error(`HTTP ${response.status}`);
-      const data=await response.json();
-      return Array.isArray(data)?data:[];
-    }catch(err){
-      console.warn(`PCBR site search: ${path} unavailable.`,err);
-      return [];
+      const entries=await read(response);
+      return entries.map(indexEntry);
     }finally{
       clearTimeout(timeout);
     }
   }
 
-  async function buildIndex(){
-    const staticIndex=staticEntries.map(e=>({...e,_searchText:searchableText(e)}));
-    const groups=await Promise.all(BOARD_DATA.map(loadBoardData));
-    const boards=[];
-    const seen=new Set();
-
-    for(const board of groups.flat()){
-      if(!board||typeof board!=='object')continue;
-      const key=String(board.file||'').trim().toLowerCase();
-      if(!key||seen.has(key))continue;
-      seen.add(key);
-      boards.push(board);
+  function getSource(path,read){
+    if(!sources.has(path)){
+      sources.set(path,fetchEntries(path,read).catch(error=>{
+        sources.delete(path);
+        console.warn(`PCBR site search: ${path} unavailable.`,error);
+        return [];
+      }));
     }
+    return sources.get(path);
+  }
 
-    const boardIndex=boards.map(boardEntry).map(e=>({...e,_searchText:searchableText(e)}));
-    const biosRows = await loadBoardData('/data/bios.json');
-    const biosIndex = biosRows
+  async function readCatalog(response){
+    const rows=await response.json();
+    if(!Array.isArray(rows))throw new Error('Expected a catalog array');
+    return rows;
+  }
+
+  async function readBoards(response){
+    const rows=await readCatalog(response);
+    return rows.flatMap(item=>Array.isArray(item?.value)?item.value:[item])
+      .filter(board=>typeof board?.brand==='string'&&board.brand.trim()&&typeof board.file==='string'&&board.file.trim())
+      .map(boardEntry);
+  }
+
+  async function readBios(response){
+    const rows=await readCatalog(response);
+    return rows
       .filter(item => item && item.file && item.download_url)
       .map(item => {
         const name = String(item.file);
@@ -275,25 +246,55 @@
           model: name,
           fileName: name
         };
-      })
-      .map(e => ({ ...e, _searchText: searchableText(e) }));
-
-    return [...boardIndex,...biosIndex,...staticIndex];
+      });
   }
 
-  function getIndex(){
-    if(!indexPromise)indexPromise=buildIndex();
-    return indexPromise;
+  async function readDiagnostics(response){
+    const page=new DOMParser().parseFromString(await response.text(),'text/html');
+    const entries=[];
+    for(const card of page.querySelectorAll('a.diagCard[href]')){
+      const url=card.getAttribute('href');
+      const titleAr=card.querySelector('h2')?.textContent.trim();
+      if(!titleAr||!/^\/diagnostics\/[a-z0-9-]+(?:\.html)?$/.test(url))continue;
+      entries.push({
+        type:'diagnostics',url,titleAr,
+        titleEn:card.dataset.searchTitleEn,
+        subtitleAr:card.querySelector('p')?.textContent.trim(),
+        subtitleEn:card.dataset.searchSummaryEn,
+        keywords:card.dataset.searchKeywords
+      });
+    }
+    if(!entries.length)throw new Error('No diagnosis cards found');
+    return entries;
+  }
+
+  async function getIndex(type='all'){
+    const includes=section=>type==='all'||type===section;
+    const requests=[];
+    if(includes('boardview'))requests.push(...BOARD_DATA.map(path=>getSource(path,readBoards)));
+    if(includes('bios'))requests.push(getSource('/data/bios.json',readBios));
+    if(includes('diagnostics'))requests.push(getSource('/diagnostics/',readDiagnostics));
+
+    const entries=(await Promise.all(requests)).flat();
+    const seen=new Set();
+    const dynamicIndex=entries.filter(entry=>{
+      if(entry.type!=='boardview')return true;
+      const key=entry.file.trim().toLowerCase();
+      if(seen.has(key))return false;
+      seen.add(key);
+      return true;
+    });
+    return [...dynamicIndex,...staticIndex.filter(entry=>includes(entry.type))];
   }
 
   async function search(query,{limit=50,type='all'}={}){
     const q=normalize(query);
     if(!q)return [];
+    const qCompact=q.replace(/\s+/g,'');
     const tokens=q.split(' ').filter(Boolean);
-    const index=await getIndex();
+    const index=await getIndex(type);
     return index
-      .filter(entry=>type==='all'||entry.type===type)
-      .map(entry=>({entry,score:scoreEntry(entry,q,tokens)}))
+      .map(entry=>({entry,score:scoreEntry(entry,q,qCompact,tokens)}))
       .filter(row=>row.score>0)
       .sort((a,b)=>b.score-a.score||String(a.entry.titleAr||'').localeCompare(String(b.entry.titleAr||''),'ar'))
       .slice(0,Math.max(1,limit))
