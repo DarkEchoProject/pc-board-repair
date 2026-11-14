@@ -36,8 +36,18 @@ let unseenCount=0;
 let lastRenderSignature='';
 let pollTimer=null;
 
-if(nameEl)nameEl.value=localStorage.getItem(NAME_KEY)||'';
+const diagnosisFields=document.getElementById('diagnosisDraftFields');
+const diagnosisBoard=document.getElementById('diagnosisBoard');
+const diagnosisReadings=document.getElementById('diagnosisReadings');
+const diagnosisOffer=document.getElementById('diagnosisDraftOffer');
+const editDiagnosisText=document.getElementById('editDiagnosisText');
+let diagnosisStep='';
+
+try{if(nameEl)nameEl.value=localStorage.getItem(NAME_KEY)||'';}catch{}
 restoreDraft();
+if(offerDiagnosisDraft()){
+  requestAnimationFrame(()=>form.scrollIntoView({block:'start',behavior:'instant'}));
+}
 updateCharCount();
 
 function formatTime(iso){try{return new Intl.DateTimeFormat('ar-LB',{hour:'2-digit',minute:'2-digit'}).format(new Date(iso));}catch{return iso||'';}}
@@ -54,9 +64,87 @@ function setLive(ok){if(!liveStatus||!liveText)return;liveStatus.classList.toggl
 
 function updateCharCount(){if(!messageEl||!charCount)return;const n=messageEl.value.length;charCount.textContent=`${n.toLocaleString('ar-LB')} / 500`;charCount.classList.toggle('nearLimit',n>=430&&n<500);charCount.classList.toggle('atLimit',n>=500);}
 
-function saveDraft(){if(!messageEl||!categoryEl)return;const payload={text:messageEl.value,category:categoryEl.value,replyTo};try{if(payload.text||payload.replyTo)localStorage.setItem(DRAFT_KEY,JSON.stringify(payload));else localStorage.removeItem(DRAFT_KEY);if(draftNote)draftNote.textContent=payload.text?'تم حفظ المسودة تلقائيًا':' ';}catch{}}
-function restoreDraft(){try{const raw=localStorage.getItem(DRAFT_KEY);if(!raw)return;const d=JSON.parse(raw);if(messageEl&&typeof d.text==='string')messageEl.value=d.text.slice(0,500);if(categoryEl&&d.category)[...categoryEl.options].some(o=>{if(o.value===d.category||o.text===d.category){categoryEl.value=o.value||o.text;return true;}return false;});if(typeof d.replyTo==='string')replyTo=d.replyTo;}catch{}}
+function saveDraft(){
+  if(!messageEl||!categoryEl)return;
+  const payload={text:messageEl.value,category:categoryEl.value,replyTo};
+  if(diagnosisStep&&payload.text){
+    payload.diagnosis={step:diagnosisStep,board:diagnosisBoard.value,readings:diagnosisReadings.value};
+  }
+  if(form.hasAttribute('data-diagnosis-editing')&&payload.text)payload.fromDiagnosis=true;
+  try{
+    if(payload.text||payload.replyTo)localStorage.setItem(DRAFT_KEY,JSON.stringify(payload));
+    else localStorage.removeItem(DRAFT_KEY);
+    if(draftNote)draftNote.textContent=payload.text?'تم حفظ المسودة تلقائيًا':' ';
+  }catch{}
+}
+
+function restoreDraft(){
+  try{
+    const raw=localStorage.getItem(DRAFT_KEY);
+    if(!raw)return;
+    const draft=JSON.parse(raw);
+    if(typeof draft.text==='string')messageEl.value=draft.text.slice(0,messageEl.maxLength);
+    if(Array.from(categoryEl.options).some(option=>option.value===draft.category))categoryEl.value=draft.category;
+    if(typeof draft.replyTo==='string')replyTo=draft.replyTo;
+    if(draft.fromDiagnosis&&messageEl.value)form.setAttribute('data-diagnosis-editing','');
+    if(draft.diagnosis?.step&&messageEl.value)setDiagnosisFields(draft.diagnosis);
+  }catch{}
+}
+
 function clearDraft(){try{localStorage.removeItem(DRAFT_KEY);}catch{}if(draftNote)draftNote.textContent=' ';}
+
+function setDiagnosisFields({step='',board='',readings=''}={}){
+  diagnosisStep=step;
+  diagnosisBoard.value=board;
+  diagnosisReadings.value=readings;
+  diagnosisFields.hidden=!step;
+  messageEl.readOnly=Boolean(step);
+  editDiagnosisText.hidden=!step;
+}
+
+function writeDiagnosisMessage(){
+  messageEl.value=[
+    'العطل — الجهاز لا يعمل نهائيًا',
+    `آخر خطوة في التشخيص — ${diagnosisStep}`,
+    `موديل الجهاز ورقم البورد — ${diagnosisBoard.value.trim()}`,
+    `القياسات والملاحظات — ${diagnosisReadings.value.trim()}`
+  ].join('\n');
+  updateCharCount();
+  saveDraft();
+}
+
+function offerDiagnosisDraft(){
+  if(!location.hash.startsWith('#chatForm?'))return;
+  const params=new URLSearchParams(location.hash.slice('#chatForm?'.length));
+  if(params.get('diagnosis')!=='no-power')return;
+  form.setAttribute('data-diagnosis-editing','');
+  const step=(params.get('step')||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,100);
+  const finish=()=>{
+    diagnosisOffer.hidden=true;
+    // Strip the handoff from the URL only after the current draft is saved.
+    try{
+      const saved=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
+      if(saved?.text!==messageEl.value||saved?.replyTo!==replyTo)return;
+      history.replaceState(history.state,'','#chatForm');
+    }catch{}
+  };
+  const apply=()=>{
+    setDiagnosisFields({step:step||'ماذا يحدث عند الضغط على زر التشغيل؟'});
+    categoryEl.value='مناقشة عطل';
+    clearReply();
+    writeDiagnosisMessage();
+    finish();
+    document.getElementById('status').textContent='مسودة من التشخيص جاهزة للمراجعة.';
+  };
+  if(messageEl.value.trim()||replyTo){
+    diagnosisOffer.hidden=false;
+    document.getElementById('useDiagnosisDraft').addEventListener('click',apply);
+    document.getElementById('keepChatDraft').addEventListener('click',finish);
+  }else{
+    apply();
+  }
+  return true;
+}
 
 function setReply(id){const m=findMessage(id);if(!m)return;replyTo=m.id;if(replyName)replyName.textContent=m.name||'';if(replyPreview)replyPreview.textContent=String(m.text||'').slice(0,140);if(replyBar)replyBar.hidden=false;saveDraft();messageEl?.focus();}
 function clearReply(){replyTo='';if(replyBar)replyBar.hidden=true;if(replyName)replyName.textContent='';if(replyPreview)replyPreview.textContent='';saveDraft();}
@@ -107,9 +195,47 @@ function jumpToLatest(){unseenCount=0;updateNewButton();messagesEl.scrollTo({top
 
 async function loadMessages(showError=false){if(document.hidden&&!showError)return;const wasNearBottom=isNearBottom();try{const r=await fetch('/api/chat/messages',{cache:'no-store'});if(!r.ok)throw new Error();const data=await r.json();const next=Array.isArray(data.messages)?data.messages:[];const nextIds=new Set(next.map(m=>m.id));const newIds=new Set(initialized?next.filter(m=>!previousIds.has(m.id)).map(m=>m.id):[]);allMessages=next;previousIds=nextIds;renderQuickFilters();restoreReplyUi();render({preserve:initialized&&!wasNearBottom,newIds});if(initialized&&newIds.size){if(wasNearBottom){setTimeout(()=>messagesEl.scrollTo({top:messagesEl.scrollHeight,behavior:'smooth'}),30);}else{unseenCount+=newIds.size;updateNewButton();}}else if(!initialized){messagesEl.scrollTop=messagesEl.scrollHeight;}initialized=true;setLive(true);}catch{setLive(false);if(showError||!initialized)messagesEl.innerHTML='<div class="emptyState">تعذر تحميل الرسائل. أعد المحاولة بعد قليل.</div>';}}
 
-form.addEventListener('submit',async e=>{e.preventDefault();const name=String(nameEl?.value||'').trim(),text=String(messageEl?.value||'').trim();if(name.length<2||text.length<2)return;sendBtn.disabled=true;statusEl.textContent='جاري الإرسال...';try{const r=await fetch('/api/chat/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,category:categoryEl.value,text,replyTo,website:document.getElementById('website')?.value||''})});const data=await r.json();if(!r.ok)throw new Error(data.error||'تعذر الإرسال.');try{localStorage.setItem(NAME_KEY,name);}catch{}messageEl.value='';clearReply();clearDraft();updateCharCount();statusEl.textContent='✓ تم إرسال الرسالة.';await loadMessages(true);jumpToLatest();}catch(err){statusEl.textContent=err.message||'تعذر الإرسال.';}finally{sendBtn.disabled=false;}});
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(sendBtn.disabled)return;
+  const name=String(nameEl?.value||'').trim(),text=String(messageEl?.value||'').trim();
+  if(name.length<2||text.length<2)return;
+  sendBtn.disabled=true;
+  statusEl.textContent='جاري الإرسال...';
+  try{
+    const r=await fetch('/api/chat/send',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name,category:categoryEl.value,text,replyTo,website:document.getElementById('website')?.value||''})});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'تعذر الإرسال.');
+    try{localStorage.setItem(NAME_KEY,name);}catch{}
+    messageEl.value='';
+    setDiagnosisFields();
+    form.removeAttribute('data-diagnosis-editing');
+    diagnosisOffer.hidden=true;
+    if(location.hash.startsWith('#chatForm?'))history.replaceState(history.state,'','#chatForm');
+    clearReply();
+    clearDraft();
+    updateCharCount();
+    statusEl.textContent='✓ تم إرسال الرسالة.';
+    await loadMessages(true);
+    jumpToLatest();
+  }catch(err){
+    statusEl.textContent=err.message||'تعذر الإرسال.';
+  }finally{
+    sendBtn.disabled=false;
+  }
+});
 
-messageEl?.addEventListener('input',()=>{updateCharCount();saveDraft();});
+diagnosisBoard.addEventListener('input',writeDiagnosisMessage);
+diagnosisReadings.addEventListener('input',writeDiagnosisMessage);
+editDiagnosisText.addEventListener('click',()=>{
+  setDiagnosisFields();
+  saveDraft();
+  messageEl.focus();
+});
+messageEl?.addEventListener('input',()=>{
+  updateCharCount();
+  saveDraft();
+});
 messageEl?.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();form.requestSubmit();}});
 categoryEl?.addEventListener('change',saveDraft);
 searchEl?.addEventListener('input',()=>render({preserve:true}));
