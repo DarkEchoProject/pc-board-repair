@@ -9,8 +9,8 @@
 <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/community">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="community-chat.css?v=20261017-1">
-<script src="community-chat.js?v=20261017-1" defer></script>
+<link rel="stylesheet" href="/community-chat.css?v=20261114-1">
+<script src="/community-chat.js?v=20261114-1" defer></script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
@@ -44,15 +44,33 @@
     <button id="chatNewBtn" class="chatNewBtn" type="button" hidden>↓ رسائل جديدة</button>
 
     <form id="chatForm" class="chatForm">
+      <section id="diagnosisDraftOffer" class="chatDiagnosisOffer" aria-label="مسودة التشخيص" hidden>
+        <p>لديك مسودة سابقة. اختر أي مسودة تريد متابعتها.</p>
+        <div class="chatHeaderActions">
+          <button id="useDiagnosisDraft" class="imageBtn" type="button" data-draft-edit>استبدالها بمسودة التشخيص</button>
+          <button id="keepChatDraft" class="imageBtn" type="button" data-draft-edit>متابعة المسودة الحالية</button>
+        </div>
+      </section>
       <div id="replyBar" class="replyBar" hidden><div><span>↪ رد على </span><strong id="replyName"></strong><div id="replyPreview" class="smallText"></div></div><button id="cancelReply" type="button" class="chatActionBtn">إلغاء الرد</button></div>
       <div class="chatFields">
         <label>الاسم أو اللقب<input id="name" class="chatInput" maxlength="32" autocomplete="nickname" placeholder="يُستخدم اسم حسابك بعد تسجيل الدخول" required></label>
-        <label>نوع المشاركة<select id="category" class="chatInput"><option>مناقشة عطل</option><option>طلب مخطط</option><option>BoardView</option><option>BIOS</option><option>عام</option></select></label>
+        <label>نوع المشاركة<select id="category" class="chatInput" data-draft-edit><option>مناقشة عطل</option><option>طلب مخطط</option><option>BoardView</option><option>BIOS</option><option>عام</option></select></label>
       </div>
+      <fieldset id="diagnosisDraftFields" class="chatDiagnosisFields" hidden>
+        <legend>أكمل مسودة التشخيص</legend>
+        <p class="muted">تُضاف هذه التفاصيل إلى نص الرسالة أدناه.</p>
+        <label>موديل الجهاز ورقم البورد
+          <input id="diagnosisBoard" class="chatInput" maxlength="70" placeholder="مثل HP ProDesk 400 أو MS-7860" data-draft-edit>
+        </label>
+        <label>القياسات والملاحظات
+          <textarea id="diagnosisReadings" class="chatInput" rows="3" maxlength="220" placeholder="اكتب نقطة القياس والقراءة، أو «لم أقس بعد»." data-draft-edit></textarea>
+        </label>
+      </fieldset>
       <label>الرسالة<textarea id="message" class="chatInput chatTextarea" maxlength="500" placeholder="مثال: لدي لوحة HP رقم DA0... لا تعمل، وهذه القياسات التي حصلت عليها..." required></textarea></label>
+      <button id="editDiagnosisText" class="imageBtn" type="button" data-draft-edit hidden>تعديل نص المسودة</button>
       <div class="chatComposerMeta"><span id="chatDraftNote" class="chatDraftNote"> </span><span class="chatShortcut">Ctrl + Enter للإرسال</span><span id="chatCharCount" class="chatCharCount">0 / 500</span></div>
       <input id="website" class="hpField" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="chatSendRow"><span id="status" class="muted smallText">يمكنك متابعة القراءة أثناء كتابة الرسالة، وتُحفظ المسودة تلقائيًا.</span><button id="sendBtn" class="btn" type="submit">إرسال الرسالة</button></div>
+      <div class="chatSendRow"><span id="status" class="muted smallText" role="status">يمكنك متابعة القراءة أثناء كتابة الرسالة، وتُحفظ المسودة تلقائيًا.</span><button id="sendBtn" class="btn" type="submit">إرسال الرسالة</button></div>
     </form>
   </section>
 </main>

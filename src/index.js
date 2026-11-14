@@ -20,6 +20,15 @@ const cleanText = (value, max) => String(value ?? "")
   .trim()
   .slice(0, max);
 
+const cleanChatMessage = (value) => String(value ?? "")
+  .replace(/\r\n?/g, "\n")
+  .replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, " ")
+  .replace(/[^\S\n]+/g, " ")
+  .replace(/ *\n */g, "\n")
+  .replace(/\n{3,}/g, "\n\n")
+  .trim()
+  .slice(0, 500);
+
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
   "&": "&amp;",
   "<": "&lt;",
@@ -233,7 +242,7 @@ export class ChatRoom extends DurableObject {
       }
 
       const name = cleanText(body.name, 32);
-      const text = cleanText(body.text, 500);
+      const text = cleanChatMessage(body.text);
       const category = allowedCategories.has(body.category) ? body.category : "عام";
       const website = cleanText(body.website, 100);
       const replyTo = cleanText(body.replyTo, 80);

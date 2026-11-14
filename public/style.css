@@ -107,3 +107,20 @@
   }
 }
 /* ===== PC Board Repair Branding v3 END ===== */
+
+footer .siteIssueLink {
+  color: #8edfff;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+footer .siteIssueLink:focus-visible {
+  outline: 2px solid #20bdf2;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+:root[data-theme="light"] footer .siteIssueLink {
+  color: #12638b;
+}

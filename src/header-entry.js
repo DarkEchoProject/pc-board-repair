@@ -10,13 +10,30 @@ class HeaderUiHead {
   }
 }
 
+class SiteIssueLink {
+  constructor(url) {
+    let source = url.pathname;
+    const brand = url.searchParams.get("brand");
+    if (/^\/(boardview|bios)\/company$/.test(url.pathname) && brand) {
+      source += `?${new URLSearchParams({ brand })}`;
+    }
+    this.href = url.pathname === "/contact"
+      ? "#site-issue"
+      : `/contact?from=${encodeURIComponent(source)}#site-issue`;
+  }
 
-function withHeaderUi(response) {
+  element(element) {
+    element.after(`<a class="siteIssueLink" href="${this.href}">أبلغ عن مشكلة في الموقع</a>`, { html: true });
+  }
+}
+
+function withHeaderUi(response, url) {
   if (response.status === 304) return response;
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
   return new HTMLRewriter()
     .on("head", new HeaderUiHead())
+    .on('footer a[href="/contact"]', new SiteIssueLink(url))
     .transform(response);
 }
 
@@ -52,6 +69,6 @@ export default {
     }
 
     const response = await baseWorker.fetch(request, env, ctx);
-    return withHeaderUi(response);
+    return withHeaderUi(response, url);
   },
 };

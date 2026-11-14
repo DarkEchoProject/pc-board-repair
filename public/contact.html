@@ -10,7 +10,19 @@
 <link rel="stylesheet" href="style.css">
 <style>
 .contactHero{margin-bottom:22px}.contactGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}.contactCard{display:flex;align-items:center;gap:14px;text-decoration:none;background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:16px;padding:17px;transition:.2s}.contactCard:hover{transform:translateY(-3px);border-color:#20bdf2;box-shadow:0 10px 28px #0005}.contactIcon{width:46px;height:46px;display:grid;place-items:center;border-radius:13px;background:#112b47;border:1px solid #244d75;font-size:24px;flex:0 0 auto}.contactCard strong{display:block;color:#eef5ff;font-size:17px}.contactHandle{display:block;color:#8edfff;font-size:13px;margin-top:2px;overflow-wrap:anywhere}.contactNote{margin-top:22px;background:#102238;border:1px solid #2a4e72;border-radius:14px;padding:15px}@media(max-width:600px){.contactGrid{grid-template-columns:1fr}.contactCard{padding:15px}}
+#site-issue{scroll-margin-top:9rem;margin:0 0 22px;max-width:none}
+#site-issue h2{margin-top:0}
+.siteIssueForm{display:grid;gap:14px}
+.siteIssueForm[hidden]{display:none}
+.siteIssueForm label{display:block;font-weight:700}
+.siteIssueForm .chatInput{display:block;margin-top:5px}
+#siteIssueDescription{min-height:112px;resize:vertical}
+.siteIssueActions{display:flex;gap:9px 12px;align-items:center;flex-wrap:wrap}
+.siteIssueActions .imageBtn{margin:0}
+#siteIssueStatus:empty{display:none}
+@media(max-width:540px){.siteIssueActions>*{width:100%;text-align:center}}
 </style>
+<script src="/site-issue.js?v=20261114-1" defer></script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
@@ -20,8 +32,37 @@
   <div class="crumb"><a href="/">الرئيسية</a> ← اتصل بنا</div>
   <div class="contactHero">
     <h1>اتصل بنا</h1>
-    <p class="muted">للاستفسارات وطلبات BoardView وBIOS، الإبلاغ عن رابط لا يعمل، اقتراحات الموقع أو طلبات حقوق النشر، يمكنك التواصل عبر إحدى القنوات التالية.</p>
+    <p class="muted">أبلغ عن مشكلة واجهتك في الموقع، أو استخدم قنوات التواصل للاستفسارات وطلبات الملفات وحقوق النشر.</p>
   </div>
+
+  <section id="site-issue" class="policyBox" aria-labelledby="siteIssueTitle" tabindex="-1">
+    <h2 id="siteIssueTitle">أبلغ عن مشكلة في الموقع</h2>
+    <p class="muted">اختر نوع المشكلة واكتب ما حدث. إذا كان الخلل في التحميل، أضف اسم الملف أو رقم البورد.</p>
+    <form id="siteIssueForm" class="siteIssueForm" hidden>
+      <label for="siteIssueType">نوع البلاغ
+        <select id="siteIssueType" class="chatInput">
+          <option>رابط أو تنزيل لا يعمل</option>
+          <option>ملف غير مطابق أو معلومة خاطئة</option>
+          <option>مشكلة في تسجيل الدخول</option>
+          <option>مشكلة في عرض الموقع</option>
+          <option>شكوى أو اقتراح</option>
+        </select>
+      </label>
+      <label for="siteIssuePage">رابط الصفحة
+        <input id="siteIssuePage" class="chatInput" type="url" dir="ltr" maxlength="500" placeholder="https://…" spellcheck="false">
+      </label>
+      <label for="siteIssueDescription">ماذا حدث؟
+        <textarea id="siteIssueDescription" class="chatInput" maxlength="700" required placeholder="مثال: ضغطت على «تحميل BIOS» وظهر خطأ."></textarea>
+      </label>
+      <div class="siteIssueActions">
+        <button class="btn" type="submit">تجهيز بريد البلاغ</button>
+        <button id="siteIssueCopy" class="imageBtn" type="button">نسخ نص البلاغ</button>
+      </div>
+      <span id="siteIssueStatus" class="muted smallText" role="status"></span>
+    </form>
+    <noscript><p>أرسل تفاصيل المشكلة إلى <a href="mailto:alinasser00001@gmail.com">alinasser00001@gmail.com</a>.</p></noscript>
+    <p class="smallText">للمساعدة في عطل جهازك، افتح <a href="/community">غرفة الصيانة</a>.</p>
+  </section>
 
   <section class="contactGrid" aria-label="قنوات التواصل">
     <a class="contactCard" href="mailto:alinasser00001@gmail.com">

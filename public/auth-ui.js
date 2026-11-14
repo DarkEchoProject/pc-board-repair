@@ -803,6 +803,14 @@
   }
 
   function setupCommunity(){
+    // Evaluate draft access after deferred scripts have restored the composer.
+    if(document.readyState!=='complete'){
+      document.addEventListener('DOMContentLoaded',updateCommunityAccess,{once:true});
+    }
+    updateCommunityAccess();
+  }
+
+  function updateCommunityAccess(){
     const form=document.getElementById('chatForm');
     if(!form)return;
     const name=document.getElementById('name');
@@ -820,18 +828,25 @@
       return;
     }
 
-    [...form.querySelectorAll('input,textarea,select,button')].forEach(el=>el.disabled=true);
-    if(!form.previousElementSibling?.classList?.contains('authGate')){
-      const gate=document.createElement('div');
+    const canEditDraft=form.hasAttribute('data-diagnosis-editing');
+    [...form.querySelectorAll('input,textarea,select,button')].forEach(el=>{
+      el.disabled=!(canEditDraft&&(el.id==='message'||el.hasAttribute('data-draft-edit')));
+    });
+    let gate=form.previousElementSibling;
+    if(!gate?.classList.contains('authGate')){
+      gate=document.createElement('div');
       gate.className='authGate';
-      gate.innerHTML='<strong>المشاركة متاحة للمسجلين فقط.</strong> يمكنك قراءة الرسائل بدون حساب.';
+      const text=document.createElement('span');
       const a=document.createElement('a');
       a.className='btn';
-      a.href=loginHref(location.pathname+location.search+location.hash);
       a.textContent='تسجيل الدخول للمشاركة';
-      gate.append(a);
+      gate.append(text,a);
       form.before(gate);
     }
+    gate.firstElementChild.textContent=canEditDraft
+      ? 'يمكنك تحرير مسودة التشخيص الآن. سجّل الدخول عند الاستعداد للإرسال.'
+      : 'المشاركة متاحة للمسجلين فقط. يمكنك قراءة الرسائل بدون حساب.';
+    gate.querySelector('a').href=loginHref();
   }
 
   document.addEventListener('click',async e=>{

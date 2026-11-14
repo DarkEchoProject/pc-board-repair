@@ -5,8 +5,11 @@ const steps = new Map(
 const controls = flow.querySelector("[data-boot-controls]");
 const stage = flow.querySelector("[data-boot-stage]");
 const handoff = flow.querySelector("[data-boot-handoff]");
+const draftLink = flow.querySelector("[data-diagnosis-draft]");
+const draftUrl = draftLink ? new URL(draftLink.href) : null;
 const svgNamespace = "http://www.w3.org/2000/svg";
 const sprite = "/diagnostics/images/no-boot-mini.svg";
+let lastDraftStep = steps.get("start");
 
 function createDemo(scene, sizeClass) {
   const picture = document.createElementNS(svgNamespace, "svg");
@@ -47,6 +50,25 @@ for (const step of steps.values()) {
 
 function showStep(focusStep) {
   const current = steps.get(window.location.hash.slice(1)) ?? steps.get("start");
+
+  if (draftUrl) {
+    if (current.id === "report") {
+      const savedStep = steps.get(history.state?.pcbrDiagnosisStep);
+      if (savedStep && savedStep !== current) {
+        lastDraftStep = savedStep;
+      } else {
+        history.replaceState({ ...history.state, pcbrDiagnosisStep: lastDraftStep.id }, "");
+      }
+      const details = new URLSearchParams({
+        diagnosis: draftLink.dataset.diagnosisDraft,
+        step: lastDraftStep.querySelector("h2").textContent.trim(),
+      });
+      draftUrl.hash = `chatForm?${details}`;
+      draftLink.href = draftUrl.href;
+    } else if (current.id !== "flow") {
+      lastDraftStep = current;
+    }
+  }
 
   for (const step of steps.values()) {
     step.hidden = step !== current;
