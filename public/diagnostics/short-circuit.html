@@ -1,52 +1,463 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص الشورت على اللوحة الأم | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص الشورت على اللوحة الأم: التمييز بين المقاومة المنخفضة الطبيعية والشورت الحقيقي، تحديد خط التغذية، عزل المراحل، وفحص MOSFET والمكثفات.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.flow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.flow b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص الشورت على اللوحة الأم","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تشخيص الشورت على اللوحة الأم | المقاومة إلى الأرضي | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لتمييز المقاومة المنخفضة الطبيعية من القصر. حدّد الخط وقارن قراءة المجسّين ثم افصل المصدر عن الحمل عند الحاجة.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit">
+  <meta property="og:title" content="تشخيص الشورت على اللوحة الأم | المقاومة إلى الأرضي | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي لتمييز المقاومة المنخفضة الطبيعية من القصر. حدّد الخط وقارن قراءة المجسّين ثم افصل المصدر عن الحمل عند الحاجة.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "تشخيص الشورت على اللوحة الأم",
+  "description": "مسار تفاعلي لتمييز المقاومة المنخفضة الطبيعية من القصر. حدّد الخط وقارن قراءة المجسّين ثم افصل المصدر عن الحمل عند الحاجة.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/short-circuit",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← شورت على اللوحة</div>
-<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>🔌 تشخيص الشورت على اللوحة الأم — Short Circuit</h1><p class="muted">الهدف هو معرفة أي خط تغذية منخفض المقاومة بشكل غير طبيعي، ثم تضييق المنطقة حتى الوصول للمكوّن المسبب بدل فك القطع عشوائيًا.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← تشخيص الشورت على اللوحة الأم</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 09</span><span dir="ltr">Short Circuit</span><span>فحص اللوحة الأم</span></div>
+    <h1 id="guide-title">تشخيص الشورت على اللوحة الأم</h1>
+    <p>ابدأ باللوحة مفصولة عن الكهرباء. اختَر ما شاهدته بالملتيميتر، ثم حدّد الخط الذي قسته قبل أي تدخل على اللوحة.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>قياس بعد فصل الطاقة</span></li>
+      <li><b>٢</b><span>تحديد الخط</span></li>
+      <li><b>٣</b><span>عزل المصدر والحمل</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>سلامة مهمة:</b> قياسات المقاومة والاستمرارية تتم واللوحة مفصولة تمامًا عن الكهرباء. لا تحقن جهدًا قبل أن تعرف الخط الذي تعمل عليه، ولا تتجاوز الجهد الاسمي لذلك الخط، واستخدم مزود مختبر محدود التيار فقط إذا كنت معتادًا على هذه الطريقة.</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">قراءة الملتيميتر</a></li>
+      <li><a href="#charging-reading">القراءة المتغيّرة</a></li>
+      <li><a href="#s2">اسم خط التغذية</a></li>
+      <li><a href="#rail-map">تحديد الخط من المخطط</a></li>
+      <li><a href="#disconnect-load">عزل الحمل القابل للفصل</a></li>
+      <li><a href="#low-core">خرج منخفض المقاومة</a></li>
+      <li><a href="#rail-parallel">المراحل المتوازية والقراءات المتشابهة</a></li>
+      <li><a href="#s3">عزل المسار</a></li>
+      <li><a href="#isolation-reading">قراءة المصدر والحمل بعد العزل</a></li>
+      <li><a href="#s4">فحص المكوّنات</a></li>
+      <li><a href="#mosfet-compare">فحص MOSFET في الدائرة</a></li>
+      <li><a href="#capacitor-check">مكثفات متوازية على خط واحد</a></li>
+      <li><a href="#s5">قبل أي حقن جهد</a></li>
+      <li><a href="#injection-observation">قراءة نتيجة اختبار مزوّد المختبر</a></li>
+      <li><a href="#s6">دخل تغذية المعالج</a></li>
+      <li><a href="#eps-source">مقارنة دخل EPS مع عقدة التبديل</a></li>
+      <li><a href="#s7">بعد تحديد القطعة</a></li>
+      <li><a href="#after-repair">إعادة القياس بعد إصلاح الشورت</a></li>
+      <li><a href="#repeat-failure">تكرار تلف البديل بعد الإصلاح</a></li>
+      <li><a href="#s8">خلاصة قياس الشورت</a></li>
+      <li><a href="#stop-safely">إيقاف التشغيل</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>لا تعتبر الصفارة وحدها دليل شورت</h2><p>بعض خطوط اللوحة تكون مقاومتها منخفضة طبيعيًا، خصوصًا <span class="mono">Vcore</span> وخطوط GPU والذاكرة في بعض التصاميم. لذلك:</p><ul class="checklist"><li>استخدم وضع المقاومة أو Diode Mode بالإضافة إلى الاستمرارية.</li><li>انتظر ثوانٍ بعد وضع المجسات؛ شحن المكثفات قد يجعل القراءة تبدأ منخفضة ثم ترتفع.</li><li>قارن مع لوحة سليمة مماثلة إن توفرت.</li><li>افصل CPU عند الحاجة للمقارنة لأن وجوده قد يخفض مقاومة بعض الخطوط كثيرًا.</li></ul><div class="decision"><b>قاعدة مهمة:</b> صفارة ثابتة + مقاومة قريبة جدًا من الصفر على خط لا يُفترض أن يكون منخفضًا تستحق التحقيق، لكن الصفارة على Vcore وحدها لا تكفي للحكم.</div></section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#s8">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>حدد أي خط هو المقصور</h2><p>مع فصل الطاقة، قس المقاومة إلى GND على نقاط التغذية الرئيسية:</p><table class="measureTable"><thead><tr><th>الخط</th><th>أماكن قياس مناسبة</th><th>ملاحظة</th></tr></thead><tbody><tr><td>12V</td><td>موصل CPU 4/8-pin، مدخل VRM، مكثفات 12V</td><td>شورت قوي هنا قد يمنع PSU من البدء أو يجعله يفصل فورًا.</td></tr><tr><td>5V / 3.3V</td><td>موصل ATX، ملفات ومنظمات الخط</td><td>قصر قوي قد يسبب No Power أو حماية PSU.</td></tr><tr><td>Vcore</td><td>خرج ملفات VRM قرب CPU</td><td>المقاومة المنخفضة قد تكون طبيعية.</td></tr><tr><td>VDIMM</td><td>ملفات ومكثفات دائرة RAM</td><td>قارن مع لوحة سليمة إن أمكن.</td></tr><tr><td>5VSB / 3.3VSB</td><td>دوائر الاستعداد وSIO/EC</td><td>شورت هنا قد يمنع اللوحة من الاستجابة للزر.</td></tr></tbody></table></section>
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="meter" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ما الذي جعلك تشتبه بوجود شورت؟</h2>
+      <p>افصل جميع مصادر الطاقة، ومنها أي بطارية قابلة للفصل، وتأكد من زوال الجهد على نقطة الفحص قبل استعمال وضع المقاومة. إذا وُجد حرق أو سائل فتوقف عن التشغيل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>المقياس يصفر أو يعرض 000</strong><span>راجع الوحدة وقراءة المجسّين أولًا.</span></a>
+        <a class="bootChoice" href="#s2"><strong>قست مقاومة منخفضة ثابتة على خط معروف</strong><span>حدّد اسم الخط وموضعه.</span></a>
+        <a class="bootChoice" href="#s6"><strong>دخل 12V قرب المعالج مشكوك فيه</strong><span>ميّز دخل EPS عن خرج Vcore.</span></a>
+        <a class="bootChoice" href="#s8"><strong>لم أقس بعد ولا أعرف نقطة البداية</strong><span>اتبع ترتيب فحص دون تغذية.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>المزوّد يفصل فورًا أو توجد رائحة حرق</strong><span>توقف عن محاولات التشغيل واجمع الملاحظات.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>افصل المصدر عن الحمل</h2><p>إذا عرفت الخط المقصور، استخدم عناصر العزل الموجودة في الدائرة لتحديد أي جهة فيها المشكلة:</p><ul class="checklist"><li>الملفات <span class="mono">L</span> في دوائر Buck.</li><li>مقاومات صفر أوم <span class="mono">0Ω</span>.</li><li>Fuses أو Jumpers عند وجودها.</li><li>MOSFETات التحويل بين خط الدخل وخط الخرج.</li></ul><div class="decision"><b>بعد رفع ملف مثلًا:</b> قس الجهتين إلى الأرضي. إذا بقيت المقاومة المنخفضة في جهة الحمل، فالخط المقصور بعد الملف. إذا بقيت في جهة المصدر، ارجع للخلف باتجاه MOSFET والدخل.</div></section>
+    <section class="bootStep" id="s1" data-boot-step="قراءة الملتيميتر" data-boot-demo="meter" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">قارن القراءة بقيمة تلامس المجسّين</h2>
+      <p>صفارة الاستمرارية تبيّن أن القراءة دون حد يحدده الملتيميتر. استخدم وضع المقاومة لتسجيل القيمة ووحدتها، وابدأ بمقارنة المجسّين.</p>
+      <ol>
+        <li>بعد فصل الطاقة والتحقق من غياب الجهد، المس المجسّين ببعضهما واقرأ القيمة. دوّنها قبل قياس الخط.</li>
+        <li>قس بين الخط المحدد وGND وسجّل هل ترتفع القراءة بعد ثوانٍ أم تبقى ثابتة. راجع وحدة العرض مثل Ω أو kΩ.</li>
+        <li>عند المقارنة في وضع الدايود سجّل اتجاه المجسّين والرقم في كل اتجاه. قارِن القيم في الوضع نفسه.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-resistance-reading.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يقارن قراءة تلامس المجسّين بقراءة المقاومة إلى الأرضي على لوحة مفصولة">
+        <figcaption>قراءة واحدة أو صفارة وحدها لا تكفي. لاحظ الوحدة والسلوك بمرور الوقت.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>تبقى القراءة قرب قراءة المجسّين</strong><span>حدّد نوع الخط قبل الحكم.</span></a>
+        <a class="bootChoice" href="#charging-reading"><strong>تبدأ منخفضة ثم ترتفع</strong><span>راقب القراءة بعد أن تستقر.</span></a>
+        <a class="bootChoice" href="#s8"><strong>لم أعرف وضع القياس أو مكان GND</strong><span>راجع خطوات البدء.</span></a>
+        <a class="bootChoice" href="#report"><strong>الرقم مختلف بين الاتجاهين</strong><span>شارك الوضع والوحدة والقراءتين.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="/diagnostics/resistance-to-ground">شرح قراءة المقاومة إلى الأرضي</a></p>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>فحص MOSFET والمكثفات</h2><ul class="checklist"><li>افحص MOSFET بين Drain وSource في الاتجاهين مع فصل الطاقة.</li><li>قارن MOSFETات المراحل المتشابهة؛ اختلاف واضح بين Phase وأخرى مفيد جدًا.</li><li>المكثفات الخزفية MLCC قد تقصر داخليًا بدون أي علامة بصرية.</li><li>إذا وجدت مكثفًا على الخط يعطي نفس الشورت، لا تفترض أنه المسبب لأن جميع مكثفات الخط متصلة بالتوازي.</li></ul><div class="decision"><b>لذلك لا تنزع كل المكثفات واحدًا واحدًا:</b> حاول أولًا تقسيم الخط بالملفات أو المقاومات الصفرية، ثم حدد المنطقة الأصغر.</div></section>
+    <section class="bootStep" id="charging-reading" data-boot-step="القراءة المتغيّرة" data-boot-demo="inspect" aria-labelledby="charging-reading-title">
+      <h2 id="charging-reading-title" tabindex="-1">راقب استقرار القراءة على الخط</h2>
+      <p>قد تبدأ القراءة منخفضة ثم ترتفع عندما تتأثر بالمكثفات على الخط. دوّن القيمة الأولى والقيمة بعد الاستقرار. قارن خطًا معروفًا بلوحة مماثلة إن توفرت.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>تستقر قرب قراءة المجسّين</strong><span>سجّل اسم الخط ومكان نقطة الفحص.</span></a>
+        <a class="bootChoice" href="#report"><strong>استقرت أعلى بكثير أو اختلفت بين المحاولات</strong><span>أرسل القراءات قبل استنتاج وجود قصر.</span></a>
+        <a class="bootChoice" href="#s1"><strong>أريد إعادة المقارنة بوضع المقاومة</strong><span>ابدأ بقيمة المجسّين.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>طريقة حقن الجهد لتحديد القطعة الساخنة</h2><p>تستخدم هذه الطريقة فقط بعد تحديد خط الطاقة وأنك متأكد من جهده ووظيفته.</p><ul class="checklist"><li>استخدم Bench PSU بتيار محدود.</li><li>ابدأ بجهد منخفض وآمن بالنسبة للخط، ثم زد فقط إذا احتجت وضمن الجهد الاسمي للخط.</li><li>راقب سحب التيار ولا تترك اللوحة تحت الحقن مدة طويلة.</li><li>ابحث عن المكوّن الذي يسخن باستخدام كاميرا حرارية أو كحول إيزوبروبانول أو ملاحظة التبخر بعناية.</li><li>لا تحقن في خطوط Signal مثل Clock/Data/Reset ولا في شبكة لا تعرف هويتها.</li></ul><div class="danger"><b>خصوصًا خط 12V:</b> لا تحقن 12V مباشرة فقط لأن الشورت موجود على مدخل 12V. حدد أولًا هل القصر على المدخل نفسه أم بعد MOSFET/VRM، فقد يكون الجهد المناسب للجهة الأخرى أقل بكثير.</div></section>
+    <section class="bootStep" id="s2" data-boot-step="اسم خط التغذية" data-boot-demo="rail" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">هل تقيس مدخلًا أم خرجًا منخفض المقاومة؟</h2>
+      <p>حدّد النقطة في BoardView أو المخطط أو من اسم الموصل المعروف. قد يكون طرف الملف ضمن خرج Vcore أو نقطة تبديل، بينما دخل EPS مسار آخر.</p>
+      <ol>
+        <li>اذكر موضع القياس ورقم الملف أو الموصل. تجنب تعميم قراءة Vcore على مدخل تغذية المعالج.</li>
+        <li>انخفاض خرج Vcore مع CPU مركّب قد يكون متوقعًا. قارنه بلوحة مماثلة وبنفس وضع القياس والتركيب.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s6"><strong>القراءة قرب قيمة المجسّين على دخل CPU/EPS</strong><span>حدّد جهة الدخل قبل VRM.</span></a>
+        <a class="bootChoice" href="#low-core"><strong>القراءة منخفضة على خرج Vcore</strong><span>قارن بخط ومنصة مماثلين.</span></a>
+        <a class="bootChoice" href="#rail-map"><strong>الخط معروف وأريد عزل مساره</strong><span>حدّد نقطة فصل آمنة.</span></a>
+        <a class="bootChoice" href="#report"><strong>النقطة أو اسم الخط غير مؤكد</strong><span>شارك رقم اللوحة وصورة الموضع.</span></a>
+      </div>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>شورت 12V قرب CPU — كيف تضيق العطل</h2><div class="flow"><div><b>12V إلى GND شبه صفر</b>افصل موصل CPU عن PSU، ثم قس اللوحة نفسها للتأكد أن الشورت داخل اللوحة.</div><div><b>بعد MOSFET High-Side</b>افصل الملف أو نقطة العزل لتعرف هل الشورت على جانب VRM أم على دخل 12V.</div><div><b>Vcore منخفض المقاومة</b>لا تربطه مباشرة بشورت 12V؛ هذان خطان مختلفان يفصل بينهما MOSFET والملف.</div><div><b>MOSFET D-S مقصور</b>قد يربط 12V بمرحلة الخرج، لذلك لا تشغّل اللوحة حتى فحصه جيدًا.</div></div></section>
+    <section class="bootStep" id="rail-map" data-boot-step="تحديد الخط من المخطط" data-boot-demo="rail" aria-labelledby="rail-map-title">
+      <h2 id="rail-map-title" tabindex="-1">أي عنصر يفصل الخط عن بقية اللوحة؟</h2>
+      <p>ابحث برقم اللوحة وRevision. حدّد نقطة قياس موثّقة، واسم الخط على المخطط، والمكونات المتصلة به. على الخط الواحد قد تعطي عشرات المكثفات النتيجة نفسها.</p>
+      <ol>
+        <li>ميّز خط 5VSB أو دخل EPS من خرج Vcore أو VDIMM. افحص إن كان الملف الذي تراه يربط عقدة التبديل بالخرج أو يعمل مرشحًا في دخل التغذية.</li>
+        <li>حدّد ما يمكن فصله دون لحام أولًا، مثل كابل طاقة أو بطاقة أو لوحة فرعية. افصل كل مصادر التغذية وتحقق من زوال الجهد قبل تغيير التركيب.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disconnect-load"><strong>يوجد موصل أو حمل يمكن فصله</strong><span>قارن المقاومة قبل فصله وبعده.</span></a>
+        <a class="bootChoice" href="#s3"><strong>المخطط يبيّن عنصر فصل بين المصدر والحمل</strong><span>قارن جهتي المسار وفق المخطط.</span></a>
+        <a class="bootChoice" href="#low-core"><strong>النقطة على خرج Vcore</strong><span>قارن بمرجع للمنصة قبل الحكم.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف اسم الخط أو نقطة الفصل</strong><span>شارك موضع القياس ورقم اللوحة.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>بعد العثور على القطعة</h2><ul class="checklist"><li>ارفع المكوّن المشتبه به ثم أعد قياس مقاومة الخط قبل استبداله.</li><li>إذا اختفى الشورت، افحص المكونات المجاورة وسبب تلف القطعة قبل تركيب الجديدة.</li><li>تحقق من عدم وجود Gate Drive غير طبيعي أو MOSFET آخر تالف في نفس المرحلة.</li><li>بعد الإصلاح، شغّل أول مرة بمصدر محدود التيار إن أمكن وراقب الفولتات والحرارة.</li></ul><div class="decision"><b>إذا بقي الشورت بعد رفع القطعة:</b> كانت القطعة ساخنة لأنها على نفس الخط وليست بالضرورة المسبب؛ استمر في تقسيم الشبكة.</div></section>
+    <section class="bootStep" id="disconnect-load" data-boot-step="عزل الحمل القابل للفصل" data-boot-demo="isolate" aria-labelledby="disconnect-load-title">
+      <h2 id="disconnect-load-title" tabindex="-1">هل يختفي الانخفاض عند فصل حمل محدد؟</h2>
+      <p>بعد فصل الكهرباء والتأكد من زوال الجهد، افصل حملًا واحدًا موثّقًا وأعد القياس على النقطة نفسها. قس جهة الحمل منفصلة إن كانت نقطتها معروفة. سجّل التركيب في كل محاولة.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>القراءة ترتفع على اللوحة ويبقى الانخفاض على الحمل</dt>
+          <dd>ضيّق الفحص داخل الحمل أو الكابل الذي عزلته.</dd>
+        </div>
+        <div>
+          <dt>تبقى القراءة على اللوحة بعد فصل الحمل</dt>
+          <dd>راجع الأجزاء التي بقيت متصلة وحدد نقطة فصل أخرى.</dd>
+        </div>
+        <div>
+          <dt>القراءة تتغير مع وجود المعالج على Vcore</dt>
+          <dd>قارن بنفس حالة التركيب على منصة مماثلة.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>بقي الاشتباه في جزء معروف على اللوحة</strong><span>ضيّق المسار داخل ذلك الجزء.</span></a>
+        <a class="bootChoice" href="#low-core"><strong>يتغيّر Vcore بوجود المعالج فقط</strong><span>قارن الحالة مع مرجع للمنصة.</span></a>
+        <a class="bootChoice" href="#report"><strong>عرفت الحمل أو الكابل الذي يعيد المشكلة</strong><span>أرسل نتيجتي القياس والقطعة التي عزلتها.</span></a>
+      </div>
+    </section>
 
-<section id="s8" class="step"><h2><span class="stepNum">8</span>مسار سريع</h2><div class="flow"><div><b>1</b>افصل الكهرباء تمامًا.</div><div><b>2</b>حدد الخط منخفض المقاومة.</div><div><b>3</b>قارن بالخطوط والمنصات المشابهة.</div><div><b>4</b>قسّم الخط بملف/0Ω/Fuse.</div><div><b>5</b>افحص MOSFETات والمكثفات بالمنطقة.</div><div><b>6</b>عند الحاجة: حقن محدود وآمن على خط معروف.</div><div><b>7</b>ارفع القطعة وأعد القياس قبل الاستبدال.</div><div><b>8</b>شغّل بحذر وراقب التيار والفولتات.</div></div></section>
+    <section class="bootStep" id="low-core" data-boot-step="خرج منخفض المقاومة" data-boot-demo="chip" aria-labelledby="low-core-title">
+      <h2 id="low-core-title" tabindex="-1">قارن خرج Vcore على نفس المنصة</h2>
+      <p>سجّل مقاومة الخرج وحالة تركيب المعالج. قد تشترك عدة ملفات في الخرج نفسه، ولذلك تتشابه قراءاتها إلى الأرضي على جهة الخرج.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s7" data-boot-demo="rail"><strong>أحتاج تمييز SW من جهة الخرج</strong><span>راجع رسم مسار الملف.</span></a>
+        <a class="bootChoice" href="#rail-parallel"><strong>القراءة متشابهة على عدة ملفات</strong><span>تحقق إن كانت تشترك في نفس الخرج.</span></a>
+        <a class="bootChoice" href="#s3"><strong>القراءة تختلف عن لوحة مماثلة في نفس الظروف</strong><span>حدّد الخط والمراحل المرتبطة قبل عزلها.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد لوحة للمقارنة أو لا أعرف جهة الخرج</strong><span>أرسل الأرقام والمواضع التي قستها.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>مراجع مرتبطة</h2><div class="related"><a class="imageBtn" href="/diagnostics/no-power">⚡ No Power</a><a class="imageBtn" href="/diagnostics/no-display">🖥️ No Display</a><a class="imageBtn" href="/diagnostics/restarts-shuts-down">🔁 Restart / Shutdown</a><a class="imageBtn" href="/boardview/">🗺️ البحث في BoardView</a></div></section>
-</article>
+    <section class="bootStep" id="rail-parallel" data-boot-step="المراحل المتوازية والقراءات المتشابهة" data-boot-demo="isolate" aria-labelledby="rail-parallel-title">
+      <h2 id="rail-parallel-title" tabindex="-1">لماذا تقيس عدة ملفات أو مكثفات الرقم نفسه؟</h2>
+      <p>إذا اشتركت مراحل عدة في خرج واحد، فكل نقطة على الخرج ترى الحمل نفسه. تتبع طرف الخرج على المخطط، وقارن عقدة SW ومكونات كل مرحلة عند الفحص بلا تغذية.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#isolation-reading"><strong>أستطيع عزل المرحلة المشتبه بها بحسب المخطط</strong><span>قارن قراءة المصدر والحمل بعد العزل.</span></a>
+        <a class="bootChoice" href="#capacitor-check"><strong>القراءة متشابهة على مجموعة مكثفات</strong><span>افحص أيها يشترك في نفس الفرع.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف إن كانت هذه النقاط على خط واحد</strong><span>أرسل رقم البورد وصور الملفات والقراءات.</span></a>
+      </div>
+    </section>
 
-<aside class="toc"><b>خطوات الفحص</b><a href="#s1">1. الصفارة ليست دليلًا كافيًا</a><a href="#s2">2. تحديد الخط</a><a href="#s3">3. عزل المصدر والحمل</a><a href="#s4">4. MOSFET والمكثفات</a><a href="#s5">5. حقن الجهد</a><a href="#s6">6. شورت 12V CPU</a><a href="#s7">7. بعد العثور على القطعة</a><a href="#s8">8. المسار السريع</a></aside>
-</div>
+    <section class="bootStep" id="s3" data-boot-step="عزل المسار" data-boot-demo="isolate" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">هل يظهر الانخفاض في جهة المصدر أم الحمل؟</h2>
+      <p>هذه خطوة فني اللوحات. اقرأ المخطط وحدّد عنصر الفصل المناسب مثل فيوز أو وصلة أو ملف. افصل جميع مصادر الطاقة قبل فك أي جزء.</p>
+      <ol>
+        <li>إن أمكن فصل موصل أو حمل خارجي من دون لحام فابدأ به. بعد فصل الجزء المعروف، قس كل جهة إلى GND وسجّل أي جهة تبقى فيها القراءة منخفضة.</li>
+        <li>بعض المخارج مرتبطة عبر أكثر من مرحلة. تتبّع مسارها قبل رفع عنصر ثم دوّن ما عزلته.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#disconnect-load"><strong>يمكن فصل كابل أو بطاقة أو حمل</strong><span>غيّر عاملًا واحدًا وأعد القياس.</span></a>
+        <a class="bootChoice" href="#isolation-reading"><strong>عزلت المصدر عن الحمل وفق المخطط</strong><span>فسّر قراءة كل جهة إلى GND.</span></a>
+        <a class="bootChoice" href="#s5"><strong>الخط محدد ومرحلة العزل معروفة</strong><span>راجع شروط الفحص بمزوّد مختبر.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أجد نقطة فصل موثّقة</strong><span>شارك المخطط والقراءتين إن وجدت.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="isolation-reading" data-boot-step="قراءة المصدر والحمل بعد العزل" data-boot-demo="isolate" aria-labelledby="isolation-reading-title">
+      <h2 id="isolation-reading-title" tabindex="-1">أين بقيت القراءة المنخفضة بعد فصل المسار؟</h2>
+      <p>اعزل الجهتين باستخدام نقطة فصل موثّقة يختارها الفني بعد مراجعة المخطط. قس كل جهة إلى الأرضي والمزوّد مفصول. سجّل اسم الخط في كل جهة. وظيفته قد تتغيّر حول المنظم والملف.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-isolation-rail.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم لعزل موصل موثّق ثم قياس جهة المصدر وجهة الحمل إلى الأرضي">
+        <figcaption>قارن الجهتين بعد فصل الطاقة والعنصر المناسب، وسجّل اسم الخط في كل جهة.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>تبقى منخفضة على جهة المصدر</dt>
+          <dd>افحص عناصر الدخل أو مرحلة التبديل المرتبطة بتلك الجهة.</dd>
+        </div>
+        <div>
+          <dt>تبقى منخفضة على جهة الحمل</dt>
+          <dd>حدّد فرع الحمل والمكثفات المتصلة به، وقارن بما هو طبيعي لهذا الخط.</dd>
+        </div>
+        <div>
+          <dt>الجهتان منخفضتان</dt>
+          <dd>أعد تحديد الخط والمرجع واحتمال وجود مسار موازٍ قبل فك قطعة أخرى.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#mosfet-compare"><strong>القراءة المنخفضة على مرحلة القدرة</strong><span>قارن MOSFET أو Power Stage بلا تغذية.</span></a>
+        <a class="bootChoice" href="#capacitor-check"><strong>تبقى على خرج منخفض أو بنك مكثفات</strong><span>حدّد ما تشترك فيه المكثفات على الخط.</span></a>
+        <a class="bootChoice" href="#rail-map"><strong>القراءتان منخفضتان أو الفصل غير مؤكد</strong><span>راجع المخطط والحمل قبل فك قطعة أخرى.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مراجعة القياس قبل الفك</strong><span>شارك القراءة على كل جهة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s4" data-boot-step="فحص المكوّنات" data-boot-demo="chip" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">هل تتغيّر القراءة بعد عزل المكوّن المشتبه به؟</h2>
+      <p>ابدأ بفحص بصري للمكثفات وMOSFET ومرحلة القدرة. تُظهر المسارات المتوازية داخل اللوحة قراءات قد تشبه القصر على مكوّن سليم.</p>
+      <ol>
+        <li>حدّد أرجل القطعة ووظائفها من رقمها. قارن الاتجاهين أو المراحل المتماثلة في نفس الظروف.</li>
+        <li>بعد عزل المكوّن بمهارة مناسبة، قس القطعة خارج الدائرة وأعد قياس الخط على اللوحة. قارن القراءتين قبل الاستبدال.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#mosfet-compare"><strong>الاشتباه في MOSFET أو مرحلة قدرة</strong><span>قارن الاتجاهين مع مرحلة مماثلة.</span></a>
+        <a class="bootChoice" href="#capacitor-check"><strong>الاشتباه في مكثف أو فرع خرج</strong><span>ضيّق أثر التوازي قبل استبدال قطعة.</span></a>
+        <a class="bootChoice" href="#s7"><strong>ارتفعت المقاومة بعد العزل</strong><span>أعد فحص الخط وحدد بديلًا مطابقًا.</span></a>
+        <a class="bootChoice" href="#report"><strong>الفك لم يغيّر قراءة الخط</strong><span>شارك القراءات وموقع القطعة.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="/component-testing/mosfet-testing">فحص MOSFET خارج الدائرة وداخلها</a></p>
+      <p class="bootRelated">تابع الفحص · <a href="/component-testing/capacitor-testing">فحص المكثفات</a></p>
+    </section>
+
+    <section class="bootStep" id="mosfet-compare" data-boot-step="فحص MOSFET في الدائرة" data-boot-demo="chip" aria-labelledby="mosfet-compare-title">
+      <h2 id="mosfet-compare-title" tabindex="-1">هل يختلف MOSFET عن المراحل المماثلة؟</h2>
+      <p>حدّد G وD وS من بيانات المكوّن. في وضع الدايود واللوحة مفصولة، قارن القراءتين في الاتجاهين مع مرحلة مماثلة. مسارات التوازي ودايود الجسم قد تؤثر على القراءة.</p>
+      <ol>
+        <li>قارن أطراف كل مرحلة بنظيرتها مع نفس الاتجاه. قد يظهر مرور في اتجاه واحد بسبب دايود الجسم حسب نوع المكوّن والتوصيل.</li>
+        <li>إذا بقي قياس مرحلة مختلفًا، اعزل الجزء المشتبه به بطريقة موثّقة. أعد فحص القطعة والخط بعد العزل حتى تعرف هل انخفضت المقاومة بسببها أم بسبب حمل موازٍ.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s7"><strong>بعد عزل القطعة عاد الخط إلى قراءة مرجعية</strong><span>تحقق من البديل وأعد القياس قبل التشغيل.</span></a>
+        <a class="bootChoice" href="#capacitor-check"><strong>القطعة معزولة والقراءة المنخفضة بقيت على الخط</strong><span>ضيّق فرع الحمل أو بنك المكثفات.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#stage-comparison" data-boot-demo="chip"><strong>المكوّن Power Stage متكامل</strong><span>راجع أطرافه ومقارنة مراحله.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف الأطراف أو المراحل غير متماثلة</strong><span>أرسل الرقم المطبوع والقراءات بالاتجاهين.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="capacitor-check" data-boot-step="مكثفات متوازية على خط واحد" data-boot-demo="chip" aria-labelledby="capacitor-check-title">
+      <h2 id="capacitor-check-title" tabindex="-1">هل القراءة تخص مكثفًا واحدًا أم كامل الخط؟</h2>
+      <p>كل مكثفات الخط المتصلة بالتوازي قد تعطي مقاومة شبيهة داخل الدائرة. ابدأ بفحص التلف الظاهر وتحديد الفرع، ثم أثبت المشتبه به بمقارنة الخط والقطعة بعد العزل.</p>
+      <ol>
+        <li>إذا وجدت مكثفًا مشقوقًا أو محروقًا، حدّد موقعه وقيمته ونوعه من المخطط أو لوحة مماثلة. افحص أيضًا ما يسبّب زيادة الجهد أو الضرر عند تكرار الاحتراق.</li>
+        <li>قياس سعة المكثف داخل الخط المتوازي لا يكفي لتحديد قيمة القطعة وحدها. اتبع فحص المكثف خارج الدائرة عندما تكون العزلة آمنة وممكنة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s7"><strong>زالت القراءة المنخفضة بعد العزل</strong><span>تأكد من نوع وقيمة البديل.</span></a>
+        <a class="bootChoice" href="#s5"><strong>عرفت الخط وبقي الاشتباه في عدة مكوّنات</strong><span>راجع شروط استخدام مزوّد مختبر.</span></a>
+        <a class="bootChoice" href="/component-testing/capacitor-testing#c5" data-boot-demo="chip"><strong>أحتاج تفسير فحص المكثف</strong><span>افتح طريقة الاختبار حسب الحالة.</span></a>
+        <a class="bootChoice" href="#report"><strong>القراءة لم تتغيّر بعد العزل</strong><span>أرسل موضع القطعة والقراءات قبل العزل وبعده.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s5" data-boot-step="قبل أي حقن جهد" data-boot-demo="screen-alert" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">حدّد الخط وجهده قبل استخدام مزوّد مختبر</h2>
+      <p>الحقن خطوة لفني اللوحات بعد تحديد الجهد الاسمي للخط ومكوّناته الحساسة وعزل مصادر التغذية الأصلية. إذا كان الخط مجهولًا أو جهد تشغيله غير موثّق، أوقف العمل عند القياس دون تغذية.</p>
+      <ol>
+        <li>ابدأ بتسجيل مقاومة الخط إلى GND ونتيجة فصل الحمل وتحديد اسم الخط من المخطط.</li>
+        <li>إن كانت وسيلة تحديد الحرارة مطلوبة، اطلب مراجعة نقطة الاختبار وحدودها لموديل اللوحة قبل تطبيق أي تغذية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#injection-observation"><strong>الخط معزول ولدي حدوده وأدوات مناسبة</strong><span>تابع تفسير توزيع السخونة والقراءات.</span></a>
+        <a class="bootChoice" href="#s3"><strong>أحتاج استكمال العزل أو تحديد الحمل</strong><span>أعد تحديد الجهتين على المخطط.</span></a>
+        <a class="bootChoice" href="#report"><strong>جهد الخط أو حدوده غير مؤكدة</strong><span>أوقف اختبار المزود وأرسل التفاصيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="injection-observation" data-boot-step="قراءة نتيجة اختبار مزوّد المختبر" data-boot-demo="temperature" aria-labelledby="injection-observation-title">
+      <h2 id="injection-observation-title" tabindex="-1">هل يمكن تحديد موضع السخونة دون تجاوز حدود الخط؟</h2>
+      <p>يُجري الفني اختبار تحديد السخونة فقط بعد معرفة وظيفة الخط وحدوده، وعزل مصادره وتحديد ما يتصل به. يضبط مزوّدًا محدود التيار وفق حدود أضعف عنصر في المسار. يوقف الاختبار إذا لم يمكن تحديد حد آمن للجهد والتيار، أو ظهرت سخونة سريعة غير متوقعة.</p>
+      <ol>
+        <li>القطعة التي تسخن قد تكون جزءًا من المسار إلى الشورت. قارن توزيع الحرارة ثم افصل الطاقة وأعد قياس الجزء المشتبه به.</li>
+        <li>تحقّق من انتقال القراءة بعد العزل قبل تركيب البديل. إذا ارتفعت حرارة المعالج أو جزء حساس فورًا، أوقف الاختبار وراجع اسم الخط والعزل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s4"><strong>عرفت منطقة ساخنة وأريد تأكيد القطعة</strong><span>أعد فحص MOSFET والمكثفات بعد فصل الطاقة.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يسحب المزوّد التيار ولم أميّز موضعًا</strong><span>ارجع لعزل الخط بحسب المخطط.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف الحدود أو ظهرت سخونة غير متوقعة</strong><span>أوقف الاختبار وشارك اسم الخط وما لاحظته.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s6" data-boot-step="دخل تغذية المعالج" data-boot-demo="rail" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">حدّد هل الانخفاض على دخل EPS قبل VRM</h2>
+      <p>مع فصل المزوّد، حدّد طرف دخل 12V عند موصل CPU/EPS من مخطط اللوحة. قارن مقاومته إلى GND بمقاومة خرج Vcore عند النقطة الموثقة.</p>
+      <ol>
+        <li>سجّل هل بقي الانخفاض بعد فصل المزوّد وكابله عن اللوحة. ثباته على جهة اللوحة يوجّه الفحص لمسار الدخل والمكوّنات المتصلة به.</li>
+        <li>افحص بصريًا مكثفات الدخل والمراحل. يمكن للفني مقارنة VIN وSW وGND وفق مخطط المرحلة دون توصيل الطاقة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#eps-source"><strong>قراءة EPS شبه صفر والموصل مفصول</strong><span>قارن دخل المرحلة بعقدة التبديل والخرج.</span></a>
+        <a class="bootChoice" href="#s3"><strong>الانخفاض ثابت على دخل اللوحة</strong><span>ابدأ بعزل المسار وفق المخطط.</span></a>
+        <a class="bootChoice" href="#low-core"><strong>وجدت الانخفاض على Vcore فقط</strong><span>راجع طبيعة مقاومة خط الخرج.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أميز الدخل من جهة الملف</strong><span>شارك صورة الموصل والملفات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="eps-source" data-boot-step="مقارنة دخل EPS مع عقدة التبديل" data-boot-demo="rail" aria-labelledby="eps-source-title">
+      <h2 id="eps-source-title" tabindex="-1">هل يوجد اتصال غير متوقع بين دخل EPS ومرحلة الخرج؟</h2>
+      <p>بعد فصل مزوّد الطاقة وزوال الجهد، افصل كابل EPS بحسب الموديل، ثم قس دخل اللوحة إلى GND. تتبّع مدخل مرحلة القدرة ونقطة SW والخرج من المخطط قبل المقارنة.</p>
+      <ol>
+        <li>وجود مسار منخفض ثابت بين دخل 12V وSW أو الخرج خلاف مخطط المرحلة يستدعي فحص MOSFET العالي أو مرحلة القدرة من دون تشغيل.</li>
+        <li>قس الدخل والخرج كلًا إلى GND وحدد موضع كل قراءة. انخفاض Vcore وحده يحتاج مرجعًا للمنصة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#mosfet-compare"><strong>المدخل متصل بعقدة التبديل خلاف المخطط</strong><span>قارن أطراف المرحلة دون إعادة تشغيل.</span></a>
+        <a class="bootChoice" href="#isolation-reading"><strong>أعرف نقطة الفصل بين الدخل والحمل</strong><span>قس الجهتين بعد العزل الموثّق.</span></a>
+        <a class="bootChoice" href="#low-core"><strong>الدخل سليم والقراءة منخفضة على Vcore</strong><span>قارن الخرج بمرجع لنفس المنصة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف أي جهة تخص SW أو Vcore</strong><span>شارك رقم الملف والقطعة وصورة المنطقة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="بعد تحديد القطعة" data-boot-demo="success" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">تحقّق من البديل وأعد قياس الخط</h2>
+      <p>قبل توصيل الطاقة، سجّل رمز القطعة المرفوعة وتأكد من توافق البديل في النوع والمواصفات وترتيب الأطراف. أعد قياس الخط إلى GND وافحص موضع اللحام.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#after-repair"><strong>ركّبت بديلًا مطابقًا</strong><span>أعد قياس الخط قبل اختبار التشغيل.</span></a>
+        <a class="bootChoice" href="#s3"><strong>لا يزال الخط منخفضًا بعد فصل القطعة</strong><span>راجع الجهة التي بقي فيها الانخفاض.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت القطعة وأريد مراجعة البديل</strong><span>شارك رقم القطعة واسم الخط والقراءات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="after-repair" data-boot-step="إعادة القياس بعد إصلاح الشورت" data-boot-demo="meter" aria-labelledby="after-repair-title">
+      <h2 id="after-repair-title" tabindex="-1">هل عاد الخط واستقر بعد تركيب البديل؟</h2>
+      <p>قس الخط إلى الأرضي بعد تركيب البديل وقبل إعادة التغذية. قارن بالقراءة المرجعية. تحقق من اتجاه القطعة واللحام وعدم وجود جسور حولها. ثم استخدم مصدر الجهاز المتوافق للاختبار التدريجي.</p>
+      <ol>
+        <li>راقب أول تشغيل للوحة في تركيبها الأدنى. دوّن الجهد إن كان معروفًا وتوقف إذا عاد الفصل أو السخونة غير المعتادة.</li>
+        <li>أعد الملحقات تدريجيًا بعد فصل الطاقة. احتفظ بقراءات قبل العزل وبعده وبعد تركيب البديل لتمييز سبب العطل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>استقرت القراءة وعاد التشغيل</strong><span>شارك نقطة الشورت والقطعة ونتيجة الإصلاح.</span></a>
+        <a class="bootChoice" href="#s3"><strong>القراءة المنخفضة عادت مع تركيب البديل</strong><span>أوقف التشغيل وأعد عزل المصدر عن الحمل.</span></a>
+        <a class="bootChoice" href="#repeat-failure"><strong>عاد التلف أو سخنت القطعة الجديدة</strong><span>أوقف التشغيل وافحص البديل والمسار المرتبط به.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#signal-order" data-boot-demo="intermittent"><strong>المقاومة أفضل لكن الجهاز يفصل عند التشغيل</strong><span>تابع توقيت هبوط الإشارات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="repeat-failure" data-boot-step="تكرار تلف البديل بعد الإصلاح" data-boot-demo="chip" aria-labelledby="repeat-failure-title">
+      <h2 id="repeat-failure-title" tabindex="-1">ماذا تفحص إذا عاد الشورت في نفس المكان؟</h2>
+      <p>أوقف التشغيل عند تكرار الفصل أو السخونة بعد تركيب البديل. افحص اتجاه القطعة واللحام، وقارن مواصفاتها بالأصل. حدّد إن كانت القراءة المنخفضة عادت على نفس الخط.</p>
+      <ol>
+        <li>راجع المكونات المجاورة وأجزاء القيادة أو الحماية والحمل الذي تشترك معه المرحلة. افصل التغذية قبل القياس.</li>
+        <li>سجّل ما إذا عادت القراءة بمجرد تركيب البديل أو بعد أول محاولة تشغيل، فهذا يحدد إن كان الفحص يبدأ من اللحام والقطعة أم من شروط تشغيل المرحلة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>عاد الشورت عند تركيب البديل وقبل التشغيل</strong><span>قس جانبي العزل وراجع اللحام.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#stage-comparison" data-boot-demo="chip"><strong>عاد العطل أثناء التشغيل في مرحلة قدرة</strong><span>قارن المرحلة ومكوّنات القيادة والحمل.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج مراجعة البديل والقراءات</strong><span>شارك رقم القطعة والقياسات قبل التركيب وبعده.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s8" data-boot-step="خلاصة قياس الشورت" data-boot-demo="inspect" aria-labelledby="s8-title">
+      <h2 id="s8-title" tabindex="-1">ابدأ بفحص بصري ثم قياس دون تغذية</h2>
+      <p>افصل مصادر الطاقة وتحقق من غياب الجهد. حدّد نقطة GND واسم خط التغذية. اقرأ قيمة المجسّين ثم اقرأ الخط إلى الأرضي في وضع المقاومة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>أنا جاهز لقراءة المقاومة</strong><span>افتح خطوة تفسير القراءة.</span></a>
+        <a class="bootChoice" href="#s2"><strong>أعرف اسم الخط وعندي قياس</strong><span>حدّد هل هو دخل أم خرج.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع تحديد نقطة القياس</strong><span>أرسل صورة اللوحة ورقمها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stop-safely" data-boot-step="إيقاف التشغيل" data-boot-demo="screen-alert" aria-labelledby="stop-safely-title">
+      <h2 id="stop-safely-title" tabindex="-1">توقف عن تكرار التشغيل عند الفصل أو التلف</h2>
+      <p>افصل الكهرباء عندما يكون ذلك آمنًا. افحص الموصلات واللوحة بصريًا بعد أن يبرد الجهاز. سجّل ما حدث في آخر محاولة دون إعادة التشغيل للتصوير.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s8"><strong>الطاقة مفصولة ويمكنني تحديد الخط</strong><span>ابدأ بالقياس دون تغذية.</span></a>
+        <a class="bootChoice" href="#report"><strong>يوجد تلف ظاهر أو لا أملك أدوات</strong><span>أرسل موضع التلف ورقم اللوحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>أرسل القراءات قبل وبعد عزل أي جزء. ضع اسم الخط بجانب الرقم والوحدة، واذكر اتجاه المجسّين عند استخدام وضع الدايود.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>رقم اللوحة وRevision وصورة واضحة لنقطة القياس.</li>
+          <li>اسم الخط أو موضع الملف والموصل.</li>
+          <li>قراءة المجسّين وقيمة الخط إلى GND ووحدة القياس.</li>
+          <li>أي عنصر فُصل وكيف تغيّرت القراءة بعده.</li>
+          <li>قراءة كل جهة بعد العزل، والمكوّن الذي تغيّرت القراءة بعد فصله إن عُرف.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/resistance-to-ground#g2">تفسير الصفارة وقراءات المقاومة</a></li>
+      <li><a href="/diagnostics/vrm-cpu-ram#stage-comparison">مقارنة مراحل القدرة</a></li>
+      <li><a href="/component-testing/capacitor-testing">اختبار المكثفات</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>

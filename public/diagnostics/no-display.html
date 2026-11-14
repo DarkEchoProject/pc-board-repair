@@ -1,54 +1,458 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص No Display و No POST في اللوحة الأم | PC Board Repair</title>
-<meta name="description" content="دليل عملي خطوة بخطوة لتشخيص الكمبيوتر الذي يعمل بدون صورة أو لا يكمل POST: RAM، CPU، Vcore، BIOS، Reset، Clock وكرت الشاشة.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.flow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.flow b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص No Display و No POST في اللوحة الأم","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الجهاز يعمل ولا توجد صورة | No Display وNo POST | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي للشاشة السوداء في الكمبيوتر المكتبي. افحص الشاشة وكابلها، ثم قارن ذاكرة RAM ومؤشرات POST ومسار بطاقة الرسوميات.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display">
+  <meta property="og:title" content="الجهاز يعمل ولا توجد صورة | No Display وNo POST | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي للشاشة السوداء في الكمبيوتر المكتبي. افحص الشاشة وكابلها، ثم قارن ذاكرة RAM ومؤشرات POST ومسار بطاقة الرسوميات.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "الجهاز يعمل ولا توجد صورة",
+  "description": "مسار تفاعلي للشاشة السوداء في الكمبيوتر المكتبي. افحص الشاشة وكابلها، ثم قارن ذاكرة RAM ومؤشرات POST ومسار بطاقة الرسوميات.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-display",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← No Display / No POST</div>
-<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>🖥️ الجهاز يعمل ولا توجد صورة — No Display / No POST</h1><p class="muted">المروحة تعمل واللوحة تبدأ التشغيل، لكن الشاشة تبقى سوداء أو يتوقف الجهاز قبل إكمال POST. هذا الدليل يفصل بين عطل إخراج الصورة وعطل الإقلاع نفسه.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← الجهاز يعمل ولا توجد صورة</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 07</span><span dir="ltr">No Display / No POST</span><span>كمبيوتر مكتبي</span></div>
+    <h1 id="guide-title">الجهاز يعمل ولا توجد صورة</h1>
+    <p>حدّد هل اختفت الصورة وحدها أم توقفت اللوحة قبل إكمال الفحص الأولي POST. ابدأ بفحوص الشاشة، ثم اختر الفرع الذي يطابق الإشارة التي رأيتها.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>الشاشة ومدخلها</span></li>
+      <li><b>٢</b><span>الرام ومؤشرات POST</span></li>
+      <li><b>٣</b><span>الرسوميات وتغذية اللوحة</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>مهم:</b> لا تبدأ ببرمجة BIOS أو تغيير CPU مباشرة. أولًا حدد: هل اللوحة تكمل POST ولا تعرض صورة فقط، أم أنها لا تصل إلى POST أصلًا؟</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">الشاشة والكابل</a></li>
+      <li><a href="#no-signal">رسالة الشاشة ومصدرها</a></li>
+      <li><a href="#firmware-image">صورة BIOS مقارنة بويندوز</a></li>
+      <li><a href="#s2">أقل تركيب</a></li>
+      <li><a href="#without-memory">مقارنة POST دون RAM</a></li>
+      <li><a href="#s3">فحص الرام</a></li>
+      <li><a href="#slot-matrix">مقارنة وحدات الرام والشقوق</a></li>
+      <li><a href="#slot-channel">الشق وقناة الذاكرة</a></li>
+      <li><a href="#memory-training">تدريب الذاكرة والإعدادات</a></li>
+      <li><a href="#memory-rail">ذاكرة وتغذية</a></li>
+      <li><a href="#s4">تغذية المعالج</a></li>
+      <li><a href="#s5">المعالج والسوكت</a></li>
+      <li><a href="#socket-check">السوكيت والتوافق والضغط</a></li>
+      <li><a href="#s6">شريحة BIOS</a></li>
+      <li><a href="#firmware-conditions">قبل التفكير في استعادة BIOS</a></li>
+      <li><a href="#s7">إشارات البدء</a></li>
+      <li><a href="#s8">بطاقة العرض</a></li>
+      <li><a href="#graphics-route">مخرج البطاقة ومسار الصورة</a></li>
+      <li><a href="#graphics-slot">الشق وتغذية بطاقة الشاشة</a></li>
+      <li><a href="#s9">خلاصة فحص الصورة</a></li>
+      <li><a href="#resolved">النتيجة</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>حدد هل المشكلة No Display أم No POST</h2><ul class="checklist"><li>جرّب شاشة وكابل ومنفذ معروفين أنهم يعملون.</li><li>إذا كانت اللوحة تحتوي مخارج شاشة مدمجة، تأكد أن المعالج نفسه يدعم الرسوميات المدمجة قبل الاعتماد عليها.</li><li>افصل كرت الشاشة الخارجي وجرب المدمج إن كان مدعومًا، أو جرّب كرتًا معروفًا بالسليم.</li><li>راقب صفارات اللوحة أو Debug LEDs أو POST Code إن كانت موجودة.</li></ul><div class="decision"><b>إذا ظهرت دلائل أن POST يكتمل لكن لا توجد صورة:</b> ركز على GPU، منفذ العرض ومساره. <br><b>إذا لا توجد أي دلائل POST:</b> انتقل إلى RAM ثم CPU وVcore وBIOS.</div></section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#s9">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>ابدأ بأقل تركيب ممكن</h2><p>شغّل اللوحة خارج الكيس إن أمكن، مع:</p><ul class="checklist"><li>PSU معروف بالسليم.</li><li>CPU والمشتت.</li><li>قطعة RAM واحدة فقط.</li><li>سماعة Beep أو شاشة POST إن كانت اللوحة تدعمها.</li><li>بدون أقراص SATA/NVMe وبدون USB أمامي وبدون كروت إضافية.</li></ul><div class="decision"><b>الهدف:</b> منع جهاز خارجي أو كرت تالف من إيقاف تسلسل POST.</div></section>
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="blank" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">هل الشاشة سوداء من لحظة التشغيل؟</h2>
+      <p>شغّل الشاشة أولًا ولاحظ هل تفتح قائمة الشاشة نفسها. ثم راقب الحاسوب من أول ضغطة. دوّن وجود ضوء تشغيل أو حركة مروحة أو صفارات أو شعار.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>الجهاز يدور والشاشة تقول No Signal أو تبقى سوداء</strong><span>جرّب الشاشة والمدخل والكابل.</span></a>
+        <a class="bootChoice" href="#s3"><strong>مؤشر DRAM أو صفارات متعلّقة بالرام</strong><span>ابدأ باختبار شريحة ذاكرة واحدة.</span></a>
+        <a class="bootChoice" href="#s8"><strong>تظهر علامة أن النظام دخل لكن الصورة غائبة</strong><span>افحص منفذ العرض والبطاقة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-boot" data-boot-demo="logo"><strong>أرى شعار الشركة ثم تتوقف الصورة أو الإقلاع</strong><span>ابدأ من آخر شيء يظهر.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-power" data-boot-demo="power"><strong>الجهاز نفسه لا يستجيب للزر</strong><span>افتح مسار عدم التشغيل.</span></a>
+        <a class="bootChoice" href="/diagnostics/laptop-internal-display" data-boot-demo="screen-pair"><strong>المشكلة في شاشة اللابتوب الداخلية</strong><span>قارن الشاشة الداخلية والخارجية.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>فحص RAM وVDIMM</h2><ul class="checklist"><li>جرب قطعة RAM سليمة واحدة، ثم كل Slot على حدة.</li><li>نظف أطراف الذاكرة وتأكد من عدم وجود رجل مثنية أو جسم غريب داخل الشق.</li><li>شغّل اللوحة بدون RAM: إذا تغير السلوك أو ظهرت صفارات RAM فهذا دليل مفيد أن جزءًا من التسلسل يعمل.</li><li>قس جهد VDIMM على ملفات أو مكثفات دائرة الرام.</li></ul><table class="measureTable"><thead><tr><th>نوع الذاكرة</th><th>الجهد الاسمي الشائع</th><th>ملاحظة</th></tr></thead><tbody><tr><td>DDR3</td><td class="good">حوالي 1.5V</td><td>قد توجد DDR3L عند 1.35V.</td></tr><tr><td>DDR4</td><td class="good">حوالي 1.2V</td><td>القيمة قد تتغير قليلًا حسب التصميم.</td></tr><tr><td>DDR5</td><td class="good">حوالي 1.1V</td><td>تنظيم جزء من التغذية يكون على وحدة الذاكرة نفسها.</td></tr></tbody></table><p class="note">لا تعتبر اختلافًا بسيطًا عطلًا؛ ارجع لمخطط اللوحة عند توفره.</p></section>
+    <section class="bootStep" id="s1" data-boot-step="الشاشة والكابل" data-boot-demo="screen-pair" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">هل تعمل الشاشة على مصدر آخر؟</h2>
+      <p>افتح قائمة الشاشة المدمجة واختر المدخل الذي وصّلت فيه الكابل، مثل HDMI أو DisplayPort. جرّب كابلًا وشاشة يعملان على جهاز آخر، وغيّر عنصرًا واحدًا كل مرة.</p>
+      <ol>
+        <li>إذا كان الجهاز فيه بطاقة منفصلة، جرّب مخرج البطاقة أولًا. مخارج اللوحة تحتاج معالجًا يدعم رسومات مدمجة وتصميمًا يتيح استخدامها.</li>
+        <li>اقرأ هل تظهر No Signal على الشاشة. وجودها يساعد على فصل عمل الشاشة نفسها عن وصول إشارة الفيديو.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-display-path.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يوضح اختبار الشاشة والكابل واختيار مخرج العرض">
+        <figcaption>غيّر الكابل أو الشاشة أو المخرج في اختبار منفصل حتى تعرف ما الذي غيّر النتيجة.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#no-signal"><strong>أرى No Signal أو لا أعرف مصدر الشاشة</strong><span>اختبر القائمة والمدخل والكابل.</span></a>
+        <a class="bootChoice" href="#s8"><strong>الشاشة والكابل يعملان على جهاز آخر</strong><span>تتبّع مخرج الصورة في هذا الجهاز.</span></a>
+        <a class="bootChoice" href="#s2"><strong>الشاشة سليمة والجهاز لا يتقدم في POST</strong><span>ابدأ من التركيب الأدنى.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>عاد العرض بعد تغيير الشاشة أو الكابل</strong><span>سجّل التغيير الذي أعاد الصورة.</span></a>
+      </div>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>تأكد من 12V CPU ثم Vcore</h2><p>تأكد أن موصل EPS/CPU 4-pin أو 8-pin موصول وأن 12V يصل إلى منطقة VRM. بعد التشغيل قس خرج ملفات Vcore قرب المعالج.</p><table class="measureTable"><thead><tr><th>النقطة</th><th>ما تتوقعه</th><th>إذا كانت مفقودة</th></tr></thead><tbody><tr><td>دخل VRM</td><td class="good">حوالي 12V</td><td>افحص موصل CPU، المسار، MOSFETات الدخل والحماية.</td></tr><tr><td>Vcore</td><td class="good">عادة جهد منخفض متغير تقريبًا ضمن 0.6–1.5V</td><td>افحص PWM، Enable، MOSFETs، ملفات VRM وتسلسل Power Good.</td></tr></tbody></table><div class="decision"><b>تنبيه مهم:</b> مقاومة Vcore إلى الأرضي قد تكون منخفضة جدًا طبيعيًا، خصوصًا مع CPU مركب. لا تحكم بوجود شورت من صفارة الاستمرارية وحدها.</div></section>
+    <section class="bootStep" id="no-signal" data-boot-step="رسالة الشاشة ومصدرها" data-boot-demo="screen-alert" aria-labelledby="no-signal-title">
+      <h2 id="no-signal-title" tabindex="-1">هل تعرض الشاشة قوائمها ورسالة No Signal؟</h2>
+      <p>افصل كابل الصورة من الشاشة وهي تعمل. افتح قائمتها من أزرارها، ثم وصّل جهازًا معلومًا أنه يعرض صورة باستخدام مدخل وكابل معروفَين. غيّر عاملًا واحدًا في كل محاولة.</p>
+      <ol>
+        <li>اختر المدخل نفسه من القائمة يدويًا. عند الشك بمحوّل HDMI أو DisplayPort، جرّب كابلًا مباشرًا يدعمه الجهازان.</li>
+        <li>إذا كانت الشاشة تعمل لكن تظهر رسالة No Signal مع الكمبيوتر وحده، تابع مخرج الصورة وPOST. إذا اختفت قائمة الشاشة حتى مع فصل كابل الصورة، افحص تغذيتها أو قارن بشاشة أخرى.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s8"><strong>القائمة تظهر وشاشة أخرى لا تستقبل صورة من هذا الجهاز</strong><span>قارن المخارج والكابل وبطاقة الشاشة.</span></a>
+        <a class="bootChoice" href="#firmware-image"><strong>تظهر صورة أو وميض عند بدء التشغيل ثم تختفي</strong><span>قارن ما يظهر قبل تحميل النظام.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>شاشة أو كابل أو مدخل مختلف أعاد الصورة</strong><span>سجّل التغيير الذي أعادها.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>CPU وSocket</h2><ul class="checklist"><li>افصل الكهرباء وانزع المعالج وافحص Socket بإضاءة قوية ومكبر.</li><li>ابحث عن أرجل مثنية، معجون حراري داخل السوكت، أكسدة أو جسم معدني صغير.</li><li>أعد تركيب CPU والمشتت دون ضغط غير طبيعي.</li><li>إذا توفر CPU متوافق معروف بالسليم، استخدمه للمقارنة بعد التأكد من BIOS support.</li></ul><div class="decision"><b>إذا Vcore موجود لكن لا يوجد أي تقدم في POST:</b> Socket/CPU، BIOS، Reset وClock تصبح أهم النقاط التالية.</div></section>
+    <section class="bootStep" id="firmware-image" data-boot-step="صورة BIOS مقارنة بويندوز" data-boot-demo="windows" aria-labelledby="firmware-image-title">
+      <h2 id="firmware-image-title" tabindex="-1">هل تبقى الصورة في شاشة إعدادات BIOS؟</h2>
+      <p>حاول دخول الإعدادات بالطريقة المعروفة لهذا الموديل. راقب هل ترى الشعار أو القوائم قبل بدء تشغيل النظام، وهل يختفي العرض عند التحميل فقط.</p>
+      <ol>
+        <li>إذا ظهرت القوائم ثم اختفت الصورة عند بدء ويندوز، دوّن آخر رسالة. انتقل إلى فحص بدء النظام أو مخرج العرض من داخل النظام إن أمكن.</li>
+        <li>إذا غابت الصورة حتى قبل التحميل، افصل الطاقة ثم اختبر شاشة وكابلًا ومخرجًا معلومَين. اقرأ مؤشر POST قبل تغيير إعدادات أو برمجة BIOS.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/no-boot#blank-screen" data-boot-demo="windows"><strong>الصورة ثابتة في BIOS وتختفي عند بدء ويندوز</strong><span>تابع مسار الشاشة السوداء أثناء الإقلاع.</span></a>
+        <a class="bootChoice" href="#s2"><strong>لا صورة حتى قبل النظام مع شاشة وكابل سليمين</strong><span>جرّب الحد الأدنى واقرأ مؤشرات POST.</span></a>
+        <a class="bootChoice" href="#s8"><strong>النتيجة تتغير حسب مخرج الصورة</strong><span>راجع المخرج الذي يمكن أن يستخدمه الجهاز.</span></a>
+      </div>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>BIOS / SPI Flash</h2><p>قس تغذية شريحة BIOS أولًا. كثير من شرائح SPI التقليدية تعمل على <span class="mono">3.3V</span>، لكن توجد تصاميم بجهود أخرى، لذلك اقرأ رقم الشريحة أو المخطط.</p><ul class="checklist"><li>تأكد من VCC وGND.</li><li>افحص وجود تلف أو لحام سيئ حول الشريحة والمقاومات المتسلسلة على CLK/Data.</li><li>إذا توفر Oscilloscope أو Logic Analyzer، راقب نشاط CLK وCS/Data عند بدء التشغيل.</li><li>غياب النشاط لا يعني دائمًا أن الشريحة تالفة؛ قد يكون Reset/Clock/EC/SIO لم يسمح ببدء القراءة أصلًا.</li></ul><div class="decision"><b>إعادة البرمجة:</b> تصبح خطوة منطقية بعد التأكد من تغذية الشريحة وعدم وجود عطل واضح في دوائر البدء، مع حفظ Backup قبل الكتابة.</div></section>
+    <section class="bootStep" id="s2" data-boot-step="أقل تركيب" data-boot-demo="rail" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">اختبر POST بأقل عدد من القطع</h2>
+      <p>افصل الكهرباء. اترك اللوحة مع المعالج ومشتته ومروحته، وقطعة RAM في الشق الموصى به، ومزوّد متوافق. أضف بطاقة عرض فقط إذا احتاجها الجهاز للصورة.</p>
+      <ol>
+        <li>افصل أقراص التخزين وملحقات USB والكروت الثانوية قبل المحاولة. غياب القرص قد يظهر BOOT LED بعد أن تتجاوز اللوحة مراحل الفحص السابقة.</li>
+        <li>عند أول تشغيل بعد تغيير الذاكرة قد يستغرق تدريبها وقتًا حسب الموديل. راقب المؤشرات وانتظر المدة المذكورة لدليل اللوحة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>يثبت مؤشر DRAM أو يتغير السلوك عند تغيير الرام</strong><span>اعزل القطعة أو الشق.</span></a>
+        <a class="bootChoice" href="#s4"><strong>يثبت CPU أو لا أرى أي تقدم</strong><span>راجع موصل تغذية المعالج أولًا.</span></a>
+        <a class="bootChoice" href="#s8"><strong>يثبت VGA أو تسمع دخول النظام عند إعادة القرص</strong><span>افحص بطاقة العرض ومخرجها.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>ظهر شعار الشركة بأقل تركيب</strong><span>أعد القطع بالتدريج لتحديد ما أوقف POST.</span></a>
+        <a class="bootChoice" href="#without-memory"><strong>لم أحدد إن كانت اللوحة تبلغ فحص الذاكرة</strong><span>قارن المؤشر مع الذاكرة ودونها إن كان الاختبار مدعومًا.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes" data-boot-demo="post"><strong>يوجد رمز أو صفارات واضحة</strong><span>سجّل النمط واقرأ معنى المرحلة.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>Reset وClock</h2><p>إذا كانت خطوط التغذية موجودة لكن اللوحة لا تتحرك في POST، افحص إشارات Reset وClock حسب المخطط.</p><ul class="checklist"><li>تأكد من بطارية CMOS وجهدها عند الاشتباه، ثم نفذ Clear CMOS بالطريقة الصحيحة.</li><li>Clock لا يُقاس بدقة بملتيميتر عادي؛ الأفضل Oscilloscope.</li><li>إشارة Reset يجب أن تنتقل للحالة التي تسمح للنظام بالعمل بعد استقرار التغذيات. التسمية والقيمة تختلف بين المنصات.</li></ul><p class="note">لا نعطي رقم فولت ثابت لكل Reset لأن اللوحات تستخدم مستويات منطقية وتصاميم مختلفة.</p></section>
+    <section class="bootStep" id="without-memory" data-boot-step="مقارنة POST دون RAM" data-boot-demo="memory" aria-labelledby="without-memory-title">
+      <h2 id="without-memory-title" tabindex="-1">هل يتغيّر مؤشر POST عند إزالة الذاكرة؟</h2>
+      <p>إذا سمح دليل المنصة بتجربة دون ذاكرة، افصل الكهرباء قبل إزالة الوحدات. راقب التغيّر مرة واحدة فقط، ثم أعد تركيب وحدة متوافقة. بعض الأجهزة لا تملك سماعة أو مؤشرات واضحة؛ دوّن وسائل التشخيص المتاحة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>ظهرت إشارة DRAM مختلفة دون الذاكرة</strong><span>تابع فحص وحدة واحدة سليمة والشق المناسب.</span></a>
+        <a class="bootChoice" href="#s4"><strong>لا تغيّر وتبقى اللوحة عند CPU</strong><span>تحقق من دخل EPS وتغذية المعالج.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#silent" data-boot-demo="post"><strong>لا توجد وسيلة مؤشر واضحة</strong><span>حدّد وسائل التشخيص التي تدعمها اللوحة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يدعم الدليل الاختبار أو النتيجة غير واضحة</strong><span>شارك رقم الموديل وسلوك POST.</span></a>
+      </div>
+    </section>
 
-<section id="s8" class="step"><h2><span class="stepNum">8</span>كرت الشاشة ومسار الصورة</h2><ul class="checklist"><li>إذا كان POST يعمل على ما يبدو، جرّب منفذًا آخر مثل HDMI/DP/DVI إن توفر.</li><li>للكرت الخارجي: تأكد من تغذية PCIe الإضافية 6/8-pin عند الحاجة.</li><li>افحص Slot PCIe بصريًا ونظفه وجرب كرتًا سليمًا.</li><li>إذا ظهرت صورة على كرت خارجي فقط أو على المدمج فقط، أصبح العطل محصورًا أكثر في مسار الرسوميات أو الإعدادات.</li></ul></section>
+    <section class="bootStep" id="s3" data-boot-step="فحص الرام" data-boot-demo="memory" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">هل يعمل بقطعة RAM واحدة سليمة؟</h2>
+      <p>افصل الكهرباء قبل الفك والتركيب. راجع دليل اللوحة لاختيار شق القطعة الواحدة، ثم جرّب وحدة ذاكرة متوافقة ومعروفة السلامة.</p>
+      <ol>
+        <li>افحص نقاط تلامس الرام بإضاءة جيدة، وابحث عن حرق أو خدش واضح. افحص أسنان الشق بصريًا دون لمسها أو إدخال أداة فيه.</li>
+        <li>إذا ظهر سن مكسور أو معقوج يلامس سنًا مجاورًا، توقف عن الاختبار الكهربائي لذلك الشق. إذا بدا سليمًا، ثبّت الوحدة بالاتجاه الصحيح حتى تغلق المشابك.</li>
+        <li>قارن وحدتين في الشق نفسه أولًا، ثم قارن الشقوق بوحدة واحدة. سجّل الوحدة والشق اللذين غيّرا النتيجة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#slot-matrix"><strong>اختبرت وحدة واحدة وأريد عزل الرام من الشق</strong><span>غيّر وحدة أو شقًا في كل محاولة.</span></a>
+        <a class="bootChoice" href="#memory-rail"><strong>كل القطع المتوافقة تفشل في شق سليم</strong><span>راجع تغذية الذاكرة وSPD.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت تلفًا أو سنًّا يلامس المجاور</strong><span>توقف عن الاختبار الكهربائي للشق.</span></a>
+        <a class="bootChoice" href="#s4"><strong>لا يتغير المؤشر ويثبت عند CPU</strong><span>افحص موصل المعالج وتغذيته.</span></a>
+      </div>
+    </section>
 
-<section id="s9" class="step"><h2><span class="stepNum">9</span>مسار سريع للتشخيص</h2><div class="flow"><div><b>لا صفارات بدون RAM</b>افحص Vcore، CPU، BIOS، Reset وClock.</div><div><b>صفارات RAM تظهر</b>CPU ينفذ جزءًا من الكود؛ ركز على RAM/Slots/VDIMM ثم BIOS.</div><div><b>POST Code يتوقف</b>استخدم الكود كدليل مع دليل نفس اللوحة، وليس كحكم وحيد.</div><div><b>POST يكتمل بلا صورة</b>ركز على GPU، المنفذ، الشاشة وكابل الإشارة.</div><div><b>Vcore = 0V</b>ارجع إلى VRM وEnable و12V CPU.</div><div><b>كل الجهود موجودة</b>انتقل للـ BIOS ثم Clock/Reset وتسلسل الإقلاع.</div></div></section>
+    <section class="bootStep" id="slot-matrix" data-boot-step="مقارنة وحدات الرام والشقوق" data-boot-demo="memory" aria-labelledby="slot-matrix-title">
+      <h2 id="slot-matrix-title" tabindex="-1">هل يتبع العطل قطعة الرام أم الشق؟</h2>
+      <p>ابدأ بوحدة متوافقة سليمة في الشق الموصى به لوحدة واحدة. افصل الكهرباء قبل كل تغيير وسجّل ما يحدث عند كل تركيب. اترك للمنصة وقت تدريب الذاكرة المذكور في دليلها.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-slot-check.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يقارن شق رام سليمًا بشق فيه سن مائل يلامس السن المجاور">
+        <figcaption>قارن أسنان الشق بصريًا بعد فصل الكهرباء. ظهور تلف أو تلامس يستدعي التوقف عن الاختبار الكهربائي في الشق.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>وحدتان في الشق نفسه</dt>
+          <dd>إذا عملت واحدة فقط، كرّر القياس والاختبار بقطعة مماثلة لتضييق الشك في الوحدة.</dd>
+        </div>
+        <div>
+          <dt>الوحدة السليمة في شقّين مدعومين</dt>
+          <dd>إذا فشل شق بعينه مع وحدة تعمل في الآخر، راجع الشق والقناة والسوكيت.</dd>
+        </div>
+        <div>
+          <dt>كل الوحدات تفشل</dt>
+          <dd>قارن إشارة DRAM والجهد وبيانات SPD بحسب الجيل، وراجع توافق BIOS.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>النتيجة تتبع وحدة واحدة ويعمل الجهاز بغيرها</strong><span>سجّل الوحدة والمواضع التي اختبرتها.</span></a>
+        <a class="bootChoice" href="#slot-channel"><strong>النتيجة تتبع شقًا أو قناة</strong><span>افحص الشق والسوكيت قبل تبديل القطع.</span></a>
+        <a class="bootChoice" href="#memory-training"><strong>تتكرر المحاولة بعد تغيير الرام أو مسح الإعدادات</strong><span>ميّز تدريب الذاكرة من توقف DRAM.</span></a>
+        <a class="bootChoice" href="#memory-rail"><strong>تفشل كل الوحدات المتوافقة</strong><span>راجع تغذية الذاكرة ومسار SPD.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>ما الذي تسجله أثناء الفحص؟</h2><p>اكتب موديل اللوحة ورقمها ثم سجل: 5VSB، 12V CPU، Vcore، VDIMM، سلوك اللوحة بدون RAM، صفارات/LED/POST Code، وجهد BIOS VCC. بهذه البيانات يصبح تحديد المرحلة المتوقفة أسرع بكثير.</p><div class="related"><a class="btn" href="/community">💬 ناقش القياسات في غرفة الصيانة</a><a class="imageBtn" href="/boardview/">🗺️ ابحث عن BoardView</a><a class="imageBtn" href="/diagnostics/no-power">⚡ دليل No Power</a></div></section>
-</article>
+    <section class="bootStep" id="slot-channel" data-boot-step="الشق وقناة الذاكرة" data-boot-demo="inspect" aria-labelledby="slot-channel-title">
+      <h2 id="slot-channel-title" tabindex="-1">هل يوجد تلف في الشق أو ضغط غير متوازن على السوكيت؟</h2>
+      <p>بعد فصل الطاقة، قارن الأسنان داخل الشق الذي يفشل مع شق مماثل تحت إضاءة جيدة وتكبير مناسب. ابحث عن سن مكسور أو مائل أو ملامس لسن آخر وعن آثار احتراق أو أوساخ.</p>
+      <ol>
+        <li>إذا ظهر تلف، أوقف استخدام الشق واترك اللوحة مفصولة حتى يفحصها فني. صوّر مكان التلف بدل إدخال أدوات معدنية في الشق.</li>
+        <li>إذا بدا الشق سليمًا وفشلت قناة كاملة، راجع السوكيت وتركيب المشتت بحسب دليل المنصة. عند توفر مخطط يمكن للفني مقارنة تغذية القناة ومقاومتها بقناة سليمة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>سن تالف أو قناة كاملة تفشل</strong><span>أرسل صور الشق واللوحة واختبارات الوحدات.</span></a>
+        <a class="bootChoice" href="#s5"><strong>الشق يبدو سليمًا وأشتبه في تركيب المعالج</strong><span>راجع السوكيت وتركيب المشتت.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#memory-reference" data-boot-demo="memory"><strong>أريد مقارنة الجهد في الشقوق</strong><span>اتبع فحص تغذية الذاكرة والمرجع.</span></a>
+      </div>
+    </section>
 
-<aside class="toc"><b>محتويات الدليل</b><a href="#s1">1. No Display أم No POST؟</a><a href="#s2">2. أقل تركيب</a><a href="#s3">3. RAM وVDIMM</a><a href="#s4">4. 12V وVcore</a><a href="#s5">5. CPU وSocket</a><a href="#s6">6. BIOS</a><a href="#s7">7. Reset وClock</a><a href="#s8">8. كرت الشاشة</a><a href="#s9">9. المسار السريع</a></aside>
-</div>
+    <section class="bootStep" id="memory-training" data-boot-step="تدريب الذاكرة والإعدادات" data-boot-demo="memory" aria-labelledby="memory-training-title">
+      <h2 id="memory-training-title" tabindex="-1">هل يتقدّم فحص الذاكرة بعد وقت التدريب؟</h2>
+      <p>قد يطول أول تشغيل بعد تغيير الرام أو مسح CMOS خصوصًا على منصات DDR5. راقب هل ينتقل المؤشر من DRAM إلى مرحلة تالية. اتبع مدة وسلوك التدريب الموصوفين للموديل.</p>
+      <ol>
+        <li>ابدأ بقطعة واحدة متوافقة وإعدادات الذاكرة الافتراضية إذا استطعت دخول BIOS. إذا لزم مسح الإعدادات، اتبع طريقة اللوحة بعد إيقافها، ودوّن إعدادات التخزين والإقلاع مسبقًا إن كانت متاحة.</li>
+        <li>لا تكرر فصل الطاقة في منتصف التدريب عند استمرار التقدّم الطبيعي. إذا استقر مؤشر DRAM وتكرر الفشل بإعدادات افتراضية، سجّل تركيبة الوحدات وإصدار BIOS.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>تجاوز الجهاز DRAM وظهرت الصورة</strong><span>أكّد النتيجة بتشغيل بارد إضافي.</span></a>
+        <a class="bootChoice" href="#slot-matrix"><strong>يثبت عند DRAM مع أكثر من وحدة</strong><span>قارن الوحدات والشقوق واحدة في كل مرة.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#memory-spd" data-boot-demo="chip"><strong>التغذية موجودة وقراءة الوحدة غير مؤكدة</strong><span>افحص مسار SPD حسب جيل الرام.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="memory-rail" data-boot-step="ذاكرة وتغذية" data-boot-demo="meter" aria-labelledby="memory-rail-title">
+      <h2 id="memory-rail-title" tabindex="-1">ميّز بين وحدة RAM وتغذية الشق</h2>
+      <p>ابدأ بذاكرة متوافقة وإعدادات أساسية إذا استطعت الدخول إلى BIOS. إن لم يتغير السلوك، يستطيع الفني مراجعة خط تغذية الذاكرة من نقطة موثقة.</p>
+      <ol>
+        <li>سجّل نوع الذاكرة والموديل والـLED الذي يثبت. غياب صفارة بلا سماعة أو نظام تشخيص لا يعطي نتيجة عن الرام.</li>
+        <li>تختلف نقاط القياس حسب DDR واللوحة. في DDR5 قد يكون تنظيم جهد الذاكرة على الوحدة نفسها. حدّد المنصة قبل مقارنة القيم.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#memory-reference" data-boot-demo="memory"><strong>أريد معرفة مكان قياس تغذية الرام</strong><span>قارن VDIMM أو دخل PMIC والمرجع حسب الجيل.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#memory-spd" data-boot-demo="chip"><strong>التغذية سليمة والوحدة لا تُقرأ</strong><span>افحص تغذية SPD ونشاط ناقل البيانات.</span></a>
+        <a class="bootChoice" href="#memory-training"><strong>النتيجة تغيّرت بعد تركيب وحدة جديدة</strong><span>راقب تقدم تدريب الذاكرة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد نقطة قياس معروفة</strong><span>شارك رقم اللوحة والجيل والقراءات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s4" data-boot-step="تغذية المعالج" data-boot-demo="rail" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">هل موصل CPU/EPS وتغذية المعالج موجودان؟</h2>
+      <p>افصل الكهرباء، وتأكد من تثبيت موصل CPU/EPS الصحيح حسب دليل الجهاز. موصل PCIe المخصص لبطاقة العرض يُستخدم في مكانه فقط.</p>
+      <ol>
+        <li>للفني، قارن جهد دخل VRM مع نقطة خرج Vcore أثناء نفس محاولة التشغيل. قد يتغيّر Vcore أو يظهر للحظة حسب المرحلة.</li>
+        <li>غياب Vcore يتطلب فحص الدخل وإشارة التمكين قبل الحكم على المعالج.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s3" data-boot-demo="rail"><strong>دخل تغذية المعالج أو Vcore مفقود</strong><span>حدّد المرحلة التي لم تبدأ في مسار VRM.</span></a>
+        <a class="bootChoice" href="#s5"><strong>التغذية تصل ويثبت مؤشر CPU</strong><span>راجع المعالج وتركيبه ودعمه.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع القياس بأمان</strong><span>أرسل حالة الموصل ومؤشر POST.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s5" data-boot-step="المعالج والسوكت" data-boot-demo="chip" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">راجع تركيب المعالج ودعمه</h2>
+      <p>تحقق من توافق المعالج مع موديل اللوحة وإصدار BIOS. إذا بدأ العطل بعد تبديل المعالج أو المشتت، راجع التركيب أولًا. يعمل الفني على اللوحة وهي مفصولة عند فحص السوكت.</p>
+      <ol>
+        <li>راقب سنون السوكت والتلوث أو بقايا المعجون تحت إضاءة مناسبة. عند وجود تلف مرئي توقف وسجّل ما رأيته.</li>
+        <li>إذا توافرت قطعة متوافقة سليمة، غيّر عنصرًا واحدًا في المقارنة وأعد تركيب المشتت قبل تشغيل اللوحة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>ظهر POST بعد تصحيح التركيب</strong><span>دوّن ما تغيّر في التجربة.</span></a>
+        <a class="bootChoice" href="#socket-check"><strong>العطل بدأ بعد فك المعالج أو المشتت</strong><span>افحص السوكيت والتوافق والتركيب.</span></a>
+        <a class="bootChoice" href="#s6"><strong>التركيب والتغذيات سليمة لكن POST متوقف مبكرًا</strong><span>راجع شريحة BIOS وشروط بدء قراءتها.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت تلفًا في السوكت أو لم أتحقق من التوافق</strong><span>شارك التفاصيل دون تكرار التشغيل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="socket-check" data-boot-step="السوكيت والتوافق والضغط" data-boot-demo="inspect" aria-labelledby="socket-check-title">
+      <h2 id="socket-check-title" tabindex="-1">هل بدأ غياب الصورة بعد فك المعالج أو المشتت؟</h2>
+      <p>بعد فصل التغذية، افحص ما تسمح به خبرتك ودليل الموديل. ابحث عن تلوث أو تلف مرئي في السوكيت، وتأكد من تركيب المشتت بالتساوي. اترك السوكيت دون اختبار إذا لاحظت تلفًا أو تماسًا.</p>
+      <ol>
+        <li>إذا كانت المشكلة في قناة رام بعينها، اربطها بالشقوق في دليل اللوحة وافحص السوكيت وقوة تثبيت المشتت.</li>
+        <li>إن توفر معالج آخر متوافق مع Revision وBIOS الحالي، يمكن المقارنة به بعد تأكد سلامة التغذيات.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#firmware-conditions"><strong>بدأ العطل بعد تغيير المعالج والموديلان مختلفان</strong><span>راجع إصدار BIOS المطلوب.</span></a>
+        <a class="bootChoice" href="#slot-matrix"><strong>يتغير العطل بحسب قناة الذاكرة</strong><span>قارن وحدة واحدة عبر الشقوق المدعومة.</span></a>
+        <a class="bootChoice" href="#report"><strong>يوجد تلف أو لم تتغير النتيجة</strong><span>شارك صورة السوكيت ونوع المعالج وتركيبه.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s6" data-boot-step="شريحة BIOS" data-boot-demo="chip" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">هل تتغذى شريحة BIOS وهل يبدأ الاتصال بها؟</h2>
+      <p>هذه خطوة للفني. اقرأ رقم الشريحة وحدّد الجهد وأطرافها من بياناتها. دوّن VCC قبل تفسير نشاط CS وCLK أثناء محاولة التشغيل.</p>
+      <ol>
+        <li>الملتيميتر يفيد في التغذية. لمعرفة وجود نبضات وتوقيتها استخدم أداة قياس مناسبة مع مرجع أرضي صحيح.</li>
+        <li>إذا لم يظهر نشاط، افحص شروط بدء اللوحة ومنها التغذيات وReset. احتفظ بالنسخة الأصلية عند الوصول إلى مرحلة البرمجة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#firmware-conditions"><strong>أريد فحص توافق BIOS قبل البرمجة</strong><span>راجع الموديل والنسخة والمعالج الحالي.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#spi-activity" data-boot-demo="signal"><strong>تغذية الشريحة سليمة وأريد فحص الاتصال</strong><span>راجع ما تعنيه إشارات CS وCLK.</span></a>
+        <a class="bootChoice" href="#s7"><strong>الاتصال ظاهر وأريد تتبّع POST</strong><span>انتقل إلى إشارات الجاهزية وReset.</span></a>
+        <a class="bootChoice" href="#report"><strong>VCC غير مؤكد أو رقم الشريحة غير واضح</strong><span>شارك رقم الشريحة والقياس قبل أي كتابة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="firmware-conditions" data-boot-step="قبل التفكير في استعادة BIOS" data-boot-demo="chip" aria-labelledby="firmware-conditions-title">
+      <h2 id="firmware-conditions-title" tabindex="-1">هل تدعم نسخة BIOS المعالج الحالي؟</h2>
+      <p>تحقّق من الموديل الدقيق وRevision وقائمة دعم المعالج. إذا بدأ العطل بعد تبديل المعالج أو تحديث Firmware، سجّل ما تغيّر ثم افحص تغذية الشريحة ونشاطها بالتوازي مع توافق النسخة.</p>
+      <ol>
+        <li>إذا كان المعالج القديم ما زال متاحًا ويعمل على هذه اللوحة، يمكن المقارنة به بعد فصل الكهرباء وتركيبه وفق الدليل.</li>
+        <li>إذا لم يوجد توافق أو ظهرت قرائن خلل Firmware، اتبع طريقة الاستعادة المخصصة للموديل بعد تحديد الشريحة والنسخة. احتفظ بالنسخة الأصلية قبل أي كتابة مباشرة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#spi-identify" data-boot-demo="chip"><strong>أحتاج تحديد الشريحة وجهدها</strong><span>تتبّع رقم SPI وتغذيتها قبل القياس.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#firmware-recovery" data-boot-demo="chip"><strong>المشكلة بدأت بعد تحديث أو لدي قرينة واضحة</strong><span>راجع شروط استعادة BIOS وحفظ النسخة.</span></a>
+        <a class="bootChoice" href="#s7"><strong>التوافق معروف ولا قرينة على فساد الملف</strong><span>تابع شروط Reset وClock ومؤشر POST.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="إشارات البدء" data-boot-demo="signal" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">حدّد أول إشارة لا تصل في تسلسل POST</h2>
+      <p>إذا استقرت التغذيات وبقي الجهاز بلا تقدم، ابدأ بالمخطط. سجّل أسماء إشارات Reset وPower Good ووقت تغيرها. فحص تردد Clock يحتاج أداة مناسبة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#reset-check" data-boot-demo="signal"><strong>التغذيات ثابتة ولم أتحقق من Reset</strong><span>قارن Reset بحالة Power Good.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#clock-check" data-boot-demo="signal"><strong>أريد التحقق من Clock في نقطة موثّقة</strong><span>راجع نقطة القياس والمسبار المناسب.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#s6" data-boot-demo="post"><strong>لدي رمز POST أو لمبة ثابتة</strong><span>اقرأ ترتيب الرموز والمؤشرات.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك نقاطًا موثّقة</strong><span>أرسل رقم البورد والقراءات المتاحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s8" data-boot-step="بطاقة العرض" data-boot-demo="screen-pair" aria-labelledby="s8-title">
+      <h2 id="s8-title" tabindex="-1">هل جرّبت المخرج الصحيح وبطاقة سليمة؟</h2>
+      <p>تأكد من اختيار مدخل الشاشة وتوصيل الكابل بالمخرج الذي يعمل في هذا التركيب. افصل الطاقة قبل إعادة تثبيت البطاقة أو توصيل كابلاتها.</p>
+      <ol>
+        <li>راجع تثبيت البطاقة وتغذية PCIe المخصصة لها. جرّب بطاقة أخرى متوافقة إن توفرت، أو الرسومات المدمجة إذا كانت مدعومة.</li>
+        <li>إذا تظهر صورة في BIOS ثم تختفي عند بدء ويندوز، سجّل وقت الاختفاء وتابع إلى مسار الإقلاع.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#graphics-route"><strong>لم أتحقق من دعم المخرج أو تغذية البطاقة</strong><span>راجع مسار الصورة في التركيب الحالي.</span></a>
+        <a class="bootChoice" href="#firmware-image"><strong>تظهر صورة الشعار ثم تسود الشاشة</strong><span>اختبر ثبات الصورة داخل BIOS.</span></a>
+        <a class="bootChoice" href="#s2"><strong>جميع المخارج الموثّقة بلا صورة ومؤشر POST يتوقف</strong><span>ارجع إلى أقل تركيب واقرأ المؤشر.</span></a>
+        <a class="bootChoice" href="#report"><strong>اختبرت بطاقة وشاشة سليمتين ولا صورة</strong><span>أرسل نوع المخرج وآخر مؤشر ظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="graphics-route" data-boot-step="مخرج البطاقة ومسار الصورة" data-boot-demo="screen-pair" aria-labelledby="graphics-route-title">
+      <h2 id="graphics-route-title" tabindex="-1">هل المخرج المختبَر متصل بمعالج رسومي فعّال؟</h2>
+      <p>في جهاز ببطاقة منفصلة ابدأ بمخارج البطاقة نفسها وتحقّق من موصلات طاقتها مع فصل الكهرباء قبل أي فك. مخارج اللوحة تعمل فقط إذا كانت المنصة تملك رسومات مدمجة مفعّلة ويدعم الموديل إخراجها.</p>
+      <ol>
+        <li>قارن شاشة واحدة وكابلًا مباشرًا بكل مخرج تختبره. جرّب مخرجًا آخر من البطاقة إذا كان مدعومًا، ودوّن هل يصل POST إلى VGA أو BOOT.</li>
+        <li>إذا أمكن، قارن ببطاقة معروفة السلامة ومتوافقة. اختبار بطاقة في جهاز آخر يساعد على فصل عطلها عن الشق أو التغذية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>مخرج آخر أو بطاقة سليمة أعادا الصورة</strong><span>سجّل المخرج والقطعة التي غيّرت النتيجة.</span></a>
+        <a class="bootChoice" href="#graphics-slot"><strong>أريد عزل البطاقة من شق PCIe</strong><span>قارن ببطاقة أو شق مدعوم.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#s5" data-boot-demo="post"><strong>يبقى مؤشر VGA مع بطاقة متوافقة سليمة</strong><span>راجع كيف تحدد مرحلة VGA.</span></a>
+        <a class="bootChoice" href="#firmware-image"><strong>الصورة تظهر في BIOS وتختفي بعده</strong><span>انتقل إلى فحص مرحلة بدء النظام.</span></a>
+        <a class="bootChoice" href="#s2"><strong>لا صورة والمؤشر يتوقف قبل VGA</strong><span>ارجع إلى الحد الأدنى من القطع.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="graphics-slot" data-boot-step="الشق وتغذية بطاقة الشاشة" data-boot-demo="screen-pair" aria-labelledby="graphics-slot-title">
+      <h2 id="graphics-slot-title" tabindex="-1">هل يثبت العطل مع الشق أم مع البطاقة؟</h2>
+      <p>افصل الكهرباء وافحص تثبيت البطاقة ومزلاج الشق وتغذيتها الإضافية وفق دليلها. جرّب بطاقة سليمة متوافقة في الشق نفسه، ثم قارن بموضع آخر إذا كان مدعومًا.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>العطل يتبع البطاقة في أكثر من جهاز متوافق</strong><span>سجّل النتائج التي تعزل البطاقة.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#s5" data-boot-demo="post"><strong>بطاقتان سليمتان تتوقفان عند VGA على نفس اللوحة</strong><span>راجع مرحلة VGA والتغذيات قبل تغيير القطع.</span></a>
+        <a class="bootChoice" href="#report"><strong>المشكلة تتبع شقًا محددًا أو فيه تلف</strong><span>شارك صورة الشق ونتائج البطاقة البديلة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s9" data-boot-step="خلاصة فحص الصورة" data-boot-demo="inspect" aria-labelledby="s9-title">
+      <h2 id="s9-title" tabindex="-1">اختر الفرع بحسب آخر علامة</h2>
+      <p>وجود No Signal على الشاشة يقود لفحص المدخل والكابل. ثبات DRAM يقود لتجربة ذاكرة واحدة. ثبات VGA يقود لفحص مسار العرض. اذكر نموذج اللوحة حتى يُقرأ معنى المؤشر الصحيح.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>لا إشارة عرض</strong><span>افتح اختبار الشاشة والكابل.</span></a>
+        <a class="bootChoice" href="#s3"><strong>المؤشر يثبت عند الرام</strong><span>افتح اختبار الرام والشق.</span></a>
+        <a class="bootChoice" href="#s8"><strong>المؤشر يثبت عند VGA</strong><span>افتح فحص بطاقة العرض.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي عدة نتائج من محاولات مختلفة</strong><span>اذكر أي تغيير أدى إلى كل نتيجة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="النتيجة" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">ثبّت السبب بتغيير واحد في كل محاولة</h2>
+      <p>بعد أن تظهر الصورة، سجّل التركيب الذي نجح. أعد توصيل أي قطعة لازمة على حدة والجهاز مفصول. حدّد إن كانت الصورة تظهر منذ BIOS أم بعد دخول النظام.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك النتيجة</strong><span>اكتب العنصر الذي أعاد الصورة.</span></a>
+        <a class="bootChoice" href="#start"><strong>عادت الشاشة السوداء</strong><span>اختر ما تراه الآن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>صف أول علامة رأيتها على الشاشة أو اللوحة. إذا غيّرت الكابل أو الرام أو البطاقة، اذكر نتيجة كل اختبار على حدة.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل اللوحة والمعالج وبطاقة العرض إن وُجدت.</li>
+          <li>نوع الكابل والمخرج والمدخل، وهل ظهرت قائمة الشاشة أو No Signal.</li>
+          <li>اسم لمبة POST أو نمط الصفارات، والقطعة والشق المستخدمان في اختبار RAM.</li>
+          <li>أي قراءة موثقة لتغذية المعالج أو الرام، مع توقيت القراءة.</li>
+          <li>آخر مرحلة يظهر فيها العرض، والنتائج مع أكثر من مخرج أو شق RAM إن اختُبرت.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/post-beep-codes#s8">تتبّع إشارات POST</a></li>
+      <li><a href="/diagnostics/vrm-cpu-ram#s8">فحص تغذيات RAM وSPD</a></li>
+      <li><a href="/diagnostics/no-boot#blank-screen">الصورة تختفي عند تحميل ويندوز</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>

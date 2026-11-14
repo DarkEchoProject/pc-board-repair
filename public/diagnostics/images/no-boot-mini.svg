@@ -194,4 +194,51 @@
     <path d="M59 32v7" stroke="#ffe0ae" stroke-width="3.5" stroke-linecap="round"/>
     <circle cx="59" cy="44.5" r="1.8" fill="#ffe0ae"/>
   </symbol>
+
+  <symbol id="meter" viewBox="0 0 120 84">
+    <rect x="39" y="20" width="29" height="33" rx="5" fill="#255568" stroke="#9ce8ef" stroke-width="2.5"/>
+    <path d="M46 27h15v8H46z" fill="#b9f4e1"/>
+    <path d="m50 46 3-5 4 4m5 8 9 5 9-8" fill="none" stroke="#ffd087" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="switch-button" viewBox="0 0 120 84">
+    <rect x="36" y="24" width="49" height="25" rx="6" fill="#255568" stroke="#9ce8ef" stroke-width="2.5"/>
+    <path d="M60 29v8m-6-4a8 8 0 1 0 12 0m-30 4h-5m54 0h5" fill="none" stroke="#b9f4e1" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="rail" viewBox="0 0 120 84">
+    <path d="M31 40h12V26h15v14h15V26h16" fill="none" stroke="#a3e6f1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33 49h54" stroke="#537a97" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="89" cy="26" r="4" fill="#b9f4e1"/>
+  </symbol>
+
+  <symbol id="memory" viewBox="0 0 120 84">
+    <rect x="30" y="27" width="60" height="18" rx="4" fill="#255568" stroke="#9ce8ef" stroke-width="2.5"/>
+    <path d="M38 32h9v7h-9zm17 0h9v7h-9zm17 0h9v7h-9z" fill="#b9f4e1"/>
+    <path d="M38 46v4m7-4v4m7-4v4m15-4v4m7-4v4m7-4v4" stroke="#ffd087" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="chip" viewBox="0 0 120 84">
+    <rect x="45" y="24" width="30" height="27" rx="4" fill="#255568" stroke="#9ce8ef" stroke-width="2.5"/>
+    <path d="M40 29h5m-5 8h5m-5 8h5m30-16h5m-5 8h5m-5 8h5M53 19v5m14-5v5m-14 27v5m14-5v5" stroke="#b9f4e1" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="54" cy="32" r="2.5" fill="#ffd087"/>
+  </symbol>
+
+  <symbol id="signal" viewBox="0 0 120 84">
+    <path d="M30 39h11l8-15 12 26 9-17 5 6h15" fill="none" stroke="#b9f4e1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M31 53h58" stroke="#537a97" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+
+  <symbol id="temperature" viewBox="0 0 120 84">
+    <path d="M52 42V25a6 6 0 0 1 12 0v17a10 10 0 1 1-12 0Z" fill="#255568" stroke="#9ce8ef" stroke-width="2.5"/>
+    <path d="M58 32v15m12-17h9m-9 7h6" stroke="#ffd087" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="58" cy="49" r="3.5" fill="#ffd087"/>
+  </symbol>
+
+  <symbol id="isolate" viewBox="0 0 120 84">
+    <path d="M28 38h14m36 0h14m-47 0 24-12" fill="none" stroke="#9ce8ef" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="42" cy="38" r="4" fill="#b9f4e1"/>
+    <circle cx="78" cy="38" r="4" fill="#ffd087"/>
+    <path d="M61 47v7m-5-3h10" stroke="#ffd087" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
 </svg>

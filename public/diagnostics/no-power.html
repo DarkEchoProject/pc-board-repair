@@ -1,61 +1,521 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>الجهاز لا يعمل نهائيًا | فحص 5VSB وزر التشغيل | PC Board Repair</title>
-<meta name="description" content="ابدأ تشخيص الكمبيوتر المكتبي الذي لا يستجيب. حدّد حالة جهد 5VSB، ثم افحص زر التشغيل وإشارة PS_ON# حسب النتيجة.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.related a{text-decoration:none}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الجهاز لا يعمل نهائيًا | فحص 5VSB وزر التشغيل | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي للكمبيوتر المكتبي الذي لا يستجيب. ابدأ من الكهرباء، ثم افحص 5VSB وزر التشغيل وPS_ON# وحدّد أول مرحلة تتوقف.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power">
+  <meta property="og:title" content="الجهاز لا يعمل نهائيًا | فحص 5VSB وزر التشغيل | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي للكمبيوتر المكتبي الذي لا يستجيب. ابدأ من الكهرباء، ثم افحص 5VSB وزر التشغيل وPS_ON# وحدّد أول مرحلة تتوقف.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "الجهاز لا يعمل نهائيًا",
+  "description": "مسار تفاعلي للكمبيوتر المكتبي الذي لا يستجيب. ابدأ من الكهرباء، ثم افحص 5VSB وزر التشغيل وPS_ON# وحدّد أول مرحلة تتوقف.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/no-power",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← No Power</div>
-<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>⚡ الجهاز لا يعمل نهائيًا — No Power</h1><p class="muted">المقصود هنا: عند الضغط على زر التشغيل لا تدور المروحة ولا يبدأ الجهاز. اتبع التسلسل التالي بدل تغيير القطع عشوائيًا.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← الجهاز لا يعمل نهائيًا</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 06</span><span dir="ltr">No Power</span><span>كمبيوتر مكتبي</span></div>
+    <h1 id="guide-title">الجهاز لا يعمل نهائيًا</h1>
+    <p>ابدأ بما يحدث لحظة الضغط على زر التشغيل. إذا لم تقس جهد الاستعداد، ستجد طريقة تحديد النقطة والقياس ثم تختار النتيجة التي ظهرت.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>المقبس والكابل والمفتاح</span></li>
+      <li><b>٢</b><span>جهد الاستعداد وزر التشغيل</span></li>
+      <li><b>٣</b><span>أمر التشغيل والمخارج</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>سلامة:</b> القياسات التالية على جهة الجهد المنخفض للوحة الأم وموصل ATX. لا تفتح مزود الطاقة ولا تقس على جانبه الابتدائي المتصل بالتيار إلا إذا كنت مؤهلًا لذلك.</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">الفحص الخارجي</a></li>
+      <li><a href="#check-connectors">الموصلات والملحقات</a></li>
+      <li><a href="#no-power-first-check">قبل القياس</a></li>
+      <li><a href="#s2">قياس جهد الاستعداد</a></li>
+      <li><a href="#standby-missing">الاستعداد غائب أو منخفض</a></li>
+      <li><a href="#standby-isolation">استعداد المزود مقابل اللوحة</a></li>
+      <li><a href="#standby-under-load">هبوط الاستعداد عند الضغط</a></li>
+      <li><a href="#known-psu">المقارنة بمزوّد سليم</a></li>
+      <li><a href="#s3">زر التشغيل</a></li>
+      <li><a href="#button-failed">زر الكيس أو توصيله</a></li>
+      <li><a href="#s4">أمر تشغيل المزوّد</a></li>
+      <li><a href="#starts-on-ac">يبدأ بمجرد توصيل الكهرباء</a></li>
+      <li><a href="#s5">مخارج الباور</a></li>
+      <li><a href="#power-good">قراءة PWR_OK</a></li>
+      <li><a href="#local-power-sequence">تسلسل التغذيات المحلية</a></li>
+      <li><a href="#s6">الفحص دون تغذية</a></li>
+      <li><a href="#s7">منطق الاستعداد</a></li>
+      <li><a href="#standby-path">تتبّع تغذية الاستعداد على اللوحة</a></li>
+      <li><a href="#control-signals">إشارة الزر وطلب التشغيل على اللوحة</a></li>
+      <li><a href="#rtc-standby">ساعة RTC وبطارية الإعدادات</a></li>
+      <li><a href="#flow">خلاصة مسار عدم التشغيل</a></li>
+      <li><a href="#stop-safely">إيقاف الاختبار</a></li>
+      <li><a href="#resolved">النتيجة</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<section class="sectionBlock" aria-labelledby="no-power-first-check">
-  <h2 id="no-power-first-check">لم تقس جهد الاستعداد بعد؟</h2>
-  <p>أبقِ غطاء مزوّد الطاقة مغلقًا. دوّن هل يظهر أي ضوء على اللوحة أو تتحرك المروحة لحظة الضغط. هذه الملاحظة تساعدك على اختيار الاختبار الأول.</p>
-  <ul>
-    <li><a href="#s2">لا استجابة بعد الضغط ولم أقس 5VSB</a> · افتح خطوة قياس الاستعداد. راجع مخطط موصل اللوحة وحدّد طرف GND والطرف المسمّى 5VSB قبل وضع المجسّين.</li>
-    <li><a href="#s3">قست 5VSB والقراءة موجودة</a> · تابع إلى زر التشغيل. سجّل القراءة والموصل في وضعه وقت القياس.</li>
-    <li><a href="/diagnostics/restarts-shuts-down">الجهاز يبدأ ثم يفصل</a> · راجع تسلسل الفصل ودوّن كم يبقى الجهاز قيد التشغيل.</li>
-  </ul>
-</section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#flow">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>ابدأ خارج اللوحة</h2><ul class="checklist"><li>استخدم كابل كهرباء سليم ومزود طاقة معروف أنه يعمل.</li><li>افصل الأقراص وكروت PCIe وUSB الأمامية، واترك اللوحة مع CPU وقطعة RAM فقط عند الحاجة.</li><li>افحص بصريًا: مكثفات منتفخة، MOSFET محترق، آثار سوائل أو سواد حول دوائر التغذية.</li></ul><div class="decision"><b>إذا اشتغل الجهاز بمزود آخر:</b> العطل غالبًا في مزود الطاقة أو كابله وليس اللوحة.</div></section>
+    <section class="bootStep" id="start" data-boot-step="تحديد العَرَض" data-boot-demo="power" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">ماذا يحدث عند الضغط على زر التشغيل؟</h2>
+      <p>راقب الجهاز مرة واحدة. افحص هل يوجد ضوء استعداد، وهل تتحرك المروحة لحظة. إذا ظهر دخان أو حرق أو أثر سائل، افصل الكهرباء وتوقف عن محاولات التشغيل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s1"><strong>لا ضوء ولا حركة ولم أفحص مصدر الكهرباء</strong><span>ابدأ بالمقبس والكابل والمفتاح الخلفي.</span></a>
+        <a class="bootChoice" href="#no-power-first-check"><strong>الكهرباء والكابل سليمَان ولم أقس 5VSB</strong><span>حدّد نوع الموصل والأدوات قبل القياس.</span></a>
+        <a class="bootChoice" href="#s2"><strong>أنا فني وأريد قياس 5VSB</strong><span>انتقل إلى القياس على جهة اللوحة.</span></a>
+        <a class="bootChoice" href="#s3"><strong>قست 5VSB وهو موجود</strong><span>افحص زر الكيس ووصول الإشارة.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#early-stop" data-boot-demo="intermittent"><strong>تتحرك المروحة ثم يتوقف الجهاز</strong><span>سجّل مدة التشغيل واتبع مسار الفصل.</span></a>
+        <a class="bootChoice" href="#starts-on-ac"><strong>يحاول التشغيل بمجرد توصيل الكهرباء</strong><span>قارن إعداد الاستعادة والزر وأمر التشغيل.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>توجد رائحة حرق أو أثر سائل</strong><span>أوقف الاختبار واعزل الجهاز عن الكهرباء.</span></a>
+      </div>
+    </section>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>افحص 5VSB أولًا</h2><p>صل مزود الطاقة باللوحة دون الضغط على زر التشغيل. ضع الأسود على GND وقس خط الاستعداد <span class="mono">5VSB</span>. في موصل ATX القياسي يكون عادة السلك البنفسجي.</p><table class="measureTable"><thead><tr><th>النقطة</th><th>المتوقع</th><th>المعنى</th></tr></thead><tbody><tr><td>5VSB</td><td class="good">حوالي 5V</td><td>طاقة الاستعداد وصلت للوحة.</td></tr><tr><td>5VSB = 0V</td><td class="bad">غير طبيعي</td><td>افحص PSU، الموصل، الفيوز/الحماية ومسار 5VSB على اللوحة.</td></tr><tr><td>5VSB منخفض جدًا</td><td class="bad">مثلاً 1–3V</td><td>قد توجد حماية أو حمل زائد/شورت على خط الاستعداد.</td></tr></tbody></table><p class="muted">في اللوحات OEM ذات الموصلات الخاصة لا تعتمد ألوان أو أرقام ATX القياسية؛ استخدم المخطط أو BoardView الخاص باللوحة.</p></section>
+    <section class="bootStep" id="s1" data-boot-step="الفحص الخارجي" data-boot-demo="charger-plug" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">تأكد من المقبس والكابل والمفتاح الخلفي</h2>
+      <p>ابدأ خارج الجهاز حتى تستبعد مشكلة التغذية قبل فحص اللوحة.</p>
+      <ol>
+        <li>جرّب المقبس بجهاز بسيط معروف أنه يعمل. إذا كان الحاسوب على مشترك، اختبره بمقبس سليم مباشرة.</li>
+        <li>تأكد أن كابل الكهرباء مثبت عند الطرفين. جرّب كابلًا سليمًا بالمواصفات المناسبة، وضع المفتاح الخلفي على I إن كان موجودًا.</li>
+        <li>لاحظ هل يضيء مؤشر اللوحة عند توصيل الكهرباء. بعض اللوحات بلا مؤشر، لذلك دوّن السلوك وتابع حتى لو لم ترَ ضوءًا.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#check-connectors"><strong>المقبس والكابل سليمَان والجهاز ساكن</strong><span>افحص تثبيت الموصلات والملحقات.</span></a>
+        <a class="bootChoice" href="#resolved"><strong>عاد التشغيل بعد تغيير المقبس أو الكابل</strong><span>دوّن ما أعاد التشغيل.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>المقبس أو الموصل متضرّر</strong><span>أوقف استخدام الجزء التالف.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>افحص زر التشغيل وإشارة Power Button</h2><p>اختبر الزر نفسه أو قصّر طرفي <span class="mono">PWR_SW</span> لحظة واحدة بمفك معزول. على كثير من اللوحات تكون إشارة الزر مرفوعة لجهد منطقي ثم تنخفض عند الضغط، لكن القيمة الدقيقة تختلف حسب التصميم.</p><div class="decision"><b>إذا استجابت اللوحة عند قصر PWR_SW:</b> افحص زر الكيس والأسلاك. <br><b>إذا لم تتغير إشارة الزر:</b> تتبع المسار إلى Super I/O أو EC والمقاومات المحيطة.</div></section>
+    <section class="bootStep" id="check-connectors" data-boot-step="الموصلات والملحقات" data-boot-demo="inspect" aria-labelledby="check-connectors-title">
+      <h2 id="check-connectors-title" tabindex="-1">هل تصل التغذية عبر الموصلات الصحيحة؟</h2>
+      <p>إذا كان المقبس والكابل سليمين، افصل الكهرباء وافحص تثبيت موصل اللوحة الرئيسي وموصل CPU/EPS بحسب رسم الجهاز. تحقّق من المزلاج ومن أي دبوس متراجع أو بلاستيك متغيّر اللون.</p>
+      <ol>
+        <li>في المزوّد المعياري استخدم كابلاته المطابقة لطرازه. تشابه القوابس لا يثبت تطابق توصيلها.</li>
+        <li>افصل ملحقات USB والطاقة عن الأقراص غير اللازمة للتجربة مع إيقاف الجهاز. إذا تغيّر السلوك، أعد الملحقات واحدًا واحدًا بعد فصل الكهرباء في كل مرة.</li>
+        <li>إن كان العطل بعد تركيب اللوحة في الكيس، افحص مواقع قواعد التثبيت والبراغي وأسلاك اللوحة الأمامية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>عاد التشغيل بعد فصل ملحق أو تصحيح التوصيل</strong><span>حدّد أي تغيير أعاد الاستجابة.</span></a>
+        <a class="bootChoice" href="#no-power-first-check"><strong>الموصلات سليمة ولا توجد استجابة</strong><span>ابدأ من جهد الاستعداد.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>يوجد اسوداد أو ذوبان عند الموصل</strong><span>أوقف التشغيل وصوّر الموضع.</span></a>
+      </div>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>راقب PS_ON#</h2><p>في ATX القياسي يكون <span class="mono">PS_ON#</span> هو السلك الأخضر. قبل التشغيل يكون مرتفعًا، وعند أمر التشغيل يجب أن يسحبه النظام إلى مستوى منخفض ليشغّل المخارج الرئيسية.</p><table class="measureTable"><thead><tr><th>الحالة</th><th>PS_ON#</th><th>الاتجاه التالي</th></tr></thead><tbody><tr><td>قبل الضغط</td><td>مرتفع عادة عدة فولتات</td><td>طبيعي.</td></tr><tr><td>بعد الضغط</td><td class="good">ينخفض قرب 0V</td><td>أمر التشغيل خرج من اللوحة؛ افحص المخارج الرئيسية والشورت.</td></tr><tr><td>لا يتغير</td><td class="bad">يبقى مرتفعًا</td><td>افحص زر التشغيل، 3.3V/5V الاستعداد، Super I/O، RTC/CMOS ومسار التحكم.</td></tr><tr><td>منخفض دائمًا بمجرد توصيل الكهرباء</td><td class="bad">قرب 0V</td><td>قد يكون PS_ON عالقًا منخفضًا أو هناك عطل تحكم. إذا كانت اللوحة تقلع طبيعيًا فقد يكون إعداد Restore after AC Loss سببًا محتملًا.</td></tr></tbody></table></section>
+    <section class="bootStep" id="no-power-first-check" data-boot-step="قبل القياس" data-boot-demo="inspect" aria-labelledby="no-power-first-check-title">
+      <h2 id="no-power-first-check-title" tabindex="-1">لم تقس جهد 5VSB بعد؟</h2>
+      <p>جهد الاستعداد يساعد على التفريق بين مشكلة وصول الطاقة ومشكلة أمر التشغيل. حدّد أولًا هل الجهاز يستخدم موصل ATX تقليديًا أم موصلًا خاصًا بالشركة.</p>
+      <ol>
+        <li>إن توفر ملتيميتر ومخطط موصل معروف، افحص على جهة اللوحة فقط. ابقِ مزوّد الطاقة مغلقًا.</li>
+        <li>إذا لم تتأكد من أطراف الموصل، يمكنك المقارنة بمزوّد معروف السلامة ومتوافق مع اللوحة وبكابلاته الأصلية المطابقة له.</li>
+      </ol>
+      <p class="bootNote">الأجهزة ذات الموصلات الخاصة قد تستخدم جهد استعداد أو ترتيب أطراف مختلفًا. حدّد الطرف من مخطط موديلك.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>أعرف نوع الموصل وطرف الاستعداد</strong><span>اضبط الملتيميتر على الجهد المستمر ثم اقرأ القيمة.</span></a>
+        <a class="bootChoice" href="#known-psu"><strong>لا أملك قياسًا ولدي مزود متوافق</strong><span>اختبر الجهاز بمصدر تغذية معروف.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف الأطراف أو لا أملك أدوات</strong><span>أرسل الموديل وصورة الموصل لنحدد نقطة البداية.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>إذا انخفض PS_ON لكن لا يوجد تشغيل</h2><p>قس المخارج الرئيسية من موصل الطاقة: <span class="mono">12V</span>، <span class="mono">5V</span> و<span class="mono">3.3V</span>. إذا ظهرت ثم اختفت فورًا، افصل الكهرباء وافحص وجود شورت على الخطوط قبل إعادة المحاولة.</p><table class="measureTable"><thead><tr><th>الخط</th><th>القيمة الاسمية</th><th>ملاحظات</th></tr></thead><tbody><tr><td>12V</td><td>حوالي 12V</td><td>يغذي VRM المعالج ودوائر أخرى.</td></tr><tr><td>5V</td><td>حوالي 5V</td><td>موجود بعد تشغيل PSU.</td></tr><tr><td>3.3V</td><td>حوالي 3.3V</td><td>خط منطقي رئيسي.</td></tr></tbody></table><div class="decision"><b>المخارج كلها صفر رغم أن PS_ON منخفض:</b> جرّب PSU معروفًا، ثم افحص شورت على خطوط اللوحة أو دخول PSU في الحماية.</div></section>
+    <section class="bootStep" id="s2" data-boot-step="قياس جهد الاستعداد" data-boot-demo="meter" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">كيف تقيس 5VSB وما معنى القراءة؟</h2>
+      <p>في ATX التقليدي يصل 5VSB عندما يكون المزود موصولًا بالكهرباء ومفتاحه الخلفي في وضع التشغيل، قبل الضغط على زر الكيس. هذه خطوة قياس جهد للفني الذي يعرف أطراف الموصل.</p>
+      <ol>
+        <li>قبل توصيل الكهرباء، حدّد GND وطرف 5VSB من مخطط موصل اللوحة. أبقِ موصل ATX مركبًا إذا استطعت الوصول إلى نقطة قياس آمنة من جهة اللوحة.</li>
+        <li>ضع الملتيميتر على V DC، والأسود في COM والأحمر في مدخل الجهد V. ثبّت الأسود على GND واستخدم مجسًا معزولًا لقراءة 5VSB دون ملامسة الأطراف المجاورة.</li>
+        <li>اقرأ والكمبيوتر متوقف، وقارن القراءة بالقيمة الاسمية لموديلك. في ATX التقليدي تكون قراءة 5VSB نحو 5 فولت. سجّل الرقم ووحدة القياس.</li>
+      </ol>
+      <p class="bootNote">في ATX التقليدي قد يكون سلك الاستعداد بنفسجيًا. اعتمد على مخطط الأطراف، خصوصًا مع كابلات الألوان الموحّدة ولوحات OEM.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-standby-meter.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم ملتيميتر على الجهد المستمر بين GND و5VSB">
+        <figcaption>مبدأ القياس قبل الضغط على زر التشغيل. الرسم يوضّح الإشارة والأرضي، وترتيب الأطراف يؤخذ من موديل اللوحة.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>قراءة ضمن مواصفة المزوّد</dt>
+          <dd>في معيار ATX 3 متعدد المخارج، المجال المحدد لخط 5VSB هو 4.75 إلى 5.25 فولت. استخدم مواصفة مزوّدك في التصاميم الأخرى.</dd>
+        </div>
+        <div>
+          <dt>صفر أو أقل من المجال المتوقع</dt>
+          <dd>قارن خرج الاستعداد عند الموصل وقراءته عند اتصال اللوحة. افصل الكهرباء قبل تغيير أي توصيل.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>قراءة 5VSB قريبة من 5V وثابتة</strong><span>انتقل إلى فحص زر التشغيل.</span></a>
+        <a class="bootChoice" href="#standby-missing"><strong>القراءة صفر أو أقل بكثير من المتوقع</strong><span>قارن الاستعداد مع مزوّد متوافق.</span></a>
+        <a class="bootChoice" href="#standby-under-load"><strong>القراءة طبيعية ثم تهبط مع الضغط</strong><span>قارنها قبل محاولة التشغيل وأثناءها.</span></a>
+        <a class="bootChoice" href="#no-power-first-check"><strong>لم أجد نقطة آمنة أو القراءة غير واضحة</strong><span>راجع نوع الموصل ووضع الملتيميتر.</span></a>
+      </div>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>فحص الشورت قبل حقن أي فولت</h2><p>افصل PSU والبطارية إن أمكن، ثم قس المقاومة إلى الأرضي على خطوط الإدخال. لا تعتبر كل مقاومة منخفضة شورتًا: خط <span class="mono">Vcore</span> نفسه قد تكون مقاومته منخفضة جدًا طبيعيًا، خصوصًا مع CPU مركب.</p><ul class="checklist"><li>ركز أولًا على <b>دخل 12V CPU</b> قبل مراحل التحويل، وليس خرج Vcore.</li><li>قراءة قريبة جدًا من الصفر وثابتة مع صفارة مستمرة على دخل 12V تستحق تتبع MOSFETs والمكثفات على ذلك الخط.</li><li>أزل المعالج فقط إذا كان ذلك جزءًا من المقارنة المطلوبة؛ وجوده يغير مقاومات عدة خطوط.</li><li>لا تحقن 12V في خط مجهول. إذا استُخدم الحقن الحراري فليكن بجهد منخفض ومحدود التيار يناسب الخط.</li></ul></section>
+    <section class="bootStep" id="standby-missing" data-boot-step="الاستعداد غائب أو منخفض" data-boot-demo="meter" aria-labelledby="standby-missing-title">
+      <h2 id="standby-missing-title" tabindex="-1">هل تتغيّر قراءة الاستعداد مع مزوّد متوافق؟</h2>
+      <p>تأكد أن مرجع الأرضي ونقطة القياس صحيحان. قراءة صفر أو انخفاض الاستعداد قد يظهر عند خلل في المزود أو الموصل أو حمل على اللوحة.</p>
+      <ol>
+        <li>افصل الكهرباء قبل فك أي موصل. افحص وجود سن متراجع أو اسوداد عند طرفي الكابل من الخارج.</li>
+        <li>إن توفر مزوّد متوافق معروف السلامة، استخدم كابلاته وكرّر القياس عند النقطة نفسها. سجّل القراءة في المحاولتين.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>ظهر الاستعداد مع المزوّد المتوافق</strong><span>تابع إلى الزر وسجّل الفرق.</span></a>
+        <a class="bootChoice" href="#standby-isolation"><strong>يبقى الاستعداد منخفضًا مع المزوّد السليم</strong><span>قارن الخرج عند فصل اللوحة وعند توصيلها.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أملك مزوّدًا للمقارنة</strong><span>أرسل القراءة وموديل اللوحة والمزوّد.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>إذا 5VSB موجود وPS_ON لا يتحرك</h2><p>في هذه الحالة يكون التركيز داخل اللوحة على دائرة الاستعداد والتحكم:</p><ul class="checklist"><li>جهد RTC/بطارية CMOS.</li><li>خطوط 3.3V أو 5V Standby الناتجة من 5VSB.</li><li>Super I/O / EC وتغذيته.</li><li>إشارة زر التشغيل من الهيدر حتى المتحكم.</li><li>إشارات Reset/Clock اللازمة لبدء التسلسل في بعض التصاميم.</li><li>BIOS فقط بعد التأكد أن تغذيات الاستعداد والتحكم الأساسية موجودة.</li></ul></section>
+    <section class="bootStep" id="standby-isolation" data-boot-step="استعداد المزود مقابل اللوحة" data-boot-demo="isolate" aria-labelledby="standby-isolation-title">
+      <h2 id="standby-isolation-title" tabindex="-1">هل يغيب جهد الاستعداد فقط عند توصيل اللوحة؟</h2>
+      <p>قارن 5VSB عند جهة خرج مزود ATX الموثّق وهو مفصول عن اللوحة، ثم عند اتصاله بها. افصل الكهرباء قبل تغيير التوصيل. هذه مقارنة لخط الاستعداد فقط، وتُجرى عند توفر وصلة قياس مناسبة أو نقطة موثّقة يسهل الوصول إليها.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>الجهد غائب في الحالتين</dt>
+          <dd>تحقّق من المقبس والكابل ومرجع GND. جرّب مزوّدًا مطابقًا معروف السلامة.</dd>
+        </div>
+        <div>
+          <dt>يظهر دون اللوحة ويهبط عند توصيلها</dt>
+          <dd>ضيّق ما إذا كان الهبوط من حمل على الاستعداد أو ضعف المزود. قارن بمزوّد سليم ثم افصل الطاقة قبل قياس المقاومة.</dd>
+        </div>
+        <div>
+          <dt>الخرج سليم والجهد غائب عند نقطة لاحقة</dt>
+          <dd>تتبّع الموصل وأول عنصر في مسار الاستعداد بحسب المخطط.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#known-psu"><strong>الاستعداد غائب حتى دون اللوحة</strong><span>اختبر بمزوّد مطابق.</span></a>
+        <a class="bootChoice" href="#s6"><strong>الهبوط يتكرر عند توصيل اللوحة بمزوّد سليم</strong><span>افحص خط الاستعداد بلا تغذية.</span></a>
+        <a class="bootChoice" href="#standby-path"><strong>الجهد يصل إلى الموصل ويغيب بعده</strong><span>افحص تغذية الاستعداد داخل اللوحة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد نقطة قياس موثّقة</strong><span>أرسل موديل اللوحة والمزوّد وصورة الموصل.</span></a>
+      </div>
+    </section>
 
-<section id="flow" class="step"><h2>خلاصة المسار السريع</h2><div class="decision"><b>5VSB غير موجود</b> → PSU / حماية / شورت على Standby.</div><div class="decision"><b>5VSB موجود + زر التشغيل لا يصل</b> → زر/هيدر/مسار PWR_SW.</div><div class="decision"><b>زر التشغيل يصل + PS_ON لا ينخفض</b> → Standby logic / Super I/O / RTC / تحكم.</div><div class="decision"><b>PS_ON ينخفض + المخارج لا تظهر</b> → PSU protection أو شورت على Main rails.</div><div class="decision"><b>المخارج تظهر والجهاز لا يكمل</b> → انتقل إلى تشخيص No POST / No Display وليس No Power.</div></section>
+    <section class="bootStep" id="standby-under-load" data-boot-step="هبوط الاستعداد عند الضغط" data-boot-demo="meter" aria-labelledby="standby-under-load-title">
+      <h2 id="standby-under-load-title" tabindex="-1">ماذا يحدث لـ 5VSB أثناء محاولة التشغيل؟</h2>
+      <p>سجّل جهد الاستعداد قبل الضغط ثم لاحظ هل يبقى موجودًا أثناء المحاولة وبعدها. استخدم نفس الأرضي والنقطة. قراءة مستقرة قبل الضغط ثم هبوط متكرر قد يفسّر توقف التحكم قبل أن يكتمل أمر التشغيل.</p>
+      <ol>
+        <li>سجّل هل الضعف يستمر أم يحدث لحظة ثم يعود. الملتيميتر العادي قد يفوّت النبضة القصيرة.</li>
+        <li>قارن بمزوّد مطابق عند تكرار الهبوط. افصل الملحقات غير اللازمة قبل إعادة القياس.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>5VSB يبقى مستقرًا</strong><span>اتبع إشارة زر التشغيل.</span></a>
+        <a class="bootChoice" href="#standby-isolation"><strong>ينخفض أو يختفي ويعود بعد فصل الحمل</strong><span>قارن الاستعداد بوجود اللوحة ودونها.</span></a>
+        <a class="bootChoice" href="#report"><strong>لاحظت توقفًا سريعًا ولم ألتقط القراءة</strong><span>دوّن ما رأيته ومتى قست.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>مراجع مفيدة داخل الموقع</h2><p class="muted">بعد تحديد الخط المتوقف، استخدم BoardView للعثور على MOSFETs والملفات والمقاومات المرتبطة به.</p><div class="related"><a class="btn" href="/boardview/">فتح BoardView</a><a class="imageBtn" href="/community">ناقش القياسات في غرفة الصيانة</a><a class="imageBtn" href="/diagnostics/">كل أعطال التشخيص</a></div></section>
-</article>
+    <section class="bootStep" id="known-psu" data-boot-step="المقارنة بمزوّد سليم" data-boot-demo="power" aria-labelledby="known-psu-title">
+      <h2 id="known-psu-title" tabindex="-1">جرّب مزوّدًا مطابقًا قبل فك اللوحة</h2>
+      <p>قارن بمزوّد معروف أنه يعمل ومطابق لتوزيع أطراف الموصلات وقدرة الجهاز. افصل الكهرباء واستعمل الكابلات المخصصة للمزوّد البديل.</p>
+      <ol>
+        <li>راجع موصل اللوحة وموصل تغذية المعالج قبل المحاولة. لا تركّب كابل PCIe في مدخل CPU.</li>
+        <li>جرّب التشغيل مرة وراقب ضوء الاستعداد والمروحة وأي صوت أو رائحة غير عادية.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الجهاز يعمل مع المزوّد البديل</strong><span>دوّن موديل المزودين وما تغيّر.</span></a>
+        <a class="bootChoice" href="#s2"><strong>لم يتغيّر السلوك ويمكنني القياس</strong><span>اقرأ جهد الاستعداد أولًا.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم يتغيّر السلوك ولا أملك أدوات</strong><span>أرسل نتيجة المقارنة لنحدد الفحص القادم.</span></a>
+      </div>
+    </section>
 
-<aside class="toc"><b>في هذه الصفحة</b><a href="#s1">1. فحص خارجي</a><a href="#s2">2. 5VSB</a><a href="#s3">3. زر التشغيل</a><a href="#s4">4. PS_ON</a><a href="#s5">5. المخارج الرئيسية</a><a href="#s6">6. الشورت</a><a href="#s7">7. دوائر الاستعداد</a><a href="#flow">الخلاصة السريعة</a></aside>
-</div>
+    <section class="bootStep" id="s3" data-boot-step="زر التشغيل" data-boot-demo="switch-button" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">هل يصل طلب التشغيل من زر الكيس؟</h2>
+      <p>افصل الكهرباء قبل لمس الهيدر. ارجع إلى رسم Front Panel في دليل اللوحة وتأكد أن قابس PWR SW على الطرفين الصحيحين.</p>
+      <ol>
+        <li>بعد فصل قابس الزر عن اللوحة وهي مفصولة عن الطاقة، افحصه في وضع الاستمرارية. عادةً تكون الدائرة مفتوحة عند ترك الزر وتغلق أثناء الضغط فقط.</li>
+        <li>إذا استجاب زر الكيس للفحص، أعد توصيله. للفني، يمكن مراقبة تغيّر الإشارة عند هيدر PWR SW وفق مخطط اللوحة أثناء محاولة تشغيل.</li>
+      </ol>
+      <p class="bootNote">لا تلمس أطرافًا مجاورة أو مجهولة. إذا تعذر تحديد الهيدر، صوّر علاماته ورقم اللوحة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#button-failed"><strong>الزر لا يغلق أو القابس في مكان خاطئ</strong><span>أصلح توصيل زر الكيس ثم أعد التجربة.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الزر يعمل والإشارة تتغيّر عند الضغط</strong><span>تحقق هل أرسلت اللوحة أمر PS_ON#.</span></a>
+        <a class="bootChoice" href="#s7"><strong>الزر يعمل خارج اللوحة ولا تصل الإشارة</strong><span>راجع تغذية ومسار دائرة التحكم.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف طرفَي PWR SW</strong><span>أرسل صورة الهيدر ورقم اللوحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="button-failed" data-boot-step="زر الكيس أو توصيله" data-boot-demo="switch-button" aria-labelledby="button-failed-title">
+      <h2 id="button-failed-title" tabindex="-1">أعد توصيل زر الكيس وجرّب مرة واحدة</h2>
+      <p>بعد فصل الكهرباء، ثبّت القابس في الزوج المسمّى PWR SW. إذا بقي الزر لا يغلق عند الضغط، جرّب زرًا متوافقًا وسليمًا. دوّن هل عاد ضوء التشغيل أو دارت المروحة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>عاد التشغيل بعد تصحيح الزر</strong><span>سجّل القطعة أو الموصل الذي غيّر النتيجة.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الزر أصبح سليمًا لكن الجهاز لا يستجيب</strong><span>افحص أمر تشغيل المزود.</span></a>
+        <a class="bootChoice" href="#report"><strong>التوصيل غير واضح</strong><span>شارك صورة واضحة للموصلات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s4" data-boot-step="أمر تشغيل المزوّد" data-boot-demo="meter" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">ماذا يفعل PS_ON# عند الضغط؟</h2>
+      <p>في موصل ATX التقليدي يكون PS_ON# إشارة طلب من اللوحة إلى مزود الطاقة، ومستواها المنخفض يطلب تشغيل المخارج الرئيسية. قارن مستواها قبل الضغط وأثناءه باستخدام مخطط الموصل.</p>
+      <ol>
+        <li>سجّل هل تبقى الإشارة مرتفعة، تنخفض وتستمر، أو تنخفض لحظة ثم تعود.</li>
+        <li>إذا تعذر التقاط التغيّر السريع بملتيميتر، سجّل أن التوقيت غير محسوم واذكر سلوك المروحة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s5"><strong>تنخفض وتبقى منخفضة</strong><span>قارن مخارج المزود بعد وصول الأمر.</span></a>
+        <a class="bootChoice" href="#s7"><strong>لا تنخفض رغم وصول إشارة الزر</strong><span>راجع تغذيات الاستعداد ودائرة التحكم.</span></a>
+        <a class="bootChoice" href="#starts-on-ac"><strong>يبقى PS_ON# منخفضًا من لحظة توصيل الكهرباء</strong><span>افحص إعداد الاستعادة وزر الكيس.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#early-stop" data-boot-demo="intermittent"><strong>تنخفض لحظة ثم يرتفع المستوى</strong><span>قارن زمن الفصل والمخارج.</span></a>
+        <a class="bootChoice" href="#report"><strong>وجدت حالة أخرى أو لا أستطيع قياسها</strong><span>أرسل ما قرأته قبل وأثناء الضغط.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="#power-good">افحص المخارج وإشارة PWR_OK بعد أمر التشغيل</a></p>
+    </section>
+
+    <section class="bootStep" id="starts-on-ac" data-boot-step="يبدأ بمجرد توصيل الكهرباء" data-boot-demo="switch-button" aria-labelledby="starts-on-ac-title">
+      <h2 id="starts-on-ac-title" tabindex="-1">هل يبدأ التشغيل قبل أن تضغط زر الكيس؟</h2>
+      <p>راقب هل يكمل POST عند عودة الكهرباء أم يتحرك لحظة ثم يتوقف. عند اكتمال التشغيل راجع إعداد AC Recovery في BIOS، فقد يكون مضبوطًا لبدء التشغيل أو استعادة حالته السابقة.</p>
+      <ol>
+        <li>إذا كان التشغيل تلقائيًا بشكل غير متوقع، افصل الكهرباء ثم اختبر زر الكيس منفصلًا للتأكد من أنه لا يبقى مغلقًا.</li>
+        <li>إذا يبقى PS_ON# منخفضًا رغم فصل زر الكيس ومع عطل في التشغيل، افحص مسار التحكم وتحقق من مخطط الموصل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>يقلع طبيعيًا ويتوافق السلوك مع إعداد BIOS</strong><span>وثّق الإعداد الذي يحدد ما يحدث عند عودة الكهرباء.</span></a>
+        <a class="bootChoice" href="#button-failed"><strong>زر الكيس يبقى مغلقًا دون ضغط</strong><span>افحص الزر والتوصيل.</span></a>
+        <a class="bootChoice" href="#power-good"><strong>PS_ON# منخفض والمخارج تظهر دون POST</strong><span>راجع وصول PWR_OK وتسلسل التغذيات.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف لماذا يبدأ من تلقاء نفسه</strong><span>شارك سلوك المؤشرات وإعداد الاستعادة إن توفر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s5" data-boot-step="مخارج الباور" data-boot-demo="rail" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">هل ظهرت مخارج المزود بعد أمر التشغيل؟</h2>
+      <p>إذا وصل طلب PS_ON# في جهاز ATX تقليدي، سجّل ظهور 12V و5V و3.3V عند نقاط معروفة. افصل بين غياب المخارج وظهورها للحظة وبقائها.</p>
+      <ol>
+        <li>راجع الموصل والكابل الصحيحَين. عند المقارنة بمزوّد سليم استخدم كابلاته المطابقة.</li>
+        <li>إذا ظهر جهد ثم اختفى، سجّل ترتيب ما رأيته. الملتيميتر قد يفوّت النبضات السريعة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#power-good"><strong>ظهرت المخارج وبقيت مستقرة</strong><span>راقب وصول إشارة PWR_OK إلى اللوحة.</span></a>
+        <a class="bootChoice" href="#s6"><strong>المخارج لا تظهر رغم انخفاض PS_ON#</strong><span>افصل الطاقة وافحص الخط المشتبه به.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#signal-order" data-boot-demo="intermittent"><strong>تظهر المخارج لحظة ثم تختفي</strong><span>قارن ترتيب الإشارات وقت الفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>أعرف قراءة بعض المخارج فقط</strong><span>أرسل القيم والنقاط والتوقيت.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="power-good" data-boot-step="قراءة PWR_OK" data-boot-demo="signal" aria-labelledby="power-good-title">
+      <h2 id="power-good-title" tabindex="-1">هل أرسل المزوّد إشارة PWR_OK بعد ظهور المخارج؟</h2>
+      <p>PWR_OK في ATX إشارة من المزوّد إلى اللوحة بعد استقرار المخارج التي يراقبها. افحصها عند الطرف الموثّق بينما يكون PS_ON# منخفضًا. سجّل ترتيب ظهور المخارج والإشارة، أو اذكر أن التوقيت غير محسوم إذا كانت المحاولة قصيرة.</p>
+      <ol>
+        <li>اقرأ 12V و5V و3.3V بحسب نوع المزوّد عند نقاط القياس الموثّقة. قارن القراءة بقيم المواصفة والموديل. اقرأ PWR_OK عند الموصل وقارنها بالنقطة الموثقة داخل اللوحة إن كانت متاحة.</li>
+        <li>إذا ظهر الجهد لحظة، استخدم وظيفة التسجيل إن كانت ملائمة، أو اطلب من فني مؤهل مراقبة الإشارات بمسبار مناسب عند نقاط منخفضة الجهد. سجّل إن كان ترتيب التغيّر غير محسوم.</li>
+      </ol>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-atx-timing.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم يبيّن ترتيب 5VSB وزر التشغيل وPS_ON والمخارج ثم PWR_OK">
+        <figcaption>مخطط لترتيب الإشارات في بدء تشغيل ATX. مستويات الرسم رمزية، وتؤخذ حدود التوقيت من مواصفة الجهاز.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>المخارج ثابتة والإشارة ترتفع</dt>
+          <dd>تابع تسلسل التغذيات المحلية وبدء POST.</dd>
+        </div>
+        <div>
+          <dt>المخارج موجودة والإشارة تبقى منخفضة</dt>
+          <dd>أعد التحقق من المخارج تحت حمل الجهاز وقارن بمزوّد مطابق.</dd>
+        </div>
+        <div>
+          <dt>الإشارة تهبط قبل الفصل</dt>
+          <dd>اربط توقيتها بهبوط المخارج وبحالة PS_ON# لمعرفة أين تبدأ المشكلة.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#local-power-sequence"><strong>المخارج وPWR_OK موجودة</strong><span>تتبّع التغذيات المحلية وإشارات الجاهزية.</span></a>
+        <a class="bootChoice" href="#known-psu"><strong>PWR_OK غائب مع مخارج ظاهرة</strong><span>قارن بالمزوّد المتوافق تحت نفس التركيب.</span></a>
+        <a class="bootChoice" href="/diagnostics/restarts-shuts-down#signal-order" data-boot-demo="intermittent"><strong>تهبط PWR_OK أو المخارج ثم يفصل</strong><span>حدّد أي إشارة تغيّرت أولًا.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أحدد الطرف أو لا أملك وسيلة القياس</strong><span>شارك بيانات المزوّد والقراءات المؤكدة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="local-power-sequence" data-boot-step="تسلسل التغذيات المحلية" data-boot-demo="rail" aria-labelledby="local-power-sequence-title">
+      <h2 id="local-power-sequence-title" tabindex="-1">أين تتوقف التغذيات بعد إشارة الجاهزية؟</h2>
+      <p>استخدم مخطط نفس Revision لتتبّع الاستعداد، طلب التشغيل، المخارج، التغذيات المحلية ثم إشارات الجاهزية ورفع Reset. ابدأ من آخر نقطة مؤكّدة وانتقل إلى الشرط التالي في المخطط.</p>
+      <ol>
+        <li>لكل منظم مشتبه به سجّل VIN وتغذية التحكم وEnable والخرج وPG إن وُجدت. ترتيب الإشارات والأسماء يختلف بين المنصات.</li>
+        <li>خرج غائب مع Enable غائب يستدعي تتبّع مصدر Enable. خرج غائب مع دخل وتمكين سليمين يقود إلى فحص المرحلة وحملها.</li>
+        <li>إذا حضرت المخارج ووصلت إشارات الجاهزية، تابع مؤشر POST أو افحص Reset وفق المنصة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#standby-path"><strong>إحدى تغذيات الاستعداد غائبة</strong><span>قارن جانبي عنصر المسار الموثق.</span></a>
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s5" data-boot-demo="rail"><strong>دخل المنظم موجود والخرج غائب</strong><span>قارن تغذية متحكم VRM وتمكينه.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#s8" data-boot-demo="signal"><strong>التغذيات موجودة وPOST لا يبدأ</strong><span>اتبع فحص Reset وClock.</span></a>
+        <a class="bootChoice" href="#report"><strong>عرفت آخر إشارة ظهرت</strong><span>اكتب ترتيب القراءات في غرفة الصيانة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s6" data-boot-step="الفحص دون تغذية" data-boot-demo="meter" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">افصل الطاقة قبل قياس المقاومة</h2>
+      <p>افصل الكهرباء والموصلات والبطارية القابلة للفصل إن وُجدت. تحقق أولًا من زوال الجهد على الخط. بعد ذلك قارن مقاومته إلى GND بقراءة تلامس المجسّين.</p>
+      <ol>
+        <li>ابدأ بالخط الذي هبط في الاختبار، مثل خط الاستعداد أو دخل تغذية المعالج. اعرف اسم الخط من المخطط قبل القياس.</li>
+        <li>دوّن الوحدة وهل تبدأ القراءة منخفضة ثم ترتفع أو تبقى ثابتة. خطوط خرج Vcore قد تكون منخفضة طبيعيًا.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/short-circuit#s2" data-boot-demo="meter"><strong>هناك خط معروف بقراءة ثابتة قريبة من قراءة المجسّين</strong><span>اتبع مسار تحديد الخط المقصور.</span></a>
+        <a class="bootChoice" href="#report"><strong>القراءة تتغيّر أو اسم الخط مجهول</strong><span>أرسل القيم ورقم البورد قبل أي تدخل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="منطق الاستعداد" data-boot-demo="chip" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">يوجد 5VSB لكن اللوحة لا تطلب التشغيل</h2>
+      <p>افحص ما يعتمد عليه المتحكم قبل طلب تشغيل المزود. سجّل هل تصل إشارة الزر إلى النقطة الصحيحة وهل تظهر تغذيات الاستعداد التي يحددها المخطط.</p>
+      <ol>
+        <li>حدّد Super I/O أو EC والمسار الداخل إليه من هيدر الزر. افحص التغذية والموصلات أولًا.</li>
+        <li>إذا فقدت تغذية الاستعداد أو بقيت إشارة في حالة غير متوقعة، سجّل اسم الخط ومرحلة القياس. راجع RTC وReset حسب تصميم اللوحة قبل التفكير في BIOS.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#standby-path"><strong>إحدى تغذيات الاستعداد غائبة أو منخفضة</strong><span>تتبّع مسار الاستعداد داخل اللوحة.</span></a>
+        <a class="bootChoice" href="#control-signals"><strong>تغذية المتحكم موجودة لكن الطلب غائب</strong><span>قارن إشارة الزر قبل المتحكم وبعدها.</span></a>
+        <a class="bootChoice" href="#local-power-sequence"><strong>أريد مراجعة ترتيب الإشارات والتغذيات</strong><span>ابدأ من آخر مرحلة تعمل.</span></a>
+        <a class="bootChoice" href="#report"><strong>أعرف آخر نقطة سليمة</strong><span>شاركها مع أول قراءة مفقودة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="standby-path" data-boot-step="تتبّع تغذية الاستعداد على اللوحة" data-boot-demo="rail" aria-labelledby="standby-path-title">
+      <h2 id="standby-path-title" tabindex="-1">هل يصل الاستعداد إلى متحكم التشغيل؟</h2>
+      <p>حدّد من مخطط اللوحة ما يغذّي Super I/O أو EC في وضع الاستعداد. قد يمر الجهد عبر عنصر حماية أو منظم محلي قبل الوصول إلى المتحكم.</p>
+      <ol>
+        <li>مع تغذية اللوحة من مصدرها المتوافق قِس فقط عند نقاط DC موثّقة. قارن المدخل والخرج لنفس المرحلة. سجّل القراءة قبل الضغط.</li>
+        <li>إذا غاب الجهد بعد عنصر تسلسلي، افصل الطاقة ثم افحص سلامة المسار والمقاومة على جهة الحمل. انخفاض الجهد بعد العنصر وحده لا يحدد إن كان الحمل يسحبه.</li>
+        <li>إذا ثبت الاستعداد عند المتحكم، تحقّق هل تتغيّر إشارة الزر عند هيدر اللوحة وعند المدخل الموثّق للمتحكم.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s6"><strong>الدخل سليم والجهة التالية منخفضة</strong><span>افصل الطاقة وقارن المقاومة إلى GND.</span></a>
+        <a class="bootChoice" href="#control-signals"><strong>تغذيات المتحكم سليمة</strong><span>تحقق من وصول إشارة الزر وشروط أمر التشغيل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أعرف المنظم أو نقطة التغذية</strong><span>أرسل رقم البورد ونقطة القياس.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="control-signals" data-boot-step="إشارة الزر وطلب التشغيل على اللوحة" data-boot-demo="chip" aria-labelledby="control-signals-title">
+      <h2 id="control-signals-title" tabindex="-1">هل يتوقف الطلب قبل المتحكم أم بعده؟</h2>
+      <p>قارن إشارة زر التشغيل عند الهيدر وعند النقطة التي تستقبلها دائرة التحكم، ثم قارن طلب التشغيل عند مصدره وطرف PS_ON# في الموصل إن كان المخطط يبيّن ذلك.</p>
+      <ol>
+        <li>إذا تغيّرت إشارة الهيدر فقط، افحص المسار والعناصر الوسيطة بعد فصل الكهرباء.</li>
+        <li>إذا وصلت الإشارة إلى المتحكم، راجع تغذياته وشروطه مثل Reset أو مرجع RTC بحسب المخطط. اكتب حالة كل إشارة قبل تغيير قطعة.</li>
+        <li>إذا تغيّر طلب التشغيل قرب المتحكم ولم يصل إلى المزوّد، راجع عناصر قيادة الإشارة والموصل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s3"><strong>الإشارة مفقودة عند الهيدر</strong><span>ارجع لاختبار الزر والتوصيل.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#reset-check" data-boot-demo="signal"><strong>هناك شرط Reset لا يتغير حسب المخطط</strong><span>راجع معنى الإشارة وتوقيت رفعها.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الطلب يظهر عند موصل المزوّد</strong><span>اقرأ استجابة المزوّد عند الضغط.</span></a>
+        <a class="bootChoice" href="#rtc-standby"><strong>تفقد اللوحة الوقت أو يشير المخطط إلى RTC</strong><span>افحص البطارية ومسار RTC حسب الموديل.</span></a>
+        <a class="bootChoice" href="#report"><strong>الزر يصل لكن الطلب غائب</strong><span>أرسل تغذية المتحكم وحالة الإشارات المقاسة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="rtc-standby" data-boot-step="ساعة RTC وبطارية الإعدادات" data-boot-demo="chip" aria-labelledby="rtc-standby-title">
+      <h2 id="rtc-standby-title" tabindex="-1">متى تفحص بطارية CMOS وشرط RTC؟</h2>
+      <p>افحص هذه المرحلة إذا كانت اللوحة تفقد الوقت أو الإعدادات، أو إذا نص المخطط على تغذية RTC ضمن شروط بدء التشغيل. حدّد نوع البطارية والنقطة الموثّقة قبل المقارنة.</p>
+      <ol>
+        <li>قارن الجهد بقيمة البطارية الاسمية ودليل اللوحة. في حال تغييرها اتبع طريقة فصل الطاقة وتركيب القطبية بحسب الموديل.</li>
+        <li>إذا كانت البطارية سليمة لكن RTC أو Reset غير متاح في الموضع المتوقع، اتبع مخطط اللوحة لتحديد العنصر أو الشرط السابق.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#control-signals"><strong>تغذية RTC موجودة وطلب التشغيل ما زال غائبًا</strong><span>قارن وصول الزر ومسار الطلب.</span></a>
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#reset-check" data-boot-demo="signal"><strong>إشارة Reset هي الشرط غير المتحقق</strong><span>راجع ترتيب التغذية وPower Good.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج تحديد نقطة RTC أو نوع البطارية</strong><span>شارك موديل اللوحة وصورة البطارية.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="flow" data-boot-step="خلاصة مسار عدم التشغيل" data-boot-demo="inspect" aria-labelledby="flow-title">
+      <h2 id="flow-title" tabindex="-1">اختصر الفحص في ثلاث نتائج</h2>
+      <p>ابدأ بجهد الاستعداد قبل الضغط. بعده تأكد من إشارة زر الكيس، ثم راقب هل تغيّر PS_ON# وهل ظهرت مخارج المزود.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>لم أقس 5VSB بعد</strong><span>ابدأ بطريقة القياس.</span></a>
+        <a class="bootChoice" href="#s4"><strong>الزر يستجيب ولم أقس PS_ON#</strong><span>قارن الإشارة قبل الضغط وأثناءه.</span></a>
+        <a class="bootChoice" href="#power-good"><strong>المخارج ظهرت وأريد التحقق من PWR_OK</strong><span>افحص إشارة الجاهزية.</span></a>
+        <a class="bootChoice" href="#report"><strong>سجّلت قياسات مراحل التشغيل</strong><span>شاركها بالترتيب في غرفة الصيانة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stop-safely" data-boot-step="إيقاف الاختبار" data-boot-demo="screen-alert" aria-labelledby="stop-safely-title">
+      <h2 id="stop-safely-title" tabindex="-1">أوقف التشغيل عند ظهور تلف أو سخونة شديدة</h2>
+      <p>إذا لاحظت دخانًا أو رائحة حرق أو سائلًا أو موصلًا منصهرًا، افصل الجهاز عن الكهرباء عندما يكون ذلك آمنًا. اترك مزوّد الطاقة مغلقًا. صوّر المنطقة المتضررة بعد أن يبرد الجهاز.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>سأرسل الموديل وصورة المنطقة</strong><span>اكتب آخر شيء حدث قبل توقف الجهاز.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="النتيجة" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">ثبّت النتيجة بعد عودة التشغيل</h2>
+      <p>دوّن ما غيّر السلوك بالضبط. أعد تركيب الملحقات التي فُصلت على مراحل والجهاز مفصول عن الكهرباء. عند عودة العطل، سجّل آخر قطعة أضفتها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك كيف عاد التشغيل</strong><span>أضف النتيجة لمساعدة من يواجه العطل نفسه.</span></a>
+        <a class="bootChoice" href="#start"><strong>عاد العطل</strong><span>اختر السلوك الذي تراه الآن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>اذكر هل تغيّر السلوك بعد تجربة المقبس أو الكابل أو مزوّد متوافق. إذا أجريت قياسات، اذكر بأي نقطة ومتى قرأت كل جهد.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل الكمبيوتر ورقم اللوحة وRevision إن أمكن.</li>
+          <li>قراءة 5VSB قبل الضغط، وحالة زر التشغيل.</li>
+          <li>حالة PS_ON# بعد الضغط والمخارج التي ظهرت أو اختفت.</li>
+          <li>جهد المخارج التي قستها وحالة PWR_OK، وترتيب ظهورها أو هبوطها.</li>
+          <li>نتيجة المقارنة بمزوّد آخر، وأي سخونة أو تلف ظاهر.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/short-circuit#s1">افحص خطًا منخفض المقاومة</a></li>
+      <li><a href="/diagnostics/restarts-shuts-down#signal-order">تتبّع فصل الجهاز بعد بدء التشغيل</a></li>
+      <li><a href="/boardview/">ابحث عن مخطط اللوحة</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>

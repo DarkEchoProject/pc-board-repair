@@ -1,52 +1,468 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>تشخيص الجهاز يعمل ويفصل أو يعيد التشغيل | PC Board Repair</title>
-<meta name="description" content="دليل عملي لتشخيص الكمبيوتر الذي يعمل ثم يفصل أو يعيد التشغيل: PSU، PWR_OK، الحرارة، VRM، Vcore، RAM، BIOS وتسلسل Power Good.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down">
-<link rel="stylesheet" href="../style.css">
-<style>
-.guideHero{background:linear-gradient(145deg,#0d1a2d,#0a1626);border:1px solid #203a5b;border-radius:20px;padding:25px;margin-bottom:24px}.guideHero h1{margin-bottom:8px}.guideLayout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px}.guideMain{min-width:0}.toc{position:sticky;top:90px;align-self:start;background:#0d1a2d;border:1px solid #203a5b;border-radius:16px;padding:17px}.toc a{display:block;text-decoration:none;padding:7px 0;color:#bcd0e7}.toc a:hover{color:#56d6ff}.step{background:#0d1a2d;border:1px solid #203a5b;border-radius:17px;padding:20px;margin-bottom:18px}.step h2{margin-top:0}.stepNum{display:inline-block;min-width:31px;text-align:center;background:#20bdf2;color:#03101b;font-weight:900;border-radius:999px;padding:2px 8px;margin-left:7px}.measureTable{width:100%;border-collapse:collapse;margin-top:14px}.measureTable th,.measureTable td{border:1px solid #203a5b;padding:10px;text-align:right;vertical-align:top}.measureTable th{background:#102238;color:#8edfff}.good{color:#83e6ae}.bad{color:#ff9d9d}.decision{background:#091522;border:1px dashed #365573;border-radius:14px;padding:15px;margin-top:12px}.decision b{color:#8edfff}.danger{background:#332612;border:1px solid #74561f;color:#ffd98b;border-radius:13px;padding:14px;margin:18px 0}.checklist{padding-right:20px}.checklist li{margin:7px 0}.mono{direction:ltr;unicode-bidi:embed;font-family:Consolas,monospace;background:#091522;padding:2px 6px;border-radius:6px}.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.flow div{background:#091522;border:1px solid #203a5b;border-radius:12px;padding:12px}.flow b{display:block;color:#8edfff;margin-bottom:5px}.note{font-size:13px;color:#9fb6d1}.related{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}@media(max-width:850px){.guideLayout{grid-template-columns:1fr}.toc{position:static;order:-1}.measureTable{font-size:14px}}
-</style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"تشخيص الجهاز يعمل ويفصل أو يعيد التشغيل","inLanguage":"ar","mainEntityOfPage":"https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
-<link rel="icon" href="/favicon.ico?v=4" sizes="any">
-<link rel="icon" type="image/png" href="/site-logo.png?v=4">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>الجهاز يعمل ثم يفصل أو يعيد التشغيل | الحرارة والطاقة وPOST | PC Board Repair</title>
+  <meta name="description" content="مسار تفاعلي لفصل الكمبيوتر أو إعادة تشغيله. اختر توقيت العطل قبل POST أو في BIOS أو تحت الحمل، وقارن الحرارة والطاقة والذاكرة.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down">
+  <meta property="og:title" content="الجهاز يعمل ثم يفصل أو يعيد التشغيل | الحرارة والطاقة وPOST | PC Board Repair">
+  <meta property="og:description" content="مسار تفاعلي لفصل الكمبيوتر أو إعادة تشغيله. اختر توقيت العطل قبل POST أو في BIOS أو تحت الحمل، وقارن الحرارة والطاقة والذاكرة.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down">
+  <link rel="icon" href="/favicon.ico?v=4" sizes="any">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/diagnostics/no-boot.css">
+  <script type="module" src="/diagnostics/no-boot.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "الجهاز يعمل ثم يفصل أو يعيد التشغيل",
+  "description": "مسار تفاعلي لفصل الكمبيوتر أو إعادة تشغيله. اختر توقيت العطل قبل POST أو في BIOS أو تحت الحمل، وقارن الحرارة والطاقة والذاكرة.",
+  "inLanguage": "ar",
+  "mainEntityOfPage": "https://pc-board-repair.alinasser00001.workers.dev/diagnostics/restarts-shuts-down",
+  "publisher": {
+    "@type": "Organization",
+    "name": "PC Board Repair"
+  }
+}
+  </script>
 </head>
-<body>
-<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap">
-<div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← يعمل ويفصل أو يعيد التشغيل</div>
-<section class="guideHero"><span class="brandTag">Desktop Motherboard</span><h1>🔁 الجهاز يعمل ثم يفصل أو يعيد التشغيل</h1><p class="muted">قد يكون السبب مزود الطاقة، حرارة، حماية VRM، خط تغذية ينهار تحت الحمل، أو فشل في تسلسل الإقلاع. أهم خطوة هي تحديد متى يحدث الفصل بالضبط.</p></section>
+<body class="bootPage">
+<header>
+  <a class="logo" href="/">⚙️ PC Board Repair</a>
+  <nav aria-label="التنقل الرئيسي">
+    <a href="/">الرئيسية</a>
+    <a href="/boardview/">BoardView</a>
+    <a href="/bios/">BIOS</a>
+    <a href="/diagnostics/" aria-current="true">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+  </nav>
+</header>
+<main class="wrap bootGuide">
+  <div class="crumb"><a href="/">الرئيسية</a> ← <a href="/diagnostics/">التشخيص</a> ← الجهاز يعمل ثم يفصل أو يعيد التشغيل</div>
+  <section class="bootHero" aria-labelledby="guide-title">
+    <div class="bootMeta"><span>المسار 08</span><span dir="ltr">Restart / Shutdown</span><span>كمبيوتر مكتبي</span></div>
+    <h1 id="guide-title">الجهاز يعمل ثم يفصل أو يعيد التشغيل</h1>
+    <p>سجّل كم يبقى الجهاز قيد التشغيل وأين يكون عند الفصل. قد يغيّر توقيت العطل نقطة البداية من التوصيلات إلى التبريد أو النظام.</p>
+    <ol class="bootStages" aria-label="مراحل التشخيص">
+      <li><b>١</b><span>توقيت الفصل</span></li>
+      <li><b>٢</b><span>التركيب والتبريد</span></li>
+      <li><b>٣</b><span>الطاقة أو النظام</span></li>
+    </ol>
+  </section>
 
-<div class="danger"><b>مهم:</b> إذا شممت رائحة احتراق أو وجدت MOSFET أو مكثفًا يسخن بسرعة شديدة، افصل التغذية فورًا ولا تكرر التشغيل قبل فحص الخط.</div>
+  <details class="bootMap">
+    <summary>خريطة الفحص</summary>
+    <ul>
+      <li><a href="#s1">رصد العَرَض</a></li>
+      <li><a href="#cycle-type">تمييز القطع وإعادة التشغيل</a></li>
+      <li><a href="#cold-warm">الفرق بين التشغيل البارد والدافئ</a></li>
+      <li><a href="#early-stop">الفصل خلال ثوانٍ</a></li>
+      <li><a href="#s2">التركيب الأدنى</a></li>
+      <li><a href="#isolate-peripherals">عزل الملحقات والكيس</a></li>
+      <li><a href="#s3">المزوّد ومخارج ATX</a></li>
+      <li><a href="#signal-order">ترتيب هبوط إشارات ATX</a></li>
+      <li><a href="#power-comparison">اختبار تحت الحمل نفسه</a></li>
+      <li><a href="#s4">الحرارة والمروحة</a></li>
+      <li><a href="#cooling-check">التبريد والتركيب</a></li>
+      <li><a href="#under-load">الفصل تحت الحمل</a></li>
+      <li><a href="#load-isolation">فصل حمل المعالج عن بطاقة الشاشة</a></li>
+      <li><a href="#s5">VRM وتغذية CPU</a></li>
+      <li><a href="#s6">إعادة التشغيل قبل POST</a></li>
+      <li><a href="#default-settings">تجربة إعدادات المعالج والذاكرة الافتراضية</a></li>
+      <li><a href="#s7">بعد BIOS أو في النظام</a></li>
+      <li><a href="#system-evidence">سجل النظام قبل إعادة التشغيل</a></li>
+      <li><a href="#s8">خلاصة الفصل</a></li>
+      <li><a href="#stop-safely">إيقاف الاختبار</a></li>
+      <li><a href="#resolved">النتيجة</a></li>
+      <li><a href="#report">غرفة الصيانة</a></li>
+    </ul>
+  </details>
 
-<div class="guideLayout">
-<article class="guideMain">
-<section id="s1" class="step"><h2><span class="stepNum">1</span>حدد نمط العطل والزمن</h2><p>سجل ما يحدث من لحظة الضغط على زر التشغيل:</p><div class="flow"><div><b>يفصل خلال أقل من ثانية</b>اشتباه حماية PSU، شورت قوي، VRM أو خط رئيسي ينهار مباشرة.</div><div><b>يفصل بعد ثوانٍ قليلة</b>افحص CPU 12V، Vcore، المشتت، المروحة وتسلسل Power Good.</div><div><b>يعيد التشغيل في حلقة</b>قد يكون RAM/CPU/BIOS أو تدريب الذاكرة أو خط تغذية غير مستقر.</div><div><b>يعمل طويلًا ثم يفصل</b>ركز على الحرارة، PSU تحت الحمل، VRM والمكونات التي تسخن.</div></div><div class="decision"><b>إذا وصل إلى BIOS أو Windows قبل الفصل:</b> العطل يختلف عن لوحة لا تكمل POST؛ لا تبدأ من نفس النقطة.</div></section>
+  <div class="bootFlow" data-boot-flow>
+    <nav class="bootControls" aria-label="التنقل داخل مسار التشخيص" data-boot-controls hidden>
+      <span data-boot-stage></span>
+      <div class="bootControlLinks">
+        <a href="#report" data-boot-handoff>اكتب عطلك</a>
+        <a href="#s8">خلاصة الفحص</a>
+        <a href="#start">↶ العودة إلى البداية</a>
+      </div>
+    </nav>
+    <noscript><p class="bootNote">يمكنك قراءة الخطوات بالتمرير أو الانتقال إليها باستخدام الروابط.</p></noscript>
 
-<section id="s2" class="step"><h2><span class="stepNum">2</span>اختبر بأقل تركيب ممكن</h2><ul class="checklist"><li>PSU معروف بالسليم.</li><li>CPU مع مشتت ومروحة مركبين جيدًا.</li><li>قطعة RAM واحدة سليمة.</li><li>افصل SATA/NVMe وUSB الأمامي وكروت PCIe غير الضرورية.</li><li>افصل زر Reset من Front Panel مؤقتًا؛ زر عالق قد يسبب إعادة تشغيل متكررة.</li></ul><div class="decision"><b>إذا اختفى العطل:</b> أعد القطع واحدة واحدة حتى تحدد القطعة أو الكابل الذي يعيد المشكلة.</div></section>
+    <section class="bootStep" id="start" data-boot-step="تحديد وقت الفصل" data-boot-demo="intermittent" aria-labelledby="start-title">
+      <h2 id="start-title" tabindex="-1">متى يحدث الفصل أو إعادة التشغيل؟</h2>
+      <p>لاحظ هل ينطفئ ضوء التشغيل والمروحة تمامًا، أم يعيد الجهاز المحاولة تلقائيًا، أم تظهر رسالة أو شاشة زرقاء.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#early-stop"><strong>يفصل خلال ثوانٍ وقبل ظهور صورة</strong><span>قارن الموصلات والتركيب الأدنى.</span></a>
+        <a class="bootChoice" href="#s4"><strong>يفصل بعد دقائق أو عند ارتفاع الحرارة</strong><span>افحص المروحة وتثبيت المشتت.</span></a>
+        <a class="bootChoice" href="#s7"><strong>يبقى في BIOS ويعيد التشغيل في ويندوز</strong><span>سجّل رمز الخطأ وما الذي يسبق إعادة التشغيل.</span></a>
+        <a class="bootChoice" href="#under-load"><strong>يفصل عند لعبة أو حمل ثقيل</strong><span>قارن ظروف الحمل ودرجة الحرارة.</span></a>
+        <a class="bootChoice" href="#s1"><strong>لم أحدد بعد متى يفصل</strong><span>سجّل محاولة واحدة بالتوقيت.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>توجد رائحة حرق أو سخونة عند الموصل</strong><span>افصل الكهرباء وتوقف عن التكرار.</span></a>
+      </div>
+    </section>
 
-<section id="s3" class="step"><h2><span class="stepNum">3</span>افحص PSU وخطوط ATX أثناء العطل</h2><p>لا يكفي أن تكون الفولتات صحيحة بدون حمل. راقبها لحظة التشغيل والفصل إن أمكن.</p><table class="measureTable"><thead><tr><th>الإشارة / الخط</th><th>المتوقع في ATX القياسي</th><th>ماذا تراقب؟</th></tr></thead><tbody><tr><td>12V</td><td class="good">قريب من 12V</td><td>هل يهبط بشدة قبل الفصل؟</td></tr><tr><td>5V</td><td class="good">قريب من 5V</td><td>هبوطه يدل على حمل زائد أو PSU ضعيف.</td></tr><tr><td>3.3V</td><td class="good">قريب من 3.3V</td><td>راقب الاستقرار أثناء إعادة التشغيل.</td></tr><tr><td>PS_ON#</td><td>عادة منخفض أثناء التشغيل</td><td>إذا ارتفع قبل الفصل فقد تكون اللوحة نفسها أصدرت أمر الإطفاء.</td></tr><tr><td>PWR_OK</td><td>عادة يصبح High بعد استقرار المخارج</td><td>سقوطه قد يسبق Reset/Shutdown بسبب عدم استقرار التغذية.</td></tr></tbody></table><p class="note">في لوحات OEM والموصلات الخاصة لا تعتمد ألوان أو أرقام ATX القياسية؛ استخدم المخطط أو BoardView.</p></section>
+    <section class="bootStep" id="s1" data-boot-step="رصد العَرَض" data-boot-demo="signal" aria-labelledby="s1-title">
+      <h2 id="s1-title" tabindex="-1">سجّل التوقيت وما يبقى مضاءً</h2>
+      <p>راقب محاولة واحدة إن لم توجد علامات تلف. ابدأ العد عند الضغط وسجّل آخر شاشة أو لمبة ظهرت. لاحظ هل يعود التشغيل وحده.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-shutdown-timing.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم لتوقيت الفصل قبل POST وفي BIOS وتحت الحمل">
+        <figcaption>مكان الفصل على خط الزمن يحدد الاختبار الذي تبدأ به.</figcaption>
+      </figure>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#cycle-type"><strong>أريد معرفة هل تنقطع الطاقة فعليًا</strong><span>راقب ماذا يبقى مضاءً وما الذي يعود.</span></a>
+        <a class="bootChoice" href="#early-stop"><strong>لا يصل إلى الشعار أو الإعدادات</strong><span>ابدأ بأقل تركيب ممكن.</span></a>
+        <a class="bootChoice" href="#s4"><strong>يبقى وقتًا داخل BIOS ثم يفصل</strong><span>راقب الحرارة في الإعدادات.</span></a>
+        <a class="bootChoice" href="#s7"><strong>يحدث داخل النظام فقط</strong><span>قارن ثبات BIOS وسجل ويندوز.</span></a>
+      </div>
+    </section>
 
-<section id="s4" class="step"><h2><span class="stepNum">4</span>الحرارة والمشتت والمروحة</h2><ul class="checklist"><li>تأكد أن مشتت CPU مثبت بالكامل وليس مرتخيًا من طرف.</li><li>تأكد من وجود معجون حراري بكمية مناسبة ومن دوران مروحة CPU.</li><li>إذا تستطيع دخول BIOS، راقب حرارة CPU قبل الفصل.</li><li>افحص بصريًا منطقة VRM حول المعالج وابحث عن مكون يسخن أسرع من الطبيعي.</li></ul><div class="decision"><b>إذا زمن الفصل يطول عندما تكون اللوحة باردة ثم يقصر بعد إعادة التشغيل:</b> الاشتباه الحراري يصبح أقوى.</div></section>
+    <section class="bootStep" id="cycle-type" data-boot-step="تمييز القطع وإعادة التشغيل" data-boot-demo="intermittent" aria-labelledby="cycle-type-title">
+      <h2 id="cycle-type-title" tabindex="-1">هل تنطفئ التغذية أم يعيد الجهاز POST مباشرة؟</h2>
+      <p>راقب في المحاولة نفسها شاشة العرض ومؤشر التشغيل والمراوح. المراوح التي تتوقف وحدها قد تتأثر بالتحكم بالسرعة. قارنها بمؤشر الطاقة أو جهد معروف عند نقطة موثّقة إذا كنت فنيًا.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>تنطفئ الإضاءة والمراوح ويبقى الجهاز متوقفًا</dt>
+          <dd>سجّل هل يعود بزر التشغيل أو فقط بعد قطع الكهرباء. تابع فحص المزوّد أو الحمل.</dd>
+        </div>
+        <div>
+          <dt>تعود الشاشة إلى شعار الشركة تلقائيًا</dt>
+          <dd>راجع مؤشر POST وإعدادات الذاكرة ثم سجلات النظام إن بلغ النظام.</dd>
+        </div>
+        <div>
+          <dt>الصورة وحدها تختفي</dt>
+          <dd>تأكد إن كان النظام يواصل العمل ثم اتبع مسار غياب الصورة.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#early-stop"><strong>تنطفئ التغذية قبل ظهور صورة</strong><span>اعزل الملحقات والقطع غير اللازمة.</span></a>
+        <a class="bootChoice" href="#signal-order"><strong>المخارج تهبط وأستطيع متابعة الإشارات</strong><span>قارن PS_ON# وPWR_OK والجهود.</span></a>
+        <a class="bootChoice" href="#cold-warm"><strong>يفصل أسرع بعد أن يصبح دافئًا</strong><span>قارن وقت الفصل مع تغيّر الحرارة.</span></a>
+        <a class="bootChoice" href="#s6"><strong>يعود الشعار أو تعود دورة المؤشرات تلقائيًا</strong><span>حدّد أي مؤشر يسبق إعادة التشغيل.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#firmware-image" data-boot-demo="screen-pair"><strong>الصورة تختفي والجهاز يبقى عاملًا</strong><span>قارن العرض داخل BIOS وبعده.</span></a>
+      </div>
+    </section>
 
-<section id="s5" class="step"><h2><span class="stepNum">5</span>افحص 12V CPU وVcore وVRM</h2><p>تأكد من وصول 12V إلى دخل VRM ثم راقب خرج ملفات Vcore. القيمة الدقيقة تعتمد على CPU والمنصة، وغالبًا تكون منخفضة ومتغيرة.</p><ul class="checklist"><li>هل 12V CPU ثابت حتى لحظة الفصل؟</li><li>هل Vcore يظهر ثم يختفي قبل باقي الخطوط؟</li><li>هل توجد Phase أو MOSFET تختلف حرارتها بوضوح عن الباقي؟</li><li>افحص مكثفات VRM، الملفات، MOSFETs وPWM عند الاشتباه.</li></ul><div class="decision"><b>إذا دخل 12V ثابت لكن Vcore ينهار أولًا:</b> ركز على VRM أو إشارة Enable/Power Good الخاصة به بدل PSU الرئيسي مباشرة.</div></section>
+    <section class="bootStep" id="cold-warm" data-boot-step="الفرق بين التشغيل البارد والدافئ" data-boot-demo="temperature" aria-labelledby="cold-warm-title">
+      <h2 id="cold-warm-title" tabindex="-1">هل تطول مدة العمل عندما يكون الجهاز باردًا؟</h2>
+      <p>دوّن الزمن من محاولة تشغيل باردة واحدة، ثم قارن بما حدث في محاولات سابقة بعد أن كان الجهاز دافئًا. قصر زمن العمل عند ارتفاع الحرارة يوجّه إلى مراجعة التبريد، ويمكن أن يتزامن مع خلل تغذية أيضًا.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#cooling-check"><strong>مدة العمل تقصر كلما ارتفعت الحرارة</strong><span>راجع المشتت والمروحة أو المضخة.</span></a>
+        <a class="bootChoice" href="#power-comparison"><strong>يحدث فقط مع حمل معيّن بصرف النظر عن الحرارة</strong><span>قارن المزوّد والموصلات تحت نفس الاستخدام.</span></a>
+        <a class="bootChoice" href="#report"><strong>سجّلت أزمنة مختلفة بلا نمط واضح</strong><span>شارك مدة المحاولات والحرارة عند كل واحدة.</span></a>
+      </div>
+    </section>
 
-<section id="s6" class="step"><h2><span class="stepNum">6</span>إذا كان يعيد التشغيل قبل POST</h2><p>هنا تعامل معه أيضًا كعطل No POST:</p><ul class="checklist"><li>جرب RAM سليمة وSlot آخر.</li><li>شغّل بدون RAM ولاحظ هل يتغير السلوك أو تظهر صفارات.</li><li>افحص Socket وCPU عند وجود Vcore بدون تقدم.</li><li>نفذ Clear CMOS بالطريقة الصحيحة.</li><li>إذا كانت التغذيات مستقرة، افحص BIOS/SPI وReset وClock بحسب المخطط.</li></ul><div class="decision"><b>حلقة Restart ثابتة كل عدة ثوانٍ:</b> لا تعني وحدها أن BIOS تالف؛ RAM وCPU وVRM وتسلسل Reset قد تعطي نفس العرض.</div></section>
+    <section class="bootStep" id="early-stop" data-boot-step="الفصل خلال ثوانٍ" data-boot-demo="power" aria-labelledby="early-stop-title">
+      <h2 id="early-stop-title" tabindex="-1">افحص التركيب قبل تكرار التشغيل</h2>
+      <p>افصل الكهرباء. تأكد من ثبات موصل اللوحة وموصل CPU/EPS وتوصيل مروحة المعالج. راجع آخر قطعة أو كابل تم تغييره.</p>
+      <ol>
+        <li>إذا ظهر حرق أو ذوبان أو رائحة عند أحد الموصلات، توقف. إذا كان التركيب سليمًا، افصل الملحقات الثانوية وجرب بأقل عدد من القطع.</li>
+        <li>راقب هل ينطفئ الجهاز أم يدخل في دورة محاولات. بعد تغيير الذاكرة قد يختلف سلوك التدريب حسب الموديل.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s2"><strong>الموصلات سليمة وأستطيع تقليل التركيب</strong><span>اختبر المعالج والمشتت وقطعة رام.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يقف المزوّد حتى أفصل الكهرباء ثم أعيدها</strong><span>قارن بمزوّد متوافق وراجع المخارج.</span></a>
+        <a class="bootChoice" href="#s6"><strong>يعيد المحاولة ومؤشر CPU أو DRAM ثابت</strong><span>اتبع آخر مؤشر في POST.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>لاحظت أثر حرق أو ذوبان</strong><span>اعزل الجهاز عن الكهرباء.</span></a>
+      </div>
+    </section>
 
-<section id="s7" class="step"><h2><span class="stepNum">7</span>إذا يصل إلى BIOS أو النظام ثم يعيد التشغيل</h2><ul class="checklist"><li>اختبر PSU آخر معروف بالسليم خصوصًا عند وجود GPU منفصل.</li><li>راقب درجات الحرارة.</li><li>افصل الأقراص والأجهزة الخارجية لاختبار استقرار اللوحة وحدها.</li><li>أعد إعدادات BIOS للوضع الافتراضي وألغِ أي كسر سرعة.</li><li>إذا العطل يظهر فقط داخل نظام التشغيل، افصل أولًا بين مشكلة Hardware ومشكلة Driver/OS باختبار BIOS أو بيئة إقلاع أخرى.</li></ul><div class="decision"><b>إذا يبقى الجهاز مستقرًا داخل BIOS لفترة طويلة:</b> هذا يقلل احتمال فصل حراري سريع أو عطل Power أساسي، لكنه لا يستبعد PSU تحت الحمل.</div></section>
+    <section class="bootStep" id="s2" data-boot-step="التركيب الأدنى" data-boot-demo="memory" aria-labelledby="s2-title">
+      <h2 id="s2-title" tabindex="-1">هل يستمر التشغيل مع القطع الأساسية؟</h2>
+      <p>مع فصل الكهرباء اترك المعالج ومشتته ومروحته وقطعة RAM متوافقة في الشق الموصى به ومزوّدًا مطابقًا. استخدم بطاقة عرض فقط إذا احتاجها الجهاز.</p>
+      <ol>
+        <li>افصل الأقراص وUSB الأمامي والكروت الإضافية. حاول الوصول إلى BIOS لتراقب استقرار التشغيل.</li>
+        <li>عند استقرار الجهاز أعد قطعة واحدة كل مرة بعد فصل الكهرباء. دوّن القطعة التي عاد الفصل عند تركيبها.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#isolate-peripherals"><strong>استقر بعد فصل الملحقات</strong><span>أعد كل قطعة وحدها وحدّد التي تعيد العطل.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يفصل حتى في التركيب الأدنى</strong><span>افحص المزوّد والمخارج تحت الحمل.</span></a>
+        <a class="bootChoice" href="#s6"><strong>يعيد POST ومؤشره يتكرر</strong><span>حدّد آخر مؤشر قبل إعادة المحاولة.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع اختبار تركيب أدنى</strong><span>شارك تركيب الجهاز الحالي.</span></a>
+      </div>
+    </section>
 
-<section id="s8" class="step"><h2><span class="stepNum">8</span>مسار سريع للتشخيص</h2><div class="flow"><div><b>فصل فوري + الخطوط تهبط</b>PSU / شورت / حماية تيار.</div><div><b>12V ثابت وVcore ينهار</b>VRM / PWM / Enable / Power Good.</div><div><b>كل الفولتات ثابتة ثم PS_ON يرتفع</b>اللوحة أصدرت أمر إطفاء؛ افحص حرارة/EC/SIO/تسلسل الحماية.</div><div><b>Restart قبل POST والفولتات مستقرة</b>RAM / CPU / BIOS / Reset / Clock.</div><div><b>مستقر بدون أجهزة إضافية</b>أعد الأجهزة واحدًا واحدًا لتحديد المسبب.</div><div><b>يفصل فقط تحت الحمل</b>PSU، VRM، حرارة CPU/GPU أو خط تغذية ينهار مع الحمل.</div></div></section>
+    <section class="bootStep" id="isolate-peripherals" data-boot-step="عزل الملحقات والكيس" data-boot-demo="isolate" aria-labelledby="isolate-peripherals-title">
+      <h2 id="isolate-peripherals-title" tabindex="-1">هل يعيد أحد الملحقات أو أسلاك الكيس العطل؟</h2>
+      <p>إذا اختفى الفصل في التركيب الأدنى، أعد كل ملحق وحده بعد فصل الكهرباء. ابدأ بالأجزاء اللازمة، ثم أعد الأقراص والملحقات الداخلية والأمامية كلًا على حدة. اترك جهاز تخزين غير مستقر مفصولًا حتى تقرر طريقة حماية ملفاته.</p>
+      <ol>
+        <li>افحص أسلاك USB الأمامية وزر Reset ومواضع قواعد تثبيت اللوحة إذا بدأ العطل بعد تركيبها.</li>
+        <li>إذا احتاج فني إلى تجربة اللوحة خارج الكيس، يستخدم سطح عمل ثابتًا غير موصل ومناسبًا للإلكترونيات، مع تثبيت المشتت ووصل التغذيات المطابقة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>يتكرر الفصل بعد إعادة قطعة بعينها</strong><span>دوّن القطعة وأعد التحقق بقطعة متوافقة سليمة.</span></a>
+        <a class="bootChoice" href="/diagnostics/usb-port-not-working" data-boot-demo="usb-alert"><strong>المشكلة تظهر مع منفذ USB أو كابل أمامي</strong><span>قارن المنفذ والكابل والملحق.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يفصل حتى مع فصل الملحقات</strong><span>قارن بمزوّد مناسب تحت نفس التركيب.</span></a>
+      </div>
+    </section>
 
-<section class="step"><h2>ما الذي تسجله أثناء الفحص؟</h2><p class="muted">زمن الفصل، هل المراوح تتوقف تمامًا أم تعود مباشرة، حالة PS_ON وPWR_OK، 12V CPU، Vcore، حرارة CPU/VRM، وهل يتغير السلوك بدون RAM أو بدون الأقراص. هذه المعلومات تختصر التشخيص كثيرًا.</p><div class="related"><a class="imageBtn" href="/diagnostics/no-power">⚡ دليل No Power</a><a class="imageBtn" href="/diagnostics/no-display">🖥️ دليل No Display / No POST</a><a class="btn" href="/community">ناقش العطل في غرفة الصيانة</a></div></section>
-</article>
+    <section class="bootStep" id="s3" data-boot-step="المزوّد ومخارج ATX" data-boot-demo="meter" aria-labelledby="s3-title">
+      <h2 id="s3-title" tabindex="-1">هل يتغيّر الفصل مع مزوّد مطابق؟</h2>
+      <p>قارن بمزوّد معروف السلامة، قادر على تغذية هذا الجهاز، وبكابلاته المطابقة. أبقِ غطاء المزود مغلقًا. لفني اللوحة، قارن PS_ON# وPWR_OK والمخارج عند محاولة الفصل.</p>
+      <ol>
+        <li>سجّل هل زال طلب التشغيل أولًا أم اختفت المخارج أثناء بقاء الطلب. توقيت الإشارات السريع قد يحتاج أداة مناسبة.</li>
+        <li>إذا عاد الفصل بمزوّد مطابق، ابحث عن الخط أو المرحلة التي تتوقف، وراجع علامات الحرارة قبل إعادة المحاولة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>الجهاز استقر بمزوّد مطابق</strong><span>سجّل نتيجة المقارنة.</span></a>
+        <a class="bootChoice" href="#signal-order"><strong>أريد معرفة أي إشارة تهبط أولًا</strong><span>قارن PS_ON# وPWR_OK والمخارج.</span></a>
+        <a class="bootChoice" href="#s5"><strong>المزوّد سليم وأشكّ في تغذية المعالج</strong><span>قارن الدخل والخرج عند الفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يتوفر مزوّد مطابق أو نقطة قياس</strong><span>شارك المعلومات المتاحة.</span></a>
+      </div>
+      <p class="bootRelated">تابع الفحص · <a href="/diagnostics/no-power#power-good">معنى إشارة PWR_OK وتوقيت ظهورها</a></p>
+    </section>
 
-<aside class="toc"><b>محتويات الدليل</b><a href="#s1">1. نمط العطل والزمن</a><a href="#s2">2. أقل تركيب</a><a href="#s3">3. PSU وATX</a><a href="#s4">4. الحرارة</a><a href="#s5">5. VRM وVcore</a><a href="#s6">6. Restart قبل POST</a><a href="#s7">7. بعد BIOS/Windows</a><a href="#s8">8. المسار السريع</a></aside>
-</div>
+    <section class="bootStep" id="signal-order" data-boot-step="ترتيب هبوط إشارات ATX" data-boot-demo="signal" aria-labelledby="signal-order-title">
+      <h2 id="signal-order-title" tabindex="-1">أي إشارة تغيّرت أولًا وقت الفصل؟</h2>
+      <p>استخدم نفس محاولة التشغيل لتسجيل PS_ON# وPWR_OK والجهد الذي تراقبه، مع مخطط الموصل. عند تغير الإشارات بسرعة، قد يلزم أوسيلوسكوب ومسبار مناسب على نقاط اللوحة منخفضة الجهد. سجّل الترتيب فقط عندما تسمح الأدوات بالتأكد منه.</p>
+      <figure class="bootFigure">
+        <img src="/diagnostics/images/desktop-atx-timing.webp" width="840" height="420" loading="lazy" decoding="async" alt="رسم لإشارات ATX من الاستعداد حتى جاهزية المخارج">
+        <figcaption>تعرّف إلى ترتيب بدء التشغيل، ثم سجّل ترتيب هبوط الإشارات وقت الفصل.</figcaption>
+      </figure>
+      <dl class="bootReadings">
+        <div>
+          <dt>PS_ON# يرجع مرتفعًا قبل هبوط المخارج</dt>
+          <dd>تحقق لماذا توقّف طلب التشغيل. راجع الحرارة وReset وتسلسل اللوحة حسب توقيت العطل.</dd>
+        </div>
+        <div>
+          <dt>المخارج أو PWR_OK تهبط والطلب ما زال منخفضًا</dt>
+          <dd>قارن بمزوّد مطابق وافحص الحمل والموصلات قبل تحديد القطعة.</dd>
+        </div>
+        <div>
+          <dt>دخل CPU ثابت وخرج محلي يهبط</dt>
+          <dd>راجع Enable وإشارة الجاهزية والحمل في المرحلة المحلية.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#s4"><strong>PS_ON# يرتفع أولًا وتوجد قرينة حرارة</strong><span>راقب المروحة والمشتت والحرارة قبل القطع.</span></a>
+        <a class="bootChoice" href="#s6"><strong>PS_ON# يرتفع أولًا قبل اكتمال POST</strong><span>ابدأ بآخر مؤشر قبل إعادة التشغيل.</span></a>
+        <a class="bootChoice" href="#power-comparison"><strong>تبقى إشارة الطلب منخفضة وتهبط المخارج</strong><span>قارن بالمزوّد البديل والموصل تحت الحمل.</span></a>
+        <a class="bootChoice" href="#s5"><strong>دخل المعالج ثابت والخرج المحلي ينهار</strong><span>تابع قياسات VRM عند لحظة الفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>التغير أسرع من أداة القياس المتوفرة</strong><span>شارك مدة التشغيل والقراءات التي تأكدت منها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="power-comparison" data-boot-step="اختبار تحت الحمل نفسه" data-boot-demo="power" aria-labelledby="power-comparison-title">
+      <h2 id="power-comparison-title" tabindex="-1">هل يستمر الفصل مع مزوّد آخر تحت نفس الحمل؟</h2>
+      <p>قارن بنفس اللوحة والقطع والكابلات المطابقة لكل مزوّد. إذا ظهر الفصل مع بطاقة رسومية بعينها، تحقق من تغذيتها وموصلاتها وقدرة المزوّد المناسبة لها قبل تحميل الجهاز مرة أخرى.</p>
+      <ol>
+        <li>قارن قراءة الجهد عند جهة الخرج وعند موصل الحمل إذا وُجدت نقاط آمنة. وجود الجهد عند أحد الطرفين وهبوطه عند الآخر يرجّح مشكلة في المسار أو الموصل تستحق فحصًا.</li>
+        <li>إذا لاحظت ذوبانًا أو رائحة حرق أو سخونة غير معتادة عند الموصل، افصل الجهاز وتوقف عن الاختبار.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>المزوّد المطابق أعاد الاستقرار</strong><span>دوّن موديل المزوّد والكابلات المستخدمة.</span></a>
+        <a class="bootChoice" href="#s5"><strong>يستمر العطل مع مزود سليم ودخل المعالج ثابت</strong><span>افحص خرج VRM وتمكينه.</span></a>
+        <a class="bootChoice" href="#stop-safely"><strong>ظهر تلف عند الموصل</strong><span>أوقف الاختبار وصوّر الموضع.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يتوفر مزوّد مطابق للمقارنة</strong><span>شارك التركيب ووقت الفصل.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s4" data-boot-step="الحرارة والمروحة" data-boot-demo="temperature" aria-labelledby="s4-title">
+      <h2 id="s4-title" tabindex="-1">هل ترتفع الحرارة قبل الفصل؟</h2>
+      <p>تحقق من دوران مروحة CPU ومن موصلها. إذا تمكنت من دخول BIOS، راقب حرارة CPU وسرعة المروحة دون تشغيل اختبار إجهاد.</p>
+      <ol>
+        <li>إذا تصعد الحرارة بسرعة أو تتوقف المروحة، أطفئ الجهاز وافصل الكهرباء. تأكد من ثبات المشتت ونظافة المسار الهوائي وتوصيل المضخة في التبريد المائي إن وُجدت.</li>
+        <li>إذا بدأ العطل بعد فك المشتت، راجع التركيب وتوزيع المعجون حسب طريقة هذا المشتت. جرّب مرة بعد تصحيح السبب.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#cooling-check"><strong>الحرارة ترتفع أو القراءة تبدو غير طبيعية</strong><span>افحص التبريد والتركيب.</span></a>
+        <a class="bootChoice" href="#load-isolation"><strong>الحرارة مستقرة ويفصل مع نشاط معين</strong><span>اختبر نشاط المعالج أو البطاقة كلًا على حدة.</span></a>
+        <a class="bootChoice" href="#s3"><strong>يفصل داخل BIOS مع حرارة مستقرة</strong><span>ارجع لاختبار المزوّد.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا أستطيع قراءة الحرارة</strong><span>أرسل مدة التشغيل وسلوك المروحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="cooling-check" data-boot-step="التبريد والتركيب" data-boot-demo="temperature" aria-labelledby="cooling-check-title">
+      <h2 id="cooling-check-title" tabindex="-1">هل يرتفع القياس رغم دوران المروحة؟</h2>
+      <p>دوران المروحة علامة واحدة. افحص بعد الإيقاف تثبيت المشتت بالتساوي، موصل CPU_FAN، مضخة التبريد إن وجدت، والغبار الذي يعيق مرور الهواء. اتبع طريقة تركيب المشتت الخاصة بالموديل.</p>
+      <ol>
+        <li>إذا أمكن دخول BIOS، راقب تغيّر حرارة المعالج وسرعة المروحة من بدء بارد. قارِن بحدود المعالج والموديل ولا تطِل الاختبار عند الارتفاع السريع أو الفصل.</li>
+        <li>إذا كان المشتت أُعيد تركيبه مؤخرًا، افحص موضعه واتصال سطحه بالطريقة الصحيحة. لا تشغّل المعالج من دون نظام تبريد مركّب.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>استقرت الحرارة واختفى الفصل بعد إصلاح التبريد</strong><span>أكّد النتيجة بتشغيل عادي بعد أن يبرد الجهاز.</span></a>
+        <a class="bootChoice" href="#load-isolation"><strong>الحرارة مستقرة داخل BIOS والفصل تحت حمل معيّن</strong><span>ميّز حمل المعالج من البطاقة.</span></a>
+        <a class="bootChoice" href="#signal-order"><strong>يفصل مع حرارة مستقرة ويمكنني قياس التغذية</strong><span>قارن توقيت الإشارات عند الفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>الحرارة ترتفع سريعًا حتى بعد مراجعة التركيب</strong><span>أوقف التشغيل وشارك نوع التبريد والقراءات.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="under-load" data-boot-step="الفصل تحت الحمل" data-boot-demo="temperature" aria-labelledby="under-load-title">
+      <h2 id="under-load-title" tabindex="-1">حدّد ما الذي يبدأ عنده الفصل</h2>
+      <p>سجّل هل يحدث مع لعبة معيّنة أو عند بدء حمل على المعالج أو بطاقة الرسوميات. ابدأ بالملاحظات الموجودة من محاولات سابقة وتوقف عند ظهور حرارة غير عادية أو رائحة.</p>
+      <ol>
+        <li>قارن حرارة CPU وGPU قبل الفصل إن أمكن، وراجع تغذية البطاقة وكابلاتها. إذا كانت الحرارة معتدلة والفصل يتكرر مع الحمل، قارن بمزوّد متوافق وكافٍ.</li>
+        <li>إذا تظهر شاشة زرقاء أو رسالة، سجّل الرمز بدل افتراض أن المشكلة من الطاقة.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#load-isolation"><strong>أستطيع تحديد نشاط يعيد الفصل</strong><span>قارن حمل المعالج بحمل الرسومات.</span></a>
+        <a class="bootChoice" href="#cooling-check"><strong>ترتفع الحرارة عند النشاط</strong><span>ابدأ بالتبريد.</span></a>
+        <a class="bootChoice" href="#system-evidence"><strong>النظام يعرض رمز توقف</strong><span>راجع سجل ويندوز وما سبق الرمز.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يظهر نمط واضح</strong><span>أرسل أوقات الفصل وظروفها.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="load-isolation" data-boot-step="فصل حمل المعالج عن بطاقة الشاشة" data-boot-demo="rail" aria-labelledby="load-isolation-title">
+      <h2 id="load-isolation-title" tabindex="-1">هل يرتبط الفصل بنشاط المعالج أم بطاقة الشاشة؟</h2>
+      <p>ابدأ من استخدام اعتيادي تستطيع تكراره لفترة قصيرة. سجّل نوع العمل والحرارة ووقت الفصل. غيّر عاملًا واحدًا، مثل العودة لإعدادات المعالج والذاكرة الافتراضية أو المقارنة بمخرج رسومي آخر يدعمه الجهاز.</p>
+      <ol>
+        <li>إذا يحدث الفصل عند نشاط رسومي تحديدًا، افحص الكابل والبطاقة ومزوّدها والحرارة. إذا يحدث مع نشاط المعالج وحده، راقب التبريد وتغذية CPU/EPS.</li>
+        <li>اترك الاختبارات المجهدة إلى ما بعد استبعاد تلف الموصلات أو ارتفاع الحرارة غير الطبيعي.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#power-comparison"><strong>يفصل مع الحمل الرسومي تحديدًا</strong><span>قارن تغذية البطاقة والمزوّد المناسب.</span></a>
+        <a class="bootChoice" href="#cooling-check"><strong>الحرارة ترتفع أولًا</strong><span>افحص المشتت والمروحة أو المضخة.</span></a>
+        <a class="bootChoice" href="#system-evidence"><strong>ويندوز يعرض خطأ أو يعيد التشغيل مع استمرار الطاقة</strong><span>سجّل الخطأ والأحداث السابقة له.</span></a>
+        <a class="bootChoice" href="#report"><strong>الفصل غير قابل للتكرار بطريقة واضحة</strong><span>أرسل نمط الحمل والقراءات المتاحة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s5" data-boot-step="VRM وتغذية CPU" data-boot-demo="rail" aria-labelledby="s5-title">
+      <h2 id="s5-title" tabindex="-1">هل يظهر Vcore ثم يختفي؟</h2>
+      <p>هذه خطوة لفني اللوحات. قارن دخل CPU/EPS وخرج Vcore مع زمن الفصل وإشارة التمكين حسب المخطط. إذا هبط الدخل نفسه، تتبّع المصدر أولًا. إذا بقي الدخل وانهار الخرج، راجع إشارة التمكين والحماية والحمل.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/vrm-cpu-ram#s4" data-boot-demo="rail"><strong>أعرف نقطة Vcore وأريد متابعة القياس</strong><span>افتح خطوة تمييز الدخل والخرج.</span></a>
+        <a class="bootChoice" href="/diagnostics/short-circuit#s6" data-boot-demo="meter"><strong>وجدت مقاومة قريبة من قراءة المجسّين على دخل CPU</strong><span>افصل الطاقة واتبع مسار الاشتباه بقصر على الدخل.</span></a>
+        <a class="bootChoice" href="#report"><strong>أحتاج مساعدة في ترتيب القراءات</strong><span>اكتب متى ظهر كل جهد ومتى اختفى.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s6" data-boot-step="إعادة التشغيل قبل POST" data-boot-demo="post" aria-labelledby="s6-title">
+      <h2 id="s6-title" tabindex="-1">ما آخر مؤشر قبل إعادة التشغيل؟</h2>
+      <p>إذا يتكرر الانطفاء قبل الشعار، لاحظ مرحلة CPU أو DRAM أو VGA. بعد فصل الكهرباء جرّب قطعة RAM متوافقة واحدة في الشق المحدد لدليل اللوحة. دوّن ما غيّر النمط.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/post-beep-codes#s1" data-boot-demo="post"><strong>عندي صفارات أو كود أو لمبة ثابتة</strong><span>اقرأ المؤشر بحسب موديل اللوحة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#s3" data-boot-demo="memory"><strong>تغيّر النمط عند تبديل الرام</strong><span>اعزل الوحدة أو الشق خطوة بخطوة.</span></a>
+        <a class="bootChoice" href="#s3"><strong>لا تصل إلى أي مؤشر قبل انطفاء المخارج</strong><span>راجع المزود والتسلسل.</span></a>
+        <a class="bootChoice" href="#default-settings"><strong>بدأت الحلقة بعد تغيير إعدادات أو تركيب رام</strong><span>اختبر الإعدادات الافتراضية حسب الموديل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا توجد مؤشرات واضحة</strong><span>أرسل فيديو قصير لمحاولة التشغيل إن أمكن.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="default-settings" data-boot-step="تجربة إعدادات المعالج والذاكرة الافتراضية" data-boot-demo="memory" aria-labelledby="default-settings-title">
+      <h2 id="default-settings-title" tabindex="-1">هل تختفي إعادة التشغيل مع الإعدادات الافتراضية؟</h2>
+      <p>إذا استطعت دخول BIOS، دوّن إعدادات الإقلاع والتخزين أولًا. أوقف إعدادات كسر السرعة وملفات XMP أو EXPO للاختبار وأعد تجربة التركيب نفسه. عند الحاجة إلى Clear CMOS اتبع طريقة اللوحة وافصل الطاقة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#resolved"><strong>استقر الجهاز عند إعدادات المصنع</strong><span>سجّل الإعداد الذي كانت معه المشكلة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-display#memory-training" data-boot-demo="memory"><strong>بدأت الدورة بعد تغيير الذاكرة أو الإعدادات</strong><span>راجع زمن التدريب وحالة مؤشر DRAM.</span></a>
+        <a class="bootChoice" href="#signal-order"><strong>يستمر الفصل حتى في الإعدادات الافتراضية</strong><span>قارن إشارات التغذية وقت الفصل.</span></a>
+        <a class="bootChoice" href="#report"><strong>لم أتمكن من دخول BIOS</strong><span>شارك آخر مؤشر يظهر والقطع المركبة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s7" data-boot-step="بعد BIOS أو في النظام" data-boot-demo="windows" aria-labelledby="s7-title">
+      <h2 id="s7-title" tabindex="-1">هل يعمل بثبات داخل BIOS؟</h2>
+      <p>إذا بقي الجهاز في BIOS دون فصل وفشل بعد بدء ويندوز، سجّل نص رسالة الخطأ أو رمز الشاشة الزرقاء وآخر تحديث أو قطعة تغيرت. إذا كان BIOS نفسه يعيد التشغيل، ارجع لفحص الطاقة والتبريد.</p>
+      <ol>
+        <li>إن أتيح وضع آمن من خيارات الاسترداد، قارن السلوك دون تكرار فصل الطاقة لإجبار الجهاز على الدخول إليه.</li>
+        <li>إذا ظهرت مشكلة قرص أو طلب تهيئة، احتفظ ببياناتك واتبع مسار التخزين قبل محاولات الإصلاح.</li>
+      </ol>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#system-evidence"><strong>يعمل في BIOS ويعيد التشغيل داخل النظام</strong><span>افحص رمز التوقف وسجل الأحداث.</span></a>
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#protect-data" data-boot-demo="drive"><strong>القرص يختفي أو يظهر متقطعًا</strong><span>ابدأ بحماية الملفات.</span></a>
+        <a class="bootChoice" href="#s4"><strong>يفصل داخل BIOS أيضًا</strong><span>راقب الحرارة والمراوح.</span></a>
+        <a class="bootChoice" href="#report"><strong>لا يمكن إبقاؤه في BIOS</strong><span>شارك وقت الفصل وآخر ما ظهر.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="system-evidence" data-boot-step="سجل النظام قبل إعادة التشغيل" data-boot-demo="windows" aria-labelledby="system-evidence-title">
+      <h2 id="system-evidence-title" tabindex="-1">هل سجّل النظام خطأ يسبق إعادة التشغيل؟</h2>
+      <p>في ويندوز افتح سجل النظام حول وقت العطل. دوّن رمز الشاشة الزرقاء إن ظهر وأي حدث تخزين أو تعريف أو عتاد سبقه. حدث Kernel-Power 41 يوثق إعادة تشغيل دون إيقاف سليم، وتحتاج معرفة السبب إلى القرائن السابقة له.</p>
+      <dl class="bootReadings">
+        <div>
+          <dt>يوجد رمز توقف أو ملف تفريغ</dt>
+          <dd>دوّن الرمز ووقت الحدوث وأي تغيير حديث في تعريف أو قطعة.</dd>
+        </div>
+        <div>
+          <dt>تظهر أخطاء تخزين قبل التوقف</dt>
+          <dd>احمِ الملفات أولًا ثم تابع فحص القرص أو الكابل.</dd>
+        </div>
+        <div>
+          <dt>لا يظهر خطأ سابق وينطفئ الجهاز فجأة</dt>
+          <dd>قارن التغذية والتبريد ونوع الحمل عند التوقف.</dd>
+        </div>
+      </dl>
+      <div class="bootChoices">
+        <a class="bootChoice" href="/diagnostics/drive-not-detected#protect-data" data-boot-demo="drive"><strong>توجد أخطاء تخزين أو يختفي القرص</strong><span>ابدأ بحماية البيانات.</span></a>
+        <a class="bootChoice" href="#signal-order"><strong>يفصل فجأة دون رمز يمكن قراءته</strong><span>افحص توقيت الإشارات تحت نفس الحالة.</span></a>
+        <a class="bootChoice" href="/diagnostics/no-boot#windows-start" data-boot-demo="windows"><strong>يستقر في BIOS ويفشل بدء ويندوز</strong><span>تابع مسار إصلاح بدء النظام.</span></a>
+        <a class="bootChoice" href="#report"><strong>لدي رمز خطأ أو حدث قبل الفصل</strong><span>أرسل الرمز والوقت والظروف.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="s8" data-boot-step="خلاصة الفصل" data-boot-demo="inspect" aria-labelledby="s8-title">
+      <h2 id="s8-title" tabindex="-1">اربط العَرَض بزمن حدوثه</h2>
+      <p>الفصل قبل الصورة يوجّه لفحص التوصيلات وPOST. الفصل بعد ارتفاع الحرارة يوجّه للتبريد. إعادة التشغيل في ويندوز تحتاج تسجيل الرسالة ووقت ظهورها.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#early-stop"><strong>يفصل قبل الصورة</strong><span>ارجع لفحص التركيب.</span></a>
+        <a class="bootChoice" href="#s4"><strong>يفصل مع ارتفاع الحرارة</strong><span>راجع مسار التبريد.</span></a>
+        <a class="bootChoice" href="#s7"><strong>يفصل عند دخول النظام</strong><span>افتح فرع ويندوز.</span></a>
+        <a class="bootChoice" href="#report"><strong>أريد مشاركة النتيجة</strong><span>أرسل زمن الفصل وآخر علامة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="stop-safely" data-boot-step="إيقاف الاختبار" data-boot-demo="screen-alert" aria-labelledby="stop-safely-title">
+      <h2 id="stop-safely-title" tabindex="-1">اعزل الجهاز عند وجود رائحة أو تلف</h2>
+      <p>افصل الكهرباء عندما يكون ذلك آمنًا. بعد أن يبرد الجهاز صوّر الموصل أو الموضع الذي تغيّر لونه. اذكر ما جرى قبل الفصل وتجنب إعادة التشغيل للتصوير.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك صورة المنطقة والموديل</strong><span>دوّن زمن الفصل والقطع التي كانت موصولة.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="resolved" data-boot-step="النتيجة" data-boot-demo="success" aria-labelledby="resolved-title">
+      <h2 id="resolved-title" tabindex="-1">سجّل التغيير الذي منع الفصل</h2>
+      <p>دوّن الاختبار الذي نجح والمدة التي ظل فيها الجهاز يعمل. أعد الملحقات واحدًا واحدًا والجهاز مفصول، وسجّل إن عاد العطل بعد تركيب قطعة محددة.</p>
+      <div class="bootChoices">
+        <a class="bootChoice" href="#report"><strong>أشارك النتيجة</strong><span>أضف زمن الاختبار وما تغيّر.</span></a>
+        <a class="bootChoice" href="#start"><strong>عاد الفصل</strong><span>ابدأ من توقيته الجديد.</span></a>
+      </div>
+    </section>
+
+    <section class="bootStep" id="report" data-boot-step="غرفة الصيانة" data-boot-demo="message" aria-labelledby="report-title">
+      <h2 id="report-title" tabindex="-1">اكتب عطلك وسنتابع من آخر فحص</h2>
+      <p>سجّل الزمن من لحظة التشغيل حتى الفصل، وهل يعود الجهاز تلقائيًا. هذه المعلومة تساعدنا على مراجعة ما يجب فحصه في المحاولة التالية.</p>
+      <p><strong>سنقرأ ما كتبته بعناية ونراجع نتائج الفحص معك في غرفة الصيانة.</strong> اذكر ما تغيّر في كل محاولة حتى نتمكّن من اقتراح الخطوة التالية ومتابعة نتيجتها في الموضوع نفسه.</p>
+      <div class="bootRoomDetails">
+        <h3>ماذا تكتب في الرسالة؟</h3>
+        <ul>
+          <li>موديل الجهاز واللوحة والمزوّد والمعالج وبطاقة العرض.</li>
+          <li>التوقيت وآخر شاشة أو لمبة قبل الفصل.</li>
+          <li>الحرارة وسرعة المروحة إن أمكن، ونوع الحمل الذي كان يعمل.</li>
+          <li>نتيجة التركيب الأدنى أو مزوّد بديل وأي قياسات للجهد.</li>
+          <li>آخر حدث أو رمز توقف قبل إعادة التشغيل، أو ترتيب هبوط PS_ON# وPWR_OK إن توفّر قياس موثوق.</li>
+        </ul>
+        <p>اختر «مناقشة عطل» بعد تسجيل الدخول إن طُلب منك. أرفق صورة لنقطة الفحص إذا كانت تساعد على تحديدها.</p>
+      </div>
+      <div class="bootChoices">
+        <a class="bootChoice bootRoomLink" href="/community#chatForm" data-boot-demo="message"><strong>اكتب عطلك في غرفة الصيانة</strong><span>افتح حقل الرسالة وأضف نتائج الفحص.</span></a>
+        <a class="bootChoice" href="#start"><strong>أريد مراجعة حالة أخرى</strong><span>ارجع إلى خيارات بداية الفحص.</span></a>
+      </div>
+    </section>
+  </div>
+
+  <section class="bootStep" aria-labelledby="references-title">
+    <h2 id="references-title">مسارات وفحوصات مرتبطة</h2>
+    <ul>
+      <li><a href="/diagnostics/no-power#power-good">إشارات بدء تشغيل ATX</a></li>
+      <li><a href="/diagnostics/vrm-cpu-ram#s9">مقارنة توقيت هبوط Vcore</a></li>
+      <li><a href="/diagnostics/no-boot#windows-start">فشل بدء ويندوز</a></li>
+    </ul>
+  </section>
 </main>
-<footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a></div><div>© 2026 PC Board Repair</div></footer>
+<footer>
+  <div class="footerLinks">
+    <a href="/diagnostics/">التشخيص</a>
+    <a href="/community">غرفة الصيانة</a>
+    <a href="/about">من نحن</a>
+    <a href="/contact">اتصل بنا</a>
+    <a href="/privacy">سياسة الخصوصية</a>
+  </div>
+  <div>© 2026 PC Board Repair</div>
+</footer>
 </body>
 </html>
