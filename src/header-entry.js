@@ -12,7 +12,7 @@ class HeaderUiHead {
     element.append('<script>try{document.documentElement.dataset.theme=localStorage.getItem("pcbr-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script><link rel="stylesheet" href="/theme.css?v=20261105-3"><script src="/theme.js?v=20261105-3" defer></script>', { html: true });
     element.append('<script src="/youtube-integration.js?v=20261117-1" defer></script>', { html: true });
     if (this.showAdSpaces) {
-      element.append('<link rel="stylesheet" href="/site-ads.css?v=20261117-3"><script src="/site-ads.js?v=20261117-3" defer></script>', { html: true });
+      element.append('<link rel="stylesheet" href="/site-ads.css?v=20261117-4"><script src="/site-ads.js?v=20261117-3" defer></script>', { html: true });
     }
     element.append('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token":"d776a04c82684fbaa3c8e9f78d77cb26"}\'></script>', { html: true });
   }
@@ -25,29 +25,27 @@ function adSpacesMarkup(shape, slotIds, className = "") {
   return `<aside class="pcbrAdSpaces ${className}" aria-label="مساحات إعلانية">${slots}</aside>`;
 }
 
-class TopAdSpaces {
-  constructor() {
-    this.inserted = false;
+class TitleAdSpaces {
+  constructor(state, isImage = false) {
+    this.state = state;
+    this.isImage = isImage;
   }
 
   element(element) {
-    if (this.inserted) return;
-    element.after(adSpacesMarkup("square", ["top-square-1", "top-square-2"], "pcbrAdSpaces--pair pcbrAdSpaces--top"), { html: true });
-    this.inserted = true;
+    if (this.state.inserted) return;
+    this.state.inserted = true;
+    const kind = this.isImage ? "image" : "title";
+    element.before(`<div class="pcbrTitleAds pcbrTitleAds--${kind}">${adSpacesMarkup("square", ["top-square-1"], "pcbrAdSpaces--top")}<div class="pcbrTitleAds__center">`, { html: true });
+    element.after(`</div>${adSpacesMarkup("square", ["top-square-2"], "pcbrAdSpaces--top")}</div>`, { html: true });
   }
 }
 
 class PageAdSpaces {
-  constructor(isHomePage, topAdSpaces) {
+  constructor(isHomePage) {
     this.isHomePage = isHomePage;
-    this.topAdSpaces = topAdSpaces;
   }
 
   element(element) {
-    if (!this.topAdSpaces.inserted) {
-      element.before(adSpacesMarkup("square", ["top-square-1", "top-square-2"], "pcbrAdSpaces--pair pcbrAdSpaces--top"), { html: true });
-      this.topAdSpaces.inserted = true;
-    }
     const shape = this.isHomePage ? "square" : "banner";
     const slotIds = this.isHomePage
       ? ["home-square-1", "home-square-2"]
@@ -102,9 +100,10 @@ function withHeaderUi(response, url) {
     .on('footer a[href="/contact"]', new SiteIssueLink(url));
   if (showAdSpaces) {
     const isHomePage = url.pathname === "/" || url.pathname === "/index.html";
-    const topAdSpaces = new TopAdSpaces();
-    rewriter.on("body > header", topAdSpaces);
-    rewriter.on("main", new PageAdSpaces(isHomePage, topAdSpaces));
+    const titleAdSpaces = { inserted: false };
+    rewriter.on("img.siteHeroBanner", new TitleAdSpaces(titleAdSpaces, true));
+    rewriter.on("h1", new TitleAdSpaces(titleAdSpaces));
+    rewriter.on("main", new PageAdSpaces(isHomePage));
   }
   const transformed = rewriter.transform(response);
   if (!showAdSpaces) return transformed;

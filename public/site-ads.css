@@ -17,9 +17,47 @@
   margin-inline: auto;
 }
 
-.pcbrAdSpaces--top {
-  width: calc(100% - 40px);
-  margin-block: 24px;
+.pcbrTitleAds {
+  display: grid;
+  grid-template-columns: clamp(64px, 18%, 180px) minmax(0, 1fr) clamp(64px, 18%, 180px);
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  grid-column: 1 / -1;
+  margin: 16px auto 24px;
+}
+
+.pcbrTitleAds__center {
+  min-width: 0;
+}
+
+.pcbrTitleAds__center > .siteHeroBanner {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0 !important;
+}
+
+.pcbrTitleAds__center > h1 {
+  margin: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+  font-size: clamp(20px, 3vw, 38px);
+}
+
+.pcbrTitleAds > .pcbrAdSpaces--top {
+  grid-column: auto;
+  width: 100%;
+  max-width: 180px;
+  margin: 0;
+}
+
+.pcbrAdSpaces--top .pcbrAdSlot {
+  padding: 8px;
+  border-radius: 12px;
+  font-size: clamp(12px, 1.5vw, 18px);
 }
 
 .pcbrAdSpaces--between {
@@ -62,8 +100,9 @@
 }
 
 @media (max-width: 640px) {
-  .pcbrAdSpaces--top {
-    gap: 12px;
+  .pcbrTitleAds {
+    grid-template-columns: 64px minmax(0, 1fr) 64px;
+    gap: 10px;
     margin-block: 16px;
   }
 
