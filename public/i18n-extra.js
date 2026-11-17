@@ -1,5 +1,14 @@
 (()=>{
   const en={
+    // BoardView matching guide
+    'كيف تختار ملف BoardView المطابق للوحَتك؟':'How do you choose the right BoardView file?',
+    'اقرأ رقم البورد والـRevision المطبوعين على اللوحة وسجّل الرقم والإصدار كاملين.':'Read the board number and revision printed on the board and record both in full.',
+    'ابحث برقم البورد في الخانة أعلاه، وافتح صفحة الملف لمطابقة الموديل والـRevision.':'Search by board number above, then open the file page to check the model and revision.',
+    'قارن صورة اللوحة إن وُجدت، وتحقّق من مواقع الموصلات قبل استخدام الخريطة.':'Compare the board photo if available, and check the connector positions before using the map.',
+    'إصداران لنفس رقم البورد':'Two revisions of the same board number',
+    'شرح اختيار ملف BoardView للوحة MS-7860 Rev 1.2':'Choosing a BoardView file for MS-7860 Rev 1.2',
+    'شاهد الشرح على YouTube':'Watch the guide on YouTube',
+
     // Common / generated BoardView detail pages
     'لا توجد صورة متاحة حاليًا':'No image is currently available',
     'الشركة':'Brand','الموديل':'Model','رقم البورد':'Board number','المنصة':'Platform','اسم الملف':'File name',

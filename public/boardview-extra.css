@@ -11,3 +11,44 @@
 .boardPlaceholderLink:hover{border-color:#20bdf2!important;box-shadow:inset 0 0 42px #06101dcc,0 0 0 3px #20bdf218}.boardPlaceholderLink:hover:before{transform:scale(1.04);transition:.2s}
 
 @media(max-width:900px){.filterGrid{grid-template-columns:1fr 1fr}.boardStats{grid-template-columns:1fr 1fr 1fr}}@media(max-width:760px){.boardDetail{grid-template-columns:1fr;padding:16px}.detailRow{grid-template-columns:1fr;gap:2px}.boardActions>*{width:100%;text-align:center}.filterGrid{grid-template-columns:1fr}.boardStats{grid-template-columns:1fr}.filterActions{align-items:stretch}.resetBtn{width:100%}.pcbrFileMetaGrid{grid-template-columns:1fr}.pcbrMetaTileWide{grid-column:auto}.pcbrShaLine{align-items:stretch}.pcbrCopySha{width:100%}}
+
+.boardviewGuideLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.boardviewGuideLayout ol {
+  margin-block: 0 14px;
+  padding-inline-start: 24px;
+}
+
+.boardviewGuideLayout li + li {
+  margin-block-start: 6px;
+}
+
+.boardviewGuideRevisions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.boardviewGuideVideo iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  border-radius: 12px;
+}
+
+.boardviewGuideVideo .imageBtn {
+  margin-block-start: 10px;
+}
+
+@media (max-width: 760px) {
+  .boardviewGuideLayout {
+    grid-template-columns: 1fr;
+  }
+}
