@@ -41,6 +41,7 @@ function escapeHtml(value) {
 function writeBoardviewCompanyCards(boards) {
   const page = fileURLToPath(new URL("../public/boardview/index.html", import.meta.url));
   const contents = fs.readFileSync(page, "utf8");
+  const newline = contents.match(/\r?\n/)?.[0] ?? "\n";
   const section = /<!-- boardview-companies:start -->[\s\S]*?<!-- boardview-companies:end -->/;
   if (!section.test(contents)) throw new Error("BoardView company card markers are missing.");
 
@@ -60,15 +61,15 @@ function writeBoardviewCompanyCards(boards) {
       `      <p class="muted">${escapeHtml(description)}</p>`,
       `      <div class="countBadge">${records.length} ملف</div>`,
       "    </a>",
-    ].join("\n");
-  }).join("\n");
+    ].join(newline);
+  }).join(newline);
   const replacement = [
     "<!-- boardview-companies:start -->",
     '  <div id="companies" class="grid companyGrid">',
     cards,
     "  </div>",
     "  <!-- boardview-companies:end -->",
-  ].join("\n");
+  ].join(newline);
   const updated = contents.replace(section, () => replacement);
   if (updated === contents) return;
 
