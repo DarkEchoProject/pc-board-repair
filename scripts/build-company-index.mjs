@@ -28,6 +28,59 @@ function summarizeCompanies(records, makeExample) {
   return companies;
 }
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;",
+  })[character]);
+}
+
+function writeBoardviewCompanyCards(boards) {
+  const page = fileURLToPath(new URL("../public/boardview/index.html", import.meta.url));
+  const contents = fs.readFileSync(page, "utf8");
+  const section = /<!-- boardview-companies:start -->[\s\S]*?<!-- boardview-companies:end -->/;
+  if (!section.test(contents)) throw new Error("BoardView company card markers are missing.");
+
+  const brands = [...new Set(boards.map(board => board.brand))]
+    .sort((a, b) => a.localeCompare(b, "en"));
+  const cards = brands.map(brand => {
+    const records = boards.filter(board => board.brand === brand);
+    const models = [...new Set(records.map(board => board.model).filter(Boolean))]
+      .sort((a, b) => String(a).localeCompare(String(b), "en"))
+      .slice(0, 3)
+      .join("، ");
+    const href = "/boardview/company?brand=" + encodeURIComponent(brand);
+    const description = models + (records.length > 3 ? "…" : "");
+    return [
+      `    <a class="card" href="${escapeHtml(href)}">`,
+      `      <h2>${escapeHtml(brand)}</h2>`,
+      `      <p class="muted">${escapeHtml(description)}</p>`,
+      `      <div class="countBadge">${records.length} ملف</div>`,
+      "    </a>",
+    ].join("\n");
+  }).join("\n");
+  const replacement = [
+    "<!-- boardview-companies:start -->",
+    '  <div id="companies" class="grid companyGrid">',
+    cards,
+    "  </div>",
+    "  <!-- boardview-companies:end -->",
+  ].join("\n");
+  const updated = contents.replace(section, () => replacement);
+  if (updated === contents) return;
+
+  const temporary = `${page}.${process.pid}.tmp`;
+  try {
+    fs.writeFileSync(temporary, updated, "utf8");
+    fs.renameSync(temporary, page);
+  } finally {
+    fs.rmSync(temporary, { force: true });
+  }
+}
+
 const boards = mergeBoards(
   normalizeBoards(readCatalog("boards.json")),
   normalizeBoards(readCatalog("boards-large.json", true)),
@@ -54,5 +107,6 @@ try {
 } finally {
   fs.rmSync(temporary, { force: true });
 }
+writeBoardviewCompanyCards(boards);
 writeHomeSummary(boards, biosRecords.length);
 console.log(`Company index built: ${boardview.size} BoardView and ${bios.size} BIOS companies`);
