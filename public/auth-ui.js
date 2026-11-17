@@ -525,6 +525,7 @@
     const items=[
       {href:'/boardview/',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
       {href:'/bios/',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
+      {href:'/market/',ar:'سوق البوردات',en:'Board Market',active:path=>path==='/market'||path.startsWith('/market/')},
       {href:'#',ar:'المزيد ▾',en:'More ▾',active:()=>false,moreMenu:true},
       {href:'/community',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community'||path==='/community.html'},
       {href:'#',ar:'↗ مشاركة',en:'↗ Share',active:()=>false,shareMenu:true},

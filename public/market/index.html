@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سوق بوردات كمبيوتر — بيع وطلب بوردات وقطع صيانة | PC Board Repair</title>
+<meta name="description" content="اعرض بوردات الكمبيوتر واللابتوب وقطع الصيانة، أو اطلب قطعة تحتاجها. ابحث في طرابلس ولبنان وباقي المناطق وتواصل مباشرة مع صاحب الإعلان.">
+<link rel="canonical" href="https://pc-board-repair.alinasser00001.workers.dev/market/">
+<meta name="robots" content="index,follow">
+<meta property="og:site_name" content="PC Board Repair">
+<meta property="og:title" content="سوق بوردات كمبيوتر">
+<meta property="og:description" content="بورد زائد عندك، قطعة ناقصة عند غيرك. بيع وطلب بوردات الكمبيوتر واللابتوب وقطعها.">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/market/market.css?v=20261118-1">
+<script src="/market/market.js?v=20261118-1" defer></script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"سوق بوردات كمبيوتر","url":"https://pc-board-repair.alinasser00001.workers.dev/market/","inLanguage":"ar","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
+</head>
+<body>
+<header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/market/" aria-current="page">سوق البوردات</a><a href="/community">غرفة الصيانة</a></nav></header>
+<main class="wrap marketPage" dir="rtl">
+  <div class="crumb"><a href="/">الرئيسية</a> ← سوق البوردات</div>
+  <h1>سوق بوردات كمبيوتر</h1>
+  <div class="marketIntro">
+    <div><p class="marketEyebrow">بورد زائد عندك، قطعة ناقصة عند غيرك</p><p class="muted">اعرض بورد كمبيوتر أو لابتوب وقطع صيانته، أو اطلب قطعة تحتاجها لإكمال تصليحك.</p></div>
+    <button id="marketAdd" class="btn marketAdd" type="button"><span aria-hidden="true">＋</span> أضف عرضًا أو طلبًا</button>
+  </div>
+  <section class="marketBrowse" aria-labelledby="marketBrowseTitle">
+    <div class="marketBrowseHead"><div><h2 id="marketBrowseTitle">العروض والطلبات</h2><p class="muted marketSmall">التصفّح للجميع. سجّل الدخول لإضافة إعلان أو رد وإدارة إعلاناتك.</p></div><button id="marketMine" class="marketSoftButton" type="button" aria-pressed="false">إعلاناتي</button></div>
+    <div class="marketKindTabs" role="group" aria-label="نوع الإعلان">
+      <button class="marketTab isActive" type="button" data-kind="" aria-pressed="true">الكل</button>
+      <button class="marketTab" type="button" data-kind="sale" aria-pressed="false">للبيع</button>
+      <button class="marketTab" type="button" data-kind="wanted" aria-pressed="false">مطلوب</button>
+    </div>
+    <form id="marketFilters" class="marketFilters" role="search">
+      <label class="marketSearch"><span class="marketFieldLabel">ابحث عن بورد أو قطعة</span><input id="marketQuery" type="search" maxlength="100" placeholder="رقم البورد، الموديل، أو رقم الآيسي…" autocomplete="off"></label>
+      <label><span class="marketFieldLabel">المنطقة</span><select id="marketRegion"><option value="">كل المناطق</option><option value="tripoli">طرابلس — لبنان</option><option value="lebanon">كل لبنان</option><option value="world">خارج لبنان</option></select></label>
+      <label><span class="marketFieldLabel">التصنيف</span><select id="marketCategory"><option value="">كل البوردات والقطع</option><option value="desktop-board">بورد كمبيوتر مكتبي</option><option value="laptop-board">بورد لابتوب</option><option value="graphics-board">بورد كرت شاشة</option><option value="ic">آيسي</option><option value="mosfet">MOSFET وقطع تغذية</option><option value="connector">موصل أو منفذ</option><option value="computer-part">قطعة كمبيوتر</option><option value="other-part">قطعة صيانة أخرى</option></select></label>
+      <button id="marketReset" class="marketReset" type="button">مسح الفلاتر</button>
+    </form>
+    <div class="marketResultsBar"><span id="marketResultCount" role="status" aria-live="polite">جاري تحميل السوق…</span><span id="marketBusy" class="marketBusy" hidden>جاري التحديث…</span></div>
+    <div id="marketGrid" class="marketGrid" aria-busy="true"><div class="marketEmpty"><p>جاري تحميل العروض والطلبات…</p></div></div>
+    <div class="marketPagination" id="marketPagination" hidden><button id="marketPrev" class="marketSoftButton" type="button">السابق</button><span id="marketPageLabel"></span><button id="marketNext" class="marketSoftButton" type="button">التالي</button></div>
+  </section>
+  <div class="marketScope"><span aria-hidden="true">♻</span><p>السوق مخصص لبوردات الكمبيوتر واللابتوب وقطع صيانتها. وضّح حالة القطعة، واتفق مع الطرف الآخر على السعر والفحص والتسليم.</p></div>
+</main>
+<footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a></div><div>© 2026 PC Board Repair</div></footer>
+
+<dialog id="marketEditor" class="marketDialog marketEditor" aria-labelledby="marketEditorTitle" dir="rtl">
+  <div class="marketDialogHeader"><div><span class="marketEyebrow">سوق بوردات كمبيوتر</span><h2 id="marketEditorTitle">أضف عرضًا أو طلبًا</h2></div><button class="marketClose" type="button" data-close="marketEditor" aria-label="إغلاق">×</button></div>
+  <form id="marketListingForm" class="marketForm">
+    <fieldset class="marketKindChoice"><legend>ماذا تريد أن تنشر؟</legend><label><input type="radio" name="kind" value="sale" checked><span>عندي بورد أو قطعة للبيع</span></label><label><input type="radio" name="kind" value="wanted"><span>أبحث عن بورد أو قطعة</span></label></fieldset>
+    <label class="marketFull"><span class="marketFieldLabel">عنوان الإعلان <span aria-hidden="true">*</span></span><input id="listingTitle" name="title" required minlength="6" maxlength="120" placeholder="مثال: بورد Dell Latitude 5480 خردة للقطع"></label>
+    <div class="marketFormColumns">
+      <label><span class="marketFieldLabel">التصنيف *</span><select id="listingCategory" name="category" required><option value="">اختر التصنيف</option><option value="desktop-board">بورد كمبيوتر مكتبي</option><option value="laptop-board">بورد لابتوب</option><option value="graphics-board">بورد كرت شاشة</option><option value="ic">آيسي</option><option value="mosfet">MOSFET وقطع تغذية</option><option value="connector">موصل أو منفذ</option><option value="computer-part">قطعة كمبيوتر</option><option value="other-part">قطعة صيانة أخرى</option></select></label>
+      <label id="listingConditionField"><span class="marketFieldLabel">حالة القطعة *</span><select id="listingCondition" name="condition"><option value="untested">غير مفحوصة</option><option value="working">مفحوصة وتعمل</option><option value="faulty">معطلة</option><option value="donor">خردة للقطع</option><option value="new">جديدة</option></select></label>
+      <label><span class="marketFieldLabel">موديل الجهاز أو البورد</span><input id="listingModel" name="model" maxlength="120" placeholder="مثال: Dell Latitude 5480" dir="auto"></label>
+      <label><span class="marketFieldLabel">رقم البورد أو القطعة</span><input id="listingPartNumber" name="partNumber" maxlength="80" placeholder="مثال: LA-E082P أو BQ24780S" dir="auto"></label>
+    </div>
+    <label class="marketFull"><span class="marketFieldLabel">التفاصيل *</span><textarea id="listingDescription" name="description" rows="4" required minlength="12" maxlength="2500" placeholder="اذكر حالة البورد، القطع الموجودة أو الناقصة، أو مواصفات القطعة التي تبحث عنها."></textarea></label>
+    <div class="marketPhotoField"><span class="marketFieldLabel">صور البورد أو القطعة</span><label class="marketPhotoPicker" for="listingPhotos"><span aria-hidden="true">＋</span><span>أضف حتى 3 صور</span><input id="listingPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><p class="marketHint">الصور اختيارية، وتُصغّر تلقائيًا قبل الحفظ.</p><div id="listingPhotoPreviews" class="marketPhotoPreviews"></div><p id="listingPhotoStatus" class="marketHint" role="status"></p></div>
+    <div class="marketFormColumns">
+      <label><span class="marketFieldLabel">الدولة *</span><input id="listingCountry" name="country" required maxlength="60" value="لبنان" list="marketCountries"></label>
+      <label><span class="marketFieldLabel">المدينة *</span><input id="listingCity" name="city" required maxlength="60" placeholder="مثال: طرابلس" list="marketCities"></label>
+    </div>
+    <datalist id="marketCountries"><option value="لبنان"><option value="سوريا"><option value="الأردن"><option value="فلسطين"><option value="العراق"><option value="مصر"><option value="السعودية"><option value="الإمارات"><option value="الكويت"><option value="تركيا"><option value="ألمانيا"><option value="فرنسا"><option value="المغرب"><option value="الجزائر"><option value="تونس"></datalist>
+    <datalist id="marketCities"><option value="طرابلس"><option value="الميناء — طرابلس"><option value="بيروت"><option value="صيدا"><option value="صور"><option value="زحلة"><option value="جونية"><option value="عكار"></datalist>
+    <div class="marketFormColumns marketMoneyFields"><label><span id="listingPriceLabel" class="marketFieldLabel">السعر</span><input id="listingPrice" name="price" type="number" min="0" max="999999999999" step="0.01" inputmode="decimal" placeholder="اختياري عند الاتفاق"></label><label><span class="marketFieldLabel">العملة</span><select id="listingCurrency" name="currency"><option value="USD">دولار أمريكي — USD</option><option value="LBP">ليرة لبنانية — LBP</option><option value="EUR">يورو — EUR</option></select></label></div>
+    <label class="marketCheck"><input id="listingNegotiable" name="negotiable" type="checkbox" checked><span>السعر على الاتفاق أو قابل للتفاوض</span></label>
+    <div class="marketFormColumns"><label><span class="marketFieldLabel">طريقة التسليم</span><select id="listingDelivery" name="delivery"><option value="agreement">حسب الاتفاق</option><option value="pickup">استلام باليد</option><option value="shipping">يمكن الشحن</option></select></label><label><span class="marketFieldLabel">اسم العرض</span><input id="listingDisplayName" name="displayName" maxlength="60" autocomplete="name"></label></div>
+    <div class="marketFormColumns"><label><span class="marketFieldLabel">وسيلة التواصل *</span><select id="listingContactKind" name="contactKind"><option value="whatsapp">واتساب</option><option value="telegram">تلغرام</option><option value="phone">اتصال هاتفي</option></select></label><label><span id="listingContactLabel" class="marketFieldLabel">الرقم مع مفتاح الدولة *</span><input id="listingContact" name="contact" required maxlength="100" placeholder="+96170123456" dir="ltr" inputmode="tel"></label></div>
+    <p class="marketHint">اسم العرض ووسيلة التواصل سيظهران في إعلانك ليتمكن المهتمون من التواصل معك.</p>
+    <p id="marketFormStatus" class="marketFormStatus" role="status" aria-live="polite"></p>
+    <div class="marketFormActions"><button id="marketSave" class="btn" type="submit">نشر الإعلان</button><button class="marketSoftButton" type="button" data-close="marketEditor">إلغاء</button></div>
+  </form>
+</dialog>
+
+<dialog id="marketDetail" class="marketDialog marketDetail" aria-labelledby="marketDetailTitle" dir="rtl">
+  <div class="marketDialogHeader"><span id="marketDetailKind" class="marketBadge"></span><button class="marketClose" type="button" data-close="marketDetail" aria-label="إغلاق">×</button></div>
+  <div class="marketDetailBody"><h2 id="marketDetailTitle">تفاصيل الإعلان</h2><div id="marketDetailContent"></div><p id="marketDetailStatus" class="marketFormStatus" role="status"></p>
+    <section class="marketReplies" aria-labelledby="marketRepliesTitle"><h3 id="marketRepliesTitle">الردود والاستفسارات</h3><div id="marketReplyList"></div><div id="marketReplyPages" class="marketPagination" hidden><button id="marketReplyNewer" class="marketSoftButton" type="button">ردود أحدث</button><span id="marketReplyPageLabel"></span><button id="marketReplyOlder" class="marketSoftButton" type="button">ردود أقدم</button></div>
+      <form id="marketReplyForm"><label for="marketReplyText" class="marketFieldLabel">عندك القطعة المطلوبة أو سؤال لصاحب الإعلان؟</label><textarea id="marketReplyText" rows="3" required minlength="2" maxlength="1200" placeholder="اكتب ردك هنا…"></textarea><div class="marketFormActions"><button id="marketReplySend" class="btn" type="submit">إرسال الرد</button></div></form>
+      <p id="marketReplyGate" class="marketHint"></p>
+    </section>
+  </div>
+</dialog>
+
+<dialog id="marketSignIn" class="marketDialog marketSmallDialog" aria-labelledby="marketSignInTitle" dir="rtl"><div class="marketDialogHeader"><h2 id="marketSignInTitle">سجّل الدخول للمشاركة</h2><button class="marketClose" data-close="marketSignIn" type="button" aria-label="إغلاق">×</button></div><div class="marketDetailBody"><p class="muted">يمكن للجميع تصفّح السوق. استخدم حسابك لإضافة عرض أو طلب، والرد على الإعلانات وإدارتها.</p><a id="marketLoginLink" class="btn" href="/login?next=%2Fmarket%2F">تسجيل الدخول</a></div></dialog>
+
+<dialog id="marketReport" class="marketDialog marketSmallDialog" aria-labelledby="marketReportTitle" dir="rtl"><div class="marketDialogHeader"><h2 id="marketReportTitle">الإبلاغ عن الإعلان</h2><button class="marketClose" data-close="marketReport" type="button" aria-label="إغلاق">×</button></div><form id="marketReportForm" class="marketForm"><label><span class="marketFieldLabel">سبب البلاغ</span><select id="marketReportReason"><option value="خارج نطاق سوق البوردات والقطع">خارج نطاق سوق البوردات والقطع</option><option value="معلومات مضللة">معلومات مضللة</option><option value="إعلان مكرر أو مزعج">إعلان مكرر أو مزعج</option><option value="سبب آخر">سبب آخر</option></select></label><label><span class="marketFieldLabel">تفاصيل إضافية</span><textarea id="marketReportDetails" maxlength="500" rows="3"></textarea></label><p id="marketReportStatus" class="marketFormStatus" role="status"></p><button id="marketReportSend" class="btn" type="submit">إرسال البلاغ</button></form></dialog>
+
+<div id="marketToast" class="marketToast" role="status" aria-live="polite" hidden></div>
+<noscript><p class="wrap">فعّل JavaScript لعرض إعلانات السوق والبحث فيها وإضافة عرض أو طلب.</p></noscript>
+</body>
+</html>

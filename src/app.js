@@ -1,4 +1,5 @@
 import baseWorker, { ChatRoom as BaseChatRoom } from "./index.js";
+import { forwardMarketRequest, MarketStore, MARKET_ROOM } from "./market.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 const SESSION_COOKIE = "pcbr_session";
@@ -275,6 +276,11 @@ export class ChatRoom extends BaseChatRoom {
   async fetch(request) {
     const url = new URL(request.url);
 
+    if (url.pathname.startsWith("/api/market/") || url.pathname.startsWith("/api/admin/market/")) {
+      this.marketStore ||= new MarketStore(this.ctx);
+      return this.marketStore.fetch(request);
+    }
+
     if (url.pathname.startsWith("/api/admin/")) {
       if (request.headers.get("x-admin-authorized") !== "1") {
         return json({ error: "غير مصرح." }, 403);
@@ -353,6 +359,10 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
+    if (url.pathname.startsWith("/api/market/")) {
+      return forwardMarketRequest(request, env, await getSessionUser(request, env));
+    }
+
     if (url.pathname === "/api/auth/google" && request.method === "GET") {
       return startGoogleAuth(request, env);
     }
@@ -386,7 +396,7 @@ export default {
       headers.delete("authorization");
       headers.delete("x-admin-token");
       headers.set("x-admin-authorized", "1");
-      const room = env.CHAT_ROOM.getByName("repair-main");
+      const room = env.CHAT_ROOM.getByName(url.pathname.startsWith("/api/admin/market/") ? MARKET_ROOM : "repair-main");
       return room.fetch(new Request(request, { headers }));
     }
 

@@ -86,6 +86,7 @@ const staticPaths = [
   '/boardview/directory.html',
   '/boardview/hp-compaq-dc5800-c453-vrm-repair.html',
   '/bios/index.html',
+  '/market/index.html',
   '/bios/intel.html',
   '/community.html',
   '/about.html',
@@ -226,3 +227,4 @@ console.log(`Static BoardView directory built: ${directoryItems.length} file lin
 console.log(`Homepage summary built for ${homeBoards.length} BoardView record(s)`);
 console.log(sitemapOutput);
 console.log(directoryOutput);
+
