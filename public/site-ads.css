@@ -7,7 +7,8 @@
   margin-block: 32px 12px;
 }
 
-.pcbrAdSpaces--pair {
+.pcbrAdSpaces--pair,
+.pcbrAdSpaces--home {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 300px));
   justify-content: center;
@@ -44,7 +45,10 @@
 }
 
 .pcbrAdSlot--square {
+  max-width: 300px;
+  max-height: 300px;
   aspect-ratio: 1;
+  justify-self: center;
 }
 
 .pcbrAdSlot--banner {
