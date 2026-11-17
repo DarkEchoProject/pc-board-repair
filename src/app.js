@@ -250,18 +250,25 @@ async function finishGoogleAuth(request, env) {
 }
 
 class BrandHead {
+  constructor(pathname) {
+    this.isHomePage = pathname === "/" || pathname === "/index.html";
+  }
+
   element(element) {
+    const favicon = this.isHomePage
+      ? ""
+      : '<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">';
     element.prepend(
-      `<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any"><link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261114-1" defer></script><script src="/i18n-extra.js" defer></script>`,
+      `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261114-1" defer></script><script src="/i18n-extra.js" defer></script>`,
       { html: true },
     );
   }
 }
 
-function withBrand(response) {
+function withBrand(response, pathname) {
   const contentType = response.headers.get("content-type") || "";
   if (!contentType.includes("text/html")) return response;
-  return new HTMLRewriter().on("head", new BrandHead()).transform(response);
+  return new HTMLRewriter().on("head", new BrandHead(pathname)).transform(response);
 }
 
 export class ChatRoom extends BaseChatRoom {
@@ -401,6 +408,6 @@ export default {
     }
 
     const response = await baseWorker.fetch(request, env, ctx);
-    return withBrand(response);
+    return withBrand(response, url.pathname);
   },
 };

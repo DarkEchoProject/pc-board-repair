@@ -1,10 +1,11 @@
 (()=>{
   'use strict';
 
-  if(window.PCBRYouTubeIntegrationVersion==='20261020-9')return;
-  window.PCBRYouTubeIntegrationVersion='20261020-9';
+  if(window.PCBRYouTubeIntegrationVersion==='20261117-1')return;
+  window.PCBRYouTubeIntegrationVersion='20261117-1';
 
   const DATA_URL='/data/videos.json';
+  const LATEST_URL='/api/youtube/latest';
   const CHANNEL_URL='https://www.youtube.com/@PCBoardRepairArabic';
   const SUBSCRIBE_URL=`${CHANNEL_URL}?sub_confirmation=1`;
 
@@ -88,7 +89,7 @@
     let section=document.getElementById('pcbrHomeVideos');
     if(!section){section=document.createElement('section');section.id='pcbrHomeVideos';section.className='pcbrVideoSection';target.insertAdjacentElement('afterend',section);}
     const list=videos.slice(0,3);
-    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2><p class="muted">${l==='en'?'The first three videos in the site video list are shown here. Add each new video at the top of the list and the oldest displayed video drops out automatically.':'تظهر هنا أول 3 فيديوهات في قائمة الموقع. عند إضافة فيديو جديد في أول القائمة يخرج أقدم فيديو من العرض تلقائيًا.'}</p></div><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div><div class="pcbrVideoGrid">${list.map(v=>videoCard(v,l)).join('')}</div>`;
+    section.innerHTML=`<div class="sectionHead"><div><h2>${l==='en'?'🎥 Latest Repair Videos':'🎥 أحدث فيديوهات الصيانة'}</h2></div><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div><div class="pcbrVideoGrid">${list.map(v=>videoCard(v,l)).join('')}</div>`;
   }
 
   function addComponentTestingVideo(videos){
@@ -100,13 +101,36 @@
     section.innerHTML=`<span class="pcbrVideoEyebrow">YouTube</span><h2>${l==='en'?'🎥 Practical video explanation':'🎥 الشرح العملي بالفيديو'}</h2><p class="muted">${esc(description(video,l))}</p><div class="pcbrVideoEmbed"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.id)}?rel=0" title="${esc(title(video,l))}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div><div class="pcbrVideoActions" style="margin-top:14px"><a class="btn" href="${esc(watchUrl(video))}" target="_blank" rel="noopener noreferrer">${l==='en'?'Open video on YouTube':'فتح الفيديو على YouTube'}</a><a class="imageBtn pcbrSubscribeBtn" href="${esc(SUBSCRIBE_URL)}" target="_blank" rel="noopener noreferrer">${subscribeLabel(l)}</a></div>`;
   }
 
-  async function init(){
+  async function loadVideos(url) {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const videos = await response.json();
+    return Array.isArray(videos) ? videos.filter(video => video && typeof video.id === 'string') : [];
+  }
+
+  async function init() {
     addStyles();addChannelLinks();addChannelSchema();
-    try{
-      const response=await fetch(DATA_URL,{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
-      const data=await response.json();const videos=Array.isArray(data)?data.filter(v=>v&&v.id):[];if(!videos.length)return;
-      addHomeSection(videos);addComponentTestingVideo(videos);
-    }catch(err){console.warn('PCBR YouTube integration unavailable.',err);}
+    const home = /^\/(?:index\.html)?$/.test(location.pathname);
+    const componentTesting = /^\/component-testing(?:\/index\.html|\/)?$/.test(location.pathname);
+    if (!home && !componentTesting) return;
+
+    const live = home ? loadVideos(LATEST_URL).catch(() => []) : null;
+    const local = await loadVideos(DATA_URL).catch(error => {
+      console.warn('PCBR YouTube integration unavailable.', error);
+      return [];
+    });
+
+    if (componentTesting) {
+      addComponentTestingVideo(local);
+      return;
+    }
+
+    if (local.length) addHomeSection(local);
+    const latest = await live;
+    if (latest.length) {
+      const localById = new Map(local.map(video => [video.id, video]));
+      addHomeSection(latest.map(video => ({ ...localById.get(video.id), ...video })));
+    }
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
