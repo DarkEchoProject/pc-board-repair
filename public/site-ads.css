@@ -7,13 +7,22 @@
   margin-block: 32px 12px;
 }
 
-.pcbrAdSpaces--home {
+.pcbrAdSpaces--pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 300px));
   justify-content: center;
   gap: 20px;
   max-width: 620px;
   margin-inline: auto;
+}
+
+.pcbrAdSpaces--top {
+  width: calc(100% - 40px);
+  margin-block: 24px;
+}
+
+.pcbrAdSpaces--between {
+  margin-block: 24px;
 }
 
 .pcbrAdSlot {
@@ -49,6 +58,11 @@
 }
 
 @media (max-width: 640px) {
+  .pcbrAdSpaces--top {
+    gap: 12px;
+    margin-block: 16px;
+  }
+
   .pcbrAdSpaces--home {
     grid-template-columns: minmax(0, 1fr);
     max-width: 300px;
