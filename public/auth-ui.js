@@ -526,11 +526,11 @@
       {href:'/boardview/',ar:'BoardView',en:'BoardView',active:path=>path.startsWith('/boardview/')},
       {href:'/bios/',ar:'BIOS',en:'BIOS',active:path=>path.startsWith('/bios/')},
       {href:'/market/',ar:'سوق البوردات',en:'Board Market',active:path=>path==='/market'||path.startsWith('/market/')},
-      {href:'#',ar:'المزيد ▾',en:'More ▾',active:()=>false,moreMenu:true},
       {href:'/community',ar:'غرفة الصيانة',en:'Repair Room',active:path=>path==='/community'||path==='/community.html'},
       {href:'#',ar:'↗ مشاركة',en:'↗ Share',active:()=>false,shareMenu:true},
       {href:'https://t.me/rdRepairLB',ar:'✈ انضم لتلغرام',en:'✈ Join Telegram',active:()=>false,external:true,telegram:true},
-      {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true}
+      {href:'https://www.youtube.com/@PCBoardRepairArabic',ar:'▶ YouTube',en:'▶ YouTube',active:()=>false,external:true,youtube:true},
+      {href:'#',ar:'المزيد ▾',en:'More ▾',active:()=>false,moreMenu:true}
     ];
 
     const path=location.pathname;
