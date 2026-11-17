@@ -1,5 +1,7 @@
 (()=>{
   const en={
+    'أعلن هنا':'Advertise here',
+    'مساحات إعلانية':'Advertising spaces',
     // BoardView matching guide
     'كيف تختار ملف BoardView المطابق للوحَتك؟':'How do you choose the right BoardView file?',
     'اقرأ رقم البورد والـRevision المطبوعين على اللوحة وسجّل الرقم والإصدار كاملين.':'Read the board number and revision printed on the board and record both in full.',

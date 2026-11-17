@@ -4,10 +4,35 @@ import { serveLatestYouTubeVideos } from "./youtube-latest.js";
 export { ChatRoom };
 
 class HeaderUiHead {
+  constructor(showAdSpaces) {
+    this.showAdSpaces = showAdSpaces;
+  }
+
   element(element) {
     element.append('<script>try{document.documentElement.dataset.theme=localStorage.getItem("pcbr-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script><link rel="stylesheet" href="/theme.css?v=20261105-3"><script src="/theme.js?v=20261105-3" defer></script>', { html: true });
     element.append('<script src="/youtube-integration.js?v=20261117-1" defer></script>', { html: true });
+    if (this.showAdSpaces) {
+      element.append('<link rel="stylesheet" href="/site-ads.css?v=20261117-1">', { html: true });
+    }
     element.append('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'{"token":"d776a04c82684fbaa3c8e9f78d77cb26"}\'></script>', { html: true });
+  }
+}
+
+class PageAdSpaces {
+  constructor(isHomePage) {
+    this.isHomePage = isHomePage;
+  }
+
+  element(element) {
+    const shape = this.isHomePage ? "square" : "banner";
+    const slotIds = this.isHomePage
+      ? ["home-square-1", "home-square-2"]
+      : ["content-banner"];
+    const slots = slotIds.map(id =>
+      `<div class="pcbrAdSlot pcbrAdSlot--${shape}" data-ad-slot="${id}"><span>أعلن هنا</span></div>`
+    ).join("");
+    const className = this.isHomePage ? "pcbrAdSpaces pcbrAdSpaces--home" : "pcbrAdSpaces";
+    element.append(`<aside class="${className}" aria-label="مساحات إعلانية">${slots}</aside>`, { html: true });
   }
 }
 
@@ -32,10 +57,18 @@ function withHeaderUi(response, url) {
   if (response.status === 304) return response;
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
-  return new HTMLRewriter()
-    .on("head", new HeaderUiHead())
-    .on('footer a[href="/contact"]', new SiteIssueLink(url))
-    .transform(response);
+  const showAdSpaces = response.status === 200 &&
+    !url.pathname.startsWith("/api/") &&
+    !isProtectedDownload(url.pathname) &&
+    !/^\/(?:admin|login)(?:\/|\.html|$)/.test(url.pathname);
+  const rewriter = new HTMLRewriter()
+    .on("head", new HeaderUiHead(showAdSpaces))
+    .on('footer a[href="/contact"]', new SiteIssueLink(url));
+  if (showAdSpaces) {
+    const isHomePage = url.pathname === "/" || url.pathname === "/index.html";
+    rewriter.on("main", new PageAdSpaces(isHomePage));
+  }
+  return rewriter.transform(response);
 }
 
 function isProtectedDownload(pathname) {

@@ -1,0 +1,56 @@
+.pcbrAdSpaces {
+  --pcbr-ad-background: #0b192b;
+  --pcbr-ad-border: #34526d;
+  --pcbr-ad-text: #9cb4ca;
+  width: 100%;
+  grid-column: 1 / -1;
+  margin-block: 32px 12px;
+}
+
+.pcbrAdSpaces--home {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 300px));
+  justify-content: center;
+  gap: 20px;
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+.pcbrAdSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  border: 1px dashed var(--pcbr-ad-border);
+  border-radius: 16px;
+  background: var(--pcbr-ad-background);
+  color: var(--pcbr-ad-text);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.pcbrAdSlot--square {
+  aspect-ratio: 1;
+}
+
+.pcbrAdSlot--banner {
+  height: clamp(96px, 12vw, 140px);
+}
+
+:root[data-theme="light"] .pcbrAdSpaces {
+  --pcbr-ad-background: #f0f6fb;
+  --pcbr-ad-border: #a3b9cb;
+  --pcbr-ad-text: #48647c;
+}
+
+@media (max-width: 640px) {
+  .pcbrAdSpaces--home {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 300px;
+  }
+}
