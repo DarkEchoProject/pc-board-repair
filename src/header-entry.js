@@ -74,14 +74,29 @@ class SiteIssueLink {
   }
 }
 
+function isPublicContent(url) {
+  return !url.pathname.startsWith("/api/") &&
+    !isProtectedDownload(url.pathname) &&
+    !/^\/(?:admin|login)(?:\/|\.html|$)/.test(url.pathname);
+}
+
+function withFreshPageRequest(request, url) {
+  const isPage = !/\.[^/]+$/.test(url.pathname) || /\.html$/i.test(url.pathname);
+  if (!isPage || !isPublicContent(url) ||
+      (request.method !== "GET" && request.method !== "HEAD")) return request;
+
+  // An asset's validators do not identify the HTML after Worker transformations.
+  const headers = new Headers(request.headers);
+  headers.delete("if-none-match");
+  headers.delete("if-modified-since");
+  return new Request(request, { headers });
+}
+
 function withHeaderUi(response, url) {
   if (response.status === 304) return response;
   const type = response.headers.get("content-type") || "";
   if (!type.toLowerCase().includes("text/html")) return response;
-  const showAdSpaces = response.status === 200 &&
-    !url.pathname.startsWith("/api/") &&
-    !isProtectedDownload(url.pathname) &&
-    !/^\/(?:admin|login)(?:\/|\.html|$)/.test(url.pathname);
+  const showAdSpaces = response.status === 200 && isPublicContent(url);
   const rewriter = new HTMLRewriter()
     .on("head", new HeaderUiHead(showAdSpaces))
     .on('footer a[href="/contact"]', new SiteIssueLink(url));
@@ -91,7 +106,19 @@ function withHeaderUi(response, url) {
     rewriter.on("body > header", topAdSpaces);
     rewriter.on("main", new PageAdSpaces(isHomePage, topAdSpaces));
   }
-  return rewriter.transform(response);
+  const transformed = rewriter.transform(response);
+  if (!showAdSpaces) return transformed;
+
+  const headers = new Headers(transformed.headers);
+  headers.delete("etag");
+  headers.delete("last-modified");
+  headers.delete("content-length");
+  headers.set("cache-control", "no-cache, must-revalidate");
+  return new Response(transformed.body, {
+    status: transformed.status,
+    statusText: transformed.statusText,
+    headers,
+  });
 }
 
 function isProtectedDownload(pathname) {
@@ -129,7 +156,7 @@ export default {
       return loginRedirect(url);
     }
 
-    const response = await baseWorker.fetch(request, env, ctx);
+    const response = await baseWorker.fetch(withFreshPageRequest(request, url), env, ctx);
     return withHeaderUi(response, url);
   },
 };
