@@ -54,9 +54,10 @@
   }
   async function load() {
     if (loading || $("dashboard").classList.contains("hidden")) return;
-    loading = true; status("جاري تحميل إعلانات السوق…");
+    loading = true; const session=sessionStorage.getItem("pcbr-admin-token"); status("جاري تحميل إعلانات السوق…");
     try {
       const data = await api(`/api/admin/market/overview?filter=${encodeURIComponent($("marketAdminFilter").value)}&page=${page}`);
+      if(session!==sessionStorage.getItem("pcbr-admin-token")||$("dashboard").classList.contains("hidden"))return;
       pages = data.pages;
       clearImages(); root.replaceChildren(...data.items.map(card));
       if (!data.items.length) { const empty = document.createElement("p"); empty.className = "muted"; empty.textContent = "لا توجد إعلانات ضمن هذا الاختيار."; root.append(empty); }
@@ -69,7 +70,7 @@
   $("marketAdminFilter").addEventListener("change", () => { page = 1; load(); });
   $("marketAdminPrev").addEventListener("click", () => { if (page > 1) { page--; load(); } });
   $("marketAdminNext").addEventListener("click", () => { if (page < pages) { page++; load(); } });
-  $("refreshBtn").addEventListener("click", load);
+  // Refresh is handled by the active dashboard section.
   new MutationObserver(() => { if (!$("dashboard").classList.contains("hidden")) load(); else { clearImages(); root.replaceChildren(); status(""); } }).observe($("dashboard"), { attributes: true, attributeFilter: ["class"] });
   load();
 })();

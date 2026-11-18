@@ -22,7 +22,7 @@
 #siteIssueStatus:empty{display:none}
 @media(max-width:540px){.siteIssueActions>*{width:100%;text-align:center}}
 </style>
-<script src="/site-issue.js?v=20261114-1" defer></script>
+<script src="/site-issue.js?v=20261118-2" defer></script>
 <link rel="icon" href="/favicon.ico?v=4" sizes="any">
 <link rel="icon" type="image/png" href="/site-logo.png?v=4">
 </head>
@@ -55,7 +55,8 @@
         <textarea id="siteIssueDescription" class="chatInput" maxlength="700" required placeholder="مثال: ضغطت على «تحميل BIOS» وظهر خطأ."></textarea>
       </label>
       <div class="siteIssueActions">
-        <button class="btn" type="submit">تجهيز بريد البلاغ</button>
+        <button class="btn" type="submit">إرسال البلاغ إلى إدارة الموقع</button>
+        <button id="siteIssueEmail" class="imageBtn" type="button">تجهيز بريد البلاغ</button>
         <button id="siteIssueCopy" class="imageBtn" type="button">نسخ نص البلاغ</button>
       </div>
       <span id="siteIssueStatus" class="muted smallText" role="status"></span>

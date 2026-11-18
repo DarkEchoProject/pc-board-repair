@@ -27,13 +27,17 @@
   }
 
   description.addEventListener("input", () => description.setCustomValidity(""));
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  document.getElementById("siteIssueEmail").addEventListener("click", () => {
     if (!validReport()) return;
     const subject = encodeURIComponent(`بلاغ PC Board Repair — ${type.value}`);
     const body = encodeURIComponent(reportText());
     status.textContent = `راجع الرسالة في تطبيق البريد ثم أرسلها إلى ${address}.`;
     location.href = `mailto:${address}?subject=${subject}&body=${body}`;
+  });
+  form.addEventListener("submit",async event=>{
+    event.preventDefault();if(!validReport())return;
+    const button=form.querySelector('[type="submit"]');button.disabled=true;status.textContent="جاري إرسال البلاغ…";
+    try{const r=await fetch("/api/site/issue",{method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({kind:type.value,page:page.value,description:description.value.trim()})});const data=await r.json();if(!r.ok)throw Error(data.error||"تعذر الإرسال.");status.textContent="تم إرسال البلاغ إلى لوحة الإدارة.";description.value="";}catch(e){status.textContent=e.message+" يمكنك أيضًا استخدام زر البريد.";}finally{button.disabled=false;}
   });
   document.getElementById("siteIssueCopy").addEventListener("click", async () => {
     if (!validReport()) return;

@@ -6,6 +6,25 @@ const SESSION_COOKIE = "pcbr_session";
 const OAUTH_STATE_COOKIE = "pcbr_oauth_state";
 const OAUTH_NEXT_COOKIE = "pcbr_oauth_next";
 const SESSION_SECONDS = 30 * 24 * 60 * 60;
+const SITE_ADMIN_ROOM = "site-admin";
+const SITE_ADMIN_PATH = "/api/admin/site/";
+function internalSite(env, origin, action, data) {
+  return env.CHAT_ROOM.getByName(SITE_ADMIN_ROOM).fetch(new Request(new URL(SITE_ADMIN_PATH+action,origin),{
+    method:data?"POST":"GET",headers:{"content-type":"application/json","x-admin-authorized":"1"},...(data?{body:JSON.stringify(data)}:{})
+  }));
+}
+async function observeUser(env,origin,user) {
+  try {await internalSite(env,origin,"observe",{id:user.sub,name:user.name});} catch {}
+}
+async function canParticipate(env,origin,user) {
+  const r=await internalSite(env,origin,"participation",{id:user.sub});
+  if(!r.ok)throw Error("Participation check unavailable");
+  return !(await r.json()).suspended;
+}
+function sameSite(request,url) {
+  const origin=request.headers.get("origin");
+  return (!origin||origin===url.origin)&&request.headers.get("sec-fetch-site")!=="cross-site";
+}
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -240,6 +259,7 @@ async function finishGoogleAuth(request, env) {
   }
 
   const session = await createSession(googleUser, env);
+  await observeUser(env,new URL(request.url).origin,googleUser);
   let next = "/";
   try { next = safeNext(decodeURIComponent(getCookie(request, OAUTH_NEXT_COOKIE) || "%2F")); } catch {}
 
@@ -256,9 +276,7 @@ class BrandHead {
   }
 
   element(element) {
-    const favicon = this.isHomePage
-      ? ""
-      : '<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">';
+    const favicon = ""; // canonical favicon is applied by seo-entry.js
     element.prepend(
       `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261114-1" defer></script><script src="/i18n-extra.js" defer></script>`,
       { html: true },
@@ -273,6 +291,64 @@ function withBrand(response, pathname) {
 }
 
 export class ChatRoom extends BaseChatRoom {
+  async siteAdmin(request,url) {
+    const sql=this.ctx.storage.sql;
+    if(!this.siteSchemaReady){
+    sql.exec("CREATE TABLE IF NOT EXISTS site_accounts(id TEXT PRIMARY KEY,name TEXT NOT NULL,first_seen INTEGER NOT NULL,last_seen INTEGER NOT NULL,suspended INTEGER NOT NULL DEFAULT 0)");
+    sql.exec("CREATE TABLE IF NOT EXISTS site_issues(id TEXT PRIMARY KEY,user_id TEXT NOT NULL,user_name TEXT NOT NULL,kind TEXT NOT NULL,page TEXT NOT NULL,description TEXT NOT NULL,created INTEGER NOT NULL,resolved INTEGER NOT NULL DEFAULT 0)");
+    sql.exec("CREATE INDEX IF NOT EXISTS site_issues_user_created ON site_issues(user_id,created)");
+    sql.exec("CREATE TABLE IF NOT EXISTS site_config(key TEXT PRIMARY KEY,value TEXT NOT NULL)");
+    this.siteSchemaReady=true;
+    }
+    const rows=(q,...a)=>sql.exec(q,...a).toArray(),one=(q,...a)=>rows(q,...a)[0];
+    const settings=()=>{try{return JSON.parse(one("SELECT value FROM site_config WHERE key='settings'")?.value||"{}");}catch{return {};}};
+    const action=url.pathname.slice(SITE_ADMIN_PATH.length),now=Date.now();
+    if(request.method==="GET"){
+      if(action==="notice"||action==="settings"){
+        const s=settings();return json({enabled:s.enabled===true,text:action==="notice"&&!s.enabled?"":s.text||"",tone:s.tone||"info"});
+      }
+      if(action==="summary")return json({users:one("SELECT COUNT(*) AS n FROM site_accounts").n,suspended:one("SELECT COUNT(*) AS n FROM site_accounts WHERE suspended=1").n,openIssues:one("SELECT COUNT(*) AS n FROM site_issues WHERE resolved=0").n,totalIssues:one("SELECT COUNT(*) AS n FROM site_issues").n,noticeEnabled:settings().enabled===true});
+      const page=Math.max(1,Math.min(100000,parseInt(url.searchParams.get("page"),10)||1)),limit=30,offset=(page-1)*limit;
+      if(action==="users")return json({items:rows("SELECT id,name,first_seen,last_seen,suspended FROM site_accounts ORDER BY last_seen DESC LIMIT ? OFFSET ?",limit,offset),total:one("SELECT COUNT(*) AS n FROM site_accounts").n,page,limit});
+      if(action==="issues"){
+        const filter=url.searchParams.get("filter"),where=filter==="all"?"":filter==="resolved"?" WHERE resolved=1":" WHERE resolved=0";
+        return json({items:rows("SELECT id,user_name,kind,page,description,created,resolved FROM site_issues"+where+" ORDER BY created DESC LIMIT ? OFFSET ?",limit,offset),total:one("SELECT COUNT(*) AS n FROM site_issues"+where).n,page,limit});
+      }
+    }
+    if(request.method!=="POST")return json({error:"غير موجود."},404);
+    const body=await readBody(request);
+    if(!body||typeof body!=="object")return json({error:"طلب غير صالح."},400);
+    const id=cleanText(body.id,160),name=cleanText(body.name,80)||"مستخدم";
+    if(action==="observe"||action==="participation"){
+      if(!id)return json({error:"حساب غير صالح."},400);
+      if(action==="observe")sql.exec("INSERT INTO site_accounts(id,name,first_seen,last_seen) VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,last_seen=excluded.last_seen WHERE site_accounts.last_seen<? OR site_accounts.name!=excluded.name",id,name,now,now,now-3600000);
+      return json({suspended:!!one("SELECT suspended FROM site_accounts WHERE id=?",id)?.suspended});
+    }
+    if(action==="user-action"){
+      if(!id||typeof body.suspended!=="boolean"||!one("SELECT id FROM site_accounts WHERE id=?",id))return json({error:"حساب غير موجود أو طلب غير صالح."},400);
+      sql.exec("UPDATE site_accounts SET suspended=? WHERE id=?",body.suspended?1:0,id);return json({ok:true});
+    }
+    if(action==="submit-issue"){
+      const kind=cleanText(body.kind,100),page=cleanText(body.page,500),description=cleanText(body.description,700);
+      if(!id||!["رابط أو تنزيل لا يعمل","ملف غير مطابق أو معلومة خاطئة","مشكلة في تسجيل الدخول","مشكلة في عرض الموقع","شكوى أو اقتراح"].includes(kind)||!description)return json({error:"أكمل نوع المشكلة ووصفها."},400);
+      if(page){try{const u=new URL(page);if(!["https:","http:"].includes(u.protocol))throw 0;}catch{return json({error:"رابط غير صالح."},400);}}
+      if(one("SELECT COUNT(*) AS n FROM site_issues WHERE user_id=? AND created>?",id,now-86400000).n>=5)return json({error:"وصلت إلى حد البلاغات اليومية."},429);
+      sql.exec("INSERT INTO site_issues(id,user_id,user_name,kind,page,description,created) VALUES(?,?,?,?,?,?,?)",crypto.randomUUID(),id,name,kind,page,description,now);
+      return json({ok:true},201);
+    }
+    if(action==="issue-action"){
+      if(!id||typeof body.resolved!=="boolean"||!one("SELECT id FROM site_issues WHERE id=?",id))return json({error:"البلاغ غير موجود."},404);
+      sql.exec("UPDATE site_issues SET resolved=? WHERE id=?",body.resolved?1:0,id);return json({ok:true});
+    }
+    if(action==="settings"){
+      const text=cleanText(body.text,300),tone=["info","warning","success"].includes(body.tone)?body.tone:"info";
+      if(typeof body.enabled!=="boolean"||(body.enabled&&!text))return json({error:"اكتب نص التنبيه قبل تفعيله."},400);
+      const value={enabled:body.enabled,text,tone};
+      sql.exec("INSERT INTO site_config(key,value) VALUES('settings',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",JSON.stringify(value));return json(value);
+    }
+    return json({error:"غير موجود."},404);
+  }
+
   async fetch(request) {
     const url = new URL(request.url);
 
@@ -285,6 +361,8 @@ export class ChatRoom extends BaseChatRoom {
       if (request.headers.get("x-admin-authorized") !== "1") {
         return json({ error: "غير مصرح." }, 403);
       }
+
+      if (url.pathname.startsWith(SITE_ADMIN_PATH)) return this.siteAdmin(request,url);
 
       if (request.method === "GET" && url.pathname === "/api/admin/overview") {
         const messages = (await this.ctx.storage.get("messages")) || [];
@@ -360,7 +438,25 @@ export default {
     }
 
     if (url.pathname.startsWith("/api/market/")) {
-      return forwardMarketRequest(request, env, await getSessionUser(request, env));
+      const user=await getSessionUser(request,env);
+      if(user&&!["GET","HEAD"].includes(request.method)&&url.pathname!=="/api/market/consent"){
+        try{if(!await canParticipate(env,url.origin,user))return json({error:"تم تعليق مشاركتك في السوق."},403);}catch{return json({error:"تعذر التحقق من صلاحية المشاركة."},503);}
+      }
+      return forwardMarketRequest(request,env,user);
+    }
+
+    if(url.pathname==="/api/site/notice"&&request.method==="GET")return internalSite(env,url.origin,"notice");
+    if(url.pathname==="/api/site/issue"&&request.method==="POST"){
+      if(!sameSite(request,url))return json({error:"طلب غير مسموح."},403);
+      const user=await getSessionUser(request,env);
+      if(!user)return json({error:"سجّل الدخول لإرسال البلاغ إلى الإدارة، أو استخدم البريد."},401);
+      const reader=request.body?.getReader();
+      if(!reader)return json({error:"طلب غير صالح."},400);
+      const dec=new TextDecoder();let raw="",size=0;
+      try{while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>8192){await reader.cancel();return json({error:"البلاغ طويل جدًا."},413);}raw+=dec.decode(value,{stream:true});}raw+=dec.decode();}finally{reader.releaseLock();}
+      if(raw.length>4000)return json({error:"البلاغ طويل جدًا."},413);
+      let body;try{body=JSON.parse(raw);}catch{return json({error:"طلب غير صالح."},400);}
+      return internalSite(env,url.origin,"submit-issue",{kind:body?.kind,page:body?.page,description:body?.description,id:user.sub,name:user.name});
     }
 
     if (url.pathname === "/api/auth/google" && request.method === "GET") {
@@ -373,6 +469,7 @@ export default {
 
     if (url.pathname === "/api/auth/me" && request.method === "GET") {
       const user = await getSessionUser(request, env);
+      if(user)await observeUser(env,url.origin,user);
       return user ? json({ authenticated: true, user }) : json({ authenticated: false }, 401);
     }
 
@@ -392,17 +489,21 @@ export default {
         return json({ error: "كلمة مرور الإدارة غير صحيحة." }, 401);
       }
 
+      if(url.pathname.startsWith(SITE_ADMIN_PATH)&&!["summary","users","issues","settings","user-action","issue-action"].includes(url.pathname.slice(SITE_ADMIN_PATH.length)))return json({error:"غير موجود."},404);
+      if(!["GET","HEAD"].includes(request.method)&&!sameSite(request,url))return json({error:"طلب غير مسموح."},403);
+      if(url.pathname==="/api/admin/security"&&request.method==="GET")return json({adminConfigured:true,googleConfigured:authConfigured(env),sessionConfigured:!!sessionSigningSecret(env)});
       const headers = new Headers(request.headers);
       headers.delete("authorization");
       headers.delete("x-admin-token");
       headers.set("x-admin-authorized", "1");
-      const room = env.CHAT_ROOM.getByName(url.pathname.startsWith("/api/admin/market/") ? MARKET_ROOM : "repair-main");
+      const room = env.CHAT_ROOM.getByName(url.pathname.startsWith("/api/admin/market/") ? MARKET_ROOM : url.pathname.startsWith(SITE_ADMIN_PATH) ? SITE_ADMIN_ROOM : "repair-main");
       return room.fetch(new Request(request, { headers }));
     }
 
     if (url.pathname === "/api/chat/send" && request.method === "POST") {
       const user = await getSessionUser(request, env);
       if (!user) return json({ error: "سجّل الدخول للمشاركة في غرفة الصيانة." }, 401);
+      try{if(!await canParticipate(env,url.origin,user))return json({error:"تم تعليق مشاركتك في غرفة الصيانة."},403);}catch{return json({error:"تعذر التحقق من صلاحية المشاركة."},503);}
       const body = await readBody(request);
       if (!body) return json({ error: "طلب غير صالح." }, 400);
       body.name = user.name || user.email.split("@")[0] || "مستخدم";
