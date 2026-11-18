@@ -3,7 +3,7 @@ import baseWorker, { ChatRoom } from "./entry.js";
 export { ChatRoom };
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
-const FAVICON_TAG = '<link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any">';
+const FAVICON_TAG = '<link rel="icon" href="/favicon.ico?v=20261118-1" type="image/x-icon" sizes="any">';
 
 function responseFromText(response, text) {
   const headers = new Headers(response.headers);
@@ -21,12 +21,16 @@ async function withSiteFavicon(response) {
   if (!type.toLowerCase().includes("text/html")) return response;
 
   const html = await response.text();
-  if (/\<link\b[^>]*\brel\s*=\s*["'][^"']*\bicon\b[^"']*["'][^>]*>/i.test(html)) {
-    return responseFromText(response, html);
-  }
-  if (!/<\/head>/i.test(html)) return responseFromText(response, html);
-
-  return responseFromText(response, html.replace(/<\/head>/i, `${FAVICON_TAG}\n</head>`));
+  // Replace existing browser icon declarations as well as missing ones.
+  const updated = html.replace(/(<head\b[^>]*>)([\s\S]*?)(<\/head\s*>)/i, (_, open, head, close) => {
+    const cleaned = head.replace(/<link\b[^>]*>/gi, link => {
+      const rel = link.match(/\srel\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i);
+      const tokens = (rel?.[1] ?? rel?.[2] ?? rel?.[3] ?? "").toLowerCase().split(/\s+/);
+      return tokens.includes("icon") ? "" : link;
+    });
+    return open + cleaned + FAVICON_TAG + "\n" + close;
+  });
+  return responseFromText(response, updated);
 }
 
 export default {
@@ -53,6 +57,6 @@ export default {
     }
 
     const response = await baseWorker.fetch(request, env, ctx);
-    return withSiteFavicon(response);
+    return request.method === "HEAD" ? response : withSiteFavicon(response);
   },
 };
