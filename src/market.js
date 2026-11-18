@@ -1,5 +1,13 @@
 // Market data uses a separate named instance of the existing SQLite-backed binding.
 export const MARKET_ROOM = "repair-market";
+// Bump this value and the client terms version whenever the displayed terms change.
+export const MARKET_TERMS_VERSION = "2026-11-18-v1";
+const CONSENT_COOKIE = "pcbr_market_consent", CONSENT_SECONDS = 30 * 24 * 60 * 60;
+const CONSENT_PATH = "/api/market/consent";
+function consentToken(request) {
+  const value = (request.headers.get("cookie") || "").split(";").map(x => x.trim()).find(x => x.startsWith(CONSENT_COOKIE + "="))?.slice(CONSENT_COOKIE.length + 1) || "";
+  return UUID.test(value) ? value : "";
+}
 export const MARKET_CATEGORIES = {
   "desktop-board": "بورد كمبيوتر مكتبي", "laptop-board": "بورد لابتوب",
   "graphics-board": "بورد كرت شاشة", ic: "آيسي", mosfet: "MOSFET وقطع تغذية",
@@ -32,10 +40,12 @@ export async function forwardMarketRequest(request, env, user) {
   const write = !["GET", "HEAD"].includes(request.method);
   if (!["GET", "HEAD", "POST", "PATCH", "DELETE"].includes(request.method)) return json({ error: "الطريقة غير مدعومة." }, 405);
   if (write && ((request.headers.get("origin") && request.headers.get("origin") !== url.origin) || request.headers.get("sec-fetch-site") === "cross-site")) return json({ error: "طلب غير مسموح من هذا المصدر." }, 403);
-  if ((write || url.searchParams.get("mine") === "1") && !user) return json({ error: "سجّل الدخول لإضافة إعلان أو إدارته.", code: "sign_in_required" }, 401);
+  if (url.pathname !== CONSENT_PATH && (write || url.searchParams.get("mine") === "1") && !user) return json({ error: "سجّل الدخول لإضافة إعلان أو إدارته.", code: "sign_in_required" }, 401);
   // Never forward identity/admin headers supplied by a visitor.
   const headers = new Headers();
   for (const key of ["content-type", "if-none-match"]) if (request.headers.has(key)) headers.set(key, request.headers.get(key));
+  const token = consentToken(request);
+  if (token) headers.set("cookie", CONSENT_COOKIE + "=" + token);
   if (user) headers.set("x-pcbr-market-user", encodeURIComponent(JSON.stringify({ id: user.sub, name: user.name || "مستخدم" })));
   return env.CHAT_ROOM.getByName(MARKET_ROOM).fetch(new Request(request, { headers }));
 }
@@ -151,6 +161,26 @@ export class MarketStore {
     this.sql.exec("CREATE TABLE IF NOT EXISTS market_reports (listing_id TEXT NOT NULL, owner_id TEXT NOT NULL, reason TEXT NOT NULL, details TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(listing_id, owner_id))");
     this.sql.exec("CREATE TABLE IF NOT EXISTS market_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expires INTEGER NOT NULL)");
     this.sql.exec("CREATE INDEX IF NOT EXISTS market_limit_expiry ON market_limits(expires)");
+    this.sql.exec("CREATE TABLE IF NOT EXISTS market_consents (token TEXT PRIMARY KEY, version TEXT NOT NULL, expires INTEGER NOT NULL)");
+    this.sql.exec("CREATE INDEX IF NOT EXISTS market_consent_expiry ON market_consents(expires)");
+  }
+  accepted(request) {
+    const token = consentToken(request);
+    return !!(token && this.one("SELECT token FROM market_consents WHERE token=? AND version=? AND expires>?", token, MARKET_TERMS_VERSION, Date.now()));
+  }
+  async consent(request, url) {
+    if (request.method === "GET") return json({ accepted: this.accepted(request), version: MARKET_TERMS_VERSION });
+    if (request.method !== "POST") return json({ error: "الطريقة غير مدعومة." }, 405);
+    const body = await readJson(request);
+    if (body.accepted !== true || body.version !== MARKET_TERMS_VERSION) fail("اقرأ الشروط الحالية ووافق عليها أولًا.", 403, "market_consent_required");
+    if (this.accepted(request)) return json({ accepted: true, version: MARKET_TERMS_VERSION });
+    const token = crypto.randomUUID(), now = Date.now();
+    this.storage.transactionSync(() => {
+      this.sql.exec("DELETE FROM market_consents WHERE expires<=?", now);
+      this.sql.exec("INSERT INTO market_consents(token,version,expires) VALUES(?,?,?)", token, MARKET_TERMS_VERSION, now + CONSENT_SECONDS * 1000);
+    });
+    const secure = url.protocol === "https:" ? "; Secure" : "";
+    return json({ accepted: true, version: MARKET_TERMS_VERSION }, 200, { "set-cookie": CONSENT_COOKIE + "=" + token + "; Path=/api/market/; Max-Age=" + CONSENT_SECONDS + "; HttpOnly; SameSite=Lax" + secure });
   }
   rows(query, ...args) { return this.sql.exec(query, ...args).toArray(); }
   one(query, ...args) { return this.rows(query, ...args)[0]; }
@@ -279,7 +309,7 @@ export class MarketStore {
   image(request, id, user, admin = false) {
     const photo = this.one("SELECT p.*,l.moderated,l.status,l.owner_id FROM market_photos p JOIN market_listings l ON l.id=p.listing_id WHERE p.id=? AND l.status!='deleted'", id);
     if (!photo || (!admin && photo.moderated && photo.owner_id !== user?.id)) fail("الصورة غير موجودة.", 404);
-    const headers = { "content-type": photo.mime, "cache-control": admin || photo.moderated ? "no-store" : "public, max-age=300", "x-content-type-options": "nosniff", etag: `"${id}"` };
+    const headers = { "content-type": photo.mime, "cache-control": admin ? "no-store" : "private, no-store", "x-content-type-options": "nosniff", etag: `"${id}"` };
     if (!admin && request.headers.get("if-none-match") === headers.etag) return new Response(null, { status: 304, headers });
     const data = photo.data instanceof ArrayBuffer ? new Uint8Array(photo.data) : photo.data;
     return new Response(request.method === "HEAD" ? null : data, { headers: { ...headers, "content-length": String(data.byteLength) } });
@@ -313,6 +343,8 @@ export class MarketStore {
     try {
       const url = new URL(request.url), user = userFrom(request);
       if (url.pathname.startsWith("/api/admin/market/")) return await this.admin(request, url);
+      if (url.pathname === CONSENT_PATH) return await this.consent(request, url);
+      if (!this.accepted(request)) fail("يجب قراءة شروط السوق وإخلاء المسؤولية والموافقة عليها أولًا.", 403, "market_consent_required");
       if (url.pathname === "/api/market/listings") {
         if (request.method === "GET") return this.list(url, user);
         if (request.method === "POST") return await this.save(request, null, user);

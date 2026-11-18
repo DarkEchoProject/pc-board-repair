@@ -11,13 +11,13 @@
 <meta property="og:title" content="سوق بوردات كمبيوتر">
 <meta property="og:description" content="بورد زائد عندك، قطعة ناقصة عند غيرك. بيع وطلب بوردات الكمبيوتر واللابتوب وقطعها.">
 <link rel="stylesheet" href="/style.css">
-<link rel="stylesheet" href="/market/market.css?v=20261118-2">
-<script src="/market/market.js?v=20261118-1" defer></script>
+<link rel="stylesheet" href="/market/market.css?v=20261118-3">
+<script src="/market/market.js?v=20261118-3" defer></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"سوق بوردات كمبيوتر","url":"https://pc-board-repair.alinasser00001.workers.dev/market/","inLanguage":"ar","isPartOf":{"@type":"WebSite","name":"PC Board Repair","url":"https://pc-board-repair.alinasser00001.workers.dev/"}}</script>
 </head>
 <body>
 <header><a class="logo" href="/">⚙️ PC Board Repair</a><nav><a href="/">الرئيسية</a><a href="/boardview/">BoardView</a><a href="/bios/">BIOS</a><a href="/market/" aria-current="page">سوق البوردات</a><a href="/community">غرفة الصيانة</a></nav></header>
-<main class="wrap marketPage" dir="rtl">
+<main id="marketMain" class="wrap marketPage" dir="rtl" inert>
   <div class="crumb"><a href="/">الرئيسية</a> ← سوق البوردات</div>
   <h1>سوق بوردات كمبيوتر</h1>
   <div class="marketIntro">
@@ -29,7 +29,7 @@
     <div><h2 id="marketDisclaimerTitle">إخلاء المسؤولية</h2><p>يوفّر PC Board Repair مساحة لعرض الإعلانات والتواصل فقط، ولا يضمن صحة الإعلانات أو حالة القطع. البيع والشراء يتمّان مباشرة بين البائع والمشتري، وهما مسؤولان عن فحص القطعة والتحقق من بياناتها والاتفاق على السعر والدفع والتسليم وأي خلاف ينتج عن التعامل. الموقع لا يتولى تحصيل الأموال أو الشحن.</p></div>
   </aside>
   <section class="marketBrowse" aria-labelledby="marketBrowseTitle">
-    <div class="marketBrowseHead"><div><h2 id="marketBrowseTitle">العروض والطلبات</h2><p class="muted marketSmall">التصفّح للجميع. سجّل الدخول لإضافة إعلان أو رد وإدارة إعلاناتك.</p></div><button id="marketMine" class="marketSoftButton" type="button" aria-pressed="false">إعلاناتي</button></div>
+    <div class="marketBrowseHead"><div><h2 id="marketBrowseTitle">العروض والطلبات</h2><p class="muted marketSmall">التصفّح بعد الموافقة على الشروط. سجّل الدخول لإضافة إعلان أو رد وإدارة إعلاناتك.</p></div><button id="marketMine" class="marketSoftButton" type="button" aria-pressed="false">إعلاناتي</button></div>
     <div class="marketKindTabs" role="group" aria-label="نوع الإعلان">
       <button class="marketTab isActive" type="button" data-kind="" aria-pressed="true">الكل</button>
       <button class="marketTab" type="button" data-kind="sale" aria-pressed="false">للبيع</button>
@@ -48,6 +48,23 @@
   <div class="marketScope"><span aria-hidden="true">♻</span><p>السوق مخصص لبوردات الكمبيوتر واللابتوب وقطع صيانتها. وضّح حالة القطعة، واتفق مع الطرف الآخر على السعر والفحص والتسليم.</p></div>
 </main>
 <footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a></div><div>© 2026 PC Board Repair</div></footer>
+
+<dialog id="marketConsent" class="marketDialog marketConsent" aria-labelledby="marketConsentTitle" dir="rtl">
+  <div class="marketConsentHead"><span class="marketConsentIcon" aria-hidden="true">🔒</span><span class="marketEyebrow">PC Board Repair Market</span><h2 id="marketConsentTitle">شروط استخدام السوق</h2><p>يرجى قراءة الشروط وإخلاء المسؤولية قبل الدخول إلى السوق.</p></div>
+  <form id="marketConsentForm" class="marketConsentForm">
+    <ul class="marketConsentRules">
+      <li>الموقع يوفر مساحة لعرض الإعلانات والتواصل فقط، ولا يضمن صحة الإعلانات أو حالة القطع.</li>
+      <li>البيع والشراء والتفاوض والدفع والتسليم تتم مباشرة بين المعلن والمشتري وعلى مسؤوليتهما.</li>
+      <li>على الطرفين التحقق من بيانات الإعلان وفحص القطعة والتأكد من سلامتها قبل الدفع.</li>
+      <li>يمنع نشر الإعلانات الاحتيالية أو المضللة أو المخالفة لنطاق السوق.</li>
+      <li>الموقع لا يتولى تحصيل الأموال أو الشحن، ولا يتولى حل الخلافات بين الطرفين.</li>
+    </ul>
+    <label class="marketCheck marketConsentCheck"><input id="marketConsentCheck" type="checkbox" required><span>قرأت الشروط وإخلاء المسؤولية وأوافق عليها.</span></label>
+    <p id="marketConsentStatus" class="marketFormStatus" role="status" aria-live="polite"></p>
+    <button id="marketConsentEnter" class="btn" type="submit" disabled>الدخول إلى السوق</button>
+    <a class="marketConsentExit" href="/">العودة إلى الصفحة الرئيسية</a>
+  </form>
+</dialog>
 
 <dialog id="marketEditor" class="marketDialog marketEditor" aria-labelledby="marketEditorTitle" dir="rtl">
   <div class="marketDialogHeader"><div><span class="marketEyebrow">سوق بوردات كمبيوتر</span><h2 id="marketEditorTitle">أضف عرضًا أو طلبًا</h2></div><button class="marketClose" type="button" data-close="marketEditor" aria-label="إغلاق">×</button></div>
@@ -88,7 +105,7 @@
   </div>
 </dialog>
 
-<dialog id="marketSignIn" class="marketDialog marketSmallDialog" aria-labelledby="marketSignInTitle" dir="rtl"><div class="marketDialogHeader"><h2 id="marketSignInTitle">سجّل الدخول للمشاركة</h2><button class="marketClose" data-close="marketSignIn" type="button" aria-label="إغلاق">×</button></div><div class="marketDetailBody"><p class="muted">يمكن للجميع تصفّح السوق. استخدم حسابك لإضافة عرض أو طلب، والرد على الإعلانات وإدارتها.</p><a id="marketLoginLink" class="btn" href="/login?next=%2Fmarket%2F">تسجيل الدخول</a></div></dialog>
+<dialog id="marketSignIn" class="marketDialog marketSmallDialog" aria-labelledby="marketSignInTitle" dir="rtl"><div class="marketDialogHeader"><h2 id="marketSignInTitle">سجّل الدخول للمشاركة</h2><button class="marketClose" data-close="marketSignIn" type="button" aria-label="إغلاق">×</button></div><div class="marketDetailBody"><p class="muted">يمكن للجميع تصفّح السوق بعد الموافقة على الشروط. استخدم حسابك لإضافة عرض أو طلب، والرد على الإعلانات وإدارتها.</p><a id="marketLoginLink" class="btn" href="/login?next=%2Fmarket%2F">تسجيل الدخول</a></div></dialog>
 
 <dialog id="marketReport" class="marketDialog marketSmallDialog" aria-labelledby="marketReportTitle" dir="rtl"><div class="marketDialogHeader"><h2 id="marketReportTitle">الإبلاغ عن الإعلان</h2><button class="marketClose" data-close="marketReport" type="button" aria-label="إغلاق">×</button></div><form id="marketReportForm" class="marketForm"><label><span class="marketFieldLabel">سبب البلاغ</span><select id="marketReportReason"><option value="خارج نطاق سوق البوردات والقطع">خارج نطاق سوق البوردات والقطع</option><option value="معلومات مضللة">معلومات مضللة</option><option value="إعلان مكرر أو مزعج">إعلان مكرر أو مزعج</option><option value="سبب آخر">سبب آخر</option></select></label><label><span class="marketFieldLabel">تفاصيل إضافية</span><textarea id="marketReportDetails" maxlength="500" rows="3"></textarea></label><p id="marketReportStatus" class="marketFormStatus" role="status"></p><button id="marketReportSend" class="btn" type="submit">إرسال البلاغ</button></form></dialog>
 

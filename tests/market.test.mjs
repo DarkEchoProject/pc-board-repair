@@ -1,17 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { makeStorage } from "./sqlite-helper.mjs";
-import { MarketStore, forwardMarketRequest } from "../src/market.js";
+import { MarketStore, forwardMarketRequest, MARKET_TERMS_VERSION } from "../src/market.js";
 
 const alice = { id: "alice", name: "فني الاختبار" }, bob = { id: "bob", name: "مشارك آخر" };
 const png = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jC2cAAAAASUVORK5CYII=";
 function setup() {
   const { db, ctx } = makeStorage();
   const store = new MarketStore(ctx);
-  const call = (path, method = "GET", body, user = alice, extra = {}) => store.fetch(new Request(`https://market.test${path}`, {
+  const RAW = (path, method = "GET", body, user = alice, extra = {}) => store.fetch(new Request(`https://market.test${path}`, {
     method, headers: { ...(body ? { "content-type": "application/json" } : {}), ...(user ? { "x-pcbr-market-user": encodeURIComponent(JSON.stringify(user)) } : {}), ...extra }, ...(body ? { body: JSON.stringify(body) } : {}),
   }));
-  return { db, store, call };
+  const consent = RAW("/api/market/consent", "POST", { accepted: true, version: MARKET_TERMS_VERSION }, null).then(r => r.headers.get("set-cookie").split(";")[0]);
+  const call = async (path, method = "GET", body, user = alice, extra = {}) => RAW(path, method, body, user, { cookie: await consent, ...extra });
+  return { db, store, call, RAW, consent };
 }
 function listing(extra = {}) { return { requestId: crypto.randomUUID(), kind: "sale", category: "laptop-board", title: "بورد Dell خردة للقطع", description: "بورد للاختبار، توجد عليه بعض القطع الناقصة.", country: "لبنان", city: "طرابلس", condition: "donor", price: "25", currency: "USD", negotiable: true, contactKind: "whatsapp", contact: "+96170123456", photos: [], ...extra }; }
 async function create(call, input = listing(), user = alice) { const r = await call("/api/market/listings", "POST", input, user); const data = await r.json(); assert.equal(r.status, 201, JSON.stringify(data)); return data.listing; }
@@ -25,7 +27,7 @@ test("public list, persistent SQLite records, filters and private owner fields",
   assert.equal((await (await call("/api/market/listings?region=world", "GET", null, null)).json()).total, 0);
   assert.equal((await (await call("/api/market/listings?kind=wanted", "GET", null, null)).json()).total, 0);
   assert.equal(db.prepare("SELECT COUNT(*) AS n FROM market_listings").get().n, 1);
-  assert.equal((await (await store.fetch(new Request(`https://market.test/api/market/listings/${item.id}`))).json()).listing.title, item.title);
+  assert.equal((await (await call(`/api/market/listings/${item.id}`, "GET", null, null)).json()).listing.title, item.title);
 });
 
 test("write requires a session and edit/status require ownership", async () => {
@@ -113,13 +115,30 @@ test("validation and rate limits fail cleanly without partially saved records", 
 });
 
 test("proxy rejects forged identity, cross-origin writes and anonymous mine", async () => {
-  const { store } = setup(); let received;
+  const { store, consent } = setup(); let received;
   const env = { CHAT_ROOM: { getByName(name) { assert.equal(name, "repair-market"); return { fetch(req) { received = req; return store.fetch(req); } }; } } };
   const forged = new Request("https://market.test/api/market/listings", { method: "POST", headers: { "content-type": "application/json", "x-admin-authorized": "1", "x-pcbr-market-user": encodeURIComponent(JSON.stringify(alice)) }, body: JSON.stringify(listing()) });
   assert.equal((await forwardMarketRequest(forged, env, null)).status, 401);
-  const request = new Request("https://market.test/api/market/listings", { headers: { "x-admin-authorized": "1", "x-pcbr-market-user": encodeURIComponent(JSON.stringify(alice)) } });
+  const request = new Request("https://market.test/api/market/listings", { headers: { cookie: await consent, "x-admin-authorized": "1", "x-pcbr-market-user": encodeURIComponent(JSON.stringify(alice)) } });
   assert.equal((await forwardMarketRequest(request, env, null)).status, 200); assert.equal(received.headers.has("x-pcbr-market-user"), false); assert.equal(received.headers.has("x-admin-authorized"), false);
   assert.equal((await forwardMarketRequest(new Request("https://market.test/api/market/listings?mine=1"), env, null)).status, 401);
   const cross = new Request("https://market.test/api/market/listings", {method:"POST",headers:{origin:"https://other.test","content-type":"application/json"},body:JSON.stringify(listing())});
   assert.equal((await forwardMarketRequest(cross, env, { sub: "alice", name: "Alice" })).status, 403);
+});
+
+test("market consent is mandatory for reads, writes and images and expires on version change", async () => {
+  const { RAW, call, db, consent } = setup();
+  const item = await create(call, listing({ photos: [{ mime: "image/png", data: png }] }));
+  for (const path of ["/api/market/listings", "/api/market/listings?mine=1", "/api/market/listings/" + item.id, item.photos[0].url]) {
+    const r = await RAW(path);
+    assert.equal(r.status, 403); assert.equal((await r.json()).code, "market_consent_required");
+  }
+  assert.equal((await RAW("/api/market/listings", "POST", listing())).status, 403);
+  assert.equal((await RAW("/api/market/consent", "POST", { accepted: false, version: MARKET_TERMS_VERSION }, null)).status, 403);
+  assert.equal((await RAW("/api/market/consent", "POST", { accepted: true, version: "old" }, null)).status, 403);
+  assert.equal((await RAW("/api/market/listings", "GET", null, null, { cookie: "pcbr_market_consent=" + crypto.randomUUID() })).status, 403);
+  assert.equal((await (await call("/api/market/consent")).json()).accepted, true);
+  db.prepare("UPDATE market_consents SET version='old' WHERE token=?").run((await consent).split("=")[1]);
+  assert.equal((await call("/api/market/listings")).status, 403);
+  assert.equal((await (await call("/api/market/consent")).json()).accepted, false);
 });

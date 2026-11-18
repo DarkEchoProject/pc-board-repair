@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 import { makeStorage } from "./sqlite-helper.mjs";
-import { MarketStore, forwardMarketRequest, MARKET_ROOM } from "../src/market.js";
+import { MarketStore, forwardMarketRequest, MARKET_ROOM, MARKET_TERMS_VERSION } from "../src/market.js";
 
 test("real signed sessions and existing admin token protect the market routes", async () => {
   class BaseChatRoom { constructor(ctx) { this.ctx = ctx; } async fetch() { return Response.json({ messages: [] }); } }
@@ -14,12 +14,19 @@ test("real signed sessions and existing admin token protect the market routes", 
   const env = { SESSION_SECRET: "test-only-session-secret", ADMIN_TOKEN: "test-only-admin-token", CHAT_ROOM: { getByName(name) { rooms.push(name); if (!objects.has(name)) objects.set(name, new sut.ChatRoom(makeStorage().ctx)); return objects.get(name); } } };
   const alice = await sut.createSession({ sub: "a", name: "صاحب الإعلان", email: "a@example.invalid" }, env);
   const bob = await sut.createSession({ sub: "b", name: "شخص آخر", email: "b@example.invalid" }, env);
+  let consentCookie = "";
   async function request(path, { method = "GET", body, token, headers = {} } = {}) {
-    return sut.worker.fetch(new Request("https://market.test" + path, { method, headers: { ...(body ? { "content-type": "application/json" } : {}), ...(token ? { cookie: "pcbr_session=" + token } : {}), ...headers }, ...(body ? { body: JSON.stringify(body) } : {}) }), env, {});
+    return sut.worker.fetch(new Request("https://market.test" + path, { method, headers: { ...(body ? { "content-type": "application/json" } : {}), ...((token || consentCookie) ? { cookie: [token && "pcbr_session=" + token, consentCookie].filter(Boolean).join("; ") } : {}), ...headers }, ...(body ? { body: JSON.stringify(body) } : {}) }), env, {});
   }
   const body = { requestId: crypto.randomUUID(), kind: "wanted", category: "ic", title: "مطلوب آيسي شحن للاختبار", description: "حالة تجريبية لطلب آيسي وإثبات صلاحيات الجلسات.", country: "لبنان", city: "طرابلس", contactKind: "telegram", contact: "test_user", price: "", photos: [] };
   const forged = { "x-admin-authorized": "1", "x-pcbr-market-user": encodeURIComponent(JSON.stringify({ id: "a", name: "Fake" })) };
   assert.equal((await request("/api/market/listings", { method: "POST", body, headers: forged })).status, 401);
+  assert.equal((await request("/api/market/listings")).status, 403);
+  assert.equal((await request("/api/market/listings", { method: "POST", body, token: alice })).status, 403);
+  const agreement = await request("/api/market/consent", { method: "POST", body: { accepted: true, version: MARKET_TERMS_VERSION } });
+  assert.equal(agreement.status, 200);
+  consentCookie = agreement.headers.get("set-cookie").split(";")[0];
+  assert.equal((await (await request("/api/market/consent")).json()).accepted, true);
   const saved = await request("/api/market/listings", { method: "POST", body, token: alice });
   assert.equal(saved.status, 201); const item = (await saved.json()).listing;
   assert.equal(item.ownerName, "صاحب الإعلان"); assert.equal(item.isOwner, true);

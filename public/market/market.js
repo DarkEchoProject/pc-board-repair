@@ -9,11 +9,48 @@
   let user = null, sessionError = false, sessionPromise, listController, detailController, currentListing, detailPage = 1, detailPages = 0;
   let editing = null, photoDraft = [], photoGeneration = 0, processingPhotos = false, saving = false, requestId = "", replyRequestId = "", toastTimer;
   const DRAFT_KEY = "pcbr-market-draft-v1";
+  const TERMS_VERSION = "2026-11-18-v1";
+  let marketStarted = false, consentBusy = false;
+  function consentButton() { $("marketConsentEnter").disabled = consentBusy || !$("marketConsentCheck").checked; }
+  function startMarket() {
+    if (marketStarted) return;
+    marketStarted = true;
+    $("marketMain").inert = false;
+    $("marketConsent").close();
+    readFilters(); sessionPromise = readSession(); loadListings();
+    const initial = new URLSearchParams(location.search), requested = initial.get("listing");
+    if (initial.get("compose") === "1") restoreDraft(); else if (requested) openDetail(requested, false);
+  }
+  async function initConsent() {
+    consentBusy = true; consentButton();
+    $("marketConsent").showModal();
+    $("marketConsentStatus").textContent = "جاري التحقق من الموافقة…";
+    try {
+      const data = await api("/api/market/consent");
+      if (data.version !== TERMS_VERSION) { $("marketConsentStatus").textContent = "تم تحديث الشروط. حدّث الصفحة أولًا."; return; }
+      if (data.accepted) { startMarket(); return; }
+      $("marketConsentStatus").textContent = "";
+    } catch { $("marketConsentStatus").textContent = "تعذّر التحقق. يمكنك المحاولة بالموافقة أدناه."; }
+    finally { consentBusy = false; consentButton(); }
+  }
+  async function acceptConsent(event) {
+    event.preventDefault();
+    if (consentBusy || !$("marketConsentCheck").checked) return;
+    consentBusy = true; consentButton();
+    $("marketConsentStatus").textContent = "جاري حفظ الموافقة…";
+    try {
+      await write("/api/market/consent", { accepted: true, version: TERMS_VERSION });
+      const data = await api("/api/market/consent");
+      if (!data.accepted || data.version !== TERMS_VERSION) throw new Error("تعذّر حفظ الموافقة. تأكد من السماح بملفات تعريف الارتباط.");
+      startMarket();
+    } catch (error) { $("marketConsentStatus").textContent = error.message; }
+    finally { consentBusy = false; consentButton(); }
+  }
 
   async function api(path, options = {}) {
     const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...options, headers: { ...(options.body ? { "content-type": "application/json" } : {}), ...options.headers } });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) { if (response.status === 401 && !path.startsWith("/api/auth/")) { user = null; sessionPromise = Promise.resolve(null); } const error = new Error(data.error || "تعذّر الاتصال بالسوق. حاول مجددًا."); error.status = response.status; error.code = data.code; throw error; }
+    if (!response.ok) { if (marketStarted && data.code === "market_consent_required") { $("marketMain").inert = true; location.reload(); } if (response.status === 401 && !path.startsWith("/api/auth/")) { user = null; sessionPromise = Promise.resolve(null); } const error = new Error(data.error || "تعذّر الاتصال بالسوق. حاول مجددًا."); error.status = response.status; error.code = data.code; throw error; }
     return data;
   }
   const write = (path, body, method = "POST") => api(path, { method, body: JSON.stringify(body) });
@@ -300,9 +337,10 @@
     detailController?.abort(); currentListing = null;
     const url = new URL(location.href); if (url.searchParams.has("listing")) { url.searchParams.delete("listing"); history.replaceState(null, "", url); }
   });
-  window.addEventListener("popstate", () => { readFilters(); loadListings(); const id = new URLSearchParams(location.search).get("listing"); if (id) openDetail(id, false); else if ($("marketDetail").open) $("marketDetail").close(); });
-  window.addEventListener("pageshow", event => { if (event.persisted) { sessionPromise = readSession(); loadListings(); } });
-  readFilters(); sessionPromise = readSession(); loadListings();
-  const initial = new URLSearchParams(location.search), requested = initial.get("listing");
-  if (initial.get("compose") === "1") restoreDraft(); else if (requested) openDetail(requested, false);
+  window.addEventListener("popstate", () => { if (!marketStarted) return; readFilters(); loadListings(); const id = new URLSearchParams(location.search).get("listing"); if (id) openDetail(id, false); else if ($("marketDetail").open) $("marketDetail").close(); });
+  window.addEventListener("pageshow", event => { if (event.persisted && marketStarted) { location.reload(); } });
+  $("marketConsent").addEventListener("cancel", event => event.preventDefault());
+  $("marketConsentCheck").addEventListener("change", consentButton);
+  $("marketConsentForm").addEventListener("submit", acceptConsent);
+  initConsent();
 })();
