@@ -8,7 +8,7 @@ import { MarketStore, forwardMarketRequest, MARKET_ROOM, MARKET_TERMS_VERSION } 
 test("real signed sessions and existing admin token protect the market routes", async () => {
   class BaseChatRoom { constructor(ctx) { this.ctx = ctx; } async fetch() { return Response.json({ messages: [] }); } }
   const context = vm.createContext({ URL, URLSearchParams, Request, Response, Headers, TextEncoder, TextDecoder, crypto, atob, btoa, console, BaseChatRoom, MarketStore, forwardMarketRequest, MARKET_ROOM, baseWorker: { fetch: async () => Response.json({ ok: true }) } });
-  const source = fs.readFileSync(new URL("../src/app.js", import.meta.url), "utf8").replace(/^import .*;\n/gm, "").replace("export class ChatRoom", "class ChatRoom").replace("export default", "const worker =");
+  const source = fs.readFileSync(new URL("../src/app.js", import.meta.url), "utf8").replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/^import .*;\n/gm, "").replace("export class ChatRoom", "class ChatRoom").replace("export default", "const worker =");
   vm.runInContext(source + "\nglobalThis.sut = {worker, ChatRoom, createSession};", context);
   const { sut } = context, objects = new Map(), rooms = [];
   const env = { SESSION_SECRET: "test-only-session-secret", ADMIN_TOKEN: "test-only-admin-token", CHAT_ROOM: { getByName(name) { rooms.push(name); if (!objects.has(name)) objects.set(name, new sut.ChatRoom(makeStorage().ctx)); return objects.get(name); } } };
