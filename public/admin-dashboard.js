@@ -9,7 +9,7 @@
   function button(label,fn,cls="softBtn"){const b=document.createElement("button");b.className=cls;b.type="button";b.textContent=label;b.onclick=fn;return b;}
   function line(title,sub,action){const row=document.createElement("div");row.className="dataRow";const d=document.createElement("div"),b=document.createElement("b"),s=document.createElement("small");b.textContent=title;s.textContent=sub||"";d.append(b,s);row.append(d);if(action)row.append(action);return row;}
   function message(root,value){const p=document.createElement("p");p.className="muted";p.textContent=value;root.replaceChildren(p);}
-  async function publicJson(path){const r=await fetch(path,{cache:"no-store"});if(!r.ok)throw Error("HTTP "+r.status+" — "+path);return r.json();}
+  async function publicJson(path){const r=await fetch(path,{cache:path.startsWith("/data/")?"default":"no-store"});if(!r.ok)throw Error("HTTP "+r.status+" — "+path);return r.json();}
   function handle(err,id,e){if(!alive(e))return;if(err.status===401){sessionStorage.removeItem(TOKEN_KEY);token="";showLogin("انتهت صلاحية الإدارة. سجّل الدخول مجددًا.");return;}text(id,err.message);}
   async function overview(){
     const e=epoch,jobs=[["/data/home-data.json",publicJson],["/api/stats/summary",publicJson],["/api/admin/market/overview?filter=all&page=1",api],["/api/admin/site/summary",api],["/api/admin/overview",api]];

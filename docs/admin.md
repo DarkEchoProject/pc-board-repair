@@ -7,3 +7,7 @@
 تخزن الإعدادات والسجلات في الكائن site-admin ضمن CHAT_ROOM الموجود، دون تغيير ربط التخزين أو مسح البيانات. لا تتضمن واجهات الإدارة قيم الأسرار.
 
 اختبار: node.exe --test tests/*.test.mjs (Node.js 24). المعاينة المحلية: استخدم ADMIN_TOKEN تجريبيًا في متغيرات Wrangler المحلية، لا تشارك قيمة السر الإنتاجي. لا تُنشر النسخة حتى نجاح الاختبارات والمراجعة.
+
+
+## Login protection
+Five incorrect nonempty token attempts from the same Cloudflare client IP within ten minutes block further admin API access from that IP for ten minutes (HTTP 429 with Retry-After). ADMIN_TOKEN is unchanged. Only a keyed hash of the IP is stored in the existing SQLite Durable Object; expired records are removed on later failures. Successful access before a block resets the counter. Public browsing and user login are unaffected.

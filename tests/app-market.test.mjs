@@ -65,5 +65,14 @@ test("real signed sessions and existing admin token protect the market routes", 
   assert.equal((await request("/api/chat/send",{method:"POST",token:alice,body:{text:"test"}})).status,200);
   const security=await (await request("/api/admin/security",{headers:admin})).json();
   assert.equal(security.adminConfigured,true);assert.equal(security.sessionConfigured,true);
+  const blockedIP={"CF-Connecting-IP":"192.0.2.10"};
+  for(let failure=1;failure<=5;failure++){
+    const response=await request("/api/admin/security",{headers:{...blockedIP,authorization:"Bearer incorrect"}});
+    assert.equal(response.status,failure===5?429:401);
+    if(failure===5)assert.ok(Number(response.headers.get("retry-after"))>0);
+  }
+  assert.equal((await request("/api/admin/overview",{headers:{...blockedIP,...admin}})).status,429);
+  assert.equal((await request("/api/admin/security",{headers:{...admin,"CF-Connecting-IP":"192.0.2.11"}})).status,200);
+  assert.equal((await request("/api/admin/site/admin-auth-check",{method:"POST",body:{key:"x",valid:true},headers:admin})).status,404);
   assert.ok(rooms.includes("site-admin")); assert.ok(rooms.includes("repair-market")); assert.ok(rooms.includes("repair-main"));
 });

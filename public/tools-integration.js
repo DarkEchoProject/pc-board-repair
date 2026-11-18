@@ -233,7 +233,7 @@
       try{
         const payloads=await Promise.all(
           ['/data/boards.json','/data/boards-large.json'].map(async url=>{
-            const r=await fetch(url,{cache:'no-store'});
+            const r=await fetch(url,{cache:'default'});
             if(!r.ok)return [];
             return r.json();
           })

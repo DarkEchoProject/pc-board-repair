@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeBiosCatalog } from '../public/bios/catalog-data.js';
-import { priorityCompanyPages } from '../src/seo-priority.js';
+import { boardPath } from '../src/board-catalog.js';
 import { writeHomeSummary } from './home-summary.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -22,28 +22,6 @@ function readJsonArray(filePath) {
   const parsed = JSON.parse(raw);
   const items = Array.isArray(parsed) ? parsed : [parsed];
   return items.flatMap((item) => Array.isArray(item?.value) ? item.value : [item]).filter(Boolean);
-}
-
-function fileKey(value) {
-  const s = String(value ?? '');
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i += 1) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0).toString(36);
-}
-
-function textSlug(value) {
-  const slug = String(value ?? '')
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 120)
-    .replace(/-+$/g, '');
-  return slug || 'boardview';
 }
 
 function escapeXml(value) {
@@ -127,9 +105,7 @@ for (const board of all) {
   const boardNo = String(board?.board ?? '').trim();
   const revision = String(board?.revision ?? '').trim();
   const type = String(board?.type ?? '').trim();
-  const key = fileKey(file);
-  const slug = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join('-'));
-  const itemPath = `/boardview/item/${key}/${slug}`;
+  const itemPath = boardPath(board);
 
   boardPaths.push(itemPath);
 
@@ -148,14 +124,19 @@ for (const board of all) {
 const biosRecords = normalizeBiosCatalog(readJsonArray(biosJson));
 writeHomeSummary(homeBoards, biosRecords.length);
 
-const companyBrands = {
-  '/boardview/company': new Set(homeBoards.map(board => String(board.brand).trim())),
-  '/bios/company': new Set(biosRecords.map(record => record.brand)),
-};
-const companyPaths = [...priorityCompanyPages.keys()].filter(route => {
-  const url = new URL(route, site);
-  return companyBrands[url.pathname].has(url.searchParams.get('brand'));
-});
+function canonicalCompanyPaths(section, records) {
+  const brands = new Map();
+  for (const record of records) {
+    const brand = String(record.brand ?? '').trim();
+    if (brand && !brands.has(brand.toLowerCase())) brands.set(brand.toLowerCase(), brand);
+  }
+  return [...brands.values()].sort((a, b) => a.localeCompare(b, 'en'))
+    .map(brand => `/${section}/company?brand=${encodeURIComponent(brand)}`);
+}
+const companyPaths = [
+  ...canonicalCompanyPaths('boardview', homeBoards),
+  ...canonicalCompanyPaths('bios', biosRecords),
+];
 
 function toPublicUrlPath(p) {
   if (p.endsWith('/index.html')) return p.slice(0, -'index.html'.length);

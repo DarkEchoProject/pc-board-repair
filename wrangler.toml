@@ -11,7 +11,7 @@ binding = "ASSETS"
 run_worker_first = [ "/api/*", "/download/*", "/downloads/*", "/", "/*.html", "/boardview/*", "/bios/*", "/diagnostics/*", "/component-testing/*", "/market/*", "/market", "/sitemap.xml", "/about", "/contact", "/community", "/privacy", "/terms", "/disclaimer", "/copyright", "/search", "/login", "/admin", "/admin/" ]
 
 [build]
-command = "node scripts/build-company-index.mjs"
+command = "node scripts/build-company-index.mjs && node scripts/build-sitemap.mjs"
 watch_dir = ["public/data", "public/bios", "scripts", "src"]
 
 [[durable_objects.bindings]]

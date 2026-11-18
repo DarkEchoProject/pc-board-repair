@@ -1,4 +1,4 @@
-import { normalizeBiosCatalog } from './catalog-data.js';
+import { normalizeBiosCatalog, biosCompanyCatalogPath } from './catalog-data.js?v=20261118-2';
 
 (()=>{
   'use strict';
@@ -128,9 +128,22 @@ import { normalizeBiosCatalog } from './catalog-data.js';
   });
   async function load(){
     try{
-      const response=await fetch(dataUrl,{cache:'no-store'});
-      if(!response.ok)throw new Error(`HTTP ${response.status}`);
-      records=normalizeBiosCatalog(await response.json());
+      async function readCatalog(path){
+        const response=await fetch(path,{cache:'default'});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        return normalizeBiosCatalog(await response.json());
+      }
+      const requested=new URLSearchParams(location.search).get('brand')||'';
+      const companyPath=companyMode?biosCompanyCatalogPath(requested):'';
+      if(companyPath){
+        try{
+          records=await readCatalog(companyPath);
+          if(!records.length||records.some(item=>item.brand.toLowerCase()!==requested.trim().toLowerCase()))throw new Error('Invalid company catalog');
+        }catch(error){
+          console.warn('BIOS company catalog unavailable; using full catalog.',error);
+          records=await readCatalog(dataUrl);
+        }
+      }else records=await readCatalog(dataUrl);
       brands=[...new Set(records.map(i=>i.brand))].sort((a,b)=>a.localeCompare(b,'en',{sensitivity:'base'}));
       if(companyMode){
         const requested=new URLSearchParams(location.search).get('brand')||'';

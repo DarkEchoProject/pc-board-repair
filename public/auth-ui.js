@@ -676,7 +676,7 @@
         const payloads=await Promise.all(
           ['/data/boards.json','/data/boards-large.json'].map(async url=>{
             try{
-              const r=await fetch(url,{cache:'no-store'});
+              const r=await fetch(url,{cache:'default'});
               return r.ok?await r.json():[];
             }catch{
               return [];

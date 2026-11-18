@@ -8,6 +8,19 @@ const OAUTH_NEXT_COOKIE = "pcbr_oauth_next";
 const SESSION_SECONDS = 30 * 24 * 60 * 60;
 const SITE_ADMIN_ROOM = "site-admin";
 const SITE_ADMIN_PATH = "/api/admin/site/";
+const ADMIN_ATTEMPT_LIMIT = 5;
+const ADMIN_ATTEMPT_WINDOW_MS = 10 * 60 * 1000;
+function adminTooMany(retryAfter) {
+  return new Response(JSON.stringify({error:"محاولات كثيرة. أعد المحاولة بعد " + Math.max(1,Math.ceil(retryAfter/60)) + " دقيقة."}), {
+    status:429,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","retry-after":String(retryAfter)}
+  });
+}
+async function checkAdminAccess(request,env,url,configuredToken,suppliedToken) {
+  if (!suppliedToken) return json({error:"كلمة مرور الإدارة غير صحيحة."},401);
+  const ip=(request.headers.get("CF-Connecting-IP")||"local").slice(0,128);
+  const key=bytesToBase64Url(new Uint8Array(await crypto.subtle.sign("HMAC",await hmacKey(configuredToken),encoder.encode(ip))));
+  return internalSite(env,url.origin,"admin-auth-check",{key,valid:suppliedToken===configuredToken});
+}
 function internalSite(env, origin, action, data) {
   return env.CHAT_ROOM.getByName(SITE_ADMIN_ROOM).fetch(new Request(new URL(SITE_ADMIN_PATH+action,origin),{
     method:data?"POST":"GET",headers:{"content-type":"application/json","x-admin-authorized":"1"},...(data?{body:JSON.stringify(data)}:{})
@@ -278,7 +291,7 @@ class BrandHead {
   element(element) {
     const favicon = ""; // canonical favicon is applied by seo-entry.js
     element.prepend(
-      `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261114-1" defer></script><script src="/i18n-extra.js" defer></script>`,
+      `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261118-2" defer></script><script src="/i18n-extra.js" defer></script>`,
       { html: true },
     );
   }
@@ -298,6 +311,8 @@ export class ChatRoom extends BaseChatRoom {
     sql.exec("CREATE TABLE IF NOT EXISTS site_issues(id TEXT PRIMARY KEY,user_id TEXT NOT NULL,user_name TEXT NOT NULL,kind TEXT NOT NULL,page TEXT NOT NULL,description TEXT NOT NULL,created INTEGER NOT NULL,resolved INTEGER NOT NULL DEFAULT 0)");
     sql.exec("CREATE INDEX IF NOT EXISTS site_issues_user_created ON site_issues(user_id,created)");
     sql.exec("CREATE TABLE IF NOT EXISTS site_config(key TEXT PRIMARY KEY,value TEXT NOT NULL)");
+    sql.exec("CREATE TABLE IF NOT EXISTS site_admin_attempts(key TEXT PRIMARY KEY,failures INTEGER NOT NULL,expires INTEGER NOT NULL)");
+    sql.exec("CREATE INDEX IF NOT EXISTS site_admin_attempts_expiry ON site_admin_attempts(expires)");
     this.siteSchemaReady=true;
     }
     const rows=(q,...a)=>sql.exec(q,...a).toArray(),one=(q,...a)=>rows(q,...a)[0];
@@ -318,6 +333,22 @@ export class ChatRoom extends BaseChatRoom {
     if(request.method!=="POST")return json({error:"غير موجود."},404);
     const body=await readBody(request);
     if(!body||typeof body!=="object")return json({error:"طلب غير صالح."},400);
+    if(action==="admin-auth-check"){
+      const key=String(body.key||"");
+      if(!/^[A-Za-z0-9_-]{43}$/.test(key)||typeof body.valid!=="boolean")return json({error:"طلب غير صالح."},400);
+      const row=one("SELECT failures,expires FROM site_admin_attempts WHERE key=?",key);
+      if(row&&row.expires>now&&row.failures>=ADMIN_ATTEMPT_LIMIT)return adminTooMany(Math.max(1,Math.ceil((row.expires-now)/1000)));
+      if(body.valid){
+        if(row)sql.exec("DELETE FROM site_admin_attempts WHERE key=?",key);
+        return json({ok:true});
+      }
+      sql.exec("DELETE FROM site_admin_attempts WHERE expires<=?",now);
+      const failures=row&&row.expires>now?row.failures+1:1;
+      const expires=failures>=ADMIN_ATTEMPT_LIMIT?now+ADMIN_ATTEMPT_WINDOW_MS:(row&&row.expires>now?row.expires:now+ADMIN_ATTEMPT_WINDOW_MS);
+      sql.exec("INSERT INTO site_admin_attempts(key,failures,expires) VALUES(?,?,?) ON CONFLICT(key) DO UPDATE SET failures=excluded.failures,expires=excluded.expires",key,failures,expires);
+      if(failures>=ADMIN_ATTEMPT_LIMIT)return adminTooMany(Math.max(1,Math.ceil((expires-now)/1000)));
+      return json({error:"كلمة مرور الإدارة غير صحيحة."},401);
+    }
     const id=cleanText(body.id,160),name=cleanText(body.name,80)||"مستخدم";
     if(action==="observe"||action==="participation"){
       if(!id)return json({error:"حساب غير صالح."},400);
@@ -485,9 +516,10 @@ export default {
         return json({ error: "لوحة الإدارة لم تُفعّل بعد. يجب إعداد ADMIN_TOKEN في Cloudflare." }, 503);
       }
       const suppliedToken = getAdminToken(request);
-      if (!suppliedToken || suppliedToken !== configuredToken) {
-        return json({ error: "كلمة مرور الإدارة غير صحيحة." }, 401);
-      }
+      let access;
+      try { access=await checkAdminAccess(request,env,url,configuredToken,suppliedToken); }
+      catch { return json({error:"تعذر التحقق من حماية الإدارة. أعد المحاولة لاحقًا."},503); }
+      if (!access.ok) return access;
 
       if(url.pathname.startsWith(SITE_ADMIN_PATH)&&!["summary","users","issues","settings","user-action","issue-action"].includes(url.pathname.slice(SITE_ADMIN_PATH.length)))return json({error:"غير موجود."},404);
       if(!["GET","HEAD"].includes(request.method)&&!sameSite(request,url))return json({error:"طلب غير مسموح."},403);

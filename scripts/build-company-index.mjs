@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import { normalizeBiosCatalog } from "../public/bios/catalog-data.js";
+import { normalizeBiosCatalog, groupBiosCompanies } from "../public/bios/catalog-data.js";
 import { boardPath, mergeBoards, normalizeBoards } from "../src/board-catalog.js";
 import { writeHomeSummary } from "./home-summary.mjs";
 
@@ -91,6 +91,26 @@ const boardview = summarizeCompanies(boards, board => ({
   href: boardPath(board),
 }));
 const biosRecords = normalizeBiosCatalog(readCatalog("bios.json"));
+// Derived assets only; the source catalog remains unchanged.
+const shardDir = new URL("../public/data/bios-companies/", import.meta.url);
+fs.mkdirSync(shardDir, { recursive: true });
+const activeShards = new Set();
+for (const [assetPath, records] of groupBiosCompanies(biosRecords)) {
+  const filename = assetPath.split("/").at(-1);
+  const destination = fileURLToPath(new URL(filename, shardDir));
+  activeShards.add(filename);
+  const contents = JSON.stringify(records);
+  if (fs.existsSync(destination) && fs.readFileSync(destination, "utf8") === contents) continue;
+  const temporary = destination + "." + process.pid + ".tmp";
+  try { fs.writeFileSync(temporary, contents, "utf8"); fs.renameSync(temporary, destination); }
+  finally { fs.rmSync(temporary, { force: true }); }
+}
+for (const entry of fs.readdirSync(shardDir, { withFileTypes: true })) {
+  if (entry.isFile() && /^[0-9a-f]+\.json$/.test(entry.name) && !activeShards.has(entry.name)) {
+    fs.rmSync(new URL(entry.name, shardDir));
+  }
+}
+console.log(`BIOS company catalogs built: ${activeShards.size} files`);
 const bios = summarizeCompanies(biosRecords, item => ({
   label: String(item.file),
   href: item.download_url,

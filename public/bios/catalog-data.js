@@ -24,3 +24,19 @@ export function normalizeBiosCatalog(payload) {
     return true;
   });
 }
+
+export function biosCompanyCatalogPath(brand) {
+  const bytes = new TextEncoder().encode(String(brand ?? "").trim().toLowerCase());
+  const key = Array.from(bytes, byte => byte.toString(16).padStart(2, "0")).join("");
+  return key ? `/data/bios-companies/${key}.json` : "";
+}
+export function groupBiosCompanies(records) {
+  const groups = new Map();
+  for (const record of records) {
+    const path = biosCompanyCatalogPath(record.brand);
+    if (!path) continue;
+    if (!groups.has(path)) groups.set(path, []);
+    groups.get(path).push(record);
+  }
+  return groups;
+}
