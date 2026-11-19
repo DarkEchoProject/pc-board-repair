@@ -1,5 +1,6 @@
 import baseWorker, { ChatRoom as BaseChatRoom } from "./index.js";
 import { forwardMarketRequest, MarketStore, MARKET_ROOM } from "./market.js";
+import { backupPage } from "./backup.js";
 
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 const SESSION_COOKIE = "pcbr_session";
@@ -330,6 +331,9 @@ export class ChatRoom extends BaseChatRoom {
       }
       if(action==="summary")return json({users:one("SELECT COUNT(*) AS n FROM site_accounts").n,suspended:one("SELECT COUNT(*) AS n FROM site_accounts WHERE suspended=1").n,openIssues:one("SELECT COUNT(*) AS n FROM site_issues WHERE resolved=0").n,totalIssues:one("SELECT COUNT(*) AS n FROM site_issues").n,noticeEnabled:settings().enabled===true});
       const page=Math.max(1,Math.min(100000,parseInt(url.searchParams.get("page"),10)||1)),limit=30,offset=(page-1)*limit;
+      if(action==="backup"){
+        const data=backupPage(sql,"site",url);return data?json(data):json({error:"طلب تصدير غير صالح."},400);
+      }
       if(action==="audit"){
         pruneAudit();
         return json({items:rows("SELECT id,created,action,target FROM site_admin_audit ORDER BY id DESC LIMIT ? OFFSET ?",limit,offset),total:one("SELECT COUNT(*) AS n FROM site_admin_audit").n,page,limit});
@@ -412,6 +416,10 @@ export class ChatRoom extends BaseChatRoom {
 
       if (url.pathname.startsWith(SITE_ADMIN_PATH)) return this.siteAdmin(request,url);
 
+      if(request.method==="GET"&&url.pathname==="/api/admin/chat/backup"){
+        const messages=(await this.ctx.storage.get("messages"))||[],reportCounts=(await this.ctx.storage.get("reportCounts"))||{};
+        return json({messages,reportCounts});
+      }
       if (request.method === "GET" && url.pathname === "/api/admin/overview") {
         const messages = (await this.ctx.storage.get("messages")) || [];
         const reports = (await this.ctx.storage.get("reportCounts")) || {};
@@ -538,10 +546,13 @@ export default {
       catch { return json({error:"تعذر التحقق من حماية الإدارة. أعد المحاولة لاحقًا."},503); }
       if (!access.ok) return access;
 
-      if(url.pathname.startsWith(SITE_ADMIN_PATH)&&!["summary","users","issues","settings","user-action","issue-action","audit"].includes(url.pathname.slice(SITE_ADMIN_PATH.length)))return json({error:"غير موجود."},404);
+      if(url.pathname.startsWith(SITE_ADMIN_PATH)&&!["summary","users","issues","settings","user-action","issue-action","audit","backup"].includes(url.pathname.slice(SITE_ADMIN_PATH.length)))return json({error:"غير موجود."},404);
       if(!["GET","HEAD"].includes(request.method)&&!sameSite(request,url))return json({error:"طلب غير مسموح."},403);
       if(url.pathname==="/api/admin/security"&&request.method==="GET")return json({adminConfigured:true,googleConfigured:authConfigured(env),sessionConfigured:!!sessionSigningSecret(env)});
-      if(url.pathname==="/api/admin/stats/periods"&&request.method==="GET")return env.CHAT_ROOM.getByName("site-stats").fetch(new Request(new URL("/api/stats/periods",url),{method:"GET"}));
+      if(request.method==="GET"&&["/api/admin/stats/periods","/api/admin/stats/backup","/api/admin/stats/backup-legacy"].includes(url.pathname)){
+        const target=new URL(url);target.pathname=url.pathname.replace("/api/admin/","/api/");
+        return env.CHAT_ROOM.getByName("site-stats").fetch(new Request(target,{method:"GET"}));
+      }
       const headers = new Headers(request.headers);
       headers.delete("authorization");
       headers.delete("x-admin-token");

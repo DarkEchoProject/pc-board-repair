@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import vm from "node:vm";
 import { makeStorage } from "./sqlite-helper.mjs";
+import { backupPage } from "../src/backup.js";
 import { MarketStore, forwardMarketRequest, MARKET_ROOM, MARKET_TERMS_VERSION } from "../src/market.js";
 
 test("real signed sessions and existing admin token protect the market routes", async () => {
   class BaseChatRoom { constructor(ctx) { this.ctx = ctx; } async fetch() { return Response.json({ messages: [] }); } }
-  const context = vm.createContext({ URL, URLSearchParams, Request, Response, Headers, TextEncoder, TextDecoder, crypto, atob, btoa, console, BaseChatRoom, MarketStore, forwardMarketRequest, MARKET_ROOM, baseWorker: { fetch: async () => Response.json({ ok: true }) } });
+  const context = vm.createContext({ URL, URLSearchParams, Request, Response, Headers, TextEncoder, TextDecoder, crypto, atob, btoa, console, BaseChatRoom, backupPage, MarketStore, forwardMarketRequest, MARKET_ROOM, baseWorker: { fetch: async () => Response.json({ ok: true }) } });
   const source = fs.readFileSync(new URL("../src/app.js", import.meta.url), "utf8").replace(/^\uFEFF/, "").replace(/\r\n/g, "\n").replace(/^import .*;\n/gm, "").replace("export class ChatRoom", "class ChatRoom").replace("export default", "const worker =");
   vm.runInContext(source + "\nglobalThis.sut = {worker, ChatRoom, createSession};", context);
   const { sut } = context, objects = new Map(), rooms = [];
@@ -75,6 +76,13 @@ test("real signed sessions and existing admin token protect the market routes", 
   assert.equal(history.items[5].target,item.id);
   assert.ok(history.items.every(x=>x.created>0));
   assert.doesNotMatch(JSON.stringify(history),/test-only-admin-token|example\.invalid|بلاغ للاختبار|مسودة/);
+  assert.equal((await request("/api/admin/site/backup?table=accounts",{headers:forged})).status,401);
+  const backup=await (await request("/api/admin/site/backup?table=issues",{headers:admin})).json();
+  assert.equal(backup.total,1);assert.equal(backup.items[0].user_id,"a");
+  assert.equal((await request("/api/admin/site/backup?table=site_admin_attempts",{headers:admin})).status,400);
+  const marketBackup=await (await request("/api/admin/market/backup?table=listings",{headers:admin})).json();
+  assert.equal(marketBackup.items[0].owner_id,"a");
+  assert.equal((await request("/api/admin/market/backup?table=market_consents",{headers:admin})).status,400);
   const security=await (await request("/api/admin/security",{headers:admin})).json();
   assert.equal(security.adminConfigured,true);assert.equal(security.sessionConfigured,true);
   const blockedIP={"CF-Connecting-IP":"192.0.2.10"};

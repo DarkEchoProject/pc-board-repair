@@ -2,6 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import { boardCard, boardPath, fileKey, textSlug, normalizeBoards } from "./board-catalog.js";
 import { priorityBoardPages } from "./seo-priority.js";
 import { SiteStats, statsIdentity, verifiedBiosKey } from "./site-stats.js";
+import { backupPage } from "./backup.js";
 
 const GA_ID = "G-G13T8YNG71";
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
@@ -287,6 +288,10 @@ export class ChatRoom extends DurableObject {
       }
       if(request.method==="GET"&&url.pathname==="/api/stats/summary")return json(await this.siteStats.summary());
       if(request.method==="GET"&&url.pathname==="/api/stats/periods")return json(this.siteStats.periods());
+      if(request.method==="GET"&&url.pathname==="/api/stats/backup"){
+        const data=backupPage(this.ctx.storage.sql,"stats",url);return data?json(data):json({error:"طلب تصدير غير صالح."},400);
+      }
+      if(request.method==="GET"&&url.pathname==="/api/stats/backup-legacy")return json({visitCount:Number(await this.ctx.storage.get("visitCount"))||0,downloadCounts:(await this.ctx.storage.get("downloadCounts"))||{}});
       if(request.method==="POST"&&url.pathname==="/api/stats/record"){
         let body;try{body=await request.json();}catch{return json({ok:false},400);}
         const result=this.siteStats.record(body?.kind,body?.key||"",body?.identity||"");

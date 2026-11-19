@@ -68,8 +68,50 @@
   $("auditNext").onclick=()=>{auditPage++;audit();};
   $("auditReload").onclick=()=>{auditPage=1;audit();};
   async function security(){audit();const e=epoch;try{const s=await api("/api/admin/security");if(!alive(e))return;$("securityRows").replaceChildren(...[["مفتاح الإدارة",s.adminConfigured],["تسجيل الدخول Google",s.googleConfigured],["توقيع الجلسات",s.sessionConfigured]].map(([a,b])=>line(a,b?"مُهيأ":"غير مُهيأ")));}catch(err){handle(err,"securityRows",e);}}
-  async function collectPages(path,e,limit=300){let items=[],total=0;for(let page=1;page<=30;page++){if(!alive(e))throw Error("تم إلغاء اللقطة.");const data=await api(path+(path.includes("?")?"&":"?")+"page="+page);total=data.total;items.push(...data.items);if(items.length>=total||items.length>=limit||!data.items.length)break;}return{items:items.slice(0,limit),total,truncated:total>items.slice(0,limit).length};}
-  async function backup(){const e=epoch;$("backupRun").disabled=true;text("backupStatus","جاري جمع اللقطة…");try{const [chat,market,users,issues,settings]=await Promise.all([api("/api/admin/overview"),collectPages("/api/admin/market/overview?filter=all",e),collectPages("/api/admin/site/users",e),collectPages("/api/admin/site/issues?filter=all",e),api("/api/admin/site/settings")]);if(!alive(e))return;const blob=new Blob([JSON.stringify({createdAt:new Date().toISOString(),scope:"admin snapshot; excludes image bytes and complete market replies",chat,market,users,issues,settings},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="pcbr-admin-snapshot-"+new Date().toISOString().slice(0,10)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);text("backupStatus","تم تجهيز اللقطة. احتفظ بها في مكان خاص.");}catch(err){handle(err,"backupStatus",e);}finally{$("backupRun").disabled=false;}}
+  async function backup(){
+    const e=epoch,startedAt=new Date().toISOString(),parts=[],encoder=new TextEncoder(),counts={};let bytes=0;
+    const limit=100*1024*1024,signal=new AbortController();
+    const add=value=>{bytes+=encoder.encode(value).byteLength;if(bytes>limit)throw Error("تجاوز التصدير 100 MiB؛ لم تُنزّل نسخة ناقصة. استخدم تصدير Cloudflare لحجم أكبر.");parts.push(value);};
+    const check=()=>{if(!alive(e)||signal.signal.aborted)throw Error("تم إلغاء التصدير.");};
+    $("backupRun").disabled=true;$("backupCancel").disabled=false;$("backupCancel").onclick=()=>signal.abort();
+    async function get(path){check();const data=await api(path,{signal:signal.signal});check();return data;}
+    try{
+      add('{"format":"pcbr-logical-backup","version":2,"startedAt":'+JSON.stringify(startedAt)+',"data":{');
+      const chat=await get("/api/admin/chat/backup");
+      if(!Array.isArray(chat.messages)||!chat.reportCounts||typeof chat.reportCounts!=="object")throw Error("بيانات غرفة الصيانة غير مكتملة.");
+      add('"chat":'+JSON.stringify(chat));counts.chatMessages=chat.messages.length;
+      const legacy=await get("/api/admin/stats/backup-legacy");
+      if(!Number.isFinite(legacy.visitCount)||!legacy.downloadCounts||typeof legacy.downloadCounts!=="object")throw Error("العدادات القديمة غير مكتملة.");
+      add(',"legacyStats":'+JSON.stringify(legacy));
+      for(const [scope,tables] of [["site",["accounts","issues","config","audit"]],["market",["listings","photos","replies","reports"]],["stats",["daily","files","meta"]]]){
+        add(","+JSON.stringify(scope)+":{");
+        for(let index=0;index<tables.length;index++){
+          const table=tables[index],path="/api/admin/"+scope+"/backup?table="+table;
+          add((index?",":"")+JSON.stringify(table)+":[");
+          let after=0,upper=null,total=null,count=0;
+          for(;;){
+            text("backupStatus","جاري تصدير "+scope+" / "+table+" — "+num(count)+" سجل");
+            const data=await get(path+(upper===null?"":"&upper="+upper+"&after="+after));
+            if(data.table!==table||!Array.isArray(data.items)||!Number.isSafeInteger(data.total)||data.total<0||!Number.isSafeInteger(data.upper)||data.upper<0)throw Error("استجابة تصدير غير صالحة: "+table);
+            if(upper===null){upper=data.upper;total=data.total;}
+            if(data.upper!==upper||data.total!==total)throw Error("تغيّرت البيانات أثناء التصدير. أعد المحاولة.");
+            for(const row of data.items){add((count?",":"")+JSON.stringify(row));count++;}
+            if(data.next===null)break;
+            if(!Number.isSafeInteger(data.next)||data.next<=after||data.next>upper||!data.items.length)throw Error("تعذر متابعة التصدير.");
+            after=data.next;
+          }
+          if(count!==total)throw Error("عدد السجلات غير مطابق: "+table);
+          counts[scope+"."+table]=count;add("]");
+        }
+        add("}");
+      }
+      check();add('},"counts":'+JSON.stringify(counts)+',"finishedAt":'+JSON.stringify(new Date().toISOString())+',"consistency":"live logical export, not a single point-in-time snapshot"}');
+      const blob=new Blob(parts,{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+      a.href=url;a.download="pcbr-private-backup-"+startedAt.replace(/[:.]/g,"-")+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
+      text("backupStatus","تم تجهيز التصدير — "+num(Object.values(counts).reduce((sum,n)=>sum+n,0))+" سجل / "+(blob.size/1048576).toFixed(2)+" MiB. تحقق من الملف في التنزيلات وخزّنه بمكان خاص.");
+    }catch(err){if(signal.signal.aborted){if(alive(e))text("backupStatus","تم إلغاء التصدير. لم يُنزّل ملف.");}else handle(err,"backupStatus",e);}
+    finally{$("backupRun").disabled=false;$("backupCancel").disabled=true;}
+  }
   function load(id,force=false){if(!token||dashboard.classList.contains("hidden"))return;if(id==="overview")return overview();if(id==="users"||id==="issues")return loadPaged(id);if(id==="bios"||id==="boards")return loadCatalog(id,force);if(id==="community")return loadOverview();if(id==="market")return $("marketAdminRefresh").click();if(id==="notices"||id==="settings")return loadNotice();if(id==="stats")return stats();if(id==="security")return security();if(id==="health"&&force)return health();}
   function select(id){active=id;document.querySelectorAll("[data-view]").forEach(p=>p.classList.toggle("hidden",p.dataset.view!==id));document.querySelectorAll("[data-panel]").forEach(b=>{const yes=b.dataset.panel===id;b.classList.toggle("active",yes);if(yes){b.setAttribute("aria-current","page");text("panelTitle",b.textContent.trim());}else b.removeAttribute("aria-current");});load(id);}
   function sync(){const visible=!dashboard.classList.contains("hidden");if(visible===wasVisible)return;wasVisible=visible;epoch++;if(visible)select("overview");else{for(const id of ["usersRows","issuesRows","securityRows","auditRows","statsTop","statsPeriods","healthRows"])$(id).replaceChildren();$("noticeForm").reset();paging.users=paging.issues=1;auditPage=1;auditSequence++;}}

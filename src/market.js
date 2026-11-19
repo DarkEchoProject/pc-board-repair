@@ -1,3 +1,4 @@
+import { backupPage } from "./backup.js";
 // Market data uses a separate named instance of the existing SQLite-backed binding.
 export const MARKET_ROOM = "repair-market";
 // Bump this value and the client terms version whenever the displayed terms change.
@@ -318,6 +319,9 @@ export class MarketStore {
     if (request.headers.get("x-admin-authorized") !== "1") fail("غير مصرح.", 403);
     const image = url.pathname.match(/^\/api\/admin\/market\/images\/([a-f0-9-]{36})$/i);
     if (image && ["GET", "HEAD"].includes(request.method)) return this.image(request, image[1], null, true);
+    if(request.method==="GET"&&url.pathname==="/api/admin/market/backup"){
+      const data=backupPage(this.sql,"market",url);return data?json(data):json({error:"طلب تصدير غير صالح."},400);
+    }
     if (request.method === "GET" && url.pathname === "/api/admin/market/overview") {
       const filter = url.searchParams.get("filter") || "reported", page = pageNumber(url.searchParams.get("page"));
       const where = ["l.status!='deleted'"];
