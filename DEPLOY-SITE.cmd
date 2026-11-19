@@ -52,7 +52,7 @@ if errorlevel 1 (
 echo.
 echo Validating Worker build with Wrangler dry-run...
 echo.
-call npx.cmd wrangler deploy --dry-run --name pc-board-repair
+call npx.cmd wrangler@4.163.0 deploy --dry-run --name pc-board-repair
 if errorlevel 1 (
   echo.
   echo DEPLOY CANCELLED because Wrangler dry-run failed.
@@ -63,9 +63,16 @@ if errorlevel 1 (
 )
 
 echo.
+echo Production deployment requires explicit approval.
+set "PCBR_DEPLOY_APPROVAL="
+set /p "PCBR_DEPLOY_APPROVAL=Type DEPLOY to publish pc-board-repair, or press Enter to cancel: "
+if /i not "%PCBR_DEPLOY_APPROVAL%"=="DEPLOY" (
+  echo Deployment cancelled. No production upload was performed.
+  exit /b 1
+)
 echo Uploading site to pc-board-repair...
 echo.
-call npx.cmd wrangler deploy --name pc-board-repair
+call npx.cmd wrangler@4.163.0 deploy --name pc-board-repair
 if errorlevel 1 (
   echo.
   echo DEPLOY FAILED. Copy or photograph the error above.

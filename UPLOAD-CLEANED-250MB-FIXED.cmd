@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ========================================================
-echo  PC Board Repair - Fixed 250 MB BoardView uploader
+echo  PC Board Repair - Prepare 250 MB BoardView release batch (not upload)
 echo ========================================================
 echo.
 

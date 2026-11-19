@@ -35,10 +35,12 @@ export const textSlug = (value) => {
   return slug || "boardview";
 };
 
-export const boardPath = (board) => {
+const boardRoute = (board, key) => {
   const readable = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"));
-  return `/boardview/item/${fileKey(board.file)}/${readable}`;
+  return `/boardview/item/${key}/${readable}`;
 };
+
+export const boardPath = board => boardRoute(board, fileKey(board.file));
 
 export function boardCard(board) {
   return {
@@ -61,7 +63,7 @@ export function normalizeSearchText(value) {
 }
 export const compactSearchText = value => normalizeSearchText(value).replace(/\s+/g, "");
 export const boardKey = board => String(board?.key || fileKey(board?.file || ""));
-export const boardCardPath = board => board.path || `/boardview/item/${boardKey(board)}/${textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"))}`;
+export const boardCardPath = board => board.path || boardRoute(board, boardKey(board));
 
 export async function fetchBoardCatalog({ fetcher = fetch, cache = "default", allowPartial = false } = {}) {
   const results = await Promise.allSettled(BOARD_DATA_PATHS.map(async path => {

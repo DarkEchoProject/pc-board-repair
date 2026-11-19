@@ -73,6 +73,7 @@ function Ensure-GeneratedSeoArtifacts {
                 (Join-Path $root 'public\data\bios.json'),
                 (Join-Path $root 'scripts\home-summary.mjs'),
                 (Join-Path $root 'src\board-catalog.js'),
+                (Join-Path $root 'public\board-catalog.js'),
                 (Join-Path $root 'scripts\build-sitemap.mjs')
             )) {
                 if (
@@ -329,7 +330,7 @@ else {
     $jsFiles = @(
         Get-ChildItem -LiteralPath 'src' -Recurse -File -Filter '*.js'
         Get-ChildItem -LiteralPath 'public' -Recurse -File -Filter '*.js'
-        Get-Item -LiteralPath 'scripts\build-sitemap.mjs' -ErrorAction SilentlyContinue
+        Get-ChildItem -LiteralPath 'scripts','tests' -Recurse -File -Filter '*.mjs'
     ) | Where-Object { $null -ne $_ } | Sort-Object FullName -Unique
 
     if (-not $jsFiles.Count) {
@@ -347,6 +348,21 @@ else {
             }
         }
     }
+}
+
+Write-Host ""
+Write-Host "Running automated tests..."
+if (-not $script:failed) {
+    & node.exe --test --test-reporter=spec
+    if ($LASTEXITCODE -eq 0) {
+        Pass 'All automated tests passed'
+    }
+    else {
+        Fail 'Automated tests failed'
+    }
+}
+else {
+    Write-Host 'Automated tests skipped because pre-deploy checks failed.' -ForegroundColor Yellow
 }
 
 Write-Host ""

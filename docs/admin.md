@@ -21,3 +21,7 @@ The existing Security panel includes a private paginated audit log of successful
 
 ## Private logical backup v2
 The admin-only GET export routes allow specific tables only. The browser downloads a private JSON file with a version, timestamps and counts, all stored market listings (including soft-deleted records), replies, reports, image bytes encoded in base64, observed accounts, issues including account IDs, config/audit, retained chat messages/report counts, legacy counters and dated statistics. No cookie/consent tokens, rate-limit state, secret keys or historical records already deleted by retention. Export uses bounded rowid pages and a maximum rowid per table, checks counts, and aborts rather than truncating at 100 MiB. Concurrent updates with unchanged counts may not be detected; this is not an atomic point-in-time snapshot, encrypted archive or tested restore tool. Keep private and use separately protected Cloudflare recovery facilities for full disaster recovery. BIOS/BoardView catalogs remain separate downloads.
+
+
+## Release safety
+The Windows deploy wrapper validates SEO, checks all JavaScript and module files and runs the automated tests, then performs a Wrangler dry run. Production upload requires typing DEPLOY. Direct Wrangler CLI commands and independent maintenance scripts are not intercepted by this wrapper. See scripts.md for the manual recovery pipeline.
