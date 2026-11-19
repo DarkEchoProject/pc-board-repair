@@ -66,6 +66,15 @@ test("real signed sessions and existing admin token protect the market routes", 
   assert.equal((await request("/api/admin/stats/periods")).status,401);
   assert.equal((await request("/api/admin/stats/periods",{headers:admin})).status,200);
   assert.ok(rooms.includes("site-stats"));
+  assert.equal((await request("/api/admin/site/audit",{headers:forged})).status,401);
+  assert.equal((await request("/api/admin/site/audit-record",{method:"POST",headers:admin,body:{action:"market.hide",target:"fake"}})).status,404);
+  assert.equal((await request("/api/admin/market/action",{method:"POST",headers:admin,body:{id:item.id,action:"invalid"}})).status,400);
+  const history=await (await request("/api/admin/site/audit",{headers:admin})).json();
+  assert.equal(history.total,6);
+  assert.deepEqual(history.items.map(x=>x.action),["user.resume","user.suspend","notice.disable","notice.enable","issue.resolve","market.hide"]);
+  assert.equal(history.items[5].target,item.id);
+  assert.ok(history.items.every(x=>x.created>0));
+  assert.doesNotMatch(JSON.stringify(history),/test-only-admin-token|example\.invalid|بلاغ للاختبار|مسودة/);
   const security=await (await request("/api/admin/security",{headers:admin})).json();
   assert.equal(security.adminConfigured,true);assert.equal(security.sessionConfigured,true);
   const blockedIP={"CF-Connecting-IP":"192.0.2.10"};
