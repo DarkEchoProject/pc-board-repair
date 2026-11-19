@@ -4,15 +4,16 @@ import { serveLatestYouTubeVideos } from "./youtube-latest.js";
 export { ChatRoom };
 
 class HeaderUiHead {
-  constructor(showAdSpaces) {
+  constructor(showAdSpaces, isBiosPage) {
     this.showAdSpaces = showAdSpaces;
+    this.isBiosPage = isBiosPage;
   }
 
   element(element) {
     element.append('<script>try{document.documentElement.dataset.theme=localStorage.getItem("pcbr-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script><link rel="stylesheet" href="/theme.css?v=20261105-3"><script src="/theme.js?v=20261105-3" defer></script>', { html: true });
     element.append('<script src="/youtube-integration.js?v=20261117-1" defer></script>', { html: true });
     if (this.showAdSpaces) {
-      element.append('<script src="/bios-download-stats.js?v=20261119-1" defer></script>', { html: true });
+      if (this.isBiosPage) element.append('<script src="/bios-download-stats.js?v=20261119-1" defer></script>', { html: true });
       element.append('<script src="/site-notice.js?v=20261118-1" defer></script>', { html: true });
       element.append('<link rel="stylesheet" href="/site-ads.css?v=20261117-4"><script src="/site-ads.js?v=20261117-3" defer></script>', { html: true });
     }
@@ -98,7 +99,7 @@ function withHeaderUi(response, url) {
   if (!type.toLowerCase().includes("text/html")) return response;
   const showAdSpaces = response.status === 200 && isPublicContent(url);
   const rewriter = new HTMLRewriter()
-    .on("head", new HeaderUiHead(showAdSpaces))
+    .on("head", new HeaderUiHead(showAdSpaces, url.pathname.startsWith('/bios/')))
     .on('footer a[href="/contact"]', new SiteIssueLink(url));
   if (showAdSpaces) {
     const isHomePage = url.pathname === "/" || url.pathname === "/index.html";

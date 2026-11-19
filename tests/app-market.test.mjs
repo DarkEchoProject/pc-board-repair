@@ -63,6 +63,9 @@ test("real signed sessions and existing admin token protect the market routes", 
   assert.equal((await request("/api/chat/send",{method:"POST",token:alice,body:{text:"test"}})).status,403);
   assert.equal((await request("/api/admin/site/user-action",{method:"POST",headers:admin,body:{id:"a",suspended:false}})).status,200);
   assert.equal((await request("/api/chat/send",{method:"POST",token:alice,body:{text:"test"}})).status,200);
+  assert.equal((await request("/api/admin/stats/periods")).status,401);
+  assert.equal((await request("/api/admin/stats/periods",{headers:admin})).status,200);
+  assert.ok(rooms.includes("site-stats"));
   const security=await (await request("/api/admin/security",{headers:admin})).json();
   assert.equal(security.adminConfigured,true);assert.equal(security.sessionConfigured,true);
   const blockedIP={"CF-Connecting-IP":"192.0.2.10"};
