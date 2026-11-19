@@ -11,3 +11,7 @@
 
 ## Login protection
 Five incorrect nonempty token attempts from the same Cloudflare client IP within ten minutes block further admin API access from that IP for ten minutes (HTTP 429 with Retry-After). ADMIN_TOKEN is unchanged. Only a keyed hash of the IP is stored in the existing SQLite Durable Object; expired records are removed on later failures. Successful access before a block resets the counter. Public browsing and user login are unaffected.
+
+
+## Statistics
+The old site-stats visitCount and downloadCounts KV values remain untouched; summary and BoardView top totals combine those values with new SQLite counts. The day/7/30-day reports use UTC dates and start with the first recorded event, not reconstructed history. Visits are deduplicated per keyed IP for 30 minutes, BoardView requests per IP/file for 10 seconds, and catalog BIOS link clicks per IP/archive for 60 seconds. BIOS clicks are accepted only for a URL verified against generated lookup shards; they do not prove a completed download and do not count direct GitHub downloads or the separate legacy Intel file. The new period API requires the existing admin token. The original direct download URLs, sign-in requirements and source catalogs remain unchanged.

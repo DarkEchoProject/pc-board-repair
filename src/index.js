@@ -1,10 +1,18 @@
 import { DurableObject } from "cloudflare:workers";
 import { boardCard, boardPath, fileKey, textSlug, normalizeBoards } from "./board-catalog.js";
 import { priorityBoardPages } from "./seo-priority.js";
+import { SiteStats, statsIdentity, verifiedBiosKey } from "./site-stats.js";
 
 const GA_ID = "G-G13T8YNG71";
 const SITE = "https://pc-board-repair.alinasser00001.workers.dev";
 let boardsCache = null;
+
+async function recordStats(request,env,kind,key="") {
+  const identity=await statsIdentity(request,env);
+  if(!identity)return json({ok:false},503);
+  return env.CHAT_ROOM.getByName("site-stats").fetch(new Request(new URL("/api/stats/record",request.url),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({kind,key,identity})}));
+}
+function sameOriginStats(request,url){const origin=request.headers.get("origin");return (!origin||origin===url.origin)&&request.headers.get("sec-fetch-site")!=="cross-site";}
 
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status,
@@ -271,52 +279,19 @@ export class ChatRoom extends DurableObject {
       return json({ ok: true });
     }
 
-    if (request.method === "GET" && url.pathname === "/api/stats/top") {
-      const limit = Math.min(20, Math.max(1, Number(url.searchParams.get("limit")) || 6));
-      const counts = (await this.ctx.storage.get("downloadCounts")) || {};
-      const items = Object.entries(counts)
-        .map(([key, count]) => ({ key, count: Number(count) || 0 }))
-        .filter(item => item.count > 0)
-        .sort((a, b) => b.count - a.count)
-        .slice(0, limit);
-      const total = Object.values(counts).reduce((sum, value) => sum + (Number(value) || 0), 0);
-      return json({ items, total });
-    }
-
-    if (request.method === "GET" && url.pathname === "/api/stats/summary") {
-      const counts = (await this.ctx.storage.get("downloadCounts")) || {};
-      const downloads = Object.values(counts).reduce((sum, value) => sum + (Number(value) || 0), 0);
-      const visits = Number(await this.ctx.storage.get("visitCount")) || 0;
-      return json({ visits, downloads });
-    }
-
-    if (request.method === "POST" && url.pathname === "/api/stats/visit") {
-      let visits = 0;
-      await this.ctx.storage.transaction(async txn => {
-        visits = (Number(await txn.get("visitCount")) || 0) + 1;
-        await txn.put("visitCount", visits);
-      });
-      return json({ ok: true, visits });
-    }
-
-    if (request.method === "POST" && url.pathname === "/api/stats/download") {
-      let body;
-      try {
-        body = await request.json();
-      } catch {
-        return json({ error: "طلب غير صالح." }, 400);
+    if(url.pathname.startsWith("/api/stats/")){
+      this.siteStats ||= new SiteStats(this.ctx.storage);
+      if(request.method==="GET"&&url.pathname==="/api/stats/top"){
+        const limit=Math.min(20,Math.max(1,Number(url.searchParams.get("limit"))||6));
+        return json(await this.siteStats.top(limit));
       }
-      const key = String(body.key || "").toLowerCase();
-      if (!/^[a-z0-9]{1,20}$/.test(key)) return json({ error: "مفتاح غير صالح." }, 400);
-
-      let nextCount = 0;
-      await this.ctx.storage.transaction(async txn => {
-        const counts = (await txn.get("downloadCounts")) || {};
-        nextCount = (Number(counts[key]) || 0) + 1;
-        counts[key] = nextCount;
-        await txn.put("downloadCounts", counts);
-      });
-      return json({ ok: true, key, count: nextCount });
+      if(request.method==="GET"&&url.pathname==="/api/stats/summary")return json(await this.siteStats.summary());
+      if(request.method==="GET"&&url.pathname==="/api/stats/periods")return json(this.siteStats.periods());
+      if(request.method==="POST"&&url.pathname==="/api/stats/record"){
+        let body;try{body=await request.json();}catch{return json({ok:false},400);}
+        const result=this.siteStats.record(body?.kind,body?.key||"",body?.identity||"");
+        return json(result,result.ok?200:400);
+      }
     }
 
     return json({ error: "Not found" }, 404);
@@ -332,17 +307,20 @@ export default {
       return room.fetch(request);
     }
 
-    if (url.pathname === "/api/stats/download") {
-      return json({ error: "Not found" }, 404);
-    }
-
-    if (url.pathname.startsWith("/api/stats/")) {
-      const stats = env.CHAT_ROOM.getByName("site-stats");
-      const response = await stats.fetch(request);
-      if (request.method === "GET" && response.ok && url.pathname === "/api/stats/top" &&
-          url.searchParams.get("include") === "boards") {
-        return includeTopBoards(response, env);
+    if(url.pathname.startsWith("/api/stats/")){
+      if(request.method==="POST"&&url.pathname==="/api/stats/visit"){
+        if(!sameOriginStats(request,url))return json({ok:false},403);
+        try{return await recordStats(request,env,"visits");}catch{return json({ok:false},503);}
       }
+      if(request.method==="POST"&&url.pathname==="/api/stats/bios-request"){
+        if(!sameOriginStats(request,url))return json({ok:false},403);
+        const link=url.searchParams.get("url")||"";
+        if(!link||link.length>2000)return json({ok:false},400);
+        try{const key=await verifiedBiosKey(env.ASSETS,url.origin,link);if(!key)return json({ok:false},404);return await recordStats(request,env,"bios",key);}catch{return json({ok:false},503);}
+      }
+      if(request.method!=="GET"||!["/api/stats/top","/api/stats/summary"].includes(url.pathname))return json({error:"Not found"},404);
+      const response=await env.CHAT_ROOM.getByName("site-stats").fetch(request);
+      if(response.ok&&url.pathname==="/api/stats/top"&&url.searchParams.get("include")==="boards")return includeTopBoards(response,env);
       return response;
     }
 
@@ -358,15 +336,9 @@ export default {
         const boards = await getBoards(env);
         const board = boards.find(item => fileKey(item.file) === downloadMatch[1].toLowerCase());
         if (!board) return new Response("File not found", { status: 404 });
-        if (request.method === "GET") {
-          const stats = env.CHAT_ROOM.getByName("site-stats");
-          const countRequest = new Request(`${SITE}/api/stats/download`, {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ key: downloadMatch[1].toLowerCase() }),
-          });
-          if (ctx?.waitUntil) ctx.waitUntil(stats.fetch(countRequest));
-          else await stats.fetch(countRequest);
+        if(request.method==="GET"){
+          const task=recordStats(request,env,"boards",downloadMatch[1].toLowerCase()).catch(()=>{});
+          if(ctx?.waitUntil)ctx.waitUntil(task);else await task;
         }
         return Response.redirect(`${SITE}/downloads/${encodeURIComponent(board.file)}`, 302);
       } catch {

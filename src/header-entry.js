@@ -12,6 +12,7 @@ class HeaderUiHead {
     element.append('<script>try{document.documentElement.dataset.theme=localStorage.getItem("pcbr-theme")==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script><link rel="stylesheet" href="/theme.css?v=20261105-3"><script src="/theme.js?v=20261105-3" defer></script>', { html: true });
     element.append('<script src="/youtube-integration.js?v=20261117-1" defer></script>', { html: true });
     if (this.showAdSpaces) {
+      element.append('<script src="/bios-download-stats.js?v=20261119-1" defer></script>', { html: true });
       element.append('<script src="/site-notice.js?v=20261118-1" defer></script>', { html: true });
       element.append('<link rel="stylesheet" href="/site-ads.css?v=20261117-4"><script src="/site-ads.js?v=20261117-3" defer></script>', { html: true });
     }

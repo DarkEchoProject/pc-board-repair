@@ -19,3 +19,6 @@ Thumbs.db
 
 # Generated BIOS company catalogs
 public/data/bios-companies/
+
+# Generated BIOS statistics lookup
+public/data/bios-download-keys/

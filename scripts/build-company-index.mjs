@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { normalizeBiosCatalog, groupBiosCompanies } from "../public/bios/catalog-data.js";
 import { boardPath, mergeBoards, normalizeBoards } from "../src/board-catalog.js";
+import { groupBiosDownloadKeys } from "../src/site-stats.js";
 import { writeHomeSummary } from "./home-summary.mjs";
 
 const SAMPLE_LIMIT = 8;
@@ -111,6 +112,16 @@ for (const entry of fs.readdirSync(shardDir, { withFileTypes: true })) {
   }
 }
 console.log(`BIOS company catalogs built: ${activeShards.size} files`);
+const keyDir = new URL("../public/data/bios-download-keys/", import.meta.url);
+fs.mkdirSync(keyDir,{recursive:true});
+const keyGroups=groupBiosDownloadKeys(biosRecords);
+for(const bucket of "0123456789abcdef"){
+  const file=fileURLToPath(new URL(bucket+".json",keyDir)),content=JSON.stringify(keyGroups.get(bucket)||[]);
+  if(fs.existsSync(file)&&fs.readFileSync(file,"utf8")===content)continue;
+  const temp=file+"."+process.pid+".tmp";
+  try{fs.writeFileSync(temp,content,"utf8");fs.renameSync(temp,file);}finally{fs.rmSync(temp,{force:true});}
+}
+console.log("BIOS statistics lookup built: 16 files");
 const bios = summarizeCompanies(biosRecords, item => ({
   label: String(item.file),
   href: item.download_url,

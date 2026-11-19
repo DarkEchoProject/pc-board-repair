@@ -524,6 +524,7 @@ export default {
       if(url.pathname.startsWith(SITE_ADMIN_PATH)&&!["summary","users","issues","settings","user-action","issue-action"].includes(url.pathname.slice(SITE_ADMIN_PATH.length)))return json({error:"غير موجود."},404);
       if(!["GET","HEAD"].includes(request.method)&&!sameSite(request,url))return json({error:"طلب غير مسموح."},403);
       if(url.pathname==="/api/admin/security"&&request.method==="GET")return json({adminConfigured:true,googleConfigured:authConfigured(env),sessionConfigured:!!sessionSigningSecret(env)});
+      if(url.pathname==="/api/admin/stats/periods"&&request.method==="GET")return env.CHAT_ROOM.getByName("site-stats").fetch(new Request(new URL("/api/stats/periods",url),{method:"GET"}));
       const headers = new Headers(request.headers);
       headers.delete("authorization");
       headers.delete("x-admin-token");
