@@ -1,5 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
-import { boardCard } from "./board-catalog.js";
+import { boardCard, boardPath, fileKey, textSlug, normalizeBoards } from "./board-catalog.js";
 import { priorityBoardPages } from "./seo-priority.js";
 
 const GA_ID = "G-G13T8YNG71";
@@ -37,37 +37,7 @@ const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, c => ({
   "'": "&#039;",
 }[c]));
 
-const fileKey = (value) => {
-  const s = String(value ?? "");
-  let h = 2166136261;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0).toString(36);
-};
-
-const textSlug = (value) => {
-  const slug = String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 120);
-  return slug || "boardview";
-};
-
-const boardPath = (board) => {
-  const readable = textSlug([board.brand, board.model, board.board, board.revision].filter(Boolean).join("-"));
-  return `/boardview/item/${fileKey(board.file)}/${readable}`;
-};
-
 const downloadPath = (board) => `/download/${fileKey(board.file)}`;
-
-const normalizeBoards = (all) => (Array.isArray(all) ? all : [])
-  .flatMap(x => Array.isArray(x?.value) ? x.value : [x])
-  .filter(x => x && typeof x.brand === "string" && x.brand.trim() && typeof x.file === "string" && x.file.trim());
 
 async function getBoards(env) {
   if (boardsCache) return boardsCache;

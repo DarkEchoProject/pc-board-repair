@@ -63,15 +63,10 @@
 <div class="warn"><b>تنبيه:</b> تأكد دائمًا من تطابق موديل اللوحة وRevision قبل استخدام أي ملف BIOS أو BoardView.</div>
 </main>
 <footer><div class="footerLinks"><a href="/diagnostics/">التشخيص</a><a href="/component-testing/">فحص القطع</a><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a><a href="/copyright">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
-<script>
+<script type="module">
+import { boardKey, boardCardPath as detailHref } from "/board-catalog.js?v=20261119-1";
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-function normalizeBoards(all){return(Array.isArray(all)?all:[]).flatMap(x=>Array.isArray(x?.value)?x.value:[x]).filter(x=>x&&typeof x.brand==='string'&&x.brand.trim()&&typeof x.file==='string'&&x.file.trim());}
-function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
-function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
-function boardKey(b){return String(b?.key||fileKey(b?.file||''))}
-function detailHref(b){return b.path||`/boardview/item/${boardKey(b)}/${textSlug([b.brand,b.model,b.board,b.revision].filter(Boolean).join('-'))}`}
 function miniCard(b,count){const meta=[b.board,b.revision,b.type].filter(Boolean).join(' • ');return `<article class="miniFile"><div class="miniFileTop"><span class="brandTag">${esc(b.brand)}</span>${count?`<span class="popularCount">${count.toLocaleString('ar')} تحميل</span>`:''}</div><h3><a href="${detailHref(b)}">${esc(b.model||b.board||'BoardView')}</a></h3><p class="muted">${esc(meta||'ملف صيانة')}</p><div class="miniFileActions"><a class="imageBtn" href="${detailHref(b)}">التفاصيل</a><a class="btn downloadTrack" data-brand="${esc(b.brand)}" data-model="${esc(b.model||'')}" href="/download/${boardKey(b)}" download>تحميل</a></div></article>`}
-function newestBoards(boards){const dated=boards.filter(b=>b.added_at||b.addedAt);if(dated.length>=6)return [...dated].sort((a,b)=>new Date(b.added_at||b.addedAt)-new Date(a.added_at||a.addedAt)).slice(0,6);return boards.slice(-6).reverse();}
 async function loadHome(){
   const r=await fetch('/data/home-data.json');
   if(!r.ok)throw new Error('HTTP '+r.status+' home-data.json');

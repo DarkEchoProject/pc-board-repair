@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { normalizeBiosCatalog } from '../public/bios/catalog-data.js';
-import { boardPath } from '../src/board-catalog.js';
+import { boardPath, mergeBoards, normalizeBoards } from '../src/board-catalog.js';
 import { writeHomeSummary } from './home-summary.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -86,21 +86,13 @@ const staticPaths = [
   ...collectHtmlPaths('bios').filter(p => p !== '/bios/company.html'),
 ];
 
-const all = [...readJsonArray(boardsJson), ...readJsonArray(boardsLargeJson)];
-const seenFiles = new Set();
+const all = mergeBoards(normalizeBoards(readJsonArray(boardsJson)), normalizeBoards(readJsonArray(boardsLargeJson)));
 const boardPaths = [];
 const directoryItems = [];
 const homeBoards = [];
 
 for (const board of all) {
   const brand = String(board?.brand ?? '').trim();
-  const file = String(board?.file ?? '').trim();
-  if (!brand || !file) continue;
-
-  const identity = file.toLowerCase();
-  if (seenFiles.has(identity)) continue;
-  seenFiles.add(identity);
-
   const model = String(board?.model ?? '').trim();
   const boardNo = String(board?.board ?? '').trim();
   const revision = String(board?.revision ?? '').trim();

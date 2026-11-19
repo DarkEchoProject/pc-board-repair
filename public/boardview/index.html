@@ -217,15 +217,10 @@
   <!-- boardview-companies:end -->
 </main>
 <footer><div class="footerLinks"><a href="/community">غرفة الصيانة</a><a href="/about">من نحن</a><a href="/contact">اتصل بنا</a><a href="/privacy">سياسة الخصوصية</a><a href="/terms">شروط الاستخدام</a><a href="/disclaimer">إخلاء المسؤولية</a><a href="/copyright">حقوق النشر</a></div><div>© 2026 PC Board Repair</div></footer>
-<script>
+<script type="module">
+import { boardPath as detailHref, fileKey, fetchBoardCatalog, normalizeSearchText, compactSearchText } from "/board-catalog.js?v=20261119-1";
 let boards=null;let page=1;const PAGE_SIZE=24;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-function normalize(all){return(Array.isArray(all)?all:[]).flatMap(x=>Array.isArray(x?.value)?x.value:[x]).filter(x=>x&&typeof x.brand==='string'&&x.brand.trim());}
-function normalizeSearchText(value){return String(value??'').toLowerCase().normalize('NFKD').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[ًٌٍَُِّْـ]/g,'').replace(/[^\p{L}\p{N}]+/gu,' ').replace(/\s+/g,' ').trim();}
-function compactSearchText(value){return normalizeSearchText(value).replace(/\s+/g,'');}
-function fileKey(value){const s=String(value??'');let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(36)}
-function textSlug(value){const slug=String(value??'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,120);return slug||'boardview'}
-function detailHref(b){const readable=textSlug([b.brand,b.model,b.board,b.revision].filter(Boolean).join('-'));return `item/${fileKey(b.file)}/${readable}`}
 function cleanNote(v){return v&&!/^Imported automatically/i.test(v)?v:''}
 function card(b){const meta=[b.type,b.board,b.revision,b.platform,cleanNote(b.note)].filter(Boolean).map(esc).join(' • ');const detail=detailHref(b);const image=b.image?`<a class="boardImageLink" href="${detail}"><img class="boardImage" loading="lazy" src="../images/${encodeURIComponent(b.image)}" alt="${esc('لوحة '+b.brand+' '+b.model)}"></a>`:`<a class="boardPlaceholder boardPlaceholderLink" href="${detail}">🧩<span>فتح صفحة الملف</span></a>`;return `<article class="boardCard">${image}<div class="boardInfo"><div class="brandTag">${esc(b.brand)}</div><h2><a class="boardTitleLink" href="${detail}">${esc(b.model)}</a></h2><p class="fileMeta">${meta}</p><div class="boardActions"><a class="btn" href="${detail}">📄 تفاصيل الملف</a><a class="imageBtn downloadTrack" data-brand="${esc(b.brand)}" data-model="${esc(b.model)}" href="/download/${fileKey(b.file)}" download>⬇️ تحميل مباشر</a></div></div></article>`}
 function uniqueSorted(values){return[...new Set(values.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'en'));}
@@ -258,18 +253,7 @@ function renderResults() {
 }
 function bindDownloadTracking(){document.querySelectorAll('.downloadTrack').forEach(a=>a.addEventListener('click',()=>{if(typeof gtag==='function')gtag('event','boardview_download',{board_brand:a.dataset.brand||'',board_model:a.dataset.model||'',file_name:a.getAttribute('href')||''});},{once:true}));}
 async function load() {
-  const payloads = await Promise.all(['../data/boards.json', '../data/boards-large.json'].map(async url => {
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error('HTTP ' + response.status + ' ' + url);
-    return response.json();
-  }));
-  const seen = new Set();
-  boards = normalize(payloads.flat()).filter(board => {
-    const key = String(board.file || [board.brand, board.model, board.board, board.revision].join('|'));
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  boards = await fetchBoardCatalog();
   const brands = uniqueSorted(boards.map(board => board.brand));
   const types = uniqueSorted(boards.map(board => board.type));
   totalStat.textContent = boards.length.toLocaleString('ar');
@@ -279,6 +263,7 @@ async function load() {
   fillSelect(typeFilter, types);
   renderResults();
 }
+const totalStat=document.getElementById("totalStat"),brandStat=document.getElementById("brandStat"),imageStat=document.getElementById("imageStat"),pagination=document.getElementById("pagination");
 const search=document.getElementById('search'),brandFilter=document.getElementById('brandFilter'),typeFilter=document.getElementById('typeFilter'),dataFilter=document.getElementById('dataFilter'),companies=document.getElementById('companies'),companiesTitle=document.getElementById('companiesTitle'),results=document.getElementById('results'),resultsTitle=document.getElementById('resultsTitle'),resultCount=document.getElementById('resultCount');
 [search,brandFilter,typeFilter,dataFilter].forEach(el=>el.addEventListener(el.tagName==='INPUT'?'input':'change',()=>{page=1;renderResults()}));
 document.getElementById('resetBtn').addEventListener('click',()=>{search.value='';brandFilter.value='';typeFilter.value='';dataFilter.value='';page=1;renderResults();search.focus();});
