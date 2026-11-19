@@ -31,7 +31,7 @@
   async function loadCatalog(id,force=false){
     if(cat[id].items&&!force){renderCatalog(id);return;}
     const e=epoch;text(id+"Summary","جاري تحميل الفهرس…");
-    try{const paths=id==="bios"?["/data/bios.json"]:["/data/boards.json","/data/boards-large.json"];const groups=await Promise.all(paths.map(publicJson));if(!alive(e))return;if(groups.some(g=>!Array.isArray(g)))throw Error("صيغة الفهرس غير متوقعة.");const seen=new Set();cat[id].items=groups.flat().filter(x=>{if(!x||!x.file)return false;const key=String(id==="bios"?x.sha256||x.download_url||x.file:x.file).toLowerCase();if(seen.has(key))return false;seen.add(key);return true;});renderCatalog(id);}catch(err){handle(err,id+"Summary",e);}
+    try{if(id==="boards"){const {fetchBoardCatalog}=await import("/board-catalog.js?v=20261119-1");const items=await fetchBoardCatalog({cache:force?"reload":"default"});if(!alive(e))return;cat[id].items=items;renderCatalog(id);return;}const groups=await Promise.all(["/data/bios.json"].map(publicJson));if(!alive(e))return;if(groups.some(g=>!Array.isArray(g)))throw Error("صيغة الفهرس غير متوقعة.");const seen=new Set();cat[id].items=groups.flat().filter(x=>{if(!x||!x.file)return false;const key=String(id==="bios"?x.sha256||x.download_url||x.file:x.file).toLowerCase();if(seen.has(key))return false;seen.add(key);return true;});renderCatalog(id);}catch(err){handle(err,id+"Summary",e);}
   }
   async function loadPaged(id){
     const e=epoch,isUsers=id==="users",filter=isUsers?"":"&filter="+encodeURIComponent($("issuesFilter").value);

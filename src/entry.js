@@ -90,7 +90,7 @@ function wrappedEnvironment(env) {
 class IntegrationHead {
   element(element) {
     element.append(
-      `<script>(()=>{const p=location.pathname;if(p==='/'||p==='/index.html'||p.startsWith('/boardview/item/')){const s=document.createElement('script');s.src='/tools-integration.js?v=20261015-4';s.defer=true;document.head.append(s)}})();</script>`,
+      `<script>(()=>{const p=location.pathname;if(p==='/'||p==='/index.html'||p.startsWith('/boardview/item/')){const s=document.createElement('script');s.src='/tools-integration.js?v=20261119-1';s.defer=true;document.head.append(s)}})();</script>`,
       { html: true },
     );
   }

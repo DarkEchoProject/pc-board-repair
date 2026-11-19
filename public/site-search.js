@@ -1,48 +1,13 @@
+import { BOARD_DATA_PATHS, boardPath, boardFileIdentity, normalizeBoards, normalizeSearchText as normalize, compactSearchText as compact } from "/board-catalog.js?v=20261119-1";
 (()=>{
   'use strict';
 
-  const BOARD_DATA=['/data/boards.json','/data/boards-large.json'];
+  const BOARD_DATA=BOARD_DATA_PATHS;
   const sources=new Map();
 
   const currentLang=()=>{
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   };
-
-  function normalize(value){
-    return String(value??'')
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\p{M}ـ]/gu,'')
-      .replace(/ى/g,'ي')
-      .replace(/ة/g,'ه')
-      .replace(/[^\p{L}\p{N}]+/gu,' ')
-      .replace(/\s+/g,' ')
-      .trim();
-  }
-
-  function compact(value){
-    return normalize(value).replace(/\s+/g,'');
-  }
-
-  function fileKey(path){
-    let h=2166136261;
-    for(let i=0;i<path.length;i++){
-      h^=path.charCodeAt(i);
-      h=Math.imul(h,16777619);
-    }
-    return (h>>>0).toString(36);
-  }
-
-  function textSlug(value){
-    const slug=String(value??'')
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g,'')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g,'-')
-      .replace(/^-+|-+$/g,'')
-      .slice(0,120);
-    return slug||'boardview';
-  }
 
   function filenameOnly(path){
     const parts=String(path||'').split(/[\\/]/);
@@ -112,12 +77,11 @@
     const format=typeValue(board);
     const file=String(board?.file||'');
     const fileName=filenameOnly(file);
-    const readable=textSlug([board?.brand,board?.model,board?.board,board?.revision].filter(Boolean).join('-'));
     const details=[boardNo,revision,format].filter(Boolean).join(' • ');
     const keywords=[brand,model,boardNo,revision,format,fileName,file,'boardview','board view','خريطة','مخطط بورد'].filter(Boolean).join(' ');
     return {
       type:'boardview',
-      url:`/boardview/item/${fileKey(file)}/${readable}`,
+      url:boardPath(board),
       titleAr:`${brand} — ${model}`,
       titleEn:`${brand} — ${model}`,
       subtitleAr:details||fileName,
@@ -222,9 +186,7 @@
 
   async function readBoards(response){
     const rows=await readCatalog(response);
-    return rows.flatMap(item=>Array.isArray(item?.value)?item.value:[item])
-      .filter(board=>typeof board?.brand==='string'&&board.brand.trim()&&typeof board.file==='string'&&board.file.trim())
-      .map(boardEntry);
+    return normalizeBoards(rows).map(boardEntry);
   }
 
   async function readBios(response){
@@ -279,7 +241,7 @@
     const seen=new Set();
     const dynamicIndex=entries.filter(entry=>{
       if(entry.type!=='boardview')return true;
-      const key=entry.file.trim().toLowerCase();
+      const key=boardFileIdentity(entry.file);
       if(seen.has(key))return false;
       seen.add(key);
       return true;

@@ -79,4 +79,4 @@ async function dismissReport(id){if(!confirm('تجاهل كل البلاغات �
 document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();token=document.getElementById('adminPassword').value.trim();if(!token)return;loginStatus.textContent='جاري التحقق...';await loadOverview();});
 document.getElementById('logoutBtn').addEventListener('click',()=>{sessionStorage.removeItem(TOKEN_KEY);token='';document.getElementById('adminPassword').value='';showLogin('تم تسجيل الخروج.');});document.getElementById('messageSearch').addEventListener('input',renderAll);
 if(token)loadOverview();else showLogin();
-</script><script src="/admin-dashboard.js?v=20261118-2" defer></script><script src="/admin-market.js?v=20261118-2" defer></script></body></html>
+</script><script src="/admin-dashboard.js?v=20261119-1" defer></script><script src="/admin-market.js?v=20261118-2" defer></script></body></html>

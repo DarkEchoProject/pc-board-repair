@@ -20,7 +20,8 @@
       let script=document.querySelector('script[src^="/site-search.js"]');
       if(!script){
         script=document.createElement('script');
-        script.src='/site-search.js?v=20261114-1';
+        script.type='module';
+        script.src='/site-search.js?v=20261119-1';
         script.dataset.pcbrSiteSearch='1';
         document.head.append(script);
       }
@@ -50,7 +51,7 @@
       let tries=0;
       timer=setInterval(()=>{
         if(succeed())return;
-        if(++tries>40)fail('Search engine load timed out');
+        if(++tries>200)fail('Search engine load timed out');
       },50);
     });
   }

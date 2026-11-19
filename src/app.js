@@ -291,7 +291,7 @@ class BrandHead {
   element(element) {
     const favicon = ""; // canonical favicon is applied by seo-entry.js
     element.prepend(
-      `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261118-2" defer></script><script src="/i18n-extra.js" defer></script>`,
+      `${favicon}<link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/auth.css"><meta name="theme-color" content="#07111f"><script src="/auth-ui.js?v=20261119-1" defer></script><script src="/i18n-extra.js" defer></script>`,
       { html: true },
     );
   }

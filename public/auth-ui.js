@@ -22,7 +22,7 @@
 
   if(isHomepage&&!document.querySelector('script[data-pcbr-site-search-boot]')){
     const searchBoot=document.createElement('script');
-    searchBoot.src='/site-search-boot.js?v=20261114-1';
+    searchBoot.src='/site-search-boot.js?v=20261119-1';
     searchBoot.dataset.pcbrSiteSearchBoot='1';
     document.head.append(searchBoot);
   }
@@ -566,33 +566,6 @@
     }));
   }
 
-  function fileKey(value){
-    const s=String(value??'');
-    let h=2166136261;
-    for(let i=0;i<s.length;i++){
-      h^=s.charCodeAt(i);
-      h=Math.imul(h,16777619);
-    }
-    return(h>>>0).toString(36);
-  }
-
-  function normalizeBoards(all){
-    return(Array.isArray(all)?all:[])
-      .flatMap(x=>Array.isArray(x?.value)?x.value:[x])
-      .filter(x=>x&&typeof x.file==='string'&&x.file.trim());
-  }
-
-  function getInjectedBoard(expectedKey){
-    const node=document.getElementById('pcbr-board-data');
-    if(!node)return null;
-    try{
-      const board=JSON.parse(node.textContent||'null');
-      if(!board||typeof board.file!=='string')return null;
-      return fileKey(board.file)===String(expectedKey||'').toLowerCase()?board:null;
-    }catch{
-      return null;
-    }
-  }
   function isTrue(value){
     return value===true||value===1||String(value??'').toLowerCase()==='true'||String(value??'')==='1';
   }
@@ -669,25 +642,11 @@
       cleaned:'Cleaned',verified:'Verified',unverified:'غير موثّق',copy:'نسخ SHA-256',copied:'تم النسخ'
     };
 
-    let board=getInjectedBoard(match[1]);
-
-    if(!board){
-      try{
-        const payloads=await Promise.all(
-          ['/data/boards.json','/data/boards-large.json'].map(async url=>{
-            try{
-              const r=await fetch(url,{cache:'default'});
-              return r.ok?await r.json():[];
-            }catch{
-              return [];
-            }
-          })
-        );
-
-        const boards=normalizeBoards(payloads.flat());
-        board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
-      }catch{}
-    }
+    let board;
+    try {
+      const { findBoardForPage } = await import('/board-catalog.js?v=20261119-1');
+      board = await findBoardForPage(match[1]);
+    } catch { return; }
 
     if(!board)return;
 

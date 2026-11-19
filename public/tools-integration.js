@@ -10,37 +10,6 @@
     try{return localStorage.getItem('pcbr-language')==='en'?'en':'ar';}catch{return 'ar';}
   };
 
-  function fileKey(value){
-    const s=String(value??'');
-    let h=2166136261;
-    for(let i=0;i<s.length;i++){
-      h^=s.charCodeAt(i);
-      h=Math.imul(h,16777619);
-    }
-    return(h>>>0).toString(36);
-  }
-
-  function normalizeBoards(all){
-    return(Array.isArray(all)?all:[])
-      .flatMap(item=>Array.isArray(item?.value)?item.value:[item])
-      .filter(item=>item&&typeof item.file==='string'&&item.file.trim());
-  }
-
-  function getInjectedBoard(expectedKey){
-    const node=document.getElementById('pcbr-board-data');
-    if(!node)return null;
-
-    try{
-      const board=JSON.parse(node.textContent||'null');
-      if(!board||typeof board.file!=='string')return null;
-
-      return fileKey(board.file)===String(expectedKey||'').toLowerCase()
-        ? board
-        : null;
-    }catch{
-      return null;
-    }
-  }
   function addStyles(){
     if(document.getElementById('pcbrReaderGridStyles'))return;
     const style=document.createElement('style');
@@ -227,24 +196,11 @@
     const actions=document.querySelector('.boardActions');
     if(!actions)return;
 
-    let board=getInjectedBoard(match[1]);
-
-    if(!board){
-      try{
-        const payloads=await Promise.all(
-          ['/data/boards.json','/data/boards-large.json'].map(async url=>{
-            const r=await fetch(url,{cache:'default'});
-            if(!r.ok)return [];
-            return r.json();
-          })
-        );
-
-        const boards=normalizeBoards(payloads.flat());
-        board=boards.find(item=>fileKey(item.file)===match[1].toLowerCase())||null;
-      }catch{
-        return;
-      }
-    }
+    let board;
+    try {
+      const { findBoardForPage } = await import('/board-catalog.js?v=20261119-1');
+      board = await findBoardForPage(match[1]);
+    } catch { return; }
 
     if(!board)return;
 
