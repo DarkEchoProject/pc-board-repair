@@ -83,10 +83,45 @@
   }
   function badge(item) { return item.moderated ? "مخفي من الإدارة" : item.status === "closed" ? (item.kind === "sale" ? "تم البيع" : "تم العثور عليها") : item.kind === "wanted" ? "مطلوب" : "للبيع"; }
   function detailUrl(id) { const url = new URL("/market/", location.origin); url.searchParams.set("listing", id); return url; }
+  function marketShareButtons(item) {
+    if (item.moderated || item.status !== "active") return "";
+
+    const url = detailUrl(item.id).href;
+    const title = `${item.kind === "wanted" ? "مطلوب" : "للبيع"}: ${item.title}`;
+    const text = [
+      title,
+      price(item),
+      `${item.city}, ${item.country}`,
+      "PC Board Repair"
+    ].join("\n");
+
+    const u = encodeURIComponent(url);
+    const t = encodeURIComponent(text);
+    const full = encodeURIComponent(text + "\n" + url);
+
+    const links = [
+      ["WhatsApp", `https://wa.me/?text=${full}`, "whatsapp"],
+      ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${u}`, "facebook"],
+      ["Telegram", `https://t.me/share/url?url=${u}&text=${t}`, "telegram"],
+      ["X", `https://twitter.com/intent/tweet?url=${u}&text=${t}`, "twitter"]
+    ];
+
+    return `<details class="marketShare">
+      <summary>↗ مشاركة الإعلان</summary>
+      <div class="marketShareButtons">
+        ${links.map(([name, href, style]) =>
+          `<a class="marketShareButton ${style}" href="${esc(href)}" target="_blank" rel="noopener noreferrer">${name}</a>`
+        ).join("")}
+        <button type="button" class="marketShareButton" data-market-copy="${esc(url)}">نسخ الرابط</button>
+        ${typeof navigator.share === "function" ?
+          `<button type="button" class="marketShareButton" data-market-native="${esc(url)}" data-share-text="${esc(text)}">المزيد</button>` : ""}
+      </div>
+    </details>`;
+  }
   function itemCard(item) {
     const url = `/market/?listing=${encodeURIComponent(item.id)}`;
     const cover = item.photos[0] ? `<img src="${esc(item.photos[0].url)}" alt="${esc(item.title)}" loading="lazy" width="480" height="360">` : `<div class="marketPhotoPlaceholder">${boardIcon}<span>صورة غير مضافة</span></div>`;
-    return `<article class="marketCard"><a class="marketCardLink" href="${url}" data-market-open="${esc(item.id)}"><div class="marketCardCover">${cover}<span class="marketBadge${item.kind === "wanted" ? " isWanted" : ""}${item.status === "closed" || item.moderated ? " isClosed" : ""}">${badge(item)}</span></div></a><div class="marketCardBody"><p class="marketCardCategory">${esc(CATEGORIES[item.category])} · ${esc(CONDITIONS[item.condition])}</p><h3 class="marketCardTitle" dir="auto"><a href="${url}" data-market-open="${esc(item.id)}">${esc(item.title)}</a></h3><p class="marketPrice">${esc(price(item))}${item.negotiable && item.price !== null ? "<small>قابل للتفاوض</small>" : ""}</p><div class="marketCardMeta"><span>${esc(item.city)}، ${esc(item.country)}</span><span>${esc(DELIVERY[item.delivery])}</span></div></div><div class="marketCardFooter"><span>${esc(when(item.createdAt))} · ${item.replyCount} رد</span><a href="${url}" data-market-open="${esc(item.id)}">${item.isOwner ? "إدارة إعلاني" : "التفاصيل والتواصل"} ←</a></div></article>`;
+    return `<article class="marketCard"><a class="marketCardLink" href="${url}" data-market-open="${esc(item.id)}"><div class="marketCardCover">${cover}<span class="marketBadge${item.kind === "wanted" ? " isWanted" : ""}${item.status === "closed" || item.moderated ? " isClosed" : ""}">${badge(item)}</span></div></a><div class="marketCardBody"><p class="marketCardCategory">${esc(CATEGORIES[item.category])} · ${esc(CONDITIONS[item.condition])}</p><h3 class="marketCardTitle" dir="auto"><a href="${url}" data-market-open="${esc(item.id)}">${esc(item.title)}</a></h3><p class="marketPrice">${esc(price(item))}${item.negotiable && item.price !== null ? "<small>قابل للتفاوض</small>" : ""}</p><div class="marketCardMeta"><span>${esc(item.city)}، ${esc(item.country)}</span><span>${esc(DELIVERY[item.delivery])}</span></div></div><div class="marketCardFooter"><span>${esc(when(item.createdAt))} · ${item.replyCount} رد</span><a href="${url}" data-market-open="${esc(item.id)}">${item.isOwner ? "إدارة إعلاني" : "التفاصيل والتواصل"} ←</a></div>${marketShareButtons(item)}</article>`;
   }
   function syncFilters() {
     $("marketQuery").value = state.q; $("marketRegion").value = state.region; $("marketCategory").value = state.category;
@@ -247,7 +282,7 @@
     const meta = [["التصنيف", CATEGORIES[item.category]], ["الحالة", CONDITIONS[item.condition]], ["الموديل", item.model || "غير محدد"], ["رقم البورد أو القطعة", item.partNumber || "غير محدد"], ["المكان", `${item.city}، ${item.country}`], ["التسليم", DELIVERY[item.delivery]], ["صاحب الإعلان", item.ownerName], ["نُشر", when(item.createdAt)]];
     const contactLabel = { whatsapp: "تواصل عبر واتساب", telegram: "تواصل عبر تلغرام", phone: "اتصل بصاحب الإعلان" }[item.contactKind];
     const owner = item.isOwner ? `<div class="marketOwnerActions"><button class="marketOwnerButton" type="button" data-owner-action="edit">تعديل الإعلان</button><button class="marketOwnerButton" type="button" data-owner-action="${item.status === "closed" ? "reopen" : "close"}">${item.status === "closed" ? "إعادة فتح الإعلان" : item.kind === "sale" ? "تم بيع القطعة" : "تم العثور على القطعة"}</button><button class="marketOwnerButton isDanger" type="button" data-owner-action="delete">إزالة من السوق</button></div>` : "";
-    $("marketDetailContent").innerHTML = `${item.moderated ? '<p class="marketModerated">أخفت الإدارة هذا الإعلان من السوق. يمكنك مراجعة التفاصيل والتواصل مع إدارة الموقع.</p>' : ""}${item.photos.length ? `<div class="marketGallery">${item.photos.map(photo => `<a href="${esc(photo.url)}" target="_blank" rel="noopener"><img src="${esc(photo.url)}" alt="${esc(item.title)}"></a>`).join("")}</div>` : ""}<p class="marketPrice">${esc(price(item))}${item.negotiable && item.price !== null ? "<small>قابل للتفاوض</small>" : ""}</p><p class="marketDescription" dir="auto">${esc(item.description)}</p><dl class="marketDetailMeta">${meta.map(([key, value]) => `<div><dt>${key}</dt><dd dir="auto">${esc(value)}</dd></div>`).join("")}</dl><div class="marketDetailContact"><a class="btn" href="${esc(item.contactUrl)}"${item.contactKind !== "phone" ? ' target="_blank" rel="noopener noreferrer"' : ""}>${contactLabel}</a><button class="marketSoftButton" type="button" data-share-listing>نسخ رابط الإعلان</button>${!item.isOwner ? '<button class="marketSoftButton" type="button" data-report-listing>إبلاغ</button>' : ""}</div>${owner}`;
+    $("marketDetailContent").innerHTML = `${item.moderated ? '<p class="marketModerated">أخفت الإدارة هذا الإعلان من السوق. يمكنك مراجعة التفاصيل والتواصل مع إدارة الموقع.</p>' : ""}${item.photos.length ? `<div class="marketGallery">${item.photos.map(photo => `<a href="${esc(photo.url)}" target="_blank" rel="noopener"><img src="${esc(photo.url)}" alt="${esc(item.title)}"></a>`).join("")}</div>` : ""}<p class="marketPrice">${esc(price(item))}${item.negotiable && item.price !== null ? "<small>قابل للتفاوض</small>" : ""}</p><p class="marketDescription" dir="auto">${esc(item.description)}</p><dl class="marketDetailMeta">${meta.map(([key, value]) => `<div><dt>${key}</dt><dd dir="auto">${esc(value)}</dd></div>`).join("")}</dl><div class="marketDetailContact"><a class="btn" href="${esc(item.contactUrl)}"${item.contactKind !== "phone" ? ' target="_blank" rel="noopener noreferrer"' : ""}>${contactLabel}</a><button class="marketSoftButton" type="button" data-share-listing>نسخ رابط الإعلان</button>${!item.isOwner ? '<button class="marketSoftButton" type="button" data-report-listing>إبلاغ</button>' : ""}</div>${marketShareButtons(item)}${owner}`;
     $("marketReplyList").innerHTML = data.replies.length ? data.replies.map(reply => `<article class="marketReply"><div><strong>${esc(reply.name)}${reply.isOwner ? " · أنت" : ""}</strong><time datetime="${esc(reply.createdAt)}">${esc(when(reply.createdAt))}</time></div><p dir="auto">${esc(reply.text)}</p></article>`).join("") : '<p class="marketReplyEmpty">لا توجد ردود بعد. ابدأ بسؤال أو عرض واضح.</p>';
     $("marketReplyPages").hidden = data.replyPages < 2; $("marketReplyPageLabel").textContent = `${data.replyPage} / ${data.replyPages}`; $("marketReplyNewer").disabled = data.replyPage <= 1; $("marketReplyOlder").disabled = data.replyPage >= data.replyPages;
     const canReply = !!user && item.status === "active" && !item.moderated;
@@ -304,6 +339,30 @@
   }
 
   document.addEventListener("click", async event => {
+    const copyShare = event.target.closest("[data-market-copy]");
+    if (copyShare) {
+      try {
+        await navigator.clipboard.writeText(copyShare.dataset.marketCopy);
+        toast("تم نسخ رابط الإعلان.");
+      } catch {
+        prompt("انسخ رابط الإعلان:", copyShare.dataset.marketCopy);
+      }
+      return;
+    }
+
+    const nativeShare = event.target.closest("[data-market-native]");
+    if (nativeShare && navigator.share) {
+      try {
+        await navigator.share({
+          title: "PC Board Repair",
+          text: nativeShare.dataset.shareText,
+          url: nativeShare.dataset.marketNative
+        });
+      } catch (error) {
+        if (error.name !== "AbortError") toast("تعذرت المشاركة.");
+      }
+      return;
+    }
     const open = event.target.closest("[data-market-open]");
     if (open && !event.ctrlKey && !event.metaKey && !event.shiftKey) { event.preventDefault(); openDetail(open.dataset.marketOpen); return; }
     const close = event.target.closest("[data-close]");

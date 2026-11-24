@@ -13,3 +13,50 @@
 
 /* Mandatory market terms */
 .marketConsent{max-width:550px}.marketConsent::backdrop{background:#020a12e6;backdrop-filter:blur(8px)}.marketConsentHead{text-align:center;padding:24px 24px 16px;border-bottom:1px solid var(--mk-border)}.marketConsentHead .marketEyebrow{display:block;margin-top:10px}.marketConsentHead h2{margin:7px 0;font-size:24px}.marketConsentHead p{margin:0;color:var(--mk-muted);font-size:14px;line-height:1.7}.marketConsentIcon{display:grid;place-items:center;width:56px;height:56px;border:1px solid var(--mk-border);border-radius:16px;margin:auto;background:var(--mk-soft);font-size:26px}.marketConsentForm{display:grid;gap:14px;padding:20px 24px}.marketConsentRules{margin:0;padding-inline-start:23px;color:var(--mk-text);font-size:14px;line-height:1.85}.marketConsentRules li+li{margin-top:7px}.marketConsentCheck{border:1px solid var(--mk-border);border-radius:12px;background:var(--mk-deep);padding:14px;color:var(--mk-text);cursor:pointer;font-weight:700;line-height:1.7}.marketConsentCheck input{width:20px;height:20px;flex-shrink:0}.marketConsentCheck:has(input:checked){border-color:var(--mk-accent)}.marketConsentForm>.btn{width:100%;justify-content:center;text-align:center}.marketConsentForm>.btn:disabled{cursor:not-allowed;opacity:.45}.marketConsentExit{text-align:center;color:var(--mk-muted);font-size:13px}.marketConsentForm .marketFormStatus:empty{display:none}.marketPage[inert]{opacity:.55;pointer-events:none;user-select:none}@media(max-width:640px){.marketConsentHead{padding:18px 16px 12px}.marketConsentForm{padding:16px;gap:12px}.marketConsentRules{font-size:13px}.marketConsentHead h2{font-size:21px}}
+
+/* Market social sharing */
+.marketShare {
+    margin: 10px 12px;
+    padding: 10px;
+    border: 1px solid #94a3b855;
+    border-radius: 10px;
+}
+
+.marketShare summary {
+    cursor: pointer;
+    font-weight: 700;
+    text-align: center;
+    color: #38bdf8;
+}
+
+.marketShareButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+}
+
+.marketShareButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 100px;
+    padding: 9px;
+    border: 0;
+    border-radius: 7px;
+    background: #334155;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.marketShareButton.whatsapp { background: #128c4a; }
+.marketShareButton.facebook { background: #1877f2; }
+.marketShareButton.telegram { background: #1688bd; }
+.marketShareButton.twitter { background: #111827; }
+
+.marketShareButton:hover {
+    filter: brightness(1.15);
+}
