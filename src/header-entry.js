@@ -142,6 +142,131 @@ function loginRedirect(url) {
   return Response.redirect(`${url.origin}/login?next=${encodeURIComponent(next)}`, 302);
 }
 
+const MARKET_SHARE_SITE = "https://pc-board-repair.alinasser00001.workers.dev";
+
+const marketOgEscape = value => String(value ?? "").replace(
+  /[&<>"']/g,
+  c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]
+);
+
+async function withMarketPreview(response, url, env) {
+  if (response.status !== 200 ||
+      !["/market/", "/market"].includes(url.pathname) ||
+      !response.headers.get("content-type")?.includes("text/html")) {
+    return response;
+  }
+
+  const id = url.searchParams.get("listing");
+
+  if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return response;
+  }
+
+  try {
+    const target = new URL(
+      `/api/market/share-preview/${id}`,
+      MARKET_SHARE_SITE
+    );
+
+    const result = await env.CHAT_ROOM
+      .getByName("repair-market")
+      .fetch(new Request(target));
+
+    if (!result.ok) return response;
+
+    const item = await result.json();
+
+    const type = item.kind === "wanted" ? "مطلوب" : "للبيع";
+
+    const title = `${type}: ${item.title}`;
+
+    const conditions = {
+      working: "مفحوصة وتعمل",
+      faulty: "معطلة",
+      donor: "خردة للقطع",
+      untested: "غير مفحوصة",
+      new: "جديدة",
+      any: "حسب المطلوب"
+    };
+
+    const money = item.price == null || item.price === ""
+      ? "على الاتفاق"
+      : Number(item.price) === 0 && item.kind === "sale"
+        ? "مجاني"
+        : `${item.price} ${item.currency}`;
+
+    const priceLabel = item.kind === "wanted" ? "الميزانية" : "السعر";
+
+    const description = [
+      `${priceLabel}: ${money}`,
+      item.negotiable && item.price != null ? "قابل للتفاوض" : "",
+      item.kind === "sale" ? conditions[item.condition] : "",
+      `${item.city}، ${item.country}`,
+      item.description
+    ].filter(Boolean).join(" | ");
+
+    const canonical = `${MARKET_SHARE_SITE}/market/?listing=${encodeURIComponent(id)}`;
+
+    const image = item.photo
+      ? `${MARKET_SHARE_SITE}/api/market/share-image/${id}/${item.photo.id}`
+      : "";
+
+    const tags = [
+      `<meta property="og:site_name" content="PC Board Repair">`,
+      `<meta property="og:type" content="website">`,
+      `<meta property="og:title" content="${marketOgEscape(title)}">`,
+      `<meta property="og:description" content="${marketOgEscape(description)}">`,
+      `<meta property="og:url" content="${marketOgEscape(canonical)}">`,
+      `<meta name="twitter:card" content="${image ? "summary_large_image" : "summary"}">`,
+      `<meta name="twitter:title" content="${marketOgEscape(title)}">`,
+      `<meta name="twitter:description" content="${marketOgEscape(description)}">`
+    ];
+
+    if (image) {
+      tags.push(
+        `<meta property="og:image" content="${marketOgEscape(image)}">`,
+        `<meta property="og:image:type" content="${marketOgEscape(item.photo.mime)}">`,
+        `<meta property="og:image:alt" content="${marketOgEscape(title)}">`,
+        `<meta name="twitter:image" content="${marketOgEscape(image)}">`
+      );
+    }
+
+    const transformed = new HTMLRewriter()
+      .on('meta[property^="og:"]', {
+        element(e) { e.remove(); }
+      })
+      .on('meta[name^="twitter:"]', {
+        element(e) { e.remove(); }
+      })
+      .on("head", {
+        element(e) {
+          e.append(tags.join("\n"), { html: true });
+        }
+      })
+      .transform(response);
+
+    const headers = new Headers(transformed.headers);
+
+    headers.delete("etag");
+    headers.delete("last-modified");
+    headers.delete("content-length");
+    headers.set("cache-control", "no-store");
+
+    return new Response(transformed.body, {
+      status: transformed.status,
+      headers
+    });
+
+  } catch {
+    return response;
+  }
+}
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -159,6 +284,9 @@ export default {
     }
 
     const response = await baseWorker.fetch(withFreshPageRequest(request, url), env, ctx);
-    return withHeaderUi(response, url);
+    const page = withHeaderUi(response, url);
+    return request.method === "GET"
+      ? withMarketPreview(page, url, env)
+      : page;
   },
 };

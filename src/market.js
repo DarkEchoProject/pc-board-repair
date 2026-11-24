@@ -315,6 +315,65 @@ export class MarketStore {
     const data = photo.data instanceof ArrayBuffer ? new Uint8Array(photo.data) : photo.data;
     return new Response(request.method === "HEAD" ? null : data, { headers: { ...headers, "content-length": String(data.byteLength) } });
   }
+  marketSharePreview(id) {
+    const row = this.listing(id);
+
+    if (!row || row.moderated || row.status !== "active") {
+      fail("Not found", 404);
+    }
+
+    const photo = this.one(
+      "SELECT id,mime FROM market_photos WHERE listing_id=? ORDER BY position LIMIT 1",
+      id
+    );
+
+    return json({
+      id: row.id,
+      kind: row.kind,
+      title: row.title,
+      description: row.description,
+      price: row.price,
+      currency: row.currency,
+      condition: row.condition,
+      negotiable: !!row.negotiable,
+      city: row.city,
+      country: row.country,
+      photo: photo ? { id: photo.id, mime: photo.mime } : null
+    });
+  }
+
+  marketShareImage(request, id, photoId) {
+    const photo = this.one(
+      "SELECT p.mime,p.data FROM market_photos p JOIN market_listings l ON l.id=p.listing_id WHERE l.id=? AND p.id=? AND l.status='active' AND l.moderated=0 ORDER BY p.position",
+      id, photoId
+    );
+
+    const first = this.one(
+      "SELECT id FROM market_photos WHERE listing_id=? ORDER BY position LIMIT 1",
+      id
+    );
+
+    if (!photo || first?.id !== photoId) {
+      fail("Not found", 404);
+    }
+
+    const data = photo.data instanceof ArrayBuffer
+      ? new Uint8Array(photo.data)
+      : photo.data;
+
+    return new Response(
+      request.method === "HEAD" ? null : data,
+      {
+        headers: {
+          "content-type": photo.mime,
+          "content-length": String(data.byteLength),
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+          "x-robots-tag": "noindex"
+        }
+      }
+    );
+  }
   async admin(request, url) {
     if (request.headers.get("x-admin-authorized") !== "1") fail("غير مصرح.", 403);
     const image = url.pathname.match(/^\/api\/admin\/market\/images\/([a-f0-9-]{36})$/i);
@@ -348,6 +407,18 @@ export class MarketStore {
       const url = new URL(request.url), user = userFrom(request);
       if (url.pathname.startsWith("/api/admin/market/")) return await this.admin(request, url);
       if (url.pathname === CONSENT_PATH) return await this.consent(request, url);
+      const preview = url.pathname.match(/^\/api\/market\/share-preview\/([a-f0-9-]{36})$/i);
+
+      if (preview && request.method === "GET" && UUID.test(preview[1])) {
+        return this.marketSharePreview(preview[1]);
+      }
+
+      const shareImage = url.pathname.match(/^\/api\/market\/share-image\/([a-f0-9-]{36})\/([a-f0-9-]{36})$/i);
+
+      if (shareImage && ["GET", "HEAD"].includes(request.method) &&
+          UUID.test(shareImage[1]) && UUID.test(shareImage[2])) {
+        return this.marketShareImage(request, shareImage[1], shareImage[2]);
+      }
       if (!this.accepted(request)) fail("يجب قراءة شروط السوق وإخلاء المسؤولية والموافقة عليها أولًا.", 403, "market_consent_required");
       if (url.pathname === "/api/market/listings") {
         if (request.method === "GET") return this.list(url, user);
