@@ -1,6 +1,6 @@
 (() => {
   const $ = id => document.getElementById(id);
-  const CATEGORIES = { "desktop-board": "بورد كمبيوتر مكتبي", "laptop-board": "بورد لابتوب", "graphics-board": "بورد كرت شاشة", ic: "آيسي", mosfet: "MOSFET وقطع تغذية", connector: "موصل أو منفذ", "computer-part": "قطعة كمبيوتر", "other-part": "قطعة صيانة أخرى" };
+  const CATEGORIES = { "laptop-complete": "لابتوب كامل", "desktop-complete": "كمبيوتر مكتبي كامل", "desktop-board": "بورد كمبيوتر مكتبي", "laptop-board": "بورد لابتوب", "graphics-board": "بورد كرت شاشة", ic: "آيسي", mosfet: "MOSFET وقطع تغذية", connector: "موصل أو منفذ", "computer-part": "قطعة كمبيوتر", "other-part": "قطعة صيانة أخرى" };
   const CONDITIONS = { working: "مفحوصة وتعمل", faulty: "معطلة", donor: "خردة للقطع", untested: "غير مفحوصة", new: "جديدة", any: "حسب المطلوب" };
   const DELIVERY = { pickup: "استلام باليد", shipping: "يمكن الشحن", agreement: "حسب الاتفاق" };
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -9,7 +9,7 @@
   let user = null, sessionError = false, sessionPromise, listController, detailController, currentListing, detailPage = 1, detailPages = 0;
   let editing = null, photoDraft = [], photoGeneration = 0, processingPhotos = false, saving = false, requestId = "", replyRequestId = "", toastTimer;
   const DRAFT_KEY = "pcbr-market-draft-v1";
-  const TERMS_VERSION = "2026-11-18-v1";
+  const TERMS_VERSION = "2026-11-25-v2";
   let marketStarted = false, consentBusy = false;
   function consentButton() { $("marketConsentEnter").disabled = consentBusy || !$("marketConsentCheck").checked; }
   function startMarket() {
@@ -153,7 +153,7 @@
       const data = await api("/api/market/listings?" + p, { signal: controller.signal });
       if (listController !== controller) return;
       state.pages = data.pages; $("marketResultCount").textContent = `${data.total.toLocaleString("ar")} ${state.mine ? "من إعلاناتك" : "عرض وطلب متاح"}`;
-      $("marketGrid").innerHTML = data.items.length ? data.items.map(itemCard).join("") : `<div class="marketEmpty">${boardIcon}<h3>${state.mine ? "ابدأ بإعلانك الأول" : state.q || state.kind || state.region || state.category ? "لا توجد نتائج مطابقة" : "هنا تلتقي البوردات الزائدة بالقطع الناقصة"}</h3><p>${state.q || state.region || state.category ? "جرّب رقم قطعة آخر أو وسّع المنطقة والتصنيف." : "عندك بورد خردة أو قطعة زائدة؟ اعرضها، أو انشر طلبًا للقطعة التي تحتاجها."}</p><button class="btn" type="button" data-market-add>أضف عرضًا أو طلبًا</button></div>`;
+      $("marketGrid").innerHTML = data.items.length ? data.items.map(itemCard).join("") : `<div class="marketEmpty">${boardIcon}<h3>${state.mine ? "ابدأ بإعلانك الأول" : state.q || state.kind || state.region || state.category ? "لا توجد نتائج مطابقة" : "سوق بيع وشراء الكمبيوتر واللابتوبات والقطع"}</h3><p>${state.q || state.region || state.category ? "جرّب رقم قطعة آخر أو وسّع المنطقة والتصنيف." : "عندك جهاز أو بورد أو قطعة للبيع؟ اعرضها، أو انشر طلبًا لما تحتاج إلى شرائه."}</p><button class="btn" type="button" data-market-add>أضف عرضًا أو طلبًا</button></div>`;
       $("marketPagination").hidden = data.pages < 2; $("marketPageLabel").textContent = `صفحة ${data.page} من ${data.pages}`;
       $("marketPrev").disabled = data.page <= 1; $("marketNext").disabled = data.page >= data.pages;
     } catch (error) {

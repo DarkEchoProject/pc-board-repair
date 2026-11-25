@@ -2,7 +2,7 @@ import { backupPage } from "./backup.js";
 // Market data uses a separate named instance of the existing SQLite-backed binding.
 export const MARKET_ROOM = "repair-market";
 // Bump this value and the client terms version whenever the displayed terms change.
-export const MARKET_TERMS_VERSION = "2026-11-18-v1";
+export const MARKET_TERMS_VERSION = "2026-11-25-v2";
 const CONSENT_COOKIE = "pcbr_market_consent", CONSENT_SECONDS = 30 * 24 * 60 * 60;
 const CONSENT_PATH = "/api/market/consent";
 function consentToken(request) {
@@ -10,7 +10,7 @@ function consentToken(request) {
   return UUID.test(value) ? value : "";
 }
 export const MARKET_CATEGORIES = {
-  "desktop-board": "بورد كمبيوتر مكتبي", "laptop-board": "بورد لابتوب",
+  "laptop-complete": "لابتوب كامل", "desktop-complete": "كمبيوتر مكتبي كامل", "desktop-board": "بورد كمبيوتر مكتبي", "laptop-board": "بورد لابتوب",
   "graphics-board": "بورد كرت شاشة", ic: "آيسي", mosfet: "MOSFET وقطع تغذية",
   connector: "موصل أو منفذ", "computer-part": "قطعة كمبيوتر", "other-part": "قطعة صيانة أخرى",
 };
@@ -118,13 +118,13 @@ function contact(value, kind) {
 function fields(body, user) {
   const kind = body.kind;
   if (!["sale", "wanted"].includes(kind)) fail("اختر للبيع أو مطلوب.");
-  if (!Object.hasOwn(MARKET_CATEGORIES, body.category)) fail("اختر تصنيفًا لبورد كمبيوتر أو قطعة صيانة.");
+  if (!Object.hasOwn(MARKET_CATEGORIES, body.category)) fail("اختر تصنيفًا لجهاز كمبيوتر أو بورد أو قطعة صيانة.");
   const title = line(body.title, 120), description = text(body.description, 2500), country = line(body.country, 60), city = line(body.city, 60);
   if (title.length < 6) fail("اكتب عنوانًا واضحًا من ستة أحرف على الأقل.");
   if (description.length < 12) fail("أضف تفاصيل القطعة وحالتها أو ما تحتاجه.");
   if (country.length < 2 || city.length < 2) fail("أضف الدولة والمدينة.");
   const condition = kind === "wanted" ? "any" : body.condition;
-  if (!CONDITIONS.has(condition) || (kind === "sale" && condition === "any")) fail("اختر حالة البورد أو القطعة.");
+  if (!CONDITIONS.has(condition) || (kind === "sale" && condition === "any")) fail("اختر حالة الجهاز أو البورد أو القطعة.");
   const currency = ["USD", "LBP", "EUR"].includes(body.currency) ? body.currency : "USD";
   const priceInput = digits(body.price ?? "").trim();
   const negotiable = body.negotiable === true;

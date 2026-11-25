@@ -142,3 +142,104 @@ test("market consent is mandatory for reads, writes and images and expires on ve
   assert.equal((await call("/api/market/listings")).status, 403);
   assert.equal((await (await call("/api/market/consent")).json()).accepted, false);
 });
+
+
+test("complete computers: laptop and desktop sale listings", async () => {
+  const { call } = setup();
+
+  for (const category of ["laptop-complete", "desktop-complete"]) {
+    const item = await create(call, listing({
+      category,
+      kind: "sale",
+      title: "Complete computer for sale",
+      description: "Complete working computer with all required parts.",
+      condition: "working",
+      price: "150",
+      photos: [{ mime: "image/png", data: png }]
+    }));
+
+    assert.equal(item.category, category);
+    assert.equal(item.kind, "sale");
+    assert.equal(item.condition, "working");
+    assert.equal(item.price, "150");
+    assert.equal(item.photos.length, 1);
+
+    const detail = await call(
+      `/api/market/listings/${item.id}`, "GET", null, null
+    );
+
+    assert.equal(detail.status, 200);
+    assert.equal((await detail.json()).listing.category, category);
+  }
+});
+
+test("complete computers: laptop and desktop wanted listings", async () => {
+  const { call } = setup();
+
+  for (const category of ["laptop-complete", "desktop-complete"]) {
+    const item = await create(call, listing({
+      category,
+      kind: "wanted",
+      title: "Wanted complete computer",
+      description: "Looking to purchase a complete computer.",
+      price: ""
+    }));
+
+    assert.equal(item.category, category);
+    assert.equal(item.kind, "wanted");
+    assert.equal(item.condition, "any");
+  }
+});
+
+test("complete computers: category and kind filters", async () => {
+  const { call } = setup();
+
+  for (const category of ["laptop-complete", "desktop-complete"]) {
+    for (const kind of ["sale", "wanted"]) {
+      await create(call, listing({ category, kind }));
+    }
+  }
+
+  await create(call, listing({ category: "laptop-board" }));
+
+  for (const category of ["laptop-complete", "desktop-complete"]) {
+    for (const kind of ["sale", "wanted"]) {
+      const response = await call(
+        `/api/market/listings?category=${category}&kind=${kind}`,
+        "GET", null, null
+      );
+
+      assert.equal(response.status, 200);
+
+      const result = await response.json();
+
+      assert.equal(result.total, 1);
+      assert.equal(result.items[0].category, category);
+      assert.equal(result.items[0].kind, kind);
+    }
+  }
+
+  const boards = await call(
+    "/api/market/listings?category=laptop-board",
+    "GET", null, null
+  );
+
+  assert.equal((await boards.json()).total, 1);
+});
+
+test("complete computers: unrelated categories remain rejected", async () => {
+  const { call, db } = setup();
+
+  for (const category of ["phones", "cars", "furniture"]) {
+    const response = await call(
+      "/api/market/listings", "POST", listing({ category })
+    );
+
+    assert.equal(response.status, 400);
+  }
+
+  assert.equal(
+    db.prepare("SELECT COUNT(*) AS n FROM market_listings").get().n,
+    0
+  );
+});
